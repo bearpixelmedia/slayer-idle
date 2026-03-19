@@ -97,7 +97,9 @@ export default function GameCanvas({
             transition={{ duration: 0.15 }}
           />
         </div>
-        <div className="animate-run-cycle text-3xl sm:text-4xl md:text-5xl">⚔️</div>
+        <div className="animate-run-cycle text-3xl sm:text-4xl md:text-5xl">
+          {weaponMode === "bow" ? "🏹" : "⚔️"}
+        </div>
       </div>
 
       {/* Enemy */}

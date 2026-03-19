@@ -173,10 +173,12 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     return Math.floor(cps * soulBonus * damageMultiplier * skillMults.idleMultiplier);
   }
 
-  function applyRewardMultipliers(coins, souls, s = state) {
+  function applyRewardMultipliers(coins, souls, s = state, buffs = activeBuffs) {
     const skillMults = getSkillMultipliers(s.unlockedSkills);
-    const coinAfterMultiplier = Math.floor(coins * skillMults.coinDropMultiplier);
-    const soulsAfterMultiplier = Math.floor(souls * skillMults.soulMultiplier);
+    const buffCoinMult = getBuffMultiplier(buffs, "coinMultiplier");
+    const buffSoulMult = getBuffMultiplier(buffs, "soulMultiplier");
+    const coinAfterMultiplier = Math.floor(coins * skillMults.coinDropMultiplier * buffCoinMult);
+    const soulsAfterMultiplier = Math.floor(souls * skillMults.soulMultiplier * buffSoulMult);
     return { coins: coinAfterMultiplier, souls: soulsAfterMultiplier };
   }
 

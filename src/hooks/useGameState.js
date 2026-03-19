@@ -67,7 +67,7 @@ function defaultAbilities() {
   };
 }
 
-export default function useGameState({ damageMultiplier = 1, offlineMultiplier = 1 } = {}) {
+export default function useGameState({ damageMultiplier = 1, offlineMultiplier = 1, weaponMode = "sword" } = {}) {
   const [state, setState] = useState(() => loadGame() || defaultState());
   const [floatingCoins, setFloatingCoins] = useState([]);
   const [floatingSouls, setFloatingSouls] = useState([]);
@@ -78,6 +78,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   const [abilities, setAbilities] = useState(defaultAbilities());
   const [offlineEarnings, setOfflineEarnings] = useState(null);
   const [enemyHit, setEnemyHit] = useState(false);
+  const [currentWeapon, setCurrentWeapon] = useState(weaponMode);
   const stateRef = useRef(state);
   stateRef.current = state;
   const abilitiesRef = useRef(abilities);

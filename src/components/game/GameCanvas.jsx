@@ -40,11 +40,14 @@ function GroundLayer({ stageColor }) {
   );
 }
 
+import ParticleEffect from "./ParticleEffect";
+
 export default function GameCanvas({
   state,
   enemyDying,
   floatingCoins,
   slashEffects,
+  particles,
   onTap,
 }) {
   const canvasRef = useRef(null);

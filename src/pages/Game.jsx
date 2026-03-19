@@ -70,15 +70,7 @@ export default function Game() {
   const { questProgress, claimReward, resetQuestForRepeat } = useQuests(state, state.unlockedZoneIds);
 
   const handleClaimQuestReward = (questId) => {
-    const reward = claimReward(questId);
-    if (!reward) return;
-
-    setState(prev => ({
-      ...prev,
-      coins: prev.coins + (reward.coins || 0),
-      souls: prev.souls + (reward.souls || 0),
-      slayerPoints: prev.slayerPoints + (reward.slayerPoints || 0),
-    }));
+    claimReward(questId);
   };
 
   const handleRepeatQuest = (questId) => {

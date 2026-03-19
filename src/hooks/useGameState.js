@@ -436,6 +436,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     handleTap,
     buyUpgrade,
     prestige,
+    revive,
     canPrestige,
     soulsOnPrestige,
     slayerPointsOnPrestige,

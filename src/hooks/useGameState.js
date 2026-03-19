@@ -6,6 +6,8 @@ import {
 import { getSkillMultipliers } from "@/lib/skillTree";
 import { isBossEncounter, getBossForStage, getBossHP, getBossReward } from "@/lib/bosses";
 
+const SAVE_VERSION = 2;
+
 const SAVE_KEY = "idle_slayer_save";
 
 function loadGame() {

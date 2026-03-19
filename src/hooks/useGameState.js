@@ -391,9 +391,19 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   const unlockSkill = useCallback((skillId) => {
     setState(prev => {
       if (prev.unlockedSkills.includes(skillId)) return prev;
+      
+      const skill = SKILLS.find(s => s.id === skillId);
+      if (!skill) return prev;
+      
+      // Check prerequisites and SP availability
+      const hasPrereqs = skill.requires.every(req => prev.unlockedSkills.includes(req));
+      if (!hasPrereqs || prev.slayerPoints < skill.cost) return prev;
+      
+      // Atomic: deduct SP and add skill
       return {
         ...prev,
         unlockedSkills: [...prev.unlockedSkills, skillId],
+        slayerPoints: prev.slayerPoints - skill.cost,
       };
     });
   }, []);

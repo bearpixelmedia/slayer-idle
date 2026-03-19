@@ -452,7 +452,10 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   }, []);
 
   const handleTap = useCallback((x, y) => {
-    const damage = getTapDamage(stateRef.current);
+    lastTapTimeRef.current = Date.now();
+    tryProcBuff("tap", stateRef.current);
+    
+    const damage = getTapDamage(stateRef.current, currentWeapon, activeBuffsRef.current);
     // Note: double damage multiplier is applied inside dealDamage via abilitiesRef
     
     setSlashEffects(prev => [...prev, { id: Date.now() + Math.random(), x, y }]);
@@ -461,7 +464,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     }, 300);
     
     dealDamage(damage, x, y);
-  }, [dealDamage]);
+  }, [dealDamage, tryProcBuff]);
 
   // Idle damage tick
   useEffect(() => {

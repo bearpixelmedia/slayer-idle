@@ -55,8 +55,8 @@ export default function GameCanvas({
   weaponMode,
 }) {
   const canvasRef = useRef(null);
-  const stage = STAGES[state.stage];
-  const enemyEmoji = ENEMY_EMOJIS[state.currentEnemyName] || "👾";
+  const stage = STAGES[state?.stage] || STAGES[0];
+  const enemyEmoji = ENEMY_EMOJIS[state?.currentEnemyName] || "👾";
 
   const handleClick = (e) => {
     if (state.isDead) return;

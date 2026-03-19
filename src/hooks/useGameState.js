@@ -81,7 +81,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   // Save game periodically
   useEffect(() => {
     const interval = setInterval(() => {
-      localStorage.setItem(SAVE_KEY, JSON.stringify({ ...stateRef.current, lastSave: Date.now() }));
+      localStorage.setItem(SAVE_KEY, JSON.stringify({ ...stateRef.current, lastSave: Date.now(), saveVersion: SAVE_VERSION }));
     }, 5000);
     return () => clearInterval(interval);
   }, []);

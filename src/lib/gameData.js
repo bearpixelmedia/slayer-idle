@@ -58,6 +58,14 @@ export function getEnemyReward(stage, killCount) {
   return Math.floor(base + scaling);
 }
 
+export function getEnemySouls(stage, killCount) {
+  // Base soul drop that scales with stage
+  const base = 0.5 + stage * 0.3;
+  // Small scaling per kill in stage
+  const scaling = (killCount % 25) * 0.02;
+  return base + scaling;
+}
+
 export function getSoulsOnPrestige(totalCoinsEarned) {
   // Aggressive early thresholds; prestige becomes more valuable the farther you go
   const sqrtCoins = Math.sqrt(totalCoinsEarned / 500);

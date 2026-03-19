@@ -54,6 +54,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   const [slashEffects, setSlashEffects] = useState([]);
   const [abilities, setAbilities] = useState(defaultAbilities());
   const [offlineEarnings, setOfflineEarnings] = useState(null);
+  const [enemyHit, setEnemyHit] = useState(false);
   const stateRef = useRef(state);
   stateRef.current = state;
   const abilitiesRef = useRef(abilities);
@@ -193,6 +194,9 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   }, []);
 
   const dealDamage = useCallback((damage, x, y) => {
+    setEnemyHit(true);
+    setTimeout(() => setEnemyHit(false), 150);
+    
     const multiplier = abilitiesRef.current.doubleDamage.active ? 2 : 1;
     const finalDamage = damage * multiplier;
     const isCritical = multiplier > 1;
@@ -356,5 +360,6 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     getTapDamage: () => getTapDamage(state),
     getIdleCPS: () => getIdleCPS(state),
     getUpgradeLevel,
+    enemyHit,
   };
 }

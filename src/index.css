@@ -121,9 +121,14 @@
 
 @keyframes run-cycle {
   0%, 100% { transform: translateY(0) scaleX(1); }
-  25% { transform: translateY(-3px) scaleX(0.95); }
+  25% { transform: translateY(-8px) scaleX(0.9); }
   50% { transform: translateY(0) scaleX(1); }
-  75% { transform: translateY(-2px) scaleX(1.02); }
+  75% { transform: translateY(-5px) scaleX(1.05); }
+}
+
+@keyframes enemy-hit {
+  0%, 100% { transform: translateX(0) scaleX(1); }
+  50% { transform: translateX(-8px) scaleX(0.95); }
 }
 
 .animate-float { animation: float 3s ease-in-out infinite; }
@@ -133,3 +138,4 @@
 .animate-enemy-enter { animation: enemy-enter 0.5s ease-out; }
 .animate-enemy-die { animation: enemy-die 0.3s ease-out forwards; }
 .animate-run-cycle { animation: run-cycle 0.4s ease-in-out infinite; }
+.animate-enemy-hit { animation: enemy-hit 0.15s ease-out; }

@@ -43,6 +43,7 @@ export default function Game() {
     activateAbility,
     getTapDamage,
     getIdleCPS,
+    enemyHit,
   } = useGameState(initMultipliers);
 
   const { unlockedIds, newUnlock, damageMultiplier, offlineMultiplier } = useAchievements(state);
@@ -61,6 +62,7 @@ export default function Game() {
         particles={particles}
         slashEffects={slashEffects}
         onTap={handleTap}
+        enemyHit={enemyHit}
       />
       <ScrollArea className="flex-1">
         <AbilityBar abilities={abilities} onActivate={activateAbility} />

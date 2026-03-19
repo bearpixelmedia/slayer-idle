@@ -49,6 +49,7 @@ export default function GameCanvas({
   slashEffects,
   particles,
   onTap,
+  enemyHit,
 }) {
   const canvasRef = useRef(null);
   const stage = STAGES[state.stage];
@@ -100,7 +101,7 @@ export default function GameCanvas({
         </div>
         <div
           className={`text-4xl sm:text-5xl md:text-6xl transition-all ${
-            enemyDying ? "animate-enemy-die" : "animate-float"
+            enemyDying ? "animate-enemy-die" : enemyHit ? "animate-enemy-hit" : "animate-float"
           }`}
         >
           {enemyEmoji}

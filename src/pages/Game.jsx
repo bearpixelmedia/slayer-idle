@@ -14,6 +14,7 @@ import AchievementsPanel from "@/components/game/AchievementsPanel";
 import AchievementToast from "@/components/game/AchievementToast";
 import OfflineEarningsModal from "@/components/game/OfflineEarningsModal";
 import DeathModal from "@/components/game/DeathModal";
+import ZoneSelector from "@/components/game/ZoneSelector";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import WeaponMode from "@/components/game/WeaponMode";
 

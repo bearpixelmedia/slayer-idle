@@ -13,8 +13,18 @@ const SAVE_KEY = "idle_slayer_save";
 function loadGame() {
   try {
     const saved = localStorage.getItem(SAVE_KEY);
-    if (saved) return JSON.parse(saved);
-  } catch {}
+    if (saved) {
+      const data = JSON.parse(saved);
+      // Migrate old saves
+      if (!data.saveVersion || data.saveVersion < SAVE_VERSION) {
+        console.log("Migrating save from v" + (data.saveVersion || 1) + " to v" + SAVE_VERSION);
+        return { ...data, saveVersion: SAVE_VERSION };
+      }
+      return data;
+    }
+  } catch (e) {
+    console.error("Failed to load save:", e);
+  }
   return null;
 }
 

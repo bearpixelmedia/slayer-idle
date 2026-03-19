@@ -71,9 +71,9 @@ export default function Game() {
         idleCPS={getIdleCPS()}
       />
       <WeaponMode
-        currentMode={weaponMode}
-        bowUnlocked={state.unlockedSkills?.includes("bow_mastery")}
-        onModeChange={setWeaponMode}
+        currentMode={currentWeapon}
+        bowUnlocked={state.upgradeLevels["bow"] > 0}
+        onModeChange={setCurrentWeapon}
       />
       {!showRunner ? (
         <GameCanvas

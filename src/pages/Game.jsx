@@ -110,30 +110,34 @@ export default function Game() {
             </button>
           </div>
         )}
-        {!showRunner && <AbilityBar abilities={abilities} onActivate={activateAbility} />}
-        {!showRunner && <PrestigePanel
-          canPrestige={canPrestige}
-          soulsOnPrestige={soulsOnPrestige}
-          slayerPointsOnPrestige={slayerPointsOnPrestige}
-          currentSouls={state.souls}
-          onPrestige={prestige}
-        />}
-        {!showRunner && <SkillTree
-          slayerPoints={state.slayerPoints}
-          unlockedSkillIds={state.unlockedSkills}
-          onUnlock={unlockSkill}
-        />}
-        {!showRunner && <AchievementsPanel
-          unlockedIds={unlockedIds}
-          damageMultiplier={damageMultiplier}
-          offlineMultiplier={offlineMultiplier}
-        />}
-        {!showRunner && <UpgradeShop state={state} onBuy={buyUpgrade} />}
-        {!showRunner && <div className="px-4 py-6 text-center">
-          <p className="font-pixel text-[7px] text-muted-foreground/30">
-            IDLE SLAYER CLONE • TAP & IDLE RPG
-          </p>
-        </div>}
+        {!showRunner && (
+          <>
+            <AbilityBar abilities={abilities} onActivate={activateAbility} />
+            <PrestigePanel
+              canPrestige={canPrestige}
+              soulsOnPrestige={soulsOnPrestige}
+              slayerPointsOnPrestige={slayerPointsOnPrestige}
+              currentSouls={state.souls}
+              onPrestige={prestige}
+            />
+            <SkillTree
+              slayerPoints={state.slayerPoints}
+              unlockedSkillIds={state.unlockedSkills}
+              onUnlock={unlockSkill}
+            />
+            <AchievementsPanel
+              unlockedIds={unlockedIds}
+              damageMultiplier={damageMultiplier}
+              offlineMultiplier={offlineMultiplier}
+            />
+            <UpgradeShop state={state} onBuy={buyUpgrade} />
+            <div className="px-4 py-6 text-center">
+              <p className="font-pixel text-[7px] text-muted-foreground/30">
+                IDLE SLAYER CLONE • TAP & IDLE RPG
+              </p>
+            </div>
+          </>
+        )}
       </ScrollArea>
       <AchievementToast achievement={newUnlock} />
       <OfflineEarningsModal

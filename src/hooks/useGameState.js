@@ -148,7 +148,8 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       }
     });
     const soulBonus = 1 + (s.souls * 0.05);
-    return Math.floor(cps * soulBonus * damageMultiplier);
+    const skillMults = getSkillMultipliers(s.unlockedSkills);
+    return Math.floor(cps * soulBonus * damageMultiplier * skillMults.idleMultiplier);
   }
 
   function spawnNewEnemy(s) {

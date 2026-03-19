@@ -6,6 +6,7 @@ import {
 } from "@/lib/gameData";
 import { SKILLS, getSkillMultipliers } from "@/lib/skillTree";
 import { isBossEncounter, getBossForStage, getBossHP, getBossReward } from "@/lib/bosses";
+import { BUFF_TYPES, PROC_RATES, selectRandomBuff, shouldProcBuff, getBuffMultiplier, BUFF_RULES } from "@/lib/buffs";
 
 const SAVE_VERSION = 3;
 

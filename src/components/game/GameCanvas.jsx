@@ -86,7 +86,14 @@ export default function GameCanvas({
       </div>
 
       {/* Player character */}
-      <div className="absolute bottom-16 left-[15%] sm:left-[20%]">
+      <div className="absolute bottom-16 left-[15%] sm:left-[20%] flex flex-col items-center gap-2">
+        <div className="w-20 h-1.5 bg-muted rounded-full overflow-hidden border border-border/50">
+          <motion.div
+            className="h-full bg-green-500"
+            animate={{ width: `${(state.playerHP / state.playerMaxHP) * 100}%` }}
+            transition={{ duration: 0.15 }}
+          />
+        </div>
         <div className="animate-run-cycle text-3xl sm:text-4xl md:text-5xl">⚔️</div>
       </div>
 

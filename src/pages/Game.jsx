@@ -100,7 +100,7 @@ export default function Game() {
           onModeChange={setCurrentWeapon}
         />
 
-        <div className="w-full h-full">
+        <div className="w-full flex-1 overflow-hidden flex flex-col">
           {!showRunner ? (
             <GameCanvas
               state={state}

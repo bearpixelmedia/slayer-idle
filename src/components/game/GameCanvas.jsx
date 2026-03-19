@@ -72,7 +72,7 @@ export default function GameCanvas({
   return (
     <div
       ref={canvasRef}
-      className={`relative w-full h-56 sm:h-72 md:h-80 bg-gradient-to-b ${stage.bgGradient} cursor-pointer select-none overflow-hidden`}
+      className={`relative w-full flex-1 bg-gradient-to-b ${stage.bgGradient} cursor-pointer select-none overflow-hidden`}
       onClick={handleClick}
     >
       {/* Stars */}

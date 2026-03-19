@@ -62,8 +62,9 @@ export default function GameCanvas({
   const showBossWarning = state?.bossWarning && Date.now() < state.bossWarning.warningEndTime;
 
   const handleClick = (e) => {
-    if (state.isDead) return;
-    const rect = canvasRef.current.getBoundingClientRect();
+    if (!state || state.isDead) return;
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (!rect) return;
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
     onTap(x, y);

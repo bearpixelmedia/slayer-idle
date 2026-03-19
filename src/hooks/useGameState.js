@@ -249,6 +249,14 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     }
 
     setState(prev => {
+      // Enemy damage to player
+      const playerDamage = prev.isBossActive ? 3 : 1;
+      const newPlayerHP = prev.playerHP - playerDamage;
+      
+      if (newPlayerHP <= 0) {
+        return { ...prev, playerHP: 0, isDead: true };
+      }
+
       const newHP = prev.enemyHP - finalDamage;
       
       if (newHP <= 0) {
@@ -302,12 +310,13 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
           totalKills: prev.totalKills + 1,
           stage: newStage,
           highestStage: Math.max(prev.highestStage || 0, newStage),
+          playerHP: prev.playerMaxHP,
         };
         
         return spawnNewEnemy(newState);
       }
       
-      return { ...prev, enemyHP: newHP };
+      return { ...prev, enemyHP: newHP, playerHP: newPlayerHP };
     });
   }, []);
 

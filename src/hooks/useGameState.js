@@ -223,6 +223,23 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     return () => clearInterval(interval);
   }, []);
 
+  // Buff tick and cleanup
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = Date.now();
+      setActiveBuffs(prev => prev.filter(buff => buff.endTime > now));
+    }, 100);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Buff proc on idle tick (very low rate)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      tryProcBuff("idle", stateRef.current);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   // Magnet ability: award bonus coins every second while active
   useEffect(() => {
     const interval = setInterval(() => {

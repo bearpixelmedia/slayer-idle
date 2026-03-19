@@ -71,6 +71,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   const [state, setState] = useState(() => loadGame() || defaultState());
   const [floatingCoins, setFloatingCoins] = useState([]);
   const [floatingSouls, setFloatingSouls] = useState([]);
+  const [floatingDamage, setFloatingDamage] = useState([]);
   const [particles, setParticles] = useState([]);
   const [enemyDying, setEnemyDying] = useState(false);
   const [slashEffects, setSlashEffects] = useState([]);

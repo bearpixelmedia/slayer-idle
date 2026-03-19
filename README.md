@@ -1,4 +1,9 @@
-**Welcome to your Base44 project** 
+**Welcome to your Base44 project**
+
+**Slayer Idle — Base44 prompts**
+
+- Full prompt pack (Part A–D, MVP, phased follow-ups, fallback runner): [`docs/BASE44_PROMPT_PACK.md`](docs/BASE44_PROMPT_PACK.md) — copy Part A into Base44 AI Controls, then Part B.
+- Codebase map + alignment sprint: [`docs/BASE44_MASTER_PROMPT.md`](docs/BASE44_MASTER_PROMPT.md)
 
 **About**
 

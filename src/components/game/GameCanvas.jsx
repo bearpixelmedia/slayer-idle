@@ -56,6 +56,7 @@ export default function GameCanvas({
   const enemyEmoji = ENEMY_EMOJIS[state.currentEnemyName] || "👾";
 
   const handleClick = (e) => {
+    if (state.isDead) return;
     const rect = canvasRef.current.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;

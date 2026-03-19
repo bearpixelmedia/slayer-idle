@@ -90,7 +90,27 @@ export default function Game() {
         />
       )}
       <ScrollArea className="flex-1">
-        <AbilityBar abilities={abilities} onActivate={activateAbility} />
+        {!showRunner && (
+          <div className="px-4 py-2">
+            <button
+              onClick={() => setShowRunner(true)}
+              className="w-full py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"
+            >
+              🏃 RUNNER MINIGAME
+            </button>
+          </div>
+        )}
+        {showRunner && (
+          <div className="px-4 py-2">
+            <button
+              onClick={() => setShowRunner(false)}
+              className="w-full py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"
+            >
+              ← BACK TO SLAYER
+            </button>
+          </div>
+        )}
+        {!showRunner && <AbilityBar abilities={abilities} onActivate={activateAbility} />
         <PrestigePanel
           canPrestige={canPrestige}
           soulsOnPrestige={soulsOnPrestige}

@@ -121,9 +121,65 @@ export default function useGameState() {
     return { ...s, enemyHP: hp, enemyMaxHP: hp, currentEnemyName: enemyName };
   }
 
+  // Ability tick — runs every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setAbilities(prev => {
+        const next = { ...prev };
+        let changed = false;
+        Object.keys(next).forEach(id => {
+          const a = { ...next[id] };
+          if (a.active && a.durationRemaining > 0) {
+            a.durationRemaining = Math.max(0, a.durationRemaining - 1);
+            if (a.durationRemaining === 0) {
+              a.active = false;
+              a.cooldownRemaining = ABILITY_CONFIGS[id].cooldown;
+            }
+            changed = true;
+          } else if (!a.active && a.cooldownRemaining > 0) {
+            a.cooldownRemaining = Math.max(0, a.cooldownRemaining - 1);
+            changed = true;
+          }
+          next[id] = a;
+        });
+        return changed ? next : prev;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Magnet ability: award bonus coins every second while active
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!abilitiesRef.current.magnet.active) return;
+      const cps = getIdleCPS(stateRef.current);
+      const bonus = Math.max(10, cps * 3);
+      setState(prev => ({
+        ...prev,
+        coins: prev.coins + bonus,
+        totalCoinsEarned: prev.totalCoinsEarned + bonus,
+      }));
+      setFloatingCoins(fc => [...fc, { id: Date.now() + Math.random(), amount: bonus, x: 30 + Math.random() * 40, y: 30 + Math.random() * 30 }]);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const activateAbility = useCallback((id) => {
+    setAbilities(prev => {
+      const a = prev[id];
+      if (a.active || a.cooldownRemaining > 0) return prev;
+      return {
+        ...prev,
+        [id]: { active: true, durationRemaining: ABILITY_CONFIGS[id].duration, cooldownRemaining: 0 },
+      };
+    });
+  }, []);
+
   const dealDamage = useCallback((damage, x, y) => {
+    const multiplier = abilitiesRef.current.doubleDamage.active ? 2 : 1;
+    const finalDamage = damage * multiplier;
     setState(prev => {
-      const newHP = prev.enemyHP - damage;
+      const newHP = prev.enemyHP - finalDamage;
       
       if (newHP <= 0) {
         const reward = getEnemyReward(prev.stage, prev.killCount);

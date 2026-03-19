@@ -283,6 +283,16 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     return () => clearInterval(interval);
   }, [dealDamage]);
 
+  // Auto-clicker ability: deal tap damage every 0.5 seconds while active
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!abilitiesRef.current.autoClicker.active) return;
+      const damage = getTapDamage(stateRef.current);
+      dealDamage(damage, 65 + Math.random() * 20, 40 + Math.random() * 30);
+    }, 500);
+    return () => clearInterval(interval);
+  }, [dealDamage]);
+
   // Clean up floating coins and particles
   useEffect(() => {
     const interval = setInterval(() => {

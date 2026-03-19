@@ -1,4 +1,12 @@
 // Skill tree structure with permanent bonuses and branching specialization paths
+// Multiplier Application Map:
+//   - damageMultiplier: affects getTapDamage() and deal damage per click
+//   - idleMultiplier: affects getIdleCPS() and passive damage over time
+//   - coinDropMultiplier: affects coin rewards from enemies (applyRewardMultipliers)
+//   - soulMultiplier: affects soul rewards from enemies (applyRewardMultipliers)
+//   - allMultiplier: multiplies damageMultiplier and idleMultiplier together (caps all paths)
+// All multipliers are applied atomically when skills are unlocked (SP deducted same tick).
+
 export const SKILLS = [
   // Tier 1 - Base foundation (choose starting direction)
   {
@@ -180,7 +188,7 @@ export function getSkillMultipliers(unlockedSkillIds) {
   let soulMultiplier = 1;
   let allMultiplier = 1;
 
-  unlockedSkillIds.forEach((skillId) => {
+  (unlockedSkillIds || []).forEach((skillId) => {
     const skill = SKILLS.find((s) => s.id === skillId);
     if (!skill) return;
 

@@ -46,16 +46,19 @@ export default function GameCanvas({
   state,
   enemyDying,
   floatingCoins,
+  floatingSouls,
   slashEffects,
   particles,
   onTap,
   enemyHit,
+  weaponMode,
 }) {
   const canvasRef = useRef(null);
   const stage = STAGES[state.stage];
   const enemyEmoji = ENEMY_EMOJIS[state.currentEnemyName] || "👾";
 
   const handleClick = (e) => {
+    if (state.isDead) return;
     const rect = canvasRef.current.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
@@ -86,8 +89,17 @@ export default function GameCanvas({
       </div>
 
       {/* Player character */}
-      <div className="absolute bottom-16 left-[15%] sm:left-[20%]">
-        <div className="animate-run-cycle text-3xl sm:text-4xl md:text-5xl">⚔️</div>
+      <div className="absolute bottom-16 left-[15%] sm:left-[20%] flex flex-col items-center gap-2">
+        <div className="w-20 h-1.5 bg-muted rounded-full overflow-hidden border border-border/50">
+          <motion.div
+            className="h-full bg-green-500"
+            animate={{ width: `${(state.playerHP / state.playerMaxHP) * 100}%` }}
+            transition={{ duration: 0.15 }}
+          />
+        </div>
+        <div className="animate-run-cycle text-3xl sm:text-4xl md:text-5xl">
+          {weaponMode === "bow" ? "🏹" : "⚔️"}
+        </div>
       </div>
 
       {/* Enemy */}
@@ -141,6 +153,23 @@ export default function GameCanvas({
             transition={{ duration: 0.8 }}
           >
             +{formatNumber(c.amount)} 🪙
+          </motion.div>
+        ))}
+      </AnimatePresence>
+
+      {/* Floating soul rewards */}
+      <AnimatePresence>
+        {floatingSouls?.map((s) => (
+          <motion.div
+            key={s.id}
+            className="absolute pointer-events-none font-pixel text-accent text-xs sm:text-sm font-bold"
+            style={{ left: `${s.x}%`, top: `${s.y}%` }}
+            initial={{ opacity: 1, y: 0, scale: 0.8 }}
+            animate={{ opacity: 0, y: -60, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1 }}
+          >
+            +{s.amount.toFixed(1)} 👻
           </motion.div>
         ))}
       </AnimatePresence>

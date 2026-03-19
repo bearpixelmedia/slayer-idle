@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import {
   STAGES, UPGRADES, TAP_UPGRADES, IDLE_UPGRADES, ALL_UPGRADES,
-  getUpgradeCost, getEnemyHP, getEnemyReward, getSoulsOnPrestige, getSlayerPointsOnPrestige
+  getUpgradeCost, getEnemyHP, getEnemyReward, getEnemySouls, getSoulsOnPrestige, getSlayerPointsOnPrestige
 } from "@/lib/gameData";
-import { getSkillMultipliers } from "@/lib/skillTree";
+import { SKILLS, getSkillMultipliers } from "@/lib/skillTree";
 import { isBossEncounter, getBossForStage, getBossHP, getBossReward } from "@/lib/bosses";
 
 const SAVE_VERSION = 2;
@@ -45,6 +45,9 @@ function defaultState() {
     enemyMaxHP: getEnemyHP(0, 0),
     currentEnemyName: STAGES[0].enemies[0],
     isBossActive: false,
+    playerHP: 100,
+    playerMaxHP: 100,
+    isDead: false,
     lastSave: Date.now(),
     saveVersion: SAVE_VERSION,
   };
@@ -67,6 +70,7 @@ function defaultAbilities() {
 export default function useGameState({ damageMultiplier = 1, offlineMultiplier = 1 } = {}) {
   const [state, setState] = useState(() => loadGame() || defaultState());
   const [floatingCoins, setFloatingCoins] = useState([]);
+  const [floatingSouls, setFloatingSouls] = useState([]);
   const [particles, setParticles] = useState([]);
   const [enemyDying, setEnemyDying] = useState(false);
   const [slashEffects, setSlashEffects] = useState([]);
@@ -150,6 +154,13 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     const soulBonus = 1 + (s.souls * 0.05);
     const skillMults = getSkillMultipliers(s.unlockedSkills);
     return Math.floor(cps * soulBonus * damageMultiplier * skillMults.idleMultiplier);
+  }
+
+  function applyRewardMultipliers(coins, souls, s = state) {
+    const skillMults = getSkillMultipliers(s.unlockedSkills);
+    const coinAfterMultiplier = Math.floor(coins * skillMults.coinDropMultiplier);
+    const soulsAfterMultiplier = Math.floor(souls * skillMults.soulMultiplier);
+    return { coins: coinAfterMultiplier, souls: soulsAfterMultiplier };
   }
 
   function spawnNewEnemy(s) {
@@ -246,6 +257,14 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     }
 
     setState(prev => {
+      // Enemy damage to player
+      const playerDamage = prev.isBossActive ? 3 : 1;
+      const newPlayerHP = prev.playerHP - playerDamage;
+      
+      if (newPlayerHP <= 0) {
+        return { ...prev, playerHP: 0, isDead: true };
+      }
+
       const newHP = prev.enemyHP - finalDamage;
       
       if (newHP <= 0) {
@@ -259,13 +278,25 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
           coinReward = Math.floor(bossRewards.coins * soulBonus);
           soulReward = bossRewards.souls;
         } else {
-          // Normal enemy
-          const reward = getEnemyReward(prev.stage, prev.killCount);
+          // Normal enemy - base soul drops with zone bias
+          const baseSouls = getEnemySouls(prev.stage, prev.killCount);
+          const stageBias = STAGES[prev.stage]?.soulBias || 1;
           const soulBonus = 1 + (prev.souls * 0.05);
+          soulReward = baseSouls * stageBias;
+          
+          const reward = getEnemyReward(prev.stage, prev.killCount);
           coinReward = Math.floor(reward * soulBonus);
         }
         
-        setFloatingCoins(fc => [...fc, { id: Date.now() + Math.random(), amount: coinReward, x, y }]);
+        // Apply skill tree multipliers to rewards
+        const { coins: finalCoins, souls: finalSouls } = applyRewardMultipliers(coinReward, soulReward, prev);
+        
+        setFloatingCoins(fc => [...fc, { id: Date.now() + Math.random(), amount: finalCoins, x, y }]);
+        
+        // Show soul drops separately
+        if (finalSouls > 0) {
+          setFloatingSouls(fs => [...fs, { id: Date.now() + Math.random() * 0.1, amount: finalSouls, x: x + 15, y }]);
+        }
         
         // Spawn extra particles for boss kills
         const particleCount = prev.isBossActive ? 12 : 6;
@@ -292,19 +323,20 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         
         const newState = {
           ...prev,
-          coins: prev.coins + coinReward,
-          totalCoinsEarned: prev.totalCoinsEarned + coinReward,
-          souls: prev.souls + soulReward,
+          coins: prev.coins + finalCoins,
+          totalCoinsEarned: prev.totalCoinsEarned + finalCoins,
+          souls: prev.souls + finalSouls,
           killCount: newKillCount,
           totalKills: prev.totalKills + 1,
           stage: newStage,
           highestStage: Math.max(prev.highestStage || 0, newStage),
+          playerHP: prev.playerMaxHP,
         };
         
         return spawnNewEnemy(newState);
       }
       
-      return { ...prev, enemyHP: newHP };
+      return { ...prev, enemyHP: newHP, playerHP: newPlayerHP };
     });
   }, []);
 
@@ -341,10 +373,11 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     return () => clearInterval(interval);
   }, [dealDamage]);
 
-  // Clean up floating coins and particles
+  // Clean up floating coins, souls, and particles
   useEffect(() => {
     const interval = setInterval(() => {
       setFloatingCoins(prev => prev.filter(c => Date.now() - c.id < 1000));
+      setFloatingSouls(prev => prev.filter(s => Date.now() - s.id < 1000));
       setParticles(prev => prev.filter(p => Date.now() - p.id < 1000));
     }, 500);
     return () => clearInterval(interval);
@@ -369,9 +402,32 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   const unlockSkill = useCallback((skillId) => {
     setState(prev => {
       if (prev.unlockedSkills.includes(skillId)) return prev;
+      
+      const skill = SKILLS.find(s => s.id === skillId);
+      if (!skill) return prev;
+      
+      // Check prerequisites and SP availability
+      const hasPrereqs = skill.requires.every(req => prev.unlockedSkills.includes(req));
+      if (!hasPrereqs || prev.slayerPoints < skill.cost) return prev;
+      
+      // Atomic: deduct SP and add skill
       return {
         ...prev,
         unlockedSkills: [...prev.unlockedSkills, skillId],
+        slayerPoints: prev.slayerPoints - skill.cost,
+      };
+    });
+  }, []);
+
+  const revive = useCallback(() => {
+    setState(prev => {
+      const reviveCost = 10;
+      if (prev.souls < reviveCost) return prev;
+      return {
+        ...prev,
+        souls: prev.souls - reviveCost,
+        playerHP: prev.playerMaxHP,
+        isDead: false,
       };
     });
   }, []);
@@ -403,6 +459,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   return {
     state,
     floatingCoins,
+    floatingSouls,
     particles,
     enemyDying,
     slashEffects,
@@ -411,6 +468,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     handleTap,
     buyUpgrade,
     prestige,
+    revive,
     canPrestige,
     soulsOnPrestige,
     slayerPointsOnPrestige,

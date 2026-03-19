@@ -68,6 +68,11 @@ export default function Game() {
         tapDamage={getTapDamage()}
         idleCPS={getIdleCPS()}
       />
+      <WeaponMode
+        currentMode={weaponMode}
+        bowUnlocked={state.unlockedSkills?.includes("bow_mastery")}
+        onModeChange={setWeaponMode}
+      />
       {!showRunner ? (
         <GameCanvas
           state={state}

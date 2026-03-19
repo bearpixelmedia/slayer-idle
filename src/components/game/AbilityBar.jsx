@@ -102,11 +102,14 @@ function AbilityButton({ ability, abilityState, onActivate }) {
   );
 }
 
-export default function AbilityBar({ abilities, onActivate }) {
+export default function AbilityBar({ abilities, onActivate, weaponMode }) {
   return (
     <div className="px-4 py-3 border-b border-border/50">
       <div className="flex items-center gap-2 mb-2">
         <span className="font-pixel text-[8px] text-muted-foreground">ABILITIES</span>
+        {weaponMode === "bow" && (
+          <span className="font-pixel text-[8px] text-accent">🏹 BOW MODE</span>
+        )}
         {Object.values(abilities).some(a => a.active) && (
           <span className="font-pixel text-[8px] text-yellow-400 animate-pulse">● ACTIVE</span>
         )}

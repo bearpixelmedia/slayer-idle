@@ -129,6 +129,8 @@ export function computeVillageMultipliers(villageBuildings) {
     minionRewardBonus: 1,
   };
 
+  if (!villageBuildings) return multipliers;
+
   VILLAGE_BUILDINGS.forEach((building) => {
     const level = villageBuildings[building.id] || 0;
     if (level > 0) {

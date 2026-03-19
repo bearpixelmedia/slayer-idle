@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { STAGES, ENEMY_EMOJIS } from "@/lib/gameData";
 import { formatNumber } from "@/lib/formatNumber";
 import { motion, AnimatePresence } from "framer-motion";
+import { getBossForStage, isBossShieldActive } from "@/lib/bosses";
 
 function HealthBar({ current, max }) {
   const pct = Math.max(0, (current / max) * 100);
@@ -54,9 +55,12 @@ export default function GameCanvas({
   enemyHit,
   weaponMode,
 }) {
-  const canvasRef = useRef(null);
+  const { useRef } = require("react");
+const canvasRef = useRef(null);
   const stage = STAGES[state?.stage] || STAGES[0];
   const enemyEmoji = ENEMY_EMOJIS[state?.currentEnemyName] || "👾";
+  const boss = state?.isBossActive ? getBossForStage(state?.stage) : null;
+  const showBossWarning = state?.bossWarning && Date.now() < state.bossWarning.warningEndTime;
 
   const handleClick = (e) => {
     if (state.isDead) return;
@@ -206,6 +210,77 @@ export default function GameCanvas({
           </motion.div>
         ))}
       </AnimatePresence>
+
+      {/* Boss warning banner */}
+      <AnimatePresence>
+        {showBossWarning && (
+          <motion.div
+            className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50 pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <motion.div
+              className="text-center"
+              initial={{ scale: 0.5, y: -30 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.5, y: -30 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
+              <p className="font-pixel text-2xl sm:text-4xl text-red-500 font-bold mb-2 drop-shadow-lg [text-shadow:0_0_10px_#ef4444]">
+                ⚠️ BOSS APPROACHING ⚠️
+              </p>
+              <p className="font-pixel text-sm sm:text-base text-yellow-400 drop-shadow-lg">
+                Prepare for battle!
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Boss mechanic indicator */}
+      {state?.isBossActive && boss?.mechanic && (
+        <motion.div
+          className="absolute top-12 left-1/2 -translate-x-1/2 px-3 py-2 rounded-lg bg-red-900/60 border border-red-500/40 backdrop-blur-sm z-30 pointer-events-none"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
+          <p className="font-pixel text-[8px] sm:text-[9px] text-red-300 text-center">
+            <span className="text-yellow-400">{boss.mechanic.name}</span>
+            <br />
+            {boss.mechanic.description}
+          </p>
+
+          {/* Shield window indicator */}
+          {boss.mechanic.type === "shield_window" && state.bossFightStartTime && (
+            <motion.div
+              className="mt-1 h-1 bg-red-950 rounded-full overflow-hidden border border-red-500/30"
+              style={{ width: "100px" }}
+            >
+              <motion.div
+                className="h-full bg-blue-500"
+                animate={{
+                  x: ["-100%", "0%", "100%"],
+                }}
+                transition={{
+                  duration: boss.mechanic.interval + boss.mechanic.duration,
+                  repeat: Infinity,
+                  ease: "linear",
+                }}
+              />
+            </motion.div>
+          )}
+
+          {/* Enrage stack indicator */}
+          {boss.mechanic.type === "enrage" && (
+            <p className="mt-1 font-pixel text-[7px] text-orange-400 text-center">
+              Stacks: {Math.floor(state.bossHitsReceived / boss.mechanic.stackPerHits)}
+            </p>
+          )}
+        </motion.div>
+      )}
 
       {/* Particle effects */}
       <ParticleEffect particles={particles} />

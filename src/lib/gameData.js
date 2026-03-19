@@ -1,3 +1,16 @@
+// --- ECONOMY TUNING CONSTANTS ---
+const UPGRADE_COST_MILESTONE_INTERVAL = 10;
+const UPGRADE_COST_MILESTONE_MULTIPLIER = 1.12;
+
+const COIN_REWARD_BAND_1_THRESHOLD = 7;
+const COIN_REWARD_BAND_1_MULTIPLIER = 1.05;
+const COIN_REWARD_BAND_2_THRESHOLD = 16;
+const COIN_REWARD_BAND_2_MULTIPLIER = 1.0;
+const COIN_REWARD_BAND_3_MULTIPLIER = 0.90;
+
+const SOUL_REWARD_BAND_3_THRESHOLD = 17;
+// --- END ECONOMY TUNING CONSTANTS ---
+
 export const STAGES = [
   { name: "Grassy Plains", color: "#4ade80", enemies: ["Slime", "Goblin", "Rat"], bgGradient: "from-green-900/30 to-emerald-900/20", soulBias: 0.3 },
   { name: "Dark Forest", color: "#22c55e", enemies: ["Wolf", "Spider", "Treant"], bgGradient: "from-emerald-900/40 to-green-950/30", soulBias: 0.5 },
@@ -37,7 +50,14 @@ export const IDLE_UPGRADES = ["boots", "armor", "pet", "scroll"];
 export const ALL_UPGRADES = ["crown", "orb"];
 
 export function getUpgradeCost(upgrade, level) {
-  return Math.floor(upgrade.baseCost * Math.pow(upgrade.costMultiplier, level));
+  let cost = Math.floor(upgrade.baseCost * Math.pow(upgrade.costMultiplier, level));
+  
+  // Apply upgrade cost wall every 10 levels
+  if (level > 0 && level % UPGRADE_COST_MILESTONE_INTERVAL === 0) {
+    cost = Math.floor(cost * UPGRADE_COST_MILESTONE_MULTIPLIER);
+  }
+  
+  return cost;
 }
 
 export function getEnemyHP(stage, killCount) {
@@ -53,17 +73,34 @@ export function getEnemyHP(stage, killCount) {
 
 export function getEnemyReward(stage, killCount) {
   const base = 2 + stage * 2;
-  // Rewards scale much slower than HP; incentivizes prestige when stuck
   const scaling = Math.floor(killCount / 8) * (0.8 + stage * 0.3);
-  return Math.floor(base + scaling);
+  let reward = Math.floor(base + scaling);
+  
+  // Apply coin reward bands within stage
+  const killsInStage = killCount % 25;
+  if (killsInStage <= COIN_REWARD_BAND_1_THRESHOLD) {
+    reward = Math.floor(reward * COIN_REWARD_BAND_1_MULTIPLIER);
+  } else if (killsInStage <= COIN_REWARD_BAND_2_THRESHOLD) {
+    reward = Math.floor(reward * COIN_REWARD_BAND_2_MULTIPLIER);
+  } else {
+    reward = Math.floor(reward * COIN_REWARD_BAND_3_MULTIPLIER);
+  }
+  
+  return reward;
 }
 
 export function getEnemySouls(stage, killCount) {
   // Base soul drop that scales with stage
   const base = 0.5 + stage * 0.3;
-  // Small scaling per kill in stage
-  const scaling = (killCount % 25) * 0.02;
-  return base + scaling;
+  let soulScaling = 0;
+  
+  // Remove per-kill scaling in final band (kills 17-24)
+  const killsInStage = killCount % 25;
+  if (killsInStage < SOUL_REWARD_BAND_3_THRESHOLD) {
+    soulScaling = killsInStage * 0.02;
+  }
+  
+  return base + soulScaling;
 }
 
 export function getSoulsOnPrestige(totalCoinsEarned) {

@@ -100,6 +100,13 @@ export default function Game() {
         earnings={offlineEarnings}
         onClose={() => setOfflineEarnings(null)}
       />
+      <DeathModal
+        isDead={state.isDead}
+        souls={state.souls}
+        onRevive={revive}
+        onPrestige={prestige}
+        canRevive={state.souls >= 10}
+      />
     </div>
   );
 }

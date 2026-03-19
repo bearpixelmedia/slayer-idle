@@ -132,7 +132,8 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       }
     });
     const soulBonus = 1 + (s.souls * 0.05);
-    return Math.floor(damage * soulBonus * damageMultiplier);
+    const skillMults = getSkillMultipliers(s.unlockedSkills);
+    return Math.floor(damage * soulBonus * damageMultiplier * skillMults.damageMultiplier);
   }
 
   function getIdleCPS(s = state) {

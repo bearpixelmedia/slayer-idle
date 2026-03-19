@@ -24,6 +24,17 @@ const ABILITIES = [
     borderActive: "border-yellow-400/80",
     borderReady: "border-yellow-500/40",
   },
+  {
+    id: "autoClicker",
+    name: "Auto Click",
+    icon: "🖱️",
+    description: "Auto-deals tap damage",
+    duration: 10,
+    cooldown: 75,
+    color: "from-red-500/30 to-pink-500/20",
+    borderActive: "border-red-400/80",
+    borderReady: "border-red-500/40",
+  },
 ];
 
 function AbilityButton({ ability, abilityState, onActivate }) {

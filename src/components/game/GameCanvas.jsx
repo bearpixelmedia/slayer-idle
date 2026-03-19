@@ -93,6 +93,9 @@ export default function GameCanvas({
       {/* Enemy */}
       <div className="absolute bottom-16 right-[15%] sm:right-[25%] flex flex-col items-center gap-2">
         <div className="text-center mb-1">
+          {state.isBossActive && (
+            <p className="font-pixel text-[8px] text-red-400 mb-1 animate-pulse">⚔️ BOSS ENCOUNTER ⚔️</p>
+          )}
           <p className="font-pixel text-[7px] sm:text-[8px] text-foreground/80 mb-1">{state.currentEnemyName}</p>
           <HealthBar current={state.enemyHP} max={state.enemyMaxHP} />
           <p className="font-pixel text-[6px] text-muted-foreground mt-0.5">
@@ -101,7 +104,7 @@ export default function GameCanvas({
         </div>
         <div
           className={`text-4xl sm:text-5xl md:text-6xl transition-all ${
-            enemyDying ? "animate-enemy-die" : enemyHit ? "animate-enemy-hit" : "animate-float"
+            state.isBossActive ? (enemyDying ? "animate-enemy-die" : enemyHit ? "animate-enemy-hit" : "animate-float scale-125") : (enemyDying ? "animate-enemy-die" : enemyHit ? "animate-enemy-hit" : "animate-float")
           }`}
         >
           {enemyEmoji}

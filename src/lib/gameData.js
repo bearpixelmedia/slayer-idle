@@ -16,6 +16,9 @@ export const ENEMY_EMOJIS = {
   "Ice Wraith": "❄️", "Frost Giant": "🧊", "Yeti": "⛄",
   "Demon": "😈", "Shadow Knight": "🖤", "Dark Lord": "👑",
   "Star Eater": "⭐", "Void Walker": "🌀", "Cosmic Dragon": "🐉",
+  "Slime King": "👑", "Forest Guardian": "🌲", "Spectral King": "👻",
+  "Infernal Lord": "🔥", "Frost Sovereign": "❄️", "Shadow Overlord": "🖤",
+  "Cosmic Titan": "🌌",
 };
 
 export const UPGRADES = [

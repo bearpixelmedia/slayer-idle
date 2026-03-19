@@ -41,25 +41,30 @@ export function getUpgradeCost(upgrade, level) {
 }
 
 export function getEnemyHP(stage, killCount) {
-  const base = 3 + stage * 10;
-  // Intentional wall: scaling accelerates every 25 kills (stage boundary)
+  const base = 4 + stage * 8;
+  // Intentional wall: HP scales linearly until wall, then quadratically at boundaries (every 25 kills)
+  const killsInStage = killCount % 25;
   const wallPhase = Math.floor(killCount / 25);
-  const scaling = Math.floor(killCount / 10) * (2 + stage) + (wallPhase * wallPhase * (stage + 1) * 5);
-  return base + scaling;
+  // Linear growth within stage + sharp quadratic jump at walls
+  const linearScaling = killsInStage * (1.5 + stage * 0.8);
+  const wallPenalty = wallPhase * wallPhase * (15 + stage * 20);
+  return base + Math.floor(linearScaling + wallPenalty);
 }
 
 export function getEnemyReward(stage, killCount) {
-  const base = 1 + stage * 3;
-  // Rewards scale slower than HP, creating intentional friction
-  const scaling = Math.floor(killCount / 5) * (1 + stage * 0.5);
+  const base = 2 + stage * 2;
+  // Rewards scale much slower than HP; incentivizes prestige when stuck
+  const scaling = Math.floor(killCount / 8) * (0.8 + stage * 0.3);
   return Math.floor(base + scaling);
 }
 
 export function getSoulsOnPrestige(totalCoinsEarned) {
-  return Math.floor(Math.sqrt(totalCoinsEarned / 1000));
+  // Aggressive early thresholds; prestige becomes more valuable the farther you go
+  const sqrtCoins = Math.sqrt(totalCoinsEarned / 500);
+  return Math.floor(sqrtCoins * (1 + sqrtCoins * 0.1)); // bonus multiplier for deep runs
 }
 
 export function getSlayerPointsOnPrestige(souls) {
-  // Convert total souls earned to slayer points
-  return Math.floor(Math.sqrt(souls));
+  // SP gains accelerate with more souls (incentivizes chaining prestiges for skill unlocks)
+  return Math.floor(Math.sqrt(souls) + Math.floor(souls / 50));
 }

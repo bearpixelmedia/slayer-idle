@@ -88,10 +88,15 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   const [offlineEarnings, setOfflineEarnings] = useState(null);
   const [enemyHit, setEnemyHit] = useState(false);
   const [currentWeapon, setCurrentWeapon] = useState(weaponMode);
+  const [activeBuffs, setActiveBuffs] = useState([]);
   const stateRef = useRef(state);
   stateRef.current = state;
   const abilitiesRef = useRef(abilities);
   abilitiesRef.current = abilities;
+  const activeBuffsRef = useRef(activeBuffs);
+  activeBuffsRef.current = activeBuffs;
+  const lastBuffProcRef = useRef(Date.now());
+  const lastTapTimeRef = useRef(Date.now());
 
   // Save game periodically
   useEffect(() => {

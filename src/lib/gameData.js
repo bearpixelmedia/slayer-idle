@@ -98,6 +98,11 @@ export function getBowSoulBonus(bowLevel) {
   return 1 + bowLevel * 0.05;
 }
 
+// Bow soul multiplier
+export function getBowSoulMultiplier(bowLevel) {
+  return 1 + bowLevel * 0.05;
+}
+
 // Get zone stages
 export function getZoneStages(zoneId) {
   const zone = ZONES.find(z => z.id === zoneId);

@@ -313,9 +313,9 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         
         const newState = {
           ...prev,
-          coins: prev.coins + coinReward,
-          totalCoinsEarned: prev.totalCoinsEarned + coinReward,
-          souls: prev.souls + soulReward,
+          coins: prev.coins + finalCoins,
+          totalCoinsEarned: prev.totalCoinsEarned + finalCoins,
+          souls: prev.souls + finalSouls,
           killCount: newKillCount,
           totalKills: prev.totalKills + 1,
           stage: newStage,

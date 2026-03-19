@@ -183,7 +183,8 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       }
     }
 
-    const stageData = STAGES[s.stage];
+    const zones = getZoneStages(s.activeZoneId);
+    const stageData = zones[s.stage];
     const enemyName = stageData.enemies[Math.floor(Math.random() * stageData.enemies.length)];
     const hp = getEnemyHP(s.stage, s.killCount);
     return { ...s, enemyHP: hp, enemyMaxHP: hp, currentEnemyName: enemyName, isBossActive: false };

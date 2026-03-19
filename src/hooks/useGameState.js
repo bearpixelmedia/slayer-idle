@@ -353,10 +353,18 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         
         const newKillCount = prev.killCount + 1;
         let newStage = prev.stage;
+        const zoneStages = getZoneStages(prev.activeZoneId);
         
-        if (newKillCount > 0 && newKillCount % 25 === 0 && prev.stage < STAGES.length - 1) {
+        if (newKillCount > 0 && newKillCount % 25 === 0 && prev.stage < zoneStages.length - 1) {
           newStage = prev.stage + 1;
         }
+        
+        const zoneProgress = { ...prev.zoneProgress };
+        zoneProgress[prev.activeZoneId] = {
+          stage: newStage,
+          highestStage: Math.max(zoneProgress[prev.activeZoneId].highestStage, newStage),
+          killCount: newKillCount,
+        };
         
         const newState = {
           ...prev,
@@ -367,6 +375,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
           totalKills: prev.totalKills + 1,
           stage: newStage,
           highestStage: Math.max(prev.highestStage || 0, newStage),
+          zoneProgress,
           playerHP: prev.playerMaxHP,
         };
         

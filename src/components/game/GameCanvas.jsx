@@ -115,13 +115,22 @@ export default function GameCanvas({
             {formatNumber(state.enemyHP)} / {formatNumber(state.enemyMaxHP)}
           </p>
         </div>
-        <div
-          className={`text-4xl sm:text-5xl md:text-6xl transition-all ${
-            state.isBossActive ? (enemyDying ? "animate-enemy-die" : enemyHit ? "animate-enemy-hit" : "animate-float scale-125") : (enemyDying ? "animate-enemy-die" : enemyHit ? "animate-enemy-hit" : "animate-float")
+        <motion.div
+          className={`text-4xl sm:text-5xl md:text-6xl ${
+            state.isBossActive ? "scale-125" : ""
           }`}
+          animate={{
+            filter: enemyHit ? "brightness(1.8)" : "brightness(1)",
+          }}
+          transition={{ duration: 0.1 }}
+          style={{
+            animation: enemyDying ? "enemy-die 0.3s ease-out forwards" : 
+                       (state.isBossActive && !enemyDying) ? "float 3s ease-in-out infinite" :
+                       !enemyDying && !state.isBossActive ? "float 3s ease-in-out infinite" : "none"
+          }}
         >
           {enemyEmoji}
-        </div>
+        </motion.div>
       </div>
 
       {/* Slash effects */}

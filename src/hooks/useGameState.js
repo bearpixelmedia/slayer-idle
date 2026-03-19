@@ -7,6 +7,7 @@ import {
 import { SKILLS, getSkillMultipliers } from "@/lib/skillTree";
 import { isBossEncounter, getBossForStage, getBossHP, getBossReward, BOSS_ENCOUNTER_INTERVAL, isBossShieldActive, getBossEnrageMultiplier } from "@/lib/bosses";
 import { BUFF_TYPES, PROC_RATES, selectRandomBuff, shouldProcBuff, getBuffMultiplier, BUFF_RULES } from "@/lib/buffs";
+import { VILLAGE_BUILDINGS, computeVillageMultipliers, getBuildingUpgradeCost, canAffordUpgrade } from "@/lib/village";
 
 const SAVE_VERSION = 3;
 
@@ -63,6 +64,8 @@ function defaultState() {
     bossWarning: null, // { bossId, warningEndTime }
     bossHitsReceived: 0, // Track hits for enrage mechanic
     bossFightStartTime: null, // Track elapsed time for shield window mechanic
+    // Village system
+    villageBuildings: {},
   };
 }
 
@@ -162,8 +165,9 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     });
     const soulBonus = 1 + (s.souls * 0.05);
     const skillMults = getSkillMultipliers(s.unlockedSkills);
+    const villageMultipliers = computeVillageMultipliers(s.villageBuildings);
     const buffMult = getBuffMultiplier(buffs, "tapDamageMultiplier");
-    return Math.floor(damage * soulBonus * damageMultiplier * skillMults.damageMultiplier * buffMult);
+    return Math.floor(damage * soulBonus * damageMultiplier * skillMults.damageMultiplier * villageMultipliers.tapDamageMultiplier * buffMult);
   }
 
   function getIdleCPS(s = state) {
@@ -179,15 +183,17 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     });
     const soulBonus = 1 + (s.souls * 0.05);
     const skillMults = getSkillMultipliers(s.unlockedSkills);
-    return Math.floor(cps * soulBonus * damageMultiplier * skillMults.idleMultiplier);
+    const villageMultipliers = computeVillageMultipliers(s.villageBuildings);
+    return Math.floor(cps * soulBonus * damageMultiplier * skillMults.idleMultiplier * villageMultipliers.coinMultiplier);
   }
 
   function applyRewardMultipliers(coins, souls, s = state, buffs = activeBuffs) {
     const skillMults = getSkillMultipliers(s.unlockedSkills);
+    const villageMultipliers = computeVillageMultipliers(s.villageBuildings);
     const buffCoinMult = getBuffMultiplier(buffs, "coinMultiplier");
     const buffSoulMult = getBuffMultiplier(buffs, "soulMultiplier");
-    const coinAfterMultiplier = Math.floor(coins * skillMults.coinDropMultiplier * buffCoinMult);
-    const soulsAfterMultiplier = Math.floor(souls * skillMults.soulMultiplier * buffSoulMult);
+    const coinAfterMultiplier = Math.floor(coins * skillMults.coinDropMultiplier * villageMultipliers.coinMultiplier * buffCoinMult);
+    const soulsAfterMultiplier = Math.floor(souls * skillMults.soulMultiplier * villageMultipliers.soulMultiplier * buffSoulMult);
     return { coins: coinAfterMultiplier, souls: soulsAfterMultiplier };
   }
 
@@ -615,6 +621,25 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     });
   }, []);
 
+  const upgradeBuilding = useCallback((buildingId) => {
+    setState(prev => {
+      const building = VILLAGE_BUILDINGS.find(b => b.id === buildingId);
+      if (!building) return prev;
+      
+      const currentLevel = prev.villageBuildings[buildingId] || 0;
+      const cost = getBuildingUpgradeCost(building, currentLevel);
+      
+      if (!cost || !canAffordUpgrade(cost, prev)) return prev;
+      
+      return {
+        ...prev,
+        coins: prev.coins - cost.coins,
+        souls: prev.souls - cost.souls,
+        villageBuildings: { ...prev.villageBuildings, [buildingId]: currentLevel + 1 },
+      };
+    });
+  }, []);
+
   const unlockSkill = useCallback((skillId) => {
     setState(prev => {
       if (prev.unlockedSkills.includes(skillId)) return prev;
@@ -736,5 +761,6 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     switchZone,
     unlockZone,
     activeBuffs,
+    upgradeBuilding,
   };
 }

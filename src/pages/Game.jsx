@@ -132,14 +132,17 @@ export default function Game() {
         </div>
 
         {!showRunner && menuOpen && (
-          <div className="w-full flex-shrink-0 flex flex-col pointer-events-auto max-h-64" style={{
-              background: "linear-gradient(135deg, #8B7355 0%, #A0826D 100%)",
-              border: "6px solid #D4AF37",
-              borderRadius: "2px",
-              margin: "8px",
-              boxShadow: "inset 0 0 0 2px #6B5344",
-              overflow: "hidden"
-            }}>
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 lg:hidden" onClick={() => setMenuOpen(false)}>
+            <div 
+              className="fixed bottom-0 left-0 right-0 max-h-[85vh] flex flex-col pointer-events-auto rounded-t-lg"
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                background: "linear-gradient(135deg, #8B7355 0%, #A0826D 100%)",
+                border: "6px solid #D4AF37",
+                borderRadius: "12px 12px 0 0",
+                boxShadow: "inset 0 0 0 2px #6B5344"
+              }}
+            >
               {/* Inner frame */}
               <div style={{
                 background: "linear-gradient(135deg, #4A4A4A 0%, #2D2D2D 100%)",
@@ -196,8 +199,15 @@ export default function Game() {
                 <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Skills">🧑</button>
                 <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Achievements">💎</button>
                 <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="More">⋮</button>
-                <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Close">✕</button>
+                <button 
+                  className="p-1.5 hover:opacity-70 text-lg transition-opacity cursor-pointer"
+                  title="Close"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  ✕
+                </button>
               </div>
+            </div>
           </div>
         )}
 

@@ -36,6 +36,13 @@ function defaultState() {
     souls: 0,
     slayerPoints: 0,
     unlockedSkills: [],
+    activeZoneId: "realm-of-light",
+    unlockedZoneIds: ["realm-of-light"],
+    zoneProgress: {
+      "realm-of-light": { stage: 0, highestStage: 0, killCount: 0 },
+      "whispering-woods": { stage: 0, highestStage: 0, killCount: 0 },
+      "shadowfell-citadel": { stage: 0, highestStage: 0, killCount: 0 },
+    },
     stage: 0,
     highestStage: 0,
     killCount: 0,

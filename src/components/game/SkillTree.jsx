@@ -61,13 +61,23 @@ export default function SkillTree({ slayerPoints = 0, unlockedSkillIds = [], onU
   const [open, setOpen] = useState(false);
   const [selectedTier, setSelectedTier] = useState(1);
 
-  const tiers = [1, 2, 3];
+  const tiers = [1, 2, 3, 4];
   const tierSkills = SKILLS.filter((s) => s.tier === selectedTier);
   const totalPoints = slayerPoints;
   const spentPoints = unlockedSkillIds.reduce((sum, id) => {
     const skill = SKILLS.find((s) => s.id === id);
     return sum + (skill ? skill.cost : 0);
   }, 0);
+
+  // Track specialization progress
+  const damageSkills = unlockedSkillIds.filter(id => {
+    const skill = SKILLS.find(s => s.id === id);
+    return skill?.path === "damage";
+  }).length;
+  const idleSkills = unlockedSkillIds.filter(id => {
+    const skill = SKILLS.find(s => s.id === id);
+    return skill?.path === "idle";
+  }).length;
 
   return (
     <div className="mx-4 mb-4 rounded-xl border border-border/50 overflow-hidden">

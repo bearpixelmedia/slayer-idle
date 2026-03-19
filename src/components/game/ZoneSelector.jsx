@@ -61,7 +61,7 @@ export default function ZoneSelector({
                 </div>
                 <p className="text-[8px] text-muted-foreground truncate">{zone.description}</p>
                 <div className="flex items-center gap-3 mt-1 text-[7px] text-muted-foreground/70">
-                  {isUnlocked && (
+                  {isUnlocked && zp && (
                     <>
                       <span>Stage: {zp.stage + 1}</span>
                       <span>|</span>

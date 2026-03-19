@@ -234,6 +234,28 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     });
   }, []);
 
+  const playSound = useCallback((type) => {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    oscillator.connect(gain);
+    gain.connect(audioContext.destination);
+    
+    if (type === "hit") {
+      oscillator.frequency.value = 400;
+      gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.1);
+    } else if (type === "critical") {
+      oscillator.frequency.value = 600;
+      gain.gain.setValueAtTime(0.2, audioContext.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.15);
+    }
+  }, []);
+
   const dealDamage = useCallback((damage, x, y) => {
     setEnemyHit(true);
     setTimeout(() => setEnemyHit(false), 150);
@@ -241,6 +263,8 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     const multiplier = abilitiesRef.current.doubleDamage.active ? 2 : 1;
     const finalDamage = damage * multiplier;
     const isCritical = multiplier > 1;
+    
+    playSound(isCritical ? "critical" : "hit");
 
     // Spawn particles for critical hits
     if (isCritical) {

@@ -206,6 +206,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
           killCount: newKillCount,
           totalKills: prev.totalKills + 1,
           stage: newStage,
+          highestStage: Math.max(prev.highestStage || 0, newStage),
         };
         
         return spawnNewEnemy(newState);

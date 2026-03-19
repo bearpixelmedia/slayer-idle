@@ -86,22 +86,20 @@ export default function Game() {
   return (
     <div className="fixed inset-0 bg-background flex flex-col lg:flex-row">
       {/* Portrait/Mobile: Full screen */}
-      <div className="lg:hidden w-full h-full flex flex-col">
-        <div className="flex-shrink-0">
-          <StatsBar
-            state={state}
-            tapDamage={getTapDamage()}
-            idleCPS={getIdleCPS()}
-          />
-          <ActiveBuffsDisplay activeBuffs={activeBuffs} />
-          <WeaponMode
-            currentMode={currentWeapon}
-            bowUnlocked={state.upgradeLevels["bow"] > 0}
-            onModeChange={setCurrentWeapon}
-          />
-        </div>
+      <div className="lg:hidden w-full h-full relative">
+        <StatsBar
+          state={state}
+          tapDamage={getTapDamage()}
+          idleCPS={getIdleCPS()}
+        />
+        <ActiveBuffsDisplay activeBuffs={activeBuffs} />
+        <WeaponMode
+          currentMode={currentWeapon}
+          bowUnlocked={state.upgradeLevels["bow"] > 0}
+          onModeChange={setCurrentWeapon}
+        />
 
-        <div className="flex-1 relative w-full">
+        <div className="w-full h-full">
           {!showRunner ? (
             <GameCanvas
               state={state}

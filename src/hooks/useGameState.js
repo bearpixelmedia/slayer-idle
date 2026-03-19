@@ -51,6 +51,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   const [enemyDying, setEnemyDying] = useState(false);
   const [slashEffects, setSlashEffects] = useState([]);
   const [abilities, setAbilities] = useState(defaultAbilities());
+  const [offlineEarnings, setOfflineEarnings] = useState(null);
   const stateRef = useRef(state);
   stateRef.current = state;
   const abilitiesRef = useRef(abilities);
@@ -71,17 +72,28 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       const offlineSeconds = Math.min((Date.now() - saved.lastSave) / 1000, 3600 * 8);
       if (offlineSeconds > 10) {
         const idleCPS = getIdleCPS(saved);
-        const offlineEarnings = Math.floor(idleCPS * offlineSeconds * 0.5 * offlineMultiplier);
-        if (offlineEarnings > 0) {
+        const offlineCoins = Math.floor(idleCPS * offlineSeconds * 0.5 * offlineMultiplier);
+        
+        // Calculate souls earned (if prestige is available)
+        const totalCoinsAfterOffline = saved.totalCoinsEarned + offlineCoins;
+        const soulsEarned = Math.max(0, Math.floor(Math.sqrt(totalCoinsAfterOffline / 1000)) - saved.souls);
+        
+        if (offlineCoins > 0) {
           setState(prev => ({
             ...prev,
-            coins: prev.coins + offlineEarnings,
-            totalCoinsEarned: prev.totalCoinsEarned + offlineEarnings,
+            coins: prev.coins + offlineCoins,
+            totalCoinsEarned: prev.totalCoinsEarned + offlineCoins,
           }));
+          
+          setOfflineEarnings({
+            coins: offlineCoins,
+            souls: soulsEarned,
+            seconds: offlineSeconds,
+          });
         }
       }
     }
-  }, []);
+  }, [offlineMultiplier]);
 
   function getUpgradeLevel(id) {
     return state.upgradeLevels[id] || 0;

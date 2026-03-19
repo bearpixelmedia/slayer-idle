@@ -4,6 +4,7 @@ import StatsBar from "@/components/game/StatsBar";
 import GameCanvas from "@/components/game/GameCanvas";
 import UpgradeShop from "@/components/game/UpgradeShop";
 import PrestigePanel from "@/components/game/PrestigePanel";
+import AbilityBar from "@/components/game/AbilityBar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function Game() {

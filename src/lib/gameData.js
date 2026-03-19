@@ -52,6 +52,58 @@ export const ENEMY_EMOJIS = {
   "Lich": "👻",
 };
 
+// Upgrade data
+export const UPGRADES = [];
+export const TAP_UPGRADES = [];
+export const IDLE_UPGRADES = [];
+export const ALL_UPGRADES = [];
+export const BOW_UPGRADES = [];
+
+// Upgrade cost formula
+export function getUpgradeCost(basePrice, level) {
+  return Math.floor(basePrice * Math.pow(1.15, level));
+}
+
+// Enemy HP calculation
+export function getEnemyHP(stage, killCount) {
+  const baseHP = 10 + stage * 15;
+  const killBonus = killCount * 0.5;
+  return Math.ceil(baseHP + killBonus);
+}
+
+// Enemy reward (coins)
+export function getEnemyReward(stage, killCount) {
+  const baseReward = 10 + stage * 20;
+  const killBonus = killCount * 2;
+  return Math.ceil(baseReward + killBonus);
+}
+
+// Enemy soul reward
+export function getEnemySouls(stage) {
+  return stage > 0 ? 0.1 + stage * 0.05 : 0;
+}
+
+// Prestige soul calculation
+export function getSoulsOnPrestige(totalCoinsEarned) {
+  return Math.floor(Math.sqrt(totalCoinsEarned) / 10);
+}
+
+// Slayer points on prestige
+export function getSlayerPointsOnPrestige(souls) {
+  return Math.floor(souls / 5);
+}
+
+// Bow soul bonus
+export function getBowSoulBonus(bowLevel) {
+  return 1 + bowLevel * 0.05;
+}
+
+// Get zone stages
+export function getZoneStages(zoneId) {
+  const zone = ZONES.find(z => z.id === zoneId);
+  return zone ? zone.stagesRange : [0, 5];
+}
+
 // Helper to check if a zone can be unlocked
 export function canUnlockZone(zoneId, unlockedZoneIds, zoneProgress, slayerPoints) {
   const zone = ZONES.find(z => z.id === zoneId);

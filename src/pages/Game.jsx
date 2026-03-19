@@ -80,6 +80,7 @@ export default function Game() {
           enemyDying={enemyDying}
           floatingCoins={floatingCoins}
           floatingSouls={floatingSouls}
+          floatingDamage={floatingDamage}
           particles={particles}
           slashEffects={slashEffects}
           onTap={handleTap}

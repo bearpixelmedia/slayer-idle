@@ -11,6 +11,7 @@ import AbilityBar from "@/components/game/AbilityBar";
 import AchievementsPanel from "@/components/game/AchievementsPanel";
 import AchievementToast from "@/components/game/AchievementToast";
 import OfflineEarningsModal from "@/components/game/OfflineEarningsModal";
+import DeathModal from "@/components/game/DeathModal";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 function loadSavedMultipliers() {

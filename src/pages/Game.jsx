@@ -60,6 +60,8 @@ export default function Game() {
     enemyHit,
     currentWeapon,
     setCurrentWeapon,
+    switchZone,
+    unlockZone,
   } = useGameState(initMultipliers);
 
   const { unlockedIds, newUnlock, damageMultiplier, offlineMultiplier } = useAchievements(state);

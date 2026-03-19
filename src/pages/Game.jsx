@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import useGameState from "@/hooks/useGameState";
 import useAchievements from "@/hooks/useAchievements";
+import useQuests from "@/hooks/useQuests";
 import useRunnerState from "@/hooks/useRunnerState";
 import { computeAchievementMultipliers } from "@/lib/achievements";
 import StatsBar from "@/components/game/StatsBar";
@@ -15,6 +16,7 @@ import AchievementToast from "@/components/game/AchievementToast";
 import OfflineEarningsModal from "@/components/game/OfflineEarningsModal";
 import DeathModal from "@/components/game/DeathModal";
 import ZoneSelector from "@/components/game/ZoneSelector";
+import QuestLog from "@/components/game/QuestLog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import WeaponMode from "@/components/game/WeaponMode";
 import ActiveBuffsDisplay from "@/components/game/ActiveBuffsDisplay";
@@ -67,6 +69,24 @@ export default function Game() {
   } = useGameState(initMultipliers);
 
   const { unlockedIds, newUnlock, damageMultiplier, offlineMultiplier } = useAchievements(state);
+
+  const { questProgress, claimReward, resetQuestForRepeat } = useQuests(state, state.unlockedZoneIds);
+
+  const handleClaimQuestReward = (questId) => {
+    const reward = claimReward(questId);
+    if (!reward) return;
+
+    setState(prev => ({
+      ...prev,
+      coins: prev.coins + (reward.coins || 0),
+      souls: prev.souls + (reward.souls || 0),
+      slayerPoints: prev.slayerPoints + (reward.slayerPoints || 0),
+    }));
+  };
+
+  const handleRepeatQuest = (questId) => {
+    resetQuestForRepeat(questId);
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -138,6 +158,12 @@ export default function Game() {
               slayerPoints={state.slayerPoints}
               onSwitchZone={switchZone}
               onUnlockZone={unlockZone}
+            />
+            <QuestLog
+              questProgress={questProgress}
+              onClaimReward={handleClaimQuestReward}
+              onRepeatQuest={handleRepeatQuest}
+              unlockedZoneIds={state.unlockedZoneIds}
             />
             <AbilityBar abilities={abilities} onActivate={activateAbility} weaponMode={currentWeapon} />
             <PrestigePanel

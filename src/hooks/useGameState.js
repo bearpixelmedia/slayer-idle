@@ -78,6 +78,11 @@ function defaultAbilities() {
 
 export default function useGameState({ damageMultiplier = 1, offlineMultiplier = 1, weaponMode = "sword" } = {}) {
   const [state, setState] = useState(() => loadGame() || defaultState());
+
+  // Export setState for external hook usage
+  if (typeof window !== "undefined") {
+    window.__setGameState = setState;
+  }
   const [floatingCoins, setFloatingCoins] = useState([]);
   const [floatingSouls, setFloatingSouls] = useState([]);
   const [floatingDamage, setFloatingDamage] = useState([]);

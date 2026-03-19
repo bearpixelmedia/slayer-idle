@@ -70,7 +70,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       const offlineSeconds = Math.min((Date.now() - saved.lastSave) / 1000, 3600 * 8);
       if (offlineSeconds > 10) {
         const idleCPS = getIdleCPS(saved);
-        const offlineEarnings = Math.floor(idleCPS * offlineSeconds * 0.5);
+        const offlineEarnings = Math.floor(idleCPS * offlineSeconds * 0.5 * offlineMultiplier);
         if (offlineEarnings > 0) {
           setState(prev => ({
             ...prev,

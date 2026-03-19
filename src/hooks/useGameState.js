@@ -47,6 +47,7 @@ function defaultAbilities() {
 export default function useGameState({ damageMultiplier = 1, offlineMultiplier = 1 } = {}) {
   const [state, setState] = useState(() => loadGame() || defaultState());
   const [floatingCoins, setFloatingCoins] = useState([]);
+  const [particles, setParticles] = useState([]);
   const [enemyDying, setEnemyDying] = useState(false);
   const [slashEffects, setSlashEffects] = useState([]);
   const [abilities, setAbilities] = useState(defaultAbilities());

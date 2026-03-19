@@ -1,11 +1,11 @@
 export const STAGES = [
-  { name: "Grassy Plains", color: "#4ade80", enemies: ["Slime", "Goblin", "Rat"], bgGradient: "from-green-900/30 to-emerald-900/20" },
-  { name: "Dark Forest", color: "#22c55e", enemies: ["Wolf", "Spider", "Treant"], bgGradient: "from-emerald-900/40 to-green-950/30" },
-  { name: "Haunted Caves", color: "#a78bfa", enemies: ["Bat", "Skeleton", "Ghost"], bgGradient: "from-purple-900/40 to-indigo-950/30" },
-  { name: "Lava Fields", color: "#f97316", enemies: ["Fire Imp", "Magma Golem", "Phoenix"], bgGradient: "from-orange-900/40 to-red-950/30" },
-  { name: "Frozen Peaks", color: "#38bdf8", enemies: ["Ice Wraith", "Frost Giant", "Yeti"], bgGradient: "from-blue-900/40 to-cyan-950/30" },
-  { name: "Shadow Realm", color: "#c084fc", enemies: ["Demon", "Shadow Knight", "Dark Lord"], bgGradient: "from-violet-900/40 to-purple-950/40" },
-  { name: "Celestial Void", color: "#fbbf24", enemies: ["Star Eater", "Void Walker", "Cosmic Dragon"], bgGradient: "from-yellow-900/30 to-amber-950/30" },
+  { name: "Grassy Plains", color: "#4ade80", enemies: ["Slime", "Goblin", "Rat"], bgGradient: "from-green-900/30 to-emerald-900/20", soulBias: 0.3 },
+  { name: "Dark Forest", color: "#22c55e", enemies: ["Wolf", "Spider", "Treant"], bgGradient: "from-emerald-900/40 to-green-950/30", soulBias: 0.5 },
+  { name: "Haunted Caves", color: "#a78bfa", enemies: ["Bat", "Skeleton", "Ghost"], bgGradient: "from-purple-900/40 to-indigo-950/30", soulBias: 1.2 },
+  { name: "Lava Fields", color: "#f97316", enemies: ["Fire Imp", "Magma Golem", "Phoenix"], bgGradient: "from-orange-900/40 to-red-950/30", soulBias: 0.7 },
+  { name: "Frozen Peaks", color: "#38bdf8", enemies: ["Ice Wraith", "Frost Giant", "Yeti"], bgGradient: "from-blue-900/40 to-cyan-950/30", soulBias: 0.6 },
+  { name: "Shadow Realm", color: "#c084fc", enemies: ["Demon", "Shadow Knight", "Dark Lord"], bgGradient: "from-violet-900/40 to-purple-950/40", soulBias: 1.5 },
+  { name: "Celestial Void", color: "#fbbf24", enemies: ["Star Eater", "Void Walker", "Cosmic Dragon"], bgGradient: "from-yellow-900/30 to-amber-950/30", soulBias: 2.0 },
 ];
 
 export const ENEMY_EMOJIS = {

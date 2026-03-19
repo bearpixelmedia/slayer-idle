@@ -215,6 +215,7 @@ export default function useGameState() {
 
   const handleTap = useCallback((x, y) => {
     const damage = getTapDamage(stateRef.current);
+    // Note: double damage multiplier is applied inside dealDamage via abilitiesRef
     
     setSlashEffects(prev => [...prev, { id: Date.now() + Math.random(), x, y }]);
     setTimeout(() => {

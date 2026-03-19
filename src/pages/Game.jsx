@@ -125,7 +125,7 @@ export default function Game() {
         )}
         {!showRunner && (
           <>
-            <AbilityBar abilities={abilities} onActivate={activateAbility} />
+            <AbilityBar abilities={abilities} onActivate={activateAbility} weaponMode={currentWeapon} />
             <PrestigePanel
               canPrestige={canPrestige}
               soulsOnPrestige={soulsOnPrestige}

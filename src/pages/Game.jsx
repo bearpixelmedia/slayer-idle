@@ -84,59 +84,168 @@ export default function Game() {
   };
 
   return (
-    <div className="fixed inset-0 bg-background flex flex-col">
-      <StatsBar
-        state={state}
-        tapDamage={getTapDamage()}
-        idleCPS={getIdleCPS()}
-      />
-      <ActiveBuffsDisplay activeBuffs={activeBuffs} />
-      <WeaponMode
-        currentMode={currentWeapon}
-        bowUnlocked={state.upgradeLevels["bow"] > 0}
-        onModeChange={setCurrentWeapon}
-      />
-      
-      <div className="flex-1 relative overflow-hidden">
-        {!showRunner ? (
-          <GameCanvas
-            state={state}
-            enemyDying={enemyDying}
-            floatingCoins={floatingCoins}
-            floatingSouls={floatingSouls}
-            floatingDamage={floatingDamage}
-            particles={particles}
-            slashEffects={slashEffects}
-            onTap={handleTap}
-            enemyHit={enemyHit}
-            weaponMode={currentWeapon}
-          />
-        ) : (
-          <RunnerCanvas
-            playerY={runner.playerY}
-            obstacles={runner.obstacles}
-            score={runner.score}
-            isGameOver={runner.isGameOver}
-            gameStarted={runner.gameStarted}
-            onTap={() => {
-              if (!runner.gameStarted) runner.startGame();
-              else if (runner.isGameOver) runner.resetGame();
-              else runner.handleJump();
-            }}
-          />
-        )}
+    <div className="fixed inset-0 bg-background flex flex-col lg:flex-row">
+      {/* Portrait/Mobile: Top bar */}
+      <div className="lg:hidden flex flex-col flex-1 overflow-hidden">
+        <StatsBar
+          state={state}
+          tapDamage={getTapDamage()}
+          idleCPS={getIdleCPS()}
+        />
+        <ActiveBuffsDisplay activeBuffs={activeBuffs} />
+        <WeaponMode
+          currentMode={currentWeapon}
+          bowUnlocked={state.upgradeLevels["bow"] > 0}
+          onModeChange={setCurrentWeapon}
+        />
 
+        <div className="flex-1 relative overflow-hidden">
+          {!showRunner ? (
+            <GameCanvas
+              state={state}
+              enemyDying={enemyDying}
+              floatingCoins={floatingCoins}
+              floatingSouls={floatingSouls}
+              floatingDamage={floatingDamage}
+              particles={particles}
+              slashEffects={slashEffects}
+              onTap={handleTap}
+              enemyHit={enemyHit}
+              weaponMode={currentWeapon}
+            />
+          ) : (
+            <RunnerCanvas
+              playerY={runner.playerY}
+              obstacles={runner.obstacles}
+              score={runner.score}
+              isGameOver={runner.isGameOver}
+              gameStarted={runner.gameStarted}
+              onTap={() => {
+                if (!runner.gameStarted) runner.startGame();
+                else if (runner.isGameOver) runner.resetGame();
+                else runner.handleJump();
+              }}
+            />
+          )}
+
+          {!showRunner && (
+            <div className="absolute inset-0 top-0 pointer-events-none">
+              <ScrollArea className="absolute inset-0 pointer-events-auto">
+                <div className="px-4 py-2">
+                  <button
+                    onClick={() => setShowRunner(true)}
+                    className="w-full py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"
+                  >
+                    🏃 RUNNER MINIGAME
+                  </button>
+                </div>
+                <GameTabs
+                  state={state}
+                  onBuyUpgrade={buyUpgrade}
+                  onUnlockSkill={unlockSkill}
+                  onPrestige={prestige}
+                  onRevive={revive}
+                  unlockedIds={unlockedIds}
+                  damageMultiplier={damageMultiplier}
+                  offlineMultiplier={offlineMultiplier}
+                  onSwitchZone={switchZone}
+                  onUnlockZone={unlockZone}
+                  onClaimQuestReward={handleClaimQuestReward}
+                  onRepeatQuest={handleRepeatQuest}
+                  questProgress={questProgress}
+                  onUpgradeBuilding={upgradeBuilding}
+                  abilities={abilities}
+                  onActivateAbility={activateAbility}
+                  weaponMode={currentWeapon}
+                />
+                <div className="px-4 py-6 text-center">
+                  <p className="font-pixel text-[7px] text-muted-foreground/30">
+                    SLAYER IDLE • TAP & PRESTIGE RPG
+                  </p>
+                </div>
+              </ScrollArea>
+            </div>
+          )}
+
+          {showRunner && (
+            <div className="absolute bottom-4 left-4 right-4">
+              <button
+                onClick={() => setShowRunner(false)}
+                className="w-full py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"
+              >
+                ← BACK TO SLAYER
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Landscape: Side-by-side layout */}
+      <div className="hidden lg:flex flex-1 overflow-hidden">
+        {/* Game on left */}
+        <div className="flex-1 flex flex-col relative overflow-hidden">
+          <StatsBar
+            state={state}
+            tapDamage={getTapDamage()}
+            idleCPS={getIdleCPS()}
+          />
+          <ActiveBuffsDisplay activeBuffs={activeBuffs} />
+          <WeaponMode
+            currentMode={currentWeapon}
+            bowUnlocked={state.upgradeLevels["bow"] > 0}
+            onModeChange={setCurrentWeapon}
+          />
+          <div className="flex-1 overflow-hidden">
+            {!showRunner ? (
+              <GameCanvas
+                state={state}
+                enemyDying={enemyDying}
+                floatingCoins={floatingCoins}
+                floatingSouls={floatingSouls}
+                floatingDamage={floatingDamage}
+                particles={particles}
+                slashEffects={slashEffects}
+                onTap={handleTap}
+                enemyHit={enemyHit}
+                weaponMode={currentWeapon}
+              />
+            ) : (
+              <RunnerCanvas
+                playerY={runner.playerY}
+                obstacles={runner.obstacles}
+                score={runner.score}
+                isGameOver={runner.isGameOver}
+                gameStarted={runner.gameStarted}
+                onTap={() => {
+                  if (!runner.gameStarted) runner.startGame();
+                  else if (runner.isGameOver) runner.resetGame();
+                  else runner.handleJump();
+                }}
+              />
+            )}
+          </div>
+          {showRunner && (
+            <div className="p-2 border-t border-border">
+              <button
+                onClick={() => setShowRunner(false)}
+                className="w-full py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"
+              >
+                ← BACK TO SLAYER
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Menu on right */}
         {!showRunner && (
-          <div className="absolute inset-0 top-0 pointer-events-none">
-            <ScrollArea className="absolute inset-0 pointer-events-auto">
-              <div className="px-4 py-2">
-                <button
-                  onClick={() => setShowRunner(true)}
-                  className="w-full py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"
-                >
-                  🏃 RUNNER MINIGAME
-                </button>
-              </div>
+          <ScrollArea className="w-96 border-l border-border overflow-hidden">
+            <div className="p-4 space-y-3">
+              <button
+                onClick={() => setShowRunner(true)}
+                className="w-full py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"
+              >
+                🏃 RUNNER MINIGAME
+              </button>
               <GameTabs
                 state={state}
                 onBuyUpgrade={buyUpgrade}
@@ -161,19 +270,8 @@ export default function Game() {
                   SLAYER IDLE • TAP & PRESTIGE RPG
                 </p>
               </div>
-            </ScrollArea>
-          </div>
-        )}
-
-        {showRunner && (
-          <div className="absolute bottom-4 left-4 right-4">
-            <button
-              onClick={() => setShowRunner(false)}
-              className="w-full py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"
-            >
-              ← BACK TO SLAYER
-            </button>
-          </div>
+            </div>
+          </ScrollArea>
         )}
       </div>
 

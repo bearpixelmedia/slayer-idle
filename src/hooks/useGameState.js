@@ -30,13 +30,28 @@ function defaultState() {
   };
 }
 
+const ABILITY_CONFIGS = {
+  magnet: { duration: 10, cooldown: 45 },
+  doubleDamage: { duration: 8, cooldown: 60 },
+};
+
+function defaultAbilities() {
+  return {
+    magnet: { active: false, durationRemaining: 0, cooldownRemaining: 0 },
+    doubleDamage: { active: false, durationRemaining: 0, cooldownRemaining: 0 },
+  };
+}
+
 export default function useGameState() {
   const [state, setState] = useState(() => loadGame() || defaultState());
   const [floatingCoins, setFloatingCoins] = useState([]);
   const [enemyDying, setEnemyDying] = useState(false);
   const [slashEffects, setSlashEffects] = useState([]);
+  const [abilities, setAbilities] = useState(defaultAbilities());
   const stateRef = useRef(state);
   stateRef.current = state;
+  const abilitiesRef = useRef(abilities);
+  abilitiesRef.current = abilities;
 
   // Save game periodically
   useEffect(() => {

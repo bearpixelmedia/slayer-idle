@@ -49,15 +49,6 @@ export default function useMinions(gameState, setSouls) {
   const minionsStateRef = useRef(minionsState);
   minionsStateRef.current = minionsState;
 
-  const progressContext = {
-    unlockedZoneIds: gameState.unlockedZoneIds,
-    highestStage: gameState.highestStage,
-  };
-
-  const economyContext = {
-    souls: gameState.souls,
-  };
-
   // Initial load and offline progress
   useEffect(() => {
     const now = Date.now();
@@ -94,6 +85,13 @@ export default function useMinions(gameState, setSouls) {
   }, [minionsState]);
 
   // Derived state
+  const progressContext = {
+    unlockedZoneIds: gameState.unlockedZoneIds,
+    highestStage: gameState.highestStage,
+  };
+  const economyContext = {
+    souls: gameState.souls,
+  };
   const unlockedMinionTypes = getUnlockedMinionTypes(MINION_TYPES, progressContext);
   const unlockedMissionDefs = getUnlockedMissionDefs(MISSION_DEFS, progressContext);
   const claimableMissions = getClaimableMissions(minionsState);
@@ -110,6 +108,10 @@ export default function useMinions(gameState, setSouls) {
       minionTypeDef: minionType,
       nowMs: Date.now(),
       newMissionInstanceId: nanoid(),
+      progressContext: {
+        unlockedZoneIds: gameState.unlockedZoneIds,
+        highestStage: gameState.highestStage,
+      },
     });
 
     if (result.ok) {
@@ -117,14 +119,17 @@ export default function useMinions(gameState, setSouls) {
       return true;
     }
     return false;
-  }, []);
+  }, [gameState.unlockedZoneIds, gameState.highestStage]);
 
   const buyMinion = useCallback((minionTypeDef) => {
     const result = purchaseMinion({
       minionsState: minionsStateRef.current,
       minionTypeDef,
-      progress: progressContext,
-      economy: economyContext,
+      progress: {
+        unlockedZoneIds: gameState.unlockedZoneIds,
+        highestStage: gameState.highestStage,
+      },
+      economy: { souls: gameState.souls },
       nowMs: Date.now(),
       newMinionInstanceId: nanoid(),
     });
@@ -135,7 +140,7 @@ export default function useMinions(gameState, setSouls) {
       return true;
     }
     return false;
-  }, [gameState.souls, setSouls]);
+  }, [gameState.unlockedZoneIds, gameState.highestStage, gameState.souls, setSouls]);
 
   const claimMissionReward = useCallback((missionInstanceId) => {
     const result = claimMission({

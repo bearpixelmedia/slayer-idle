@@ -36,7 +36,7 @@ export function canUnlock(condition, ctx) {
     case "highest_stage_at_least":
       return ctx.highestStage >= condition.value;
     case "all":
-      return condition.conditions.every((subCondition) =>
+      return Array.isArray(condition.conditions) && condition.conditions.every((subCondition) =>
         canUnlock(subCondition, ctx)
       );
     default:
@@ -123,10 +123,11 @@ export function canStartMission(minion) {
  * @param {MinionTypeDef} params.minionTypeDef
  * @param {number} params.nowMs
  * @param {string} params.newMissionInstanceId
+ * @param {Object} params.progressContext
  * @returns {{ ok: true, nextState: MinionsState, mission: MissionInstance } | { ok: false, reason: string }}
  */
 export function startMission(params) {
-  const { minionsState, minion, missionDef, minionTypeDef, nowMs, newMissionInstanceId } = params;
+  const { minionsState, minion, missionDef, minionTypeDef, nowMs, newMissionInstanceId, progressContext } = params;
 
   if (!minion || minion.status !== "idle") {
     return { ok: false, reason: "MINION_BUSY" };
@@ -136,6 +137,9 @@ export function startMission(params) {
   }
   if (!missionDef) {
     return { ok: false, reason: "INVALID_MISSION" };
+  }
+  if (!canUnlock(missionDef.unlock, progressContext)) {
+    return { ok: false, reason: "MISSION_NOT_UNLOCKED" };
   }
 
   const { durationSec, expectedSoulReward } = computeMissionOutcome(missionDef, minionTypeDef);
@@ -282,6 +286,8 @@ export function claimAllMissions(params) {
  * @param {string} params.newMinionInstanceId
  * @returns {{ ok: true, nextState: MinionsState, soulsSpent: number, ownedMinion: OwnedMinion } | { ok: false, reason: string }}
  */
+import { MINION_SYSTEM_CONFIG } from "./minions";
+
 export function purchaseMinion(params) {
   const { minionsState, minionTypeDef, progress, economy, nowMs, newMinionInstanceId } = params;
 
@@ -290,6 +296,9 @@ export function purchaseMinion(params) {
   }
   if (economy.souls < minionTypeDef.purchaseCostSouls) {
     return { ok: false, reason: "INSUFFICIENT_SOULS" };
+  }
+  if (minionsState.ownedMinions.length >= MINION_SYSTEM_CONFIG.maxOwnedMinions) {
+    return { ok: false, reason: "MAX_MINIONS_OWNED" };
   }
 
   const newMinion = {

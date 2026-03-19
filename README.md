@@ -4,6 +4,7 @@
 
 - **[`docs/BASE44_PROMPT_PACK.md`](docs/BASE44_PROMPT_PACK.md)** — **Base44:** paste Parts A–C and Fallback from here. Starts with a **which tool** cheat sheet.
 - **[`docs/BASE44_MASTER_PROMPT.md`](docs/BASE44_MASTER_PROMPT.md)** — **Cursor-first:** file map, gaps, alignment sprint (**§3a Cursor** / **§3b Base44**). Use with `@` file mentions in Cursor.
+- **[`docs/CURSOR_PLAN_SPRITE_SHEETS.md`](docs/CURSOR_PLAN_SPRITE_SHEETS.md)** — **Local dev:** phased plan to replace battle emoji with sprite sheets, animation, and Composer prompt.
 
 **About**
 

@@ -30,17 +30,19 @@ This file is tailored to **this repository** ([`bearpixelmedia/slayer-idle`](htt
 | **Prestige** | Resets run; keeps `unlockedSkills`, `totalKills`, `highestStage`; adds souls + SP | [`useGameState.js`](../src/hooks/useGameState.js) `prestige` |
 | **Abilities** | Magnet (bonus coins/s), double damage, auto-clicker; cooldowns | [`useGameState.js`](../src/hooks/useGameState.js), [`AbilityBar.jsx`](../src/components/game/AbilityBar.jsx) |
 | **Stages / zones** | 7 named stages with enemy pools and gradients | `STAGES` in [`gameData.js`](../src/lib/gameData.js) |
-| **Skill tree (data + UI)** | 8 skills, tiers, prerequisites, SP costs in UI | [`src/lib/skillTree.js`](../src/lib/skillTree.js), [`SkillTree.jsx`](../src/components/game/SkillTree.jsx) |
+| **Skill tree (data + UI)** | Skills + tiers in `skillTree.js`; UI imports same module (single source of truth) | [`src/lib/skillTree.js`](../src/lib/skillTree.js), [`SkillTree.jsx`](../src/components/game/SkillTree.jsx) |
 | **Achievements** | ~16 tracked achievements; damage + offline multipliers | [`src/lib/achievements.js`](../src/lib/achievements.js), [`useAchievements.js`](../src/hooks/useAchievements.js) |
 | **Offline** | Modal + partial idle coin accrual (capped) | [`OfflineEarningsModal.jsx`](../src/components/game/OfflineEarningsModal.jsx), `useGameState` |
 
 ### Known gaps vs intended design
 
-**CURSOR:** fix these locally first when possible. **BASE44:** paste §3 Base44 block below.
+**Alignment sprint (§3) — implemented in repo:** `getSkillMultipliers` applies to tap damage, idle CPS, kill rewards, and prestige souls; `unlockSkill` deducts SP atomically; multiplier map is documented at the top of [`skillTree.js`](../src/lib/skillTree.js).
 
-1. **`getSkillMultipliers` is imported in `useGameState.js` but never applied** — skill unlocks do not yet change damage, idle CPS, or drops.
-2. **Unlocking a skill does not deduct Slayer Points** — UI checks `slayerPoints >= cost`, but `unlockSkill` only appends IDs; SP never decreases.
-3. **Core fantasy loop** — Design mentions **jump**, **true auto-runner**, **separate soul drops**, **materials**, **minions**, **RNG boxes**, **quests**, **casino/village**, etc. These are **not** in code yet (or only loosely approximated).
+**Still open / backlog**
+
+1. **Platformer jump on main slayer canvas** — optional; runner minigame exists separately (`RunnerCanvas` / `useRunnerState`).
+2. **Materials, minions, RNG boxes, quests at scale, casino/village** — design backlog (use [BASE44_PROMPT_PACK](./BASE44_PROMPT_PACK.md) Part C).
+3. **Some skill `type`s** (e.g. `critMultiplier`, `specialMechanic`) are **placeholders** — descriptions only until combat logic reads them.
 
 ---
 
@@ -97,10 +99,9 @@ CURRENT REPO FACTS (do not contradict)
 - Achievements: ACHIEVEMENTS array drives multipliers via useAchievements.
 - Skill tree: SKILLS in skillTree.js; UI in SkillTree.jsx.
 
-REQUIRED FIXES TO ALIGN CODE WITH DESIGN
-- Apply getSkillMultipliers(unlockedSkills) to tap damage, idle CPS, and enemy coin/soul rewards (or document where each multiplier applies).
-- On skill purchase: deduct skill.cost from slayerPoints atomically with adding skill id; prevent double unlocks and negative SP.
-- Ensure soul gains on prestige and any “soul multiplier” skills are consistent end-to-end.
+IMPLEMENTED IN REPO (keep when extending)
+- getSkillMultipliers(unlockedSkills): tap damage, idle CPS, kill coin/soul rewards (applyRewardMultipliers), prestige souls (soulMultiplier), SP spend on unlock.
+- See §3 for historical prompt text; prefer editing `useGameState.js` + `skillTree.js` in Cursor for balance changes.
 ```
 
 ---
@@ -162,9 +163,9 @@ Between phases, playtest and adjust **one formula file** (`gameData.js`) when po
 
 ---
 
-## 5. Optional: replace footer copy
+## 5. Footer copy
 
-[`Game.jsx`](../src/pages/Game.jsx) currently shows `IDLE SLAYER CLONE` — **CURSOR:** edit directly. **BASE44:** “Change footer to an original tagline (e.g. Slayer Idle — tap & prestige RPG); don’t change layout.”
+[`Game.jsx`](../src/pages/Game.jsx) uses an original tagline: **SLAYER IDLE • TAP & PRESTIGE RPG** (no “clone” wording).
 
 ---
 

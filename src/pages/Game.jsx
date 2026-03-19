@@ -143,7 +143,7 @@ export default function Game() {
             <UpgradeShop state={state} onBuy={buyUpgrade} />
             <div className="px-4 py-6 text-center">
               <p className="font-pixel text-[7px] text-muted-foreground/30">
-                IDLE SLAYER CLONE • TAP & IDLE RPG
+                SLAYER IDLE • TAP & PRESTIGE RPG
               </p>
             </div>
           </>

@@ -434,9 +434,12 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
 
   const prestige = useCallback(() => {
     setState(prev => {
-      const newSouls = getSoulsOnPrestige(prev.totalCoinsEarned);
-      if (newSouls <= 0) return prev;
-      
+      const baseSoulsFromRun = getSoulsOnPrestige(prev.totalCoinsEarned);
+      if (baseSoulsFromRun <= 0) return prev;
+
+      const soulMult = getSkillMultipliers(prev.unlockedSkills).soulMultiplier;
+      const newSouls = Math.max(1, Math.floor(baseSoulsFromRun * soulMult));
+
       const newSlayerPoints = getSlayerPointsOnPrestige(prev.souls + newSouls);
       const fresh = defaultState();
       return {
@@ -452,8 +455,13 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     });
   }, []);
 
-  const canPrestige = getSoulsOnPrestige(state.totalCoinsEarned) > 0;
-  const soulsOnPrestige = getSoulsOnPrestige(state.totalCoinsEarned);
+  const baseSoulsOnPrestige = getSoulsOnPrestige(state.totalCoinsEarned);
+  const prestigeSoulMult = getSkillMultipliers(state.unlockedSkills).soulMultiplier;
+  const soulsOnPrestige =
+    baseSoulsOnPrestige > 0
+      ? Math.max(1, Math.floor(baseSoulsOnPrestige * prestigeSoulMult))
+      : 0;
+  const canPrestige = baseSoulsOnPrestige > 0;
   const slayerPointsOnPrestige = getSlayerPointsOnPrestige(state.souls + soulsOnPrestige);
 
   return {

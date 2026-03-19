@@ -1,11 +1,11 @@
 // Skill tree structure with permanent bonuses and branching specialization paths
-// Multiplier Application Map:
-//   - damageMultiplier: affects getTapDamage() and deal damage per click
-//   - idleMultiplier: affects getIdleCPS() and passive damage over time
-//   - coinDropMultiplier: affects coin rewards from enemies (applyRewardMultipliers)
-//   - soulMultiplier: affects soul rewards from enemies (applyRewardMultipliers)
-//   - allMultiplier: multiplies damageMultiplier and idleMultiplier together (caps all paths)
-// All multipliers are applied atomically when skills are unlocked (SP deducted same tick).
+// Multiplier application map (see getSkillMultipliers):
+//   - damageMultiplier → getTapDamage(), idle damage uses same tap scaling path via CPS→damage
+//   - idleMultiplier → getIdleCPS()
+//   - coinDropMultiplier → coin portion of kill/boss rewards (applyRewardMultipliers)
+//   - soulMultiplier → soul portion of kill/boss rewards AND souls gained on Ascend (prestige)
+//   - allMultiplier → folded into damageMultiplier and idleMultiplier in getSkillMultipliers return
+// SP is deducted in the same state update as unlock in useGameState.unlockSkill.
 
 export const SKILLS = [
   // Tier 1 - Base foundation (choose starting direction)
@@ -106,10 +106,23 @@ export const SKILLS = [
     tier: 2,
     path: "neutral",
     cost: 7,
-    description: "+20% soul drops",
+    description: "+20% soul drops & prestige souls",
     type: "soulMultiplier",
     value: 0.2,
     requires: [],
+  },
+
+  {
+    id: "bow_mastery",
+    name: "Bow Mastery",
+    icon: "🏹",
+    tier: 2,
+    path: "damage",
+    cost: 15,
+    description: "Unlock Bow weapon mode (WeaponMode UI)",
+    type: "specialMechanic",
+    value: 0,
+    requires: ["sharpened_blades"],
   },
 
   // Tier 3 - Damage specialization capstone

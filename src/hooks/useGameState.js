@@ -283,7 +283,10 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
           coinReward = Math.floor(reward * soulBonus);
         }
         
-        setFloatingCoins(fc => [...fc, { id: Date.now() + Math.random(), amount: coinReward, x, y }]);
+        // Apply skill tree multipliers to rewards
+        const { coins: finalCoins, souls: finalSouls } = applyRewardMultipliers(coinReward, soulReward, prev);
+        
+        setFloatingCoins(fc => [...fc, { id: Date.now() + Math.random(), amount: finalCoins, x, y }]);
         
         // Spawn extra particles for boss kills
         const particleCount = prev.isBossActive ? 12 : 6;

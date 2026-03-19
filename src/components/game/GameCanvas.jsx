@@ -47,6 +47,7 @@ export default function GameCanvas({
   enemyDying,
   floatingCoins,
   floatingSouls,
+  floatingDamage,
   slashEffects,
   particles,
   onTap,
@@ -114,13 +115,22 @@ export default function GameCanvas({
             {formatNumber(state.enemyHP)} / {formatNumber(state.enemyMaxHP)}
           </p>
         </div>
-        <div
-          className={`text-4xl sm:text-5xl md:text-6xl transition-all ${
-            state.isBossActive ? (enemyDying ? "animate-enemy-die" : enemyHit ? "animate-enemy-hit" : "animate-float scale-125") : (enemyDying ? "animate-enemy-die" : enemyHit ? "animate-enemy-hit" : "animate-float")
+        <motion.div
+          className={`text-4xl sm:text-5xl md:text-6xl ${
+            state.isBossActive ? "scale-125" : ""
           }`}
+          animate={{
+            filter: enemyHit ? "brightness(1.8)" : "brightness(1)",
+          }}
+          transition={{ duration: 0.1 }}
+          style={{
+            animation: enemyDying ? "enemy-die 0.3s ease-out forwards" : 
+                       (state.isBossActive && !enemyDying) ? "float 3s ease-in-out infinite" :
+                       !enemyDying && !state.isBossActive ? "float 3s ease-in-out infinite" : "none"
+          }}
         >
           {enemyEmoji}
-        </div>
+        </motion.div>
       </div>
 
       {/* Slash effects */}
@@ -170,6 +180,25 @@ export default function GameCanvas({
             transition={{ duration: 1 }}
           >
             +{s.amount.toFixed(1)} 👻
+          </motion.div>
+        ))}
+      </AnimatePresence>
+
+      {/* Floating damage numbers */}
+      <AnimatePresence>
+        {floatingDamage?.map((d) => (
+          <motion.div
+            key={d.id}
+            className={`absolute pointer-events-none font-pixel font-bold text-sm sm:text-base ${
+              d.isCritical ? "text-red-400" : "text-orange-400"
+            }`}
+            style={{ left: `${d.x}%`, top: `${d.y}%` }}
+            initial={{ opacity: 1, y: 0, scale: 1 }}
+            animate={{ opacity: 0, y: -60, scale: d.isCritical ? 1.3 : 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            {d.isCritical ? "⚡" : ""}{formatNumber(d.amount)}
           </motion.div>
         ))}
       </AnimatePresence>

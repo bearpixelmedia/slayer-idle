@@ -71,6 +71,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   const [state, setState] = useState(() => loadGame() || defaultState());
   const [floatingCoins, setFloatingCoins] = useState([]);
   const [floatingSouls, setFloatingSouls] = useState([]);
+  const [floatingDamage, setFloatingDamage] = useState([]);
   const [particles, setParticles] = useState([]);
   const [enemyDying, setEnemyDying] = useState(false);
   const [slashEffects, setSlashEffects] = useState([]);
@@ -233,6 +234,28 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     });
   }, []);
 
+  const playSound = useCallback((type) => {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    oscillator.connect(gain);
+    gain.connect(audioContext.destination);
+    
+    if (type === "hit") {
+      oscillator.frequency.value = 400;
+      gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.1);
+    } else if (type === "critical") {
+      oscillator.frequency.value = 600;
+      gain.gain.setValueAtTime(0.2, audioContext.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.15);
+    }
+  }, []);
+
   const dealDamage = useCallback((damage, x, y) => {
     setEnemyHit(true);
     setTimeout(() => setEnemyHit(false), 150);
@@ -240,6 +263,8 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     const multiplier = abilitiesRef.current.doubleDamage.active ? 2 : 1;
     const finalDamage = damage * multiplier;
     const isCritical = multiplier > 1;
+    
+    playSound(isCritical ? "critical" : "hit");
 
     // Spawn particles for critical hits
     if (isCritical) {
@@ -292,6 +317,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         const { coins: finalCoins, souls: finalSouls } = applyRewardMultipliers(coinReward, soulReward, prev);
         
         setFloatingCoins(fc => [...fc, { id: Date.now() + Math.random(), amount: finalCoins, x, y }]);
+        setFloatingDamage(fd => [...fd, { id: Date.now() + Math.random(), amount: finalDamage, x, y, isCritical }]);
         
         // Show soul drops separately
         if (finalSouls > 0) {
@@ -373,11 +399,12 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     return () => clearInterval(interval);
   }, [dealDamage]);
 
-  // Clean up floating coins, souls, and particles
+  // Clean up floating coins, souls, damage numbers, and particles
   useEffect(() => {
     const interval = setInterval(() => {
       setFloatingCoins(prev => prev.filter(c => Date.now() - c.id < 1000));
       setFloatingSouls(prev => prev.filter(s => Date.now() - s.id < 1000));
+      setFloatingDamage(prev => prev.filter(d => Date.now() - d.id < 800));
       setParticles(prev => prev.filter(p => Date.now() - p.id < 1000));
     }, 500);
     return () => clearInterval(interval);
@@ -468,6 +495,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     state,
     floatingCoins,
     floatingSouls,
+    floatingDamage,
     particles,
     enemyDying,
     slashEffects,

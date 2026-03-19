@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import useGameState from "@/hooks/useGameState";
 import useAchievements from "@/hooks/useAchievements";
+import useRunnerState from "@/hooks/useRunnerState";
 import { computeAchievementMultipliers } from "@/lib/achievements";
 import StatsBar from "@/components/game/StatsBar";
 import GameCanvas from "@/components/game/GameCanvas";
+import RunnerCanvas from "@/components/game/RunnerCanvas";
 import UpgradeShop from "@/components/game/UpgradeShop";
 import PrestigePanel from "@/components/game/PrestigePanel";
 import SkillTree from "@/components/game/SkillTree";

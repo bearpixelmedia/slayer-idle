@@ -1,17 +1,22 @@
 import React from "react";
 import useGameState from "@/hooks/useGameState";
 import useAchievements from "@/hooks/useAchievements";
-import StatsBar from "@/components/game/StatsBar";
-import GameCanvas from "@/components/game/GameCanvas";
-import UpgradeShop from "@/components/game/UpgradeShop";
-import PrestigePanel from "@/components/game/PrestigePanel";
-import AbilityBar from "@/components/game/AbilityBar";
-import AchievementsPanel from "@/components/game/AchievementsPanel";
-import AchievementToast from "@/components/game/AchievementToast";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { computeAchievementMultipliers } from "@/lib/achievements";
+
+function loadSavedMultipliers() {
+  try {
+    const saved = localStorage.getItem("idle_slayer_achievements");
+    const ids = saved ? JSON.parse(saved) : [];
+    return computeAchievementMultipliers(ids);
+  } catch {
+    return { damageMultiplier: 1, offlineMultiplier: 1 };
+  }
+}
 
 export default function Game() {
-  // Two-pass: first load state to feed achievements, then get multipliers back
+  // Load saved achievement multipliers synchronously so gameState starts with them
+  const [initMultipliers] = React.useState(loadSavedMultipliers);
+
   const {
     state,
     floatingCoins,
@@ -26,7 +31,7 @@ export default function Game() {
     activateAbility,
     getTapDamage,
     getIdleCPS,
-  } = useGameState();
+  } = useGameState(initMultipliers);
 
   const { unlockedIds, newUnlock, damageMultiplier, offlineMultiplier } = useAchievements(state);
 

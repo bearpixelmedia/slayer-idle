@@ -273,6 +273,8 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         ...fresh,
         souls: prev.souls + newSouls,
         totalKills: prev.totalKills,
+        highestStage: prev.highestStage || 0,
+        prestigeCount: (prev.prestigeCount || 0) + 1,
       };
     });
   }, []);

@@ -115,3 +115,9 @@ export function getSlayerPointsOnPrestige(souls) {
   // SP gains accelerate with more souls (incentivizes chaining prestiges for skill unlocks)
   return Math.floor(Math.sqrt(souls) + Math.floor(souls / 50));
 }
+
+// Bow-specific multipliers
+export function getBowSoulMultiplier() {
+  // Bow has inherent soul farming bonus
+  return 1.3;
+}

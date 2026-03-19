@@ -154,6 +154,23 @@ export default function GameCanvas({
         ))}
       </AnimatePresence>
 
+      {/* Floating soul rewards */}
+      <AnimatePresence>
+        {floatingSouls.map((s) => (
+          <motion.div
+            key={s.id}
+            className="absolute pointer-events-none font-pixel text-accent text-xs sm:text-sm font-bold"
+            style={{ left: `${s.x}%`, top: `${s.y}%` }}
+            initial={{ opacity: 1, y: 0, scale: 0.8 }}
+            animate={{ opacity: 0, y: -60, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1 }}
+          >
+            +{s.amount.toFixed(1)} 👻
+          </motion.div>
+        ))}
+      </AnimatePresence>
+
       {/* Particle effects */}
       <ParticleEffect particles={particles} />
 

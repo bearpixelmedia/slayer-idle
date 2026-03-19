@@ -156,7 +156,7 @@ export default function GameCanvas({
 
       {/* Floating soul rewards */}
       <AnimatePresence>
-        {floatingSouls.map((s) => (
+        {floatingSouls?.map((s) => (
           <motion.div
             key={s.id}
             className="absolute pointer-events-none font-pixel text-accent text-xs sm:text-sm font-bold"

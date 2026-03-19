@@ -180,7 +180,7 @@ export function getSkillMultipliers(unlockedSkillIds) {
   let soulMultiplier = 1;
   let allMultiplier = 1;
 
-  unlockedSkillIds.forEach((skillId) => {
+  (unlockedSkillIds || []).forEach((skillId) => {
     const skill = SKILLS.find((s) => s.id === skillId);
     if (!skill) return;
 

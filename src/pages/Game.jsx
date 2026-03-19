@@ -9,6 +9,7 @@ import PrestigePanel from "@/components/game/PrestigePanel";
 import AbilityBar from "@/components/game/AbilityBar";
 import AchievementsPanel from "@/components/game/AchievementsPanel";
 import AchievementToast from "@/components/game/AchievementToast";
+import OfflineEarningsModal from "@/components/game/OfflineEarningsModal";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 function loadSavedMultipliers() {

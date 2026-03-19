@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import {
-  STAGES, UPGRADES, TAP_UPGRADES, IDLE_UPGRADES, ALL_UPGRADES, BOW_UPGRADES,
-  getUpgradeCost, getEnemyHP, getEnemyReward, getEnemySouls, getSoulsOnPrestige, getSlayerPointsOnPrestige, getBowSoulMultiplier
+  ZONES, STAGES, UPGRADES, TAP_UPGRADES, IDLE_UPGRADES, ALL_UPGRADES, BOW_UPGRADES,
+  getUpgradeCost, getEnemyHP, getEnemyReward, getEnemySouls, getSoulsOnPrestige, getSlayerPointsOnPrestige, getBowSoulMultiplier,
+  getZoneStages, canUnlockZone
 } from "@/lib/gameData";
 import { SKILLS, getSkillMultipliers } from "@/lib/skillTree";
 import { isBossEncounter, getBossForStage, getBossHP, getBossReward } from "@/lib/bosses";
 
-const SAVE_VERSION = 2;
+const SAVE_VERSION = 3;
 
 const SAVE_KEY = "idle_slayer_save";
 

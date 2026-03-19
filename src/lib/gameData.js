@@ -41,6 +41,7 @@ export const UPGRADES = [
   { id: "pet", name: "Attack Pet", icon: "🐉", baseCost: 1000, costMultiplier: 1.3, basePower: 15, description: "Increases idle coins/sec" },
   { id: "ring", name: "Power Ring", icon: "💍", baseCost: 5000, costMultiplier: 1.35, basePower: 50, description: "Increases tap damage" },
   { id: "scroll", name: "Ancient Scroll", icon: "📜", baseCost: 25000, costMultiplier: 1.4, basePower: 150, description: "Increases idle coins/sec" },
+  { id: "bow", name: "Enchanted Bow", icon: "🏹", baseCost: 15000, costMultiplier: 1.38, basePower: 80, description: "Bow damage & soul farming" },
   { id: "crown", name: "Kings Crown", icon: "👑", baseCost: 100000, costMultiplier: 1.45, basePower: 500, description: "Increases all earnings" },
   { id: "orb", name: "Soul Orb", icon: "🔮", baseCost: 500000, costMultiplier: 1.5, basePower: 2000, description: "Increases all earnings" },
 ];

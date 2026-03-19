@@ -1,7 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
 import useGameState from "@/hooks/useGameState";
 import useAchievements from "@/hooks/useAchievements";
 import { computeAchievementMultipliers } from "@/lib/achievements";
+import StatsBar from "@/components/game/StatsBar";
+import GameCanvas from "@/components/game/GameCanvas";
+import UpgradeShop from "@/components/game/UpgradeShop";
+import PrestigePanel from "@/components/game/PrestigePanel";
+import AbilityBar from "@/components/game/AbilityBar";
+import AchievementsPanel from "@/components/game/AchievementsPanel";
+import AchievementToast from "@/components/game/AchievementToast";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 function loadSavedMultipliers() {
   try {

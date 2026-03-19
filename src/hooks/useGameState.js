@@ -459,6 +459,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   return {
     state,
     floatingCoins,
+    floatingSouls,
     particles,
     enemyDying,
     slashEffects,

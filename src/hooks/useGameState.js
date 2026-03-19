@@ -390,7 +390,10 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         }
         
         // Apply skill tree multipliers to rewards
-        const { coins: finalCoins, souls: finalSouls } = applyRewardMultipliers(coinReward, soulReward, prev);
+        const { coins: finalCoins, souls: finalSouls } = applyRewardMultipliers(coinReward, soulReward, prev, activeBuffsRef.current);
+        
+        // Buff proc on kill
+        tryProcBuff("kill", prev);
         
         setFloatingCoins(fc => [...fc, { id: Date.now() + Math.random(), amount: finalCoins, x, y }]);
         setFloatingDamage(fd => [...fd, { id: Date.now() + Math.random(), amount: finalDamage, x, y, isCritical }]);

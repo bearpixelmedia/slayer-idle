@@ -4,7 +4,7 @@ import { formatNumber } from "@/lib/formatNumber";
 import { STAGES } from "@/lib/gameData";
 
 export default function StatsBar({ state, tapDamage, idleCPS }) {
-  const stage = STAGES[state.stage];
+  const stage = STAGES[state?.stage] || STAGES[0];
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 bg-card/80 backdrop-blur-md border-b border-border">

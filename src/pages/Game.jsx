@@ -28,7 +28,7 @@ function loadSavedMultipliers() {
 
 export default function Game() {
   // Load saved achievement multipliers synchronously so gameState starts with them
-  const [initMultipliers] = React.useState(loadSavedMultipliers);
+  const [initMultipliers] = React.useState(() => loadSavedMultipliers());
   const [showRunner, setShowRunner] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -67,7 +67,7 @@ export default function Game() {
 
   const { unlockedIds, newUnlock, damageMultiplier, offlineMultiplier } = useAchievements(state);
 
-  const { questProgress, claimReward, resetQuestForRepeat } = useQuests(state, state.unlockedZoneIds);
+  const { questProgress, claimReward, resetQuestForRepeat } = useQuests(state, state?.unlockedZoneIds || []);
 
   const handleClaimQuestReward = (questId) => {
     claimReward(questId);

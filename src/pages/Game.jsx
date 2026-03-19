@@ -128,6 +128,14 @@ export default function Game() {
         )}
         {!showRunner && (
           <>
+            <ZoneSelector
+              activeZoneId={state.activeZoneId}
+              unlockedZoneIds={state.unlockedZoneIds}
+              zoneProgress={state.zoneProgress}
+              slayerPoints={state.slayerPoints}
+              onSwitchZone={switchZone}
+              onUnlockZone={unlockZone}
+            />
             <AbilityBar abilities={abilities} onActivate={activateAbility} weaponMode={currentWeapon} />
             <PrestigePanel
               canPrestige={canPrestige}

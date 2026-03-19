@@ -83,6 +83,7 @@ export default function Game() {
           slashEffects={slashEffects}
           onTap={handleTap}
           enemyHit={enemyHit}
+          weaponMode={weaponMode}
         />
       ) : (
         <RunnerCanvas

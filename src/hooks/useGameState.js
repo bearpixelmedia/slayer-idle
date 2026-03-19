@@ -588,11 +588,11 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   useEffect(() => {
     const interval = setInterval(() => {
       if (!abilitiesRef.current?.autoClicker?.active) return;
-      const damage = getTapDamage(stateRef.current);
+      const damage = getTapDamage(stateRef.current, currentWeapon, activeBuffsRef.current);
       dealDamage(damage, 65 + Math.random() * 20, 40 + Math.random() * 30);
     }, 500);
     return () => clearInterval(interval);
-  }, [dealDamage]);
+  }, [dealDamage, currentWeapon]);
 
   // Clean up floating coins, souls, damage numbers, and particles
   useEffect(() => {

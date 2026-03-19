@@ -141,6 +141,9 @@ export default function GameCanvas({
         ))}
       </AnimatePresence>
 
+      {/* Particle effects */}
+      <ParticleEffect particles={particles} />
+
       <GroundLayer stageColor={stage.color} />
 
       {/* Stage indicator mobile */}

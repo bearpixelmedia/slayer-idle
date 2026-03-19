@@ -3,7 +3,7 @@ import {
   STAGES, UPGRADES, TAP_UPGRADES, IDLE_UPGRADES, ALL_UPGRADES,
   getUpgradeCost, getEnemyHP, getEnemyReward, getSoulsOnPrestige, getSlayerPointsOnPrestige
 } from "@/lib/gameData";
-import { getSkillMultipliers } from "@/lib/skillTree";
+import { SKILLS, getSkillMultipliers } from "@/lib/skillTree";
 import { isBossEncounter, getBossForStage, getBossHP, getBossReward } from "@/lib/bosses";
 
 const SAVE_VERSION = 2;

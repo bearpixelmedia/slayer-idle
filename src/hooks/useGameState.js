@@ -113,7 +113,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       }
     });
     const soulBonus = 1 + (s.souls * 0.05);
-    return Math.floor(cps * soulBonus);
+    return Math.floor(cps * soulBonus * damageMultiplier);
   }
 
   function spawnNewEnemy(s) {

@@ -39,6 +39,7 @@ export default function Game() {
     state,
     floatingCoins,
     floatingSouls,
+    floatingDamage,
     particles,
     enemyDying,
     slashEffects,

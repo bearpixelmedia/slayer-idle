@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SKILLS, canUnlockSkill } from "@/lib/skillTree";
+import { SKILLS, canUnlockSkill } from "./skillTreeData";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ChevronUp, Lock } from "lucide-react";
 

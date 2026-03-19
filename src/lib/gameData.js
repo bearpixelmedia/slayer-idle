@@ -42,12 +42,15 @@ export function getUpgradeCost(upgrade, level) {
 
 export function getEnemyHP(stage, killCount) {
   const base = 3 + stage * 10;
-  const scaling = Math.floor(killCount / 10) * (2 + stage);
+  // Intentional wall: scaling accelerates every 25 kills (stage boundary)
+  const wallPhase = Math.floor(killCount / 25);
+  const scaling = Math.floor(killCount / 10) * (2 + stage) + (wallPhase * wallPhase * (stage + 1) * 5);
   return base + scaling;
 }
 
 export function getEnemyReward(stage, killCount) {
   const base = 1 + stage * 3;
+  // Rewards scale slower than HP, creating intentional friction
   const scaling = Math.floor(killCount / 5) * (1 + stage * 0.5);
   return Math.floor(base + scaling);
 }

@@ -13,7 +13,7 @@ import DeathModal from "@/components/game/DeathModal";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import WeaponMode from "@/components/game/WeaponMode";
 import ActiveBuffsDisplay from "@/components/game/ActiveBuffsDisplay";
-import GameTabs from "@/components/game/GameTabs";
+import MenuPanel from "@/components/game/MenuPanel";
 
 function loadSavedMultipliers() {
   try {
@@ -225,49 +225,28 @@ export default function Game() {
           )}
         </div>
 
-        {/* Menu on right */}
+        {/* Menu on right - Wooden frame */}
         {!showRunner && (
-          <div className="w-96 border-l border-border overflow-hidden flex flex-col bg-card">
-            <ScrollArea className="flex-1 overflow-hidden">
-              <div className="p-4 space-y-3">
-                <button
-                  onClick={() => setShowRunner(true)}
-                  className="w-full py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"
-                >
-                  🏃 RUNNER MINIGAME
-                </button>
-                <GameTabs
-                  state={state}
-                  onBuyUpgrade={buyUpgrade}
-                  onUnlockSkill={unlockSkill}
-                  onPrestige={prestige}
-                  onRevive={revive}
-                  unlockedIds={unlockedIds}
-                  damageMultiplier={damageMultiplier}
-                  offlineMultiplier={offlineMultiplier}
-                  onSwitchZone={switchZone}
-                  onUnlockZone={unlockZone}
-                  onClaimQuestReward={handleClaimQuestReward}
-                  onRepeatQuest={handleRepeatQuest}
-                  questProgress={questProgress}
-                  onUpgradeBuilding={upgradeBuilding}
-                  abilities={abilities}
-                  onActivateAbility={activateAbility}
-                  weaponMode={currentWeapon}
-                />
-              </div>
-            </ScrollArea>
-            
-            {/* Bottom icon bar */}
-            <div className="bg-red-900 border-t border-yellow-700 px-2 py-2 flex justify-around items-center gap-1">
-              <button className="p-2 hover:opacity-80 text-lg">⚔️</button>
-              <button className="p-2 hover:opacity-80 text-lg">⬆️</button>
-              <button className="p-2 hover:opacity-80 text-lg">🧑</button>
-              <button className="p-2 hover:opacity-80 text-lg">💎</button>
-              <button className="p-2 hover:opacity-80 text-lg">⋮</button>
-              <button className="p-2 hover:opacity-80 text-lg">✕</button>
-            </div>
-          </div>
+          <MenuPanel
+            state={state}
+            onBuyUpgrade={buyUpgrade}
+            onUnlockSkill={unlockSkill}
+            onPrestige={prestige}
+            onRevive={revive}
+            unlockedIds={unlockedIds}
+            damageMultiplier={damageMultiplier}
+            offlineMultiplier={offlineMultiplier}
+            onSwitchZone={switchZone}
+            onUnlockZone={unlockZone}
+            onClaimQuestReward={handleClaimQuestReward}
+            onRepeatQuest={handleRepeatQuest}
+            questProgress={questProgress}
+            onUpgradeBuilding={upgradeBuilding}
+            abilities={abilities}
+            onActivateAbility={activateAbility}
+            weaponMode={currentWeapon}
+            onRunnerClick={() => setShowRunner(true)}
+          />
         )}
 
         {showRunner && (

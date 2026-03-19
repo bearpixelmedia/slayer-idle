@@ -140,7 +140,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     return state.upgradeLevels[id] || 0;
   }
 
-  function getTapDamage(s = state, weapon = currentWeapon) {
+  function getTapDamage(s = state, weapon = currentWeapon, buffs = activeBuffs) {
     let damage = 1;
     UPGRADES.forEach(u => {
       const level = s.upgradeLevels[u.id] || 0;
@@ -153,7 +153,8 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     });
     const soulBonus = 1 + (s.souls * 0.05);
     const skillMults = getSkillMultipliers(s.unlockedSkills);
-    return Math.floor(damage * soulBonus * damageMultiplier * skillMults.damageMultiplier);
+    const buffMult = getBuffMultiplier(buffs, "tapDamageMultiplier");
+    return Math.floor(damage * soulBonus * damageMultiplier * skillMults.damageMultiplier * buffMult);
   }
 
   function getIdleCPS(s = state) {

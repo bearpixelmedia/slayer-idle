@@ -1,15 +1,15 @@
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import UpgradeShop from "@/components/game/UpgradeShop";
+import SkillTree from "@/components/game/SkillTree";
+import AchievementsPanel from "@/components/game/AchievementsPanel";
+import PrestigePanel from "@/components/game/PrestigePanel";
+import VillagePanel from "@/components/game/VillagePanel";
+import QuestLog from "@/components/game/QuestLog";
+import ZoneSelector from "@/components/game/ZoneSelector";
+import AbilityBar from "@/components/game/AbilityBar";
 
 export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestige, onRevive, unlockedIds, damageMultiplier, offlineMultiplier, onSwitchZone, onUnlockZone, onClaimQuestReward, onRepeatQuest, questProgress, onUpgradeBuilding, abilities, onActivateAbility, weaponMode }) {
-  const UpgradeShop = require("@/components/game/UpgradeShop").default;
-  const SkillTree = require("@/components/game/SkillTree").default;
-  const AchievementsPanel = require("@/components/game/AchievementsPanel").default;
-  const PrestigePanel = require("@/components/game/PrestigePanel").default;
-  const VillagePanel = require("@/components/game/VillagePanel").default;
-  const QuestLog = require("@/components/game/QuestLog").default;
-  const ZoneSelector = require("@/components/game/ZoneSelector").default;
-  const AbilityBar = require("@/components/game/AbilityBar").default;
 
   return (
     <Tabs defaultValue="combat" className="w-full">

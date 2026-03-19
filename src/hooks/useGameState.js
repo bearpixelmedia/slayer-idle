@@ -46,6 +46,7 @@ function defaultState() {
     currentEnemyName: STAGES[0].enemies[0],
     isBossActive: false,
     lastSave: Date.now(),
+    saveVersion: SAVE_VERSION,
   };
 }
 

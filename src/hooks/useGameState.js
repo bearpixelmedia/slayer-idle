@@ -511,6 +511,33 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   const canPrestige = baseSoulsOnPrestige > 0;
   const slayerPointsOnPrestige = getSlayerPointsOnPrestige(state.souls + soulsOnPrestige);
 
+  const switchZone = useCallback((zoneId) => {
+    if (!state.unlockedZoneIds.includes(zoneId)) return;
+    setState(prev => {
+      const zp = prev.zoneProgress[zoneId];
+      return {
+        ...prev,
+        activeZoneId: zoneId,
+        stage: zp.stage,
+        killCount: zp.killCount,
+        highestStage: zp.highestStage,
+      };
+    });
+  }, [state.unlockedZoneIds]);
+
+  const unlockZone = useCallback((zoneId) => {
+    if (!canUnlockZone(zoneId, state.unlockedZoneIds, state.zoneProgress, state.slayerPoints)) return;
+    
+    const zone = ZONES.find(z => z.id === zoneId);
+    if (!zone?.unlockRequirement) return;
+
+    setState(prev => ({
+      ...prev,
+      unlockedZoneIds: [...prev.unlockedZoneIds, zoneId],
+      slayerPoints: prev.slayerPoints - zone.unlockRequirement.spCost,
+    }));
+  }, [state.unlockedZoneIds, state.zoneProgress, state.slayerPoints]);
+
   return {
     state,
     floatingCoins,
@@ -537,5 +564,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     enemyHit,
     currentWeapon,
     setCurrentWeapon,
+    switchZone,
+    unlockZone,
   };
 }

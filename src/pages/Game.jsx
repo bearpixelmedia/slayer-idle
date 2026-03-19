@@ -110,8 +110,8 @@ export default function Game() {
             </button>
           </div>
         )}
-        {!showRunner && <AbilityBar abilities={abilities} onActivate={activateAbility} />
-        <PrestigePanel
+        {!showRunner && <AbilityBar abilities={abilities} onActivate={activateAbility} />}
+        {!showRunner && <PrestigePanel
           canPrestige={canPrestige}
           soulsOnPrestige={soulsOnPrestige}
           slayerPointsOnPrestige={slayerPointsOnPrestige}

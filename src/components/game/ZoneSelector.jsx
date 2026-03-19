@@ -18,7 +18,7 @@ export default function ZoneSelector({
           <span className="text-lg">🗺️</span>
           <span className="font-pixel text-[9px] text-primary">ZONES</span>
           <span className="font-pixel text-[8px] text-muted-foreground ml-auto">
-            {unlockedZoneIds.length} / {ZONES.length}
+            {(unlockedZoneIds || []).length} / {ZONES.length}
           </span>
         </div>
       </div>

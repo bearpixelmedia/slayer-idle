@@ -84,7 +84,7 @@ export default function Game() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="fixed inset-0 bg-background flex flex-col">
       <StatsBar
         state={state}
         tapDamage={getTapDamage()}
@@ -96,46 +96,77 @@ export default function Game() {
         bowUnlocked={state.upgradeLevels["bow"] > 0}
         onModeChange={setCurrentWeapon}
       />
-      {!showRunner ? (
-        <GameCanvas
-          state={state}
-          enemyDying={enemyDying}
-          floatingCoins={floatingCoins}
-          floatingSouls={floatingSouls}
-          floatingDamage={floatingDamage}
-          particles={particles}
-          slashEffects={slashEffects}
-          onTap={handleTap}
-          enemyHit={enemyHit}
-          weaponMode={currentWeapon}
-        />
-      ) : (
-        <RunnerCanvas
-          playerY={runner.playerY}
-          obstacles={runner.obstacles}
-          score={runner.score}
-          isGameOver={runner.isGameOver}
-          gameStarted={runner.gameStarted}
-          onTap={() => {
-            if (!runner.gameStarted) runner.startGame();
-            else if (runner.isGameOver) runner.resetGame();
-            else runner.handleJump();
-          }}
-        />
-      )}
-      <ScrollArea className="flex-1">
+      
+      <div className="flex-1 relative overflow-hidden">
+        {!showRunner ? (
+          <GameCanvas
+            state={state}
+            enemyDying={enemyDying}
+            floatingCoins={floatingCoins}
+            floatingSouls={floatingSouls}
+            floatingDamage={floatingDamage}
+            particles={particles}
+            slashEffects={slashEffects}
+            onTap={handleTap}
+            enemyHit={enemyHit}
+            weaponMode={currentWeapon}
+          />
+        ) : (
+          <RunnerCanvas
+            playerY={runner.playerY}
+            obstacles={runner.obstacles}
+            score={runner.score}
+            isGameOver={runner.isGameOver}
+            gameStarted={runner.gameStarted}
+            onTap={() => {
+              if (!runner.gameStarted) runner.startGame();
+              else if (runner.isGameOver) runner.resetGame();
+              else runner.handleJump();
+            }}
+          />
+        )}
+
         {!showRunner && (
-          <div className="px-4 py-2">
-            <button
-              onClick={() => setShowRunner(true)}
-              className="w-full py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"
-            >
-              🏃 RUNNER MINIGAME
-            </button>
+          <div className="absolute inset-0 top-0 pointer-events-none">
+            <ScrollArea className="absolute inset-0 pointer-events-auto">
+              <div className="px-4 py-2">
+                <button
+                  onClick={() => setShowRunner(true)}
+                  className="w-full py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"
+                >
+                  🏃 RUNNER MINIGAME
+                </button>
+              </div>
+              <GameTabs
+                state={state}
+                onBuyUpgrade={buyUpgrade}
+                onUnlockSkill={unlockSkill}
+                onPrestige={prestige}
+                onRevive={revive}
+                unlockedIds={unlockedIds}
+                damageMultiplier={damageMultiplier}
+                offlineMultiplier={offlineMultiplier}
+                onSwitchZone={switchZone}
+                onUnlockZone={unlockZone}
+                onClaimQuestReward={handleClaimQuestReward}
+                onRepeatQuest={handleRepeatQuest}
+                questProgress={questProgress}
+                onUpgradeBuilding={upgradeBuilding}
+                abilities={abilities}
+                onActivateAbility={activateAbility}
+                weaponMode={currentWeapon}
+              />
+              <div className="px-4 py-6 text-center">
+                <p className="font-pixel text-[7px] text-muted-foreground/30">
+                  SLAYER IDLE • TAP & PRESTIGE RPG
+                </p>
+              </div>
+            </ScrollArea>
           </div>
         )}
+
         {showRunner && (
-          <div className="px-4 py-2">
+          <div className="absolute bottom-4 left-4 right-4">
             <button
               onClick={() => setShowRunner(false)}
               className="w-full py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"
@@ -144,35 +175,8 @@ export default function Game() {
             </button>
           </div>
         )}
-        {!showRunner && (
-          <>
-            <GameTabs
-              state={state}
-              onBuyUpgrade={buyUpgrade}
-              onUnlockSkill={unlockSkill}
-              onPrestige={prestige}
-              onRevive={revive}
-              unlockedIds={unlockedIds}
-              damageMultiplier={damageMultiplier}
-              offlineMultiplier={offlineMultiplier}
-              onSwitchZone={switchZone}
-              onUnlockZone={unlockZone}
-              onClaimQuestReward={handleClaimQuestReward}
-              onRepeatQuest={handleRepeatQuest}
-              questProgress={questProgress}
-              onUpgradeBuilding={upgradeBuilding}
-              abilities={abilities}
-              onActivateAbility={activateAbility}
-              weaponMode={currentWeapon}
-            />
-            <div className="px-4 py-6 text-center">
-              <p className="font-pixel text-[7px] text-muted-foreground/30">
-                SLAYER IDLE • TAP & PRESTIGE RPG
-              </p>
-            </div>
-          </>
-        )}
-      </ScrollArea>
+      </div>
+
       <AchievementToast achievement={newUnlock} />
       <OfflineEarningsModal
         earnings={offlineEarnings}

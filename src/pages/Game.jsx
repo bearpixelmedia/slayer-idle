@@ -39,6 +39,7 @@ export default function Game() {
     handleTap,
     buyUpgrade,
     prestige,
+    revive,
     canPrestige,
     soulsOnPrestige,
     slayerPointsOnPrestige,

@@ -7,20 +7,13 @@ import { computeAchievementMultipliers } from "@/lib/achievements";
 import StatsBar from "@/components/game/StatsBar";
 import GameCanvas from "@/components/game/GameCanvas";
 import RunnerCanvas from "@/components/game/RunnerCanvas";
-import UpgradeShop from "@/components/game/UpgradeShop";
-import PrestigePanel from "@/components/game/PrestigePanel";
-import SkillTree from "@/components/game/SkillTree";
-import AbilityBar from "@/components/game/AbilityBar";
-import AchievementsPanel from "@/components/game/AchievementsPanel";
 import AchievementToast from "@/components/game/AchievementToast";
 import OfflineEarningsModal from "@/components/game/OfflineEarningsModal";
 import DeathModal from "@/components/game/DeathModal";
-import ZoneSelector from "@/components/game/ZoneSelector";
-import QuestLog from "@/components/game/QuestLog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import WeaponMode from "@/components/game/WeaponMode";
 import ActiveBuffsDisplay from "@/components/game/ActiveBuffsDisplay";
-import VillagePanel from "@/components/game/VillagePanel";
+import GameTabs from "@/components/game/GameTabs";
 
 function loadSavedMultipliers() {
   try {
@@ -153,40 +146,25 @@ export default function Game() {
         )}
         {!showRunner && (
           <>
-            <ZoneSelector
-              activeZoneId={state.activeZoneId}
-              unlockedZoneIds={state.unlockedZoneIds}
-              zoneProgress={state.zoneProgress}
-              slayerPoints={state.slayerPoints}
-              onSwitchZone={switchZone}
-              onUnlockZone={unlockZone}
-            />
-            <QuestLog
-              questProgress={questProgress}
-              onClaimReward={handleClaimQuestReward}
-              onRepeatQuest={handleRepeatQuest}
-              unlockedZoneIds={state.unlockedZoneIds}
-            />
-            <AbilityBar abilities={abilities} onActivate={activateAbility} weaponMode={currentWeapon} />
-            <PrestigePanel
-              canPrestige={canPrestige}
-              soulsOnPrestige={soulsOnPrestige}
-              slayerPointsOnPrestige={slayerPointsOnPrestige}
-              currentSouls={state.souls}
+            <GameTabs
+              state={state}
+              onBuyUpgrade={buyUpgrade}
+              onUnlockSkill={unlockSkill}
               onPrestige={prestige}
-            />
-            <SkillTree
-              slayerPoints={state.slayerPoints}
-              unlockedSkillIds={state.unlockedSkills}
-              onUnlock={unlockSkill}
-            />
-            <AchievementsPanel
+              onRevive={revive}
               unlockedIds={unlockedIds}
               damageMultiplier={damageMultiplier}
               offlineMultiplier={offlineMultiplier}
+              onSwitchZone={switchZone}
+              onUnlockZone={unlockZone}
+              onClaimQuestReward={handleClaimQuestReward}
+              onRepeatQuest={handleRepeatQuest}
+              questProgress={questProgress}
+              onUpgradeBuilding={upgradeBuilding}
+              abilities={abilities}
+              onActivateAbility={activateAbility}
+              weaponMode={currentWeapon}
             />
-            <VillagePanel state={state} onUpgradeBuilding={upgradeBuilding} />
-            <UpgradeShop state={state} onBuy={buyUpgrade} />
             <div className="px-4 py-6 text-center">
               <p className="font-pixel text-[7px] text-muted-foreground/30">
                 SLAYER IDLE • TAP & PRESTIGE RPG

@@ -65,15 +65,30 @@ export default function Game() {
         tapDamage={getTapDamage()}
         idleCPS={getIdleCPS()}
       />
-      <GameCanvas
-        state={state}
-        enemyDying={enemyDying}
-        floatingCoins={floatingCoins}
-        particles={particles}
-        slashEffects={slashEffects}
-        onTap={handleTap}
-        enemyHit={enemyHit}
-      />
+      {!showRunner ? (
+        <GameCanvas
+          state={state}
+          enemyDying={enemyDying}
+          floatingCoins={floatingCoins}
+          particles={particles}
+          slashEffects={slashEffects}
+          onTap={handleTap}
+          enemyHit={enemyHit}
+        />
+      ) : (
+        <RunnerCanvas
+          playerY={runner.playerY}
+          obstacles={runner.obstacles}
+          score={runner.score}
+          isGameOver={runner.isGameOver}
+          gameStarted={runner.gameStarted}
+          onTap={() => {
+            if (!runner.gameStarted) runner.startGame();
+            else if (runner.isGameOver) runner.resetGame();
+            else runner.handleJump();
+          }}
+        />
+      )}
       <ScrollArea className="flex-1">
         <AbilityBar abilities={abilities} onActivate={activateAbility} />
         <PrestigePanel

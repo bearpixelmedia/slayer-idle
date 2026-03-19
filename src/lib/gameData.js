@@ -1,11 +1,11 @@
 // Game stages data
 export const STAGES = [
-  { name: "Goblin Warren", bgGradient: "from-green-900 to-green-800", color: "#22c55e" },
-  { name: "Dark Forest", bgGradient: "from-blue-900 to-blue-800", color: "#3b82f6" },
-  { name: "Crystal Caverns", bgGradient: "from-cyan-900 to-cyan-800", color: "#06b6d4" },
-  { name: "Volcanic Peak", bgGradient: "from-orange-900 to-red-900", color: "#f97316" },
-  { name: "Celestial Realm", bgGradient: "from-purple-900 to-indigo-900", color: "#a855f7" },
-  { name: "Abyss", bgGradient: "from-slate-900 to-black", color: "#64748b" },
+  { name: "Goblin Warren", bgGradient: "from-green-900 to-green-800", color: "#22c55e", enemies: ["Goblin", "Orc"] },
+  { name: "Dark Forest", bgGradient: "from-blue-900 to-blue-800", color: "#3b82f6", enemies: ["Orc", "Skeleton"] },
+  { name: "Crystal Caverns", bgGradient: "from-cyan-900 to-cyan-800", color: "#06b6d4", enemies: ["Skeleton", "Vampire"] },
+  { name: "Volcanic Peak", bgGradient: "from-orange-900 to-red-900", color: "#f97316", enemies: ["Vampire", "Dragon"] },
+  { name: "Celestial Realm", bgGradient: "from-purple-900 to-indigo-900", color: "#a855f7", enemies: ["Dragon", "Lich"] },
+  { name: "Abyss", bgGradient: "from-slate-900 to-black", color: "#64748b", enemies: ["Lich"] },
 ];
 
 // Zone definitions

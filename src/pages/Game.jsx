@@ -85,21 +85,23 @@ export default function Game() {
 
   return (
     <div className="fixed inset-0 bg-background flex flex-col lg:flex-row">
-      {/* Portrait/Mobile: Top bar */}
-      <div className="lg:hidden flex flex-col flex-1 overflow-hidden">
-        <StatsBar
-          state={state}
-          tapDamage={getTapDamage()}
-          idleCPS={getIdleCPS()}
-        />
-        <ActiveBuffsDisplay activeBuffs={activeBuffs} />
-        <WeaponMode
-          currentMode={currentWeapon}
-          bowUnlocked={state.upgradeLevels["bow"] > 0}
-          onModeChange={setCurrentWeapon}
-        />
+      {/* Portrait/Mobile: Full screen */}
+      <div className="lg:hidden w-full h-full flex flex-col">
+        <div className="flex-shrink-0">
+          <StatsBar
+            state={state}
+            tapDamage={getTapDamage()}
+            idleCPS={getIdleCPS()}
+          />
+          <ActiveBuffsDisplay activeBuffs={activeBuffs} />
+          <WeaponMode
+            currentMode={currentWeapon}
+            bowUnlocked={state.upgradeLevels["bow"] > 0}
+            onModeChange={setCurrentWeapon}
+          />
+        </div>
 
-        <div className="flex-1 relative overflow-hidden">
+        <div className="flex-1 relative w-full">
           {!showRunner ? (
             <GameCanvas
               state={state}
@@ -129,7 +131,7 @@ export default function Game() {
           )}
 
           {!showRunner && (
-            <div className="absolute inset-0 top-0 pointer-events-none">
+            <div className="absolute inset-0 pointer-events-none">
               <ScrollArea className="absolute inset-0 pointer-events-auto">
                 <div className="px-4 py-2">
                   <button
@@ -168,7 +170,7 @@ export default function Game() {
           )}
 
           {showRunner && (
-            <div className="absolute bottom-4 left-4 right-4">
+            <div className="absolute bottom-4 left-4 right-4 z-10">
               <button
                 onClick={() => setShowRunner(false)}
                 className="w-full py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"

@@ -629,7 +629,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     unlockSkill,
     abilities,
     activateAbility,
-    getTapDamage: () => getTapDamage(state),
+    getTapDamage: () => getTapDamage(state, currentWeapon, activeBuffs),
     getIdleCPS: () => getIdleCPS(state),
     getUpgradeLevel,
     enemyHit,
@@ -637,5 +637,6 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     setCurrentWeapon,
     switchZone,
     unlockZone,
+    activeBuffs,
   };
 }

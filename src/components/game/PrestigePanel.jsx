@@ -42,14 +42,30 @@ export default function PrestigePanel({ canPrestige, soulsOnPrestige, slayerPoin
             <AlertDialogContent className="bg-card border-border">
               <AlertDialogHeader>
                 <AlertDialogTitle className="font-pixel text-sm text-accent">Confirm Prestige</AlertDialogTitle>
-                <AlertDialogDescription className="text-muted-foreground">
-                  This will reset all your coins and upgrades, but you'll gain{" "}
-                  <span className="text-accent font-bold">+{formatNumber(soulsOnPrestige)} souls</span>
-                  {" "}and <span className="text-primary font-bold">+{formatNumber(slayerPointsOnPrestige)} Slayer Points</span>.
-                  <br /><br />
-                  You currently have <span className="text-accent">{formatNumber(currentSouls)} souls</span>.
-                  After prestige: <span className="text-accent">{formatNumber(currentSouls + soulsOnPrestige)} souls</span>
-                  {" "}(+{formatNumber((currentSouls + soulsOnPrestige) * 5)}% bonus)
+                <AlertDialogDescription className="text-muted-foreground space-y-3">
+                  <div>
+                    <p className="font-semibold text-foreground mb-2">You will gain:</p>
+                    <div className="flex gap-4 text-sm">
+                      <div>
+                        <p className="text-accent font-bold">+{formatNumber(soulsOnPrestige)} 👻</p>
+                        <p className="text-[10px]">Souls</p>
+                      </div>
+                      <div>
+                        <p className="text-primary font-bold">+{formatNumber(slayerPointsOnPrestige)} 🌳</p>
+                        <p className="text-[10px]">Slayer Points</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="pt-2 border-t border-border/30">
+                    <p className="text-[10px] text-muted-foreground/80">
+                      <span className="text-foreground font-semibold">Why prestige?</span> Unlock powerful skills, multiply your earnings by {((currentSouls + soulsOnPrestige) * 5)}%, and break through cost walls with fresh upgrades.
+                    </p>
+                  </div>
+                  <div className="pt-2">
+                    <p className="text-[10px]">
+                      Currently: <span className="text-accent">{formatNumber(currentSouls)} souls</span> → After: <span className="text-accent">{formatNumber(currentSouls + soulsOnPrestige)} souls</span>
+                    </p>
+                  </div>
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>

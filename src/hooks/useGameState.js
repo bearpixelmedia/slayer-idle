@@ -126,7 +126,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     return state.upgradeLevels[id] || 0;
   }
 
-  function getTapDamage(s = state) {
+  function getTapDamage(s = state, weapon = currentWeapon) {
     let damage = 1;
     UPGRADES.forEach(u => {
       const level = s.upgradeLevels[u.id] || 0;

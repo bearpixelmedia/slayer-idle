@@ -287,6 +287,8 @@ export default function useGameState() {
     prestige,
     canPrestige,
     soulsOnPrestige,
+    abilities,
+    activateAbility,
     getTapDamage: () => getTapDamage(state),
     getIdleCPS: () => getIdleCPS(state),
     getUpgradeLevel,

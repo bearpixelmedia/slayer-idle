@@ -1,10 +1,23 @@
-# Slayer Idle — Base44 master prompt & build plan (codebase-aligned)
+# Slayer Idle — Codebase guide (Cursor-first)
 
-This document is tailored to **this repository** ([`bearpixelmedia/slayer-idle`](https://github.com/bearpixelmedia/slayer-idle)): React + Vite + Tailwind + shadcn-style UI, Framer Motion, local save in `localStorage`.
+This file is tailored to **this repository** ([`bearpixelmedia/slayer-idle`](https://github.com/bearpixelmedia/slayer-idle)): React + Vite + Tailwind + shadcn-style UI, Framer Motion, local save in `localStorage`.
+
+### Which tool uses what here
+
+| Section | **Cursor** | **Base44** |
+|---------|------------|------------|
+| **§1** — What already exists | **Primary:** read this table; `@` linked files when asking for changes | Optional: copy 2–3 sentences + “extend these files, don’t restart” |
+| **§2** — Shorter master spec | Optional `@` reference | **Optional duplicate** of [BASE44_PROMPT_PACK.md](./BASE44_PROMPT_PACK.md) Part A + repo constraints—use **one** of Part A (pack) or §2 (here), not both, to avoid drift |
+| **§3** — Alignment sprint | **Primary:** paste **§3 Cursor** into chat + `@useGameState.js` `@skillTree.js` | **§3 Base44:** paste the `text` block into Base44 chat |
+| **§4** — Phased roadmap | **Preferred** for economy/math (`gameData.js`, prestige formulas) | **Preferred** for big UI features (quests panel, new tabs) — or paste the matching **Part C** block from the prompt pack |
+
+**Master design spec for Base44 AI Controls:** use **Part A** in [BASE44_PROMPT_PACK.md](./BASE44_PROMPT_PACK.md), not this file alone.
 
 ---
 
 ## 1. What already exists (tell Base44 “extend, don’t restart”)
+
+**CURSOR:** keep this open as context. **BASE44:** only if you need to remind the builder what’s in the repo.
 
 | Area | Implementation | Key files |
 |------|------------------|-----------|
@@ -21,7 +34,9 @@ This document is tailored to **this repository** ([`bearpixelmedia/slayer-idle`]
 | **Achievements** | ~16 tracked achievements; damage + offline multipliers | [`src/lib/achievements.js`](../src/lib/achievements.js), [`useAchievements.js`](../src/hooks/useAchievements.js) |
 | **Offline** | Modal + partial idle coin accrual (capped) | [`OfflineEarningsModal.jsx`](../src/components/game/OfflineEarningsModal.jsx), `useGameState` |
 
-### Known gaps vs intended design (good Base44 fix prompts)
+### Known gaps vs intended design
+
+**CURSOR:** fix these locally first when possible. **BASE44:** paste §3 Base44 block below.
 
 1. **`getSkillMultipliers` is imported in `useGameState.js` but never applied** — skill unlocks do not yet change damage, idle CPS, or drops.
 2. **Unlocking a skill does not deduct Slayer Points** — UI checks `slayerPoints >= cost`, but `unlockSkill` only appends IDs; SP never decreases.
@@ -29,9 +44,11 @@ This document is tailored to **this repository** ([`bearpixelmedia/slayer-idle`]
 
 ---
 
-## 2. Master spec prompt (paste into Base44 AI Controls or top of a long chat)
+## 2. Master spec (repo-flavored) — optional for Base44
 
-Use this as the **single source of truth**. For every follow-up, add: *“Respect existing files in this repo; extend `useGameState`, `gameData`, and components under `src/components/game/`.”*
+**BASE44:** Optional. If you already pasted **Part A** from [BASE44_PROMPT_PACK.md](./BASE44_PROMPT_PACK.md) into AI Controls, you **do not need** this block—skip to §3 or Part C in the pack.
+
+If you use this block, add: *“Respect existing files in this repo; extend `useGameState`, `gameData`, and components under `src/components/game/`.”*
 
 ```text
 PROJECT: Slayer Idle (Base44 + Vite/React). This is an original medieval-fantasy incremental game inspired by the IDLE + AUTO-RUNNER + light RPG loop (not a clone of any commercial title—original name, assets, and numbers).
@@ -88,9 +105,27 @@ REQUIRED FIXES TO ALIGN CODE WITH DESIGN
 
 ---
 
-## 3. First concrete prompt to send Base44 (alignment sprint)
+## 3. Alignment sprint (skill tree ↔ economy)
 
-Send **one** message focused on correctness before huge new features:
+Do this **before** big Part C features. Pick **one** tool (or do the work in Cursor, then push).
+
+### 3a. CURSOR — recommended wording
+
+Copy into Cursor chat (add `@` to files as you attach them):
+
+```text
+In this Slayer Idle repo (@src/hooks/useGameState.js @src/lib/skillTree.js), align the skill tree with the combat economy:
+
+1) Wire getSkillMultipliers(state.unlockedSkills) into useGameState so tap damage, idle damage/CPS, and coin rewards from kills respect damageMultiplier, idleMultiplier, coinDropMultiplier, soulMultiplier from skillTree.js.
+
+2) Fix unlockSkill: when a skill is purchased, subtract skill.cost from slayerPoints in the same state update (only if prerequisites + SP are valid). Keep unlockedSkills and slayerPoints consistent.
+
+3) Add a brief comment in skillTree.js listing which multiplier affects which stat.
+
+Do not rename public components or change Game.jsx layout unless necessary. Preserve localStorage key idle_slayer_save; default new fields for old saves.
+```
+
+### 3b. BASE44 — paste this block
 
 ```text
 In this Slayer Idle repo, align the skill tree with the combat economy:
@@ -106,9 +141,9 @@ Do not rename public components or change the overall Game.jsx layout unless nec
 
 ---
 
-## 4. Phased roadmap (one Base44 prompt per phase)
+## 4. Phased roadmap (after alignment)
 
-After the alignment sprint, use **one theme per message** (Base44 best practice).
+**CURSOR** for rows that are mostly numbers (`getEnemyHP`, prestige, `gameData`). **BASE44** (or Part C in the prompt pack) for UI-heavy work (runner, quests UI, minions screen). **One theme per session** either way.
 
 | Phase | Goal | Prompt focus |
 |-------|------|----------------|
@@ -129,11 +164,12 @@ Between phases, playtest and adjust **one formula file** (`gameData.js`) when po
 
 ## 5. Optional: replace footer copy
 
-[`Game.jsx`](../src/pages/Game.jsx) currently shows `IDLE SLAYER CLONE` — for store/legal comfort, prompt Base44 to change to an original tagline (e.g. “Slayer Idle — tap & prestige RPG”).
+[`Game.jsx`](../src/pages/Game.jsx) currently shows `IDLE SLAYER CLONE` — **CURSOR:** edit directly. **BASE44:** “Change footer to an original tagline (e.g. Slayer Idle — tap & prestige RPG); don’t change layout.”
 
 ---
 
-## 6. References
+## 6. References & paired doc
 
-- Base44 prompt formula & step-by-step builds: [Prompt guide](https://docs.base44.com/Getting-Started/Prompt-guide)
+- **All Base44 copy-paste prompts (Parts A–D):** [BASE44_PROMPT_PACK.md](./BASE44_PROMPT_PACK.md)
+- Base44 prompt formula: [Prompt guide](https://docs.base44.com/Getting-Started/Prompt-guide)
 - GitHub sync: [Using GitHub](https://docs.base44.com/Integrations/Using-GitHub)

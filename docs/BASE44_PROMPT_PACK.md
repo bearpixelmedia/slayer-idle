@@ -1,8 +1,24 @@
 # Base44 prompt pack: Slayer Idle
 
+## Where each tool uses this file
+
+**Everything below that is a `text` block or a “Phase N” template is meant to be copied into Base44** (AI Controls or chat). **Do not paste those same blocks into Cursor**—Cursor works better with file paths and “implement X in `useGameState.js`.”
+
+| If you want to… | Use **Base44** | Use **Cursor** |
+|-----------------|----------------|----------------|
+| Give the app a **lasting design brief** | Paste **Part A** into Base44 **AI Controls** | Optional: `@docs/BASE44_PROMPT_PACK.md` so the AI has context—**you are not pasting Part A as the whole message** |
+| **First build** or **MVP refresh** | Paste **Part B** (greenfield **or** existing-repo version) | Say: “Implement Part B goals in this repo” + `@Game.jsx` `@useGameState.js` |
+| **Add features** after MVP | Paste **one** block from **Part C** per chat turn | Say: “Do Phase 1 from `@docs/BASE44_PROMPT_PACK.md`” or describe the same feature with `@` files |
+| **Runner too heavy** | Paste **Fallback** block | Same, or implement simplified runner locally |
+| **See what’s already coded / file map / alignment fixes** | Optional short paste into Base44 | Read **[BASE44_MASTER_PROMPT.md](./BASE44_MASTER_PROMPT.md)** in Cursor (that doc is **Cursor-first**; it also has one Base44-paste block for alignment) |
+
+**Rule of thumb:** **Base44** = paste the pre-written prompts from **this** file. **Cursor** = open the repo, `@` the files you care about, and ask in your own words (or “follow Phase N in BASE44_PROMPT_PACK.md”).
+
+---
+
 Use this file with [Base44’s prompt guide](https://docs.base44.com/Getting-Started/Prompt-guide): define **function**, **layout**, and **visual style**; build **one feature per message** after MVP.
 
-**Checklist (your actions in Base44)**
+### Checklist (Base44 only)
 
 1. Copy **Part A** below into Base44 **AI Controls** (or paste at the start of a new project chat) — single source of truth for every follow-up.
 2. Send **Part B** as your **first build message** (greenfield). If you already use the GitHub-linked repo, send **Part B (existing repo)** instead.
@@ -11,9 +27,38 @@ Use this file with [Base44’s prompt guide](https://docs.base44.com/Getting-Sta
 
 ---
 
+## Base44 vs Cursor (using both) — deeper detail
+
+**Source of truth:** Treat **GitHub + your local repo** as canonical for game logic and state. After you change code in Base44, **pull or copy** those changes into this repo (or push from Cursor first so Base44 builds on the latest).
+
+| Use **Cursor** for | Use **Base44** for |
+|--------------------|--------------------|
+| `useGameState.js`, prestige/save shape, damage & reward math | Pinning **Part A** in AI Controls and **one Part C message per feature** |
+| `gameData.js`, `skillTree.js`, `achievements.js` (tables & formulas) | Layout experiments, new panels/tabs, “make the Run panel taller / mobile tabs” |
+| Bugfixes, refactors, TypeScript/types, lint, tests | Quick UI polish, copy/tooltips, color tweaks when you want speed over a clean commit |
+| Anything you want **reviewed line-by-line** before it ships | Prototyping a big UI idea you might throw away |
+
+**Workflow that avoids conflicts**
+
+1. **Cursor first** when touching `useGameState.js` / `gameData.js` / prestige or save keys—then **push** to GitHub before a big Base44 pass.
+2. **Base44** for the next **single** feature from Part C; start the prompt with: *“The project is synced from GitHub at bearpixelmedia/slayer-idle—only change files that need to change for this feature.”*
+3. End of session: if Base44 changed the app, **reconcile** (export/pull per [Base44 + GitHub docs](https://docs.base44.com/Integrations/Using-GitHub)) so Cursor matches production.
+
+**What to paste into Base44 (feature prompts)**
+
+- Always imply context: *“Slayer Idle Vite/React repo; follow MASTER SPEC in AI Controls.”*
+- **Good Base44 asks:** “Add a quest panel below achievements; wire to a `QUESTS` array in `src/lib/` with three starter quests.” / “Restyle the skill tree cards to look more 16-bit; don’t change prestige math.” / “Add jump: spacebar + tap upper half of Run panel; keep existing tap-to-attack on enemy.”
+- **Better in Cursor:** “Refactor `getEnemyHP` and `getEnemyReward` to use a shared difficulty curve + unit-style tests.” / “Fix skill unlock to deduct SP atomically.” / “Migrate save JSON with a `saveVersion` field.”
+
+Codebase-specific fixes and file map live in [BASE44_MASTER_PROMPT.md](./BASE44_MASTER_PROMPT.md) (including the **alignment sprint** you can run in either tool).
+
+---
+
 ## Part A — Master spec (full vision)
 
-*Paste everything in the block into Base44 AI Controls or keep it at the top of your design doc.*
+**BASE44 — paste this.** (Cursor: do not paste; use `@docs/BASE44_PROMPT_PACK.md` if you need the AI to read it.)
+
+*Paste everything in the block into Base44 AI Controls or the start of a new project chat.*
 
 ```text
 MASTER SPEC — SLAYER IDLE (original medieval-fantasy incremental game; inspired by idle + auto-runner + light RPG loops; not a clone of any existing commercial game—use original names, art, and balance)
@@ -72,7 +117,7 @@ Original IP only; if full physics auto-runner is constrained on the platform, us
 
 ## Part B — First Base44 prompt (MVP only, greenfield)
 
-*Send this alone as the first build message if you are starting from scratch in Base44.*
+**BASE44 — paste this** (first build message, empty project). **Cursor:** skip this block; clone the repo and run `npm run dev` instead.
 
 ```text
 Create a web game app (single-player) called Slayer Idle—a medieval fantasy incremental game inspired by idle + auto-runner + light RPG loops.
@@ -90,7 +135,7 @@ MVP scope only: one zone, basic enemies, sword combat, jump, simple upgrades, as
 
 ### Part B — First prompt (existing GitHub repo)
 
-*Use this if the project is already the slayer-idle Vite/React repo synced with Base44.*
+**BASE44 — paste this** (first message when the app is already this GitHub repo). **Cursor:** use [BASE44_MASTER_PROMPT.md §3](./BASE44_MASTER_PROMPT.md) for the alignment sprint first, then feature work with `@` files.
 
 ```text
 This repo is Slayer Idle (Vite + React). Extend the existing game—do not rebuild from scratch.
@@ -108,13 +153,15 @@ Do not add casino, village, or minigames in this message.
 
 ### After Part B — MVP verification (manual)
 
-Confirm in the running app: **run / attack** → **earn coins (and souls if implemented)** → **buy upgrades** → **progress slows (wall)** → **Ascend** → **gain SP** → **unlock at least one skill tree node** → **achievements counter updates**. If anything is missing, fix in the next Base44 message before Part C.
+**You** (playtest in browser / `npm run dev`) — not something to paste into either AI. Confirm: **run / attack** → **earn coins (and souls if implemented)** → **buy upgrades** → **progress slows (wall)** → **Ascend** → **gain SP** → **unlock at least one skill tree node** → **achievements counter updates**. If anything is missing, fix in the next **Base44** message or **Cursor** task before Part C.
 
 ---
 
 ## Part C — Phased follow-up prompts (one message per phase)
 
-After MVP works, add **one layer per message**. Each block is a template you can send as-is or tighten.
+**BASE44 — paste one phase block per chat message.** **Cursor:** same phases, but prompt like: “Implement Phase 1 from BASE44_PROMPT_PACK” + `@useGameState.js` `@GameCanvas.jsx` (Cursor will read the doc; you don’t need to paste the whole `text` block unless you want to).
+
+After MVP works, add **one layer per message**. Each block below is a template for **Base44**.
 
 | Phase | Theme | Send when… |
 | ----- | ----- | ---------- |
@@ -202,6 +249,8 @@ Between phases, use Base44 **Discuss mode** when you only want to plan: [AI chat
 
 ## Part D — How to use this in practice
 
+**BASE44** workflow below. **Cursor:** same order, but commits + push instead of “AI Controls.”
+
 ```mermaid
 flowchart LR
   master[Part A in AI Controls]
@@ -219,7 +268,7 @@ flowchart LR
 
 ## Fallback — Real-time runner impractical
 
-If jump/physics runner is unstable or too heavy for the stack, send:
+**BASE44 — paste** if runner is unstable. **Cursor:** implement simplified runner locally, or paste this into Base44 if you want the builder to do it.
 
 ```text
 Replace the full physics auto-runner with a simplified run model: e.g. auto-advancing segments, timing windows for jump/attack, or side-scroller-lite with minimal collision. Keep the same master loop: kill enemies, earn coins and souls, upgrades, walls, Ascend for Slayer Points, skill tree, active faster than idle.

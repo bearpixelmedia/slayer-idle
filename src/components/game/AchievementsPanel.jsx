@@ -1,0 +1,130 @@
+import React, { useState } from "react";
+import { ACHIEVEMENTS } from "@/lib/achievements";
+import { motion, AnimatePresence } from "framer-motion";
+import { Trophy, ChevronDown, ChevronUp } from "lucide-react";
+
+const CATEGORIES = [
+  { id: "coins", label: "Coins", icon: "🪙" },
+  { id: "kills", label: "Kills", icon: "⚔️" },
+  { id: "prestige", label: "Prestige", icon: "👻" },
+  { id: "stages", label: "Stages", icon: "🗺️" },
+];
+
+function AchievementRow({ achievement, unlocked }) {
+  return (
+    <div className={`flex items-center gap-3 p-2.5 rounded-lg border transition-all ${
+      unlocked
+        ? "bg-primary/10 border-primary/30"
+        : "bg-muted/20 border-border/20 opacity-50"
+    }`}>
+      <span className="text-xl flex-shrink-0">{achievement.icon}</span>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2">
+          <span className={`text-sm font-semibold truncate ${unlocked ? "text-foreground" : "text-muted-foreground"}`}>
+            {achievement.name}
+          </span>
+          {unlocked && <span className="text-[8px] font-pixel text-primary">✓ DONE</span>}
+        </div>
+        <p className="text-[10px] text-muted-foreground truncate">{achievement.description}</p>
+      </div>
+      <div className={`text-right flex-shrink-0 px-2 py-1 rounded-md text-[8px] font-pixel ${
+        unlocked
+          ? achievement.reward.type === "damageMultiplier"
+            ? "bg-red-500/20 text-red-400"
+            : "bg-yellow-500/20 text-yellow-400"
+          : "bg-muted/30 text-muted-foreground"
+      }`}>
+        {achievement.rewardLabel}
+      </div>
+    </div>
+  );
+}
+
+export default function AchievementsPanel({ unlockedIds, damageMultiplier, offlineMultiplier }) {
+  const [open, setOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState("coins");
+
+  const unlockedCount = unlockedIds.length;
+  const totalCount = ACHIEVEMENTS.length;
+
+  const filtered = ACHIEVEMENTS.filter((a) => a.category === activeCategory);
+
+  return (
+    <div className="mx-4 mb-4 rounded-xl border border-border/50 overflow-hidden">
+      {/* Header toggle */}
+      <button
+        className="w-full flex items-center justify-between px-4 py-3 bg-card/60 hover:bg-card/80 transition-colors"
+        onClick={() => setOpen((o) => !o)}
+      >
+        <div className="flex items-center gap-2">
+          <Trophy className="w-4 h-4 text-primary" />
+          <span className="font-pixel text-[9px] text-primary">ACHIEVEMENTS</span>
+          <span className="font-pixel text-[8px] text-muted-foreground">{unlockedCount}/{totalCount}</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="hidden sm:flex items-center gap-3 text-[9px] font-pixel">
+            <span className="text-red-400">⚔ ×{damageMultiplier.toFixed(2)}</span>
+            <span className="text-yellow-400">🌙 ×{offlineMultiplier.toFixed(2)}</span>
+          </div>
+          {open ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
+        </div>
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            {/* Active multipliers summary */}
+            <div className="flex gap-3 px-4 pt-3 pb-2">
+              <div className="flex-1 p-2 rounded-lg bg-red-500/10 border border-red-500/20 text-center">
+                <p className="font-pixel text-[7px] text-muted-foreground">DAMAGE BONUS</p>
+                <p className="font-pixel text-xs text-red-400">×{damageMultiplier.toFixed(2)}</p>
+              </div>
+              <div className="flex-1 p-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-center">
+                <p className="font-pixel text-[7px] text-muted-foreground">OFFLINE BONUS</p>
+                <p className="font-pixel text-xs text-yellow-400">×{offlineMultiplier.toFixed(2)}</p>
+              </div>
+            </div>
+
+            {/* Category tabs */}
+            <div className="flex gap-1 px-4 pb-2">
+              {CATEGORIES.map((cat) => {
+                const catUnlocked = ACHIEVEMENTS.filter(a => a.category === cat.id && unlockedIds.includes(a.id)).length;
+                const catTotal = ACHIEVEMENTS.filter(a => a.category === cat.id).length;
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => setActiveCategory(cat.id)}
+                    className={`flex-1 py-1.5 rounded-lg text-[8px] font-pixel transition-all ${
+                      activeCategory === cat.id
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted/30 text-muted-foreground hover:bg-muted/50"
+                    }`}
+                  >
+                    {cat.icon} {catUnlocked}/{catTotal}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Achievement list */}
+            <div className="px-4 pb-4 flex flex-col gap-2">
+              {filtered.map((ach) => (
+                <AchievementRow
+                  key={ach.id}
+                  achievement={ach}
+                  unlocked={unlockedIds.includes(ach.id)}
+                />
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}

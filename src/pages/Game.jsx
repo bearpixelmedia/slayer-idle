@@ -83,6 +83,10 @@ export default function Game() {
         </div>
       </ScrollArea>
       <AchievementToast achievement={newUnlock} />
+      <OfflineEarningsModal
+        earnings={offlineEarnings}
+        onClose={() => setOfflineEarnings(null)}
+      />
     </div>
   );
 }

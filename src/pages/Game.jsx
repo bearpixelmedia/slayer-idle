@@ -20,6 +20,7 @@ import QuestLog from "@/components/game/QuestLog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import WeaponMode from "@/components/game/WeaponMode";
 import ActiveBuffsDisplay from "@/components/game/ActiveBuffsDisplay";
+import VillagePanel from "@/components/game/VillagePanel";
 
 function loadSavedMultipliers() {
   try {
@@ -66,6 +67,7 @@ export default function Game() {
     switchZone,
     unlockZone,
     activeBuffs,
+    upgradeBuilding,
   } = useGameState(initMultipliers);
 
   const { unlockedIds, newUnlock, damageMultiplier, offlineMultiplier } = useAchievements(state);
@@ -183,6 +185,7 @@ export default function Game() {
               damageMultiplier={damageMultiplier}
               offlineMultiplier={offlineMultiplier}
             />
+            <VillagePanel state={state} onUpgradeBuilding={upgradeBuilding} />
             <UpgradeShop state={state} onBuy={buyUpgrade} />
             <div className="px-4 py-6 text-center">
               <p className="font-pixel text-[7px] text-muted-foreground/30">

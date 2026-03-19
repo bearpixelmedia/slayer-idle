@@ -31,6 +31,7 @@ export default function Game() {
   // Load saved achievement multipliers synchronously so gameState starts with them
   const [initMultipliers] = React.useState(loadSavedMultipliers);
   const [showRunner, setShowRunner] = useState(false);
+  const [weaponMode, setWeaponMode] = useState("sword");
 
   const runner = useRunnerState();
 

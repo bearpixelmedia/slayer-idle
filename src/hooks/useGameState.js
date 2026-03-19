@@ -35,6 +35,7 @@ function defaultState() {
 const ABILITY_CONFIGS = {
   magnet: { duration: 10, cooldown: 45 },
   doubleDamage: { duration: 8, cooldown: 60 },
+  autoClicker: { duration: 10, cooldown: 75 },
 };
 
 function defaultAbilities() {

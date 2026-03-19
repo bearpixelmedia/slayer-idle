@@ -117,23 +117,23 @@ export default function Game() {
           slayerPointsOnPrestige={slayerPointsOnPrestige}
           currentSouls={state.souls}
           onPrestige={prestige}
-        />
-        <SkillTree
+        />}
+        {!showRunner && <SkillTree
           slayerPoints={state.slayerPoints}
           unlockedSkillIds={state.unlockedSkills}
           onUnlock={unlockSkill}
-        />
-        <AchievementsPanel
+        />}
+        {!showRunner && <AchievementsPanel
           unlockedIds={unlockedIds}
           damageMultiplier={damageMultiplier}
           offlineMultiplier={offlineMultiplier}
-        />
-        <UpgradeShop state={state} onBuy={buyUpgrade} />
-        <div className="px-4 py-6 text-center">
+        />}
+        {!showRunner && <UpgradeShop state={state} onBuy={buyUpgrade} />}
+        {!showRunner && <div className="px-4 py-6 text-center">
           <p className="font-pixel text-[7px] text-muted-foreground/30">
             IDLE SLAYER CLONE • TAP & IDLE RPG
           </p>
-        </div>
+        </div>}
       </ScrollArea>
       <AchievementToast achievement={newUnlock} />
       <OfflineEarningsModal

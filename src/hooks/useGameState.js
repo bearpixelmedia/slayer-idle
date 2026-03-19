@@ -388,6 +388,19 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     });
   }, []);
 
+  const revive = useCallback(() => {
+    setState(prev => {
+      const reviveCost = 10;
+      if (prev.souls < reviveCost) return prev;
+      return {
+        ...prev,
+        souls: prev.souls - reviveCost,
+        playerHP: prev.playerMaxHP,
+        isDead: false,
+      };
+    });
+  }, []);
+
   const prestige = useCallback(() => {
     setState(prev => {
       const newSouls = getSoulsOnPrestige(prev.totalCoinsEarned);

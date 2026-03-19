@@ -17,6 +17,7 @@ import DeathModal from "@/components/game/DeathModal";
 import ZoneSelector from "@/components/game/ZoneSelector";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import WeaponMode from "@/components/game/WeaponMode";
+import ActiveBuffsDisplay from "@/components/game/ActiveBuffsDisplay";
 
 function loadSavedMultipliers() {
   try {

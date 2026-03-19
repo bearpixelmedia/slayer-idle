@@ -28,6 +28,7 @@ export default function Game() {
   const {
     state,
     floatingCoins,
+    particles,
     enemyDying,
     slashEffects,
     handleTap,

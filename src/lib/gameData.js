@@ -52,3 +52,8 @@ export function getEnemyReward(stage, killCount) {
 export function getSoulsOnPrestige(totalCoinsEarned) {
   return Math.floor(Math.sqrt(totalCoinsEarned / 1000));
 }
+
+export function getSlayerPointsOnPrestige(souls) {
+  // Convert total souls earned to slayer points
+  return Math.floor(Math.sqrt(souls));
+}

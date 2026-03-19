@@ -6,6 +6,7 @@ import StatsBar from "@/components/game/StatsBar";
 import GameCanvas from "@/components/game/GameCanvas";
 import UpgradeShop from "@/components/game/UpgradeShop";
 import PrestigePanel from "@/components/game/PrestigePanel";
+import SkillTree from "@/components/game/SkillTree";
 import AbilityBar from "@/components/game/AbilityBar";
 import AchievementsPanel from "@/components/game/AchievementsPanel";
 import AchievementToast from "@/components/game/AchievementToast";
@@ -39,6 +40,8 @@ export default function Game() {
     prestige,
     canPrestige,
     soulsOnPrestige,
+    slayerPointsOnPrestige,
+    unlockSkill,
     abilities,
     activateAbility,
     getTapDamage,
@@ -69,8 +72,14 @@ export default function Game() {
         <PrestigePanel
           canPrestige={canPrestige}
           soulsOnPrestige={soulsOnPrestige}
+          slayerPointsOnPrestige={slayerPointsOnPrestige}
           currentSouls={state.souls}
           onPrestige={prestige}
+        />
+        <SkillTree
+          slayerPoints={state.slayerPoints}
+          unlockedSkillIds={state.unlockedSkills}
+          onUnlock={unlockSkill}
         />
         <AchievementsPanel
           unlockedIds={unlockedIds}

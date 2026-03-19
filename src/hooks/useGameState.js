@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import {
   STAGES, UPGRADES, TAP_UPGRADES, IDLE_UPGRADES, ALL_UPGRADES,
-  getUpgradeCost, getEnemyHP, getEnemyReward, getSoulsOnPrestige
+  getUpgradeCost, getEnemyHP, getEnemyReward, getSoulsOnPrestige, getSlayerPointsOnPrestige
 } from "@/lib/gameData";
+import { getSkillMultipliers } from "@/lib/skillTree";
 
 const SAVE_KEY = "idle_slayer_save";
 
@@ -19,6 +20,8 @@ function defaultState() {
     coins: 0,
     totalCoinsEarned: 0,
     souls: 0,
+    slayerPoints: 0,
+    unlockedSkills: [],
     stage: 0,
     highestStage: 0,
     killCount: 0,
@@ -323,15 +326,28 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     });
   }, []);
 
+  const unlockSkill = useCallback((skillId) => {
+    setState(prev => {
+      if (prev.unlockedSkills.includes(skillId)) return prev;
+      return {
+        ...prev,
+        unlockedSkills: [...prev.unlockedSkills, skillId],
+      };
+    });
+  }, []);
+
   const prestige = useCallback(() => {
     setState(prev => {
       const newSouls = getSoulsOnPrestige(prev.totalCoinsEarned);
       if (newSouls <= 0) return prev;
       
+      const newSlayerPoints = getSlayerPointsOnPrestige(prev.souls + newSouls);
       const fresh = defaultState();
       return {
         ...fresh,
         souls: prev.souls + newSouls,
+        slayerPoints: prev.slayerPoints + newSlayerPoints,
+        unlockedSkills: prev.unlockedSkills,
         totalKills: prev.totalKills,
         highestStage: prev.highestStage || 0,
         prestigeCount: (prev.prestigeCount || 0) + 1,
@@ -341,6 +357,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
 
   const canPrestige = getSoulsOnPrestige(state.totalCoinsEarned) > 0;
   const soulsOnPrestige = getSoulsOnPrestige(state.totalCoinsEarned);
+  const slayerPointsOnPrestige = getSlayerPointsOnPrestige(state.souls + soulsOnPrestige);
 
   return {
     state,
@@ -355,6 +372,8 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     prestige,
     canPrestige,
     soulsOnPrestige,
+    slayerPointsOnPrestige,
+    unlockSkill,
     abilities,
     activateAbility,
     getTapDamage: () => getTapDamage(state),

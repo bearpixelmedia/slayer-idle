@@ -13,7 +13,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-export default function PrestigePanel({ canPrestige, soulsOnPrestige, currentSouls, onPrestige }) {
+export default function PrestigePanel({ canPrestige, soulsOnPrestige, slayerPointsOnPrestige, currentSouls, onPrestige }) {
   if (!canPrestige) return null;
 
   return (
@@ -44,7 +44,8 @@ export default function PrestigePanel({ canPrestige, soulsOnPrestige, currentSou
                 <AlertDialogTitle className="font-pixel text-sm text-accent">Confirm Prestige</AlertDialogTitle>
                 <AlertDialogDescription className="text-muted-foreground">
                   This will reset all your coins and upgrades, but you'll gain{" "}
-                  <span className="text-accent font-bold">+{formatNumber(soulsOnPrestige)} souls</span>.
+                  <span className="text-accent font-bold">+{formatNumber(soulsOnPrestige)} souls</span>
+                  {" "}and <span className="text-primary font-bold">+{formatNumber(slayerPointsOnPrestige)} Slayer Points</span>.
                   <br /><br />
                   You currently have <span className="text-accent">{formatNumber(currentSouls)} souls</span>.
                   After prestige: <span className="text-accent">{formatNumber(currentSouls + soulsOnPrestige)} souls</span>

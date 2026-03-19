@@ -51,6 +51,7 @@ export default function GameCanvas({
   particles,
   onTap,
   enemyHit,
+  weaponMode,
 }) {
   const canvasRef = useRef(null);
   const stage = STAGES[state.stage];

@@ -181,6 +181,23 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   const dealDamage = useCallback((damage, x, y) => {
     const multiplier = abilitiesRef.current.doubleDamage.active ? 2 : 1;
     const finalDamage = damage * multiplier;
+    const isCritical = multiplier > 1;
+
+    // Spawn particles for critical hits
+    if (isCritical) {
+      const particleCount = 8;
+      const newParticles = Array.from({ length: particleCount }).map((_, i) => ({
+        id: Date.now() + Math.random() + i,
+        x,
+        y,
+        emoji: "⚡",
+        angle: (360 / particleCount) * i,
+        distance: 60 + Math.random() * 30,
+        duration: 0.6,
+      }));
+      setParticles(prev => [...prev, ...newParticles]);
+    }
+
     setState(prev => {
       const newHP = prev.enemyHP - finalDamage;
       
@@ -190,6 +207,19 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         const totalReward = Math.floor(reward * soulBonus);
         
         setFloatingCoins(fc => [...fc, { id: Date.now() + Math.random(), amount: totalReward, x, y }]);
+        
+        // Spawn coin particles
+        const coinParticles = Array.from({ length: 6 }).map((_, i) => ({
+          id: Date.now() + Math.random() + i,
+          x,
+          y,
+          emoji: "✨",
+          angle: (360 / 6) * i,
+          distance: 50 + Math.random() * 30,
+          duration: 0.8,
+        }));
+        setParticles(prev => [...prev, ...coinParticles]);
+
         setEnemyDying(true);
         setTimeout(() => setEnemyDying(false), 300);
         

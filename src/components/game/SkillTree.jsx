@@ -4,14 +4,28 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ChevronUp, Lock } from "lucide-react";
 
 function SkillCard({ skill, unlocked, canUnlock, onUnlock }) {
+  const pathColors = {
+    neutral: "border-muted/60 bg-muted/15",
+    damage: "border-red-500/50 bg-red-500/10",
+    idle: "border-yellow-500/50 bg-yellow-500/10",
+  };
+
+  const pathLabels = {
+    neutral: "Neutral",
+    damage: "🔪 Damage",
+    idle: "💰 Idle",
+  };
+
+  const borderColor = pathColors[skill.path] || pathColors.neutral;
+
   return (
     <motion.button
       onClick={() => canUnlock && !unlocked && onUnlock(skill.id)}
       className={`relative flex flex-col items-center p-3 rounded-lg border transition-all ${
         unlocked
-          ? "bg-primary/20 border-primary/60"
+          ? `${borderColor} opacity-100`
           : canUnlock
-            ? "bg-secondary/40 border-secondary/60 hover:border-primary/40 cursor-pointer hover:bg-secondary/60"
+            ? `${borderColor} hover:brightness-125 cursor-pointer`
             : "bg-muted/20 border-border/30 cursor-not-allowed opacity-50"
       }`}
       whileTap={canUnlock && !unlocked ? { scale: 0.95 } : {}}
@@ -20,15 +34,18 @@ function SkillCard({ skill, unlocked, canUnlock, onUnlock }) {
       <span className="text-[8px] font-pixel text-foreground/90 text-center">{skill.name}</span>
       <p className="text-[7px] text-muted-foreground mt-1 text-center">{skill.description}</p>
       
-      <div className="mt-2 flex items-center gap-1 text-[8px] font-pixel">
-        {unlocked ? (
-          <span className="text-primary">✓ UNLOCKED</span>
-        ) : (
-          <>
-            <span>{skill.cost} SP</span>
-            {!canUnlock && <Lock className="w-3 h-3 text-muted-foreground" />}
-          </>
-        )}
+      <div className="mt-2 flex flex-col items-center gap-1">
+        <span className="text-[6px] font-pixel text-muted-foreground/70">{pathLabels[skill.path]}</span>
+        <div className="flex items-center gap-1 text-[8px] font-pixel">
+          {unlocked ? (
+            <span className="text-primary">✓ UNLOCKED</span>
+          ) : (
+            <>
+              <span>{skill.cost} SP</span>
+              {!canUnlock && <Lock className="w-3 h-3 text-muted-foreground" />}
+            </>
+          )}
+        </div>
       </div>
 
       {!canUnlock && skill.requires.length > 0 && (

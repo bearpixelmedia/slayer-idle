@@ -278,9 +278,13 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
           coinReward = Math.floor(bossRewards.coins * soulBonus);
           soulReward = bossRewards.souls;
         } else {
-          // Normal enemy
-          const reward = getEnemyReward(prev.stage, prev.killCount);
+          // Normal enemy - base soul drops with zone bias
+          const baseSouls = getEnemySouls(prev.stage, prev.killCount);
+          const stageBias = STAGES[prev.stage]?.soulBias || 1;
           const soulBonus = 1 + (prev.souls * 0.05);
+          soulReward = baseSouls * stageBias;
+          
+          const reward = getEnemyReward(prev.stage, prev.killCount);
           coinReward = Math.floor(reward * soulBonus);
         }
         
@@ -288,6 +292,11 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         const { coins: finalCoins, souls: finalSouls } = applyRewardMultipliers(coinReward, soulReward, prev);
         
         setFloatingCoins(fc => [...fc, { id: Date.now() + Math.random(), amount: finalCoins, x, y }]);
+        
+        // Show soul drops separately
+        if (finalSouls > 0) {
+          setFloatingSouls(fs => [...fs, { id: Date.now() + Math.random() * 0.1, amount: finalSouls, x: x + 15, y }]);
+        }
         
         // Spawn extra particles for boss kills
         const particleCount = prev.isBossActive ? 12 : 6;

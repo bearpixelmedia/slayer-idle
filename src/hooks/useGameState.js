@@ -308,7 +308,8 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
           const baseSouls = getEnemySouls(prev.stage, prev.killCount);
           const stageBias = STAGES[prev.stage]?.soulBias || 1;
           const soulBonus = 1 + (prev.souls * 0.05);
-          soulReward = baseSouls * stageBias;
+          const bowBonus = currentWeapon === "bow" ? getBowSoulMultiplier() : 1;
+          soulReward = baseSouls * stageBias * bowBonus;
           
           const reward = getEnemyReward(prev.stage, prev.killCount);
           coinReward = Math.floor(reward * soulBonus);

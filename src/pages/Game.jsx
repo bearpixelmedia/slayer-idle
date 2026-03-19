@@ -100,7 +100,7 @@ export default function Game() {
           onModeChange={setCurrentWeapon}
         />
 
-        <div className="w-full flex-1 overflow-hidden flex flex-col">
+        <div className="w-full flex-1 overflow-hidden flex flex-col min-h-0">
           {!showRunner ? (
             <GameCanvas
               state={state}
@@ -131,12 +131,13 @@ export default function Game() {
         </div>
 
         {!showRunner && (
-          <div className="w-full flex-shrink-0 flex flex-col pointer-events-auto" style={{
+          <div className="w-full flex-shrink-0 flex flex-col pointer-events-auto max-h-64" style={{
               background: "linear-gradient(135deg, #8B7355 0%, #A0826D 100%)",
               border: "6px solid #D4AF37",
               borderRadius: "2px",
               margin: "8px",
-              boxShadow: "inset 0 0 0 2px #6B5344"
+              boxShadow: "inset 0 0 0 2px #6B5344",
+              overflow: "hidden"
             }}>
               {/* Inner frame */}
               <div style={{

@@ -130,7 +130,7 @@ export default function Game() {
           )}
         </div>
 
-        {!showRunner && (
+        {!showRunner && menuOpen && (
           <div className="w-full flex-shrink-0 flex flex-col pointer-events-auto max-h-64" style={{
               background: "linear-gradient(135deg, #8B7355 0%, #A0826D 100%)",
               border: "6px solid #D4AF37",
@@ -209,6 +209,15 @@ export default function Game() {
               ← BACK TO SLAYER
             </button>
           </div>
+        )}
+
+        {!showRunner && (
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="fixed bottom-4 right-4 z-40 w-12 h-12 rounded-full bg-primary hover:bg-primary/90 flex items-center justify-center text-2xl transition-all active:scale-95"
+          >
+            💼
+          </button>
         )}
       </div>
 

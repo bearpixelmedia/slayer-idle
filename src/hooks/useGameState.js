@@ -179,6 +179,45 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     return { coins: coinAfterMultiplier, souls: soulsAfterMultiplier };
   }
 
+  // Buff proc helper
+  const tryProcBuff = useCallback((source, s = state) => {
+    const now = Date.now();
+    const timeSinceLastProc = now - lastBuffProcRef.current;
+    
+    if (timeSinceLastProc < BUFF_RULES.globalCooldown * 1000) return;
+
+    let procRate = 0;
+    if (source === "tap") procRate = PROC_RATES.tap;
+    else if (source === "kill") procRate = PROC_RATES.kill;
+    else if (source === "idle") procRate = PROC_RATES.idle;
+
+    if (!shouldProcBuff(procRate)) return;
+
+    const buff = selectRandomBuff();
+    const existingBuff = activeBuffsRef.current.find(b => b.id === buff.id);
+
+    if (existingBuff) {
+      // Extend duration (capped at +50%)
+      const extension = Math.min(buff.duration * BUFF_RULES.maxDurationExtension, buff.duration * 0.5);
+      existingBuff.endTime = Math.min(existingBuff.endTime + extension * 1000, now + buff.duration * 1000 * 1.5);
+    } else {
+      // Only add if under max concurrent
+      if (activeBuffsRef.current.length < BUFF_RULES.maxConcurrent) {
+        setActiveBuffs(prev => [...prev, {
+          id: buff.id,
+          name: buff.name,
+          icon: buff.icon,
+          effects: buff.effects,
+          duration: buff.duration,
+          startTime: now,
+          endTime: now + buff.duration * 1000,
+        }]);
+      }
+    }
+
+    lastBuffProcRef.current = now;
+  }, []);
+
   function spawnNewEnemy(s) {
     // Check if next enemy should be a boss
     if (isBossEncounter(s.killCount + 1)) {

@@ -15,6 +15,7 @@ import AchievementToast from "@/components/game/AchievementToast";
 import OfflineEarningsModal from "@/components/game/OfflineEarningsModal";
 import DeathModal from "@/components/game/DeathModal";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import WeaponMode from "@/components/game/WeaponMode";
 
 function loadSavedMultipliers() {
   try {

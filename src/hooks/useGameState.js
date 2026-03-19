@@ -387,10 +387,11 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         ...fresh,
         souls: prev.souls + newSouls,
         slayerPoints: prev.slayerPoints + newSlayerPoints,
-        unlockedSkills: prev.unlockedSkills,
+        unlockedSkills: prev.unlockedSkills, // PERSIST skill unlocks
         totalKills: prev.totalKills,
         highestStage: prev.highestStage || 0,
         prestigeCount: (prev.prestigeCount || 0) + 1,
+        saveVersion: SAVE_VERSION,
       };
     });
   }, []);

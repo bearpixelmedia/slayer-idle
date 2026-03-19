@@ -225,42 +225,53 @@ export default function Game() {
           )}
         </div>
 
-        {/* Menu on right */}
+        {/* Menu on right - wooden frame */}
         {!showRunner && (
-          <ScrollArea className="w-96 border-l border-border overflow-hidden">
-            <div className="p-4 space-y-3">
-              <button
-                onClick={() => setShowRunner(true)}
-                className="w-full py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"
-              >
-                🏃 RUNNER MINIGAME
-              </button>
-              <GameTabs
-                state={state}
-                onBuyUpgrade={buyUpgrade}
-                onUnlockSkill={unlockSkill}
-                onPrestige={prestige}
-                onRevive={revive}
-                unlockedIds={unlockedIds}
-                damageMultiplier={damageMultiplier}
-                offlineMultiplier={offlineMultiplier}
-                onSwitchZone={switchZone}
-                onUnlockZone={unlockZone}
-                onClaimQuestReward={handleClaimQuestReward}
-                onRepeatQuest={handleRepeatQuest}
-                questProgress={questProgress}
-                onUpgradeBuilding={upgradeBuilding}
-                abilities={abilities}
-                onActivateAbility={activateAbility}
-                weaponMode={currentWeapon}
-              />
-              <div className="px-4 py-6 text-center">
-                <p className="font-pixel text-[7px] text-muted-foreground/30">
-                  SLAYER IDLE • TAP & PRESTIGE RPG
-                </p>
-              </div>
+          <div className="w-96 bg-yellow-900/40 border-4 border-yellow-800 rounded-lg overflow-hidden flex flex-col">
+            {/* Wooden outer frame */}
+            <div className="flex-1 bg-yellow-900/20 border-4 border-double border-yellow-700 p-3 flex flex-col">
+              {/* Inner content */}
+              <ScrollArea className="flex-1 overflow-hidden">
+                <div className="px-3 py-2 space-y-2">
+                  <button
+                    onClick={() => setShowRunner(true)}
+                    className="w-full py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"
+                  >
+                    🏃 RUNNER MINIGAME
+                  </button>
+                  <GameTabs
+                    state={state}
+                    onBuyUpgrade={buyUpgrade}
+                    onUnlockSkill={unlockSkill}
+                    onPrestige={prestige}
+                    onRevive={revive}
+                    unlockedIds={unlockedIds}
+                    damageMultiplier={damageMultiplier}
+                    offlineMultiplier={offlineMultiplier}
+                    onSwitchZone={switchZone}
+                    onUnlockZone={unlockZone}
+                    onClaimQuestReward={handleClaimQuestReward}
+                    onRepeatQuest={handleRepeatQuest}
+                    questProgress={questProgress}
+                    onUpgradeBuilding={upgradeBuilding}
+                    abilities={abilities}
+                    onActivateAbility={activateAbility}
+                    weaponMode={currentWeapon}
+                  />
+                </div>
+              </ScrollArea>
             </div>
-          </ScrollArea>
+            
+            {/* Bottom icon bar */}
+            <div className="bg-red-900/80 border-t-4 border-yellow-700 px-2 py-2 flex justify-around items-center gap-1">
+              <button className="p-2 hover:brightness-110 text-lg">⚔️</button>
+              <button className="p-2 hover:brightness-110 text-lg">⬆️</button>
+              <button className="p-2 hover:brightness-110 text-lg">🧑</button>
+              <button className="p-2 hover:brightness-110 text-lg">💎</button>
+              <button className="p-2 hover:brightness-110 text-lg">⋮</button>
+              <button className="p-2 hover:brightness-110 text-lg">✕</button>
+            </div>
+          </div>
         )}
 
         {showRunner && (

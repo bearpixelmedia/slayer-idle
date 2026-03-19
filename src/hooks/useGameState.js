@@ -155,6 +155,13 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     return Math.floor(cps * soulBonus * damageMultiplier * skillMults.idleMultiplier);
   }
 
+  function applyRewardMultipliers(coins, souls, s = state) {
+    const skillMults = getSkillMultipliers(s.unlockedSkills);
+    const coinAfterMultiplier = Math.floor(coins * skillMults.coinDropMultiplier);
+    const soulsAfterMultiplier = Math.floor(souls * skillMults.soulMultiplier);
+    return { coins: coinAfterMultiplier, souls: soulsAfterMultiplier };
+  }
+
   function spawnNewEnemy(s) {
     // Check if next enemy should be a boss
     if (isBossEncounter(s.killCount + 1)) {

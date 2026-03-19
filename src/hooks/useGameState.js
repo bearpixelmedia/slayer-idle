@@ -45,6 +45,9 @@ function defaultState() {
     enemyMaxHP: getEnemyHP(0, 0),
     currentEnemyName: STAGES[0].enemies[0],
     isBossActive: false,
+    playerHP: 100,
+    playerMaxHP: 100,
+    isDead: false,
     lastSave: Date.now(),
     saveVersion: SAVE_VERSION,
   };

@@ -71,6 +71,7 @@ export default function Game() {
           state={state}
           enemyDying={enemyDying}
           floatingCoins={floatingCoins}
+          floatingSouls={floatingSouls}
           particles={particles}
           slashEffects={slashEffects}
           onTap={handleTap}

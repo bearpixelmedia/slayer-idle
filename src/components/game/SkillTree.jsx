@@ -40,7 +40,7 @@ function SkillCard({ skill, unlocked, canUnlock, onUnlock }) {
   );
 }
 
-export default function SkillTree({ slayerPoints, unlockedSkillIds, onUnlock }) {
+export default function SkillTree({ slayerPoints = 0, unlockedSkillIds = [], onUnlock }) {
   const [open, setOpen] = useState(false);
   const [selectedTier, setSelectedTier] = useState(1);
 

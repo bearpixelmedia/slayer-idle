@@ -332,6 +332,8 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     particles,
     enemyDying,
     slashEffects,
+    offlineEarnings,
+    setOfflineEarnings,
     handleTap,
     buyUpgrade,
     prestige,

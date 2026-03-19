@@ -75,6 +75,7 @@ export default function Game() {
         tapDamage={getTapDamage()}
         idleCPS={getIdleCPS()}
       />
+      <ActiveBuffsDisplay activeBuffs={activeBuffs} />
       <WeaponMode
         currentMode={currentWeapon}
         bowUnlocked={state.upgradeLevels["bow"] > 0}

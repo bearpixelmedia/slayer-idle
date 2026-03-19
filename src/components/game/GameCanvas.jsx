@@ -184,6 +184,25 @@ export default function GameCanvas({
         ))}
       </AnimatePresence>
 
+      {/* Floating damage numbers */}
+      <AnimatePresence>
+        {floatingDamage?.map((d) => (
+          <motion.div
+            key={d.id}
+            className={`absolute pointer-events-none font-pixel font-bold text-sm sm:text-base ${
+              d.isCritical ? "text-red-400" : "text-orange-400"
+            }`}
+            style={{ left: `${d.x}%`, top: `${d.y}%` }}
+            initial={{ opacity: 1, y: 0, scale: 1 }}
+            animate={{ opacity: 0, y: -60, scale: d.isCritical ? 1.3 : 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            {d.isCritical ? "⚡" : ""}{formatNumber(d.amount)}
+          </motion.div>
+        ))}
+      </AnimatePresence>
+
       {/* Particle effects */}
       <ParticleEffect particles={particles} />
 

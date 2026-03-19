@@ -78,9 +78,9 @@ export default function Game() {
   };
 
   return (
-    <div className="fixed inset-0 bg-background flex flex-col lg:flex-row">
+    <div className="fixed inset-0 bg-background flex flex-col lg:flex-row overflow-hidden">
       {/* Portrait/Mobile: Full screen */}
-      <div className="lg:hidden w-full h-full flex flex-col relative">
+      <div className="lg:hidden w-screen h-screen flex flex-col relative -m-0">
         <StatsBar
           state={state}
           tapDamage={getTapDamage()}

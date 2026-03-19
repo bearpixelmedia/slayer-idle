@@ -4,6 +4,7 @@ import { formatNumber } from "@/lib/formatNumber";
 import { STAGES } from "@/lib/gameData";
 
 export default function StatsBar({ state, tapDamage, idleCPS, className }) {
+  if (!state) return null;
   const stage = STAGES[state?.stage] || STAGES[0];
 
   return (

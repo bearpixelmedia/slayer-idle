@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import useGameState from "@/hooks/useGameState";
 import useAchievements from "@/hooks/useAchievements";
 import { computeAchievementMultipliers } from "@/lib/achievements";

@@ -128,9 +128,10 @@ export default function Game() {
               }}
             />
           )}
+        </div>
 
-          {!showRunner && (
-            <div className="absolute inset-0 pointer-events-auto flex flex-col" style={{
+        {!showRunner && (
+          <div className="w-full flex-shrink-0 flex flex-col pointer-events-auto" style={{
               background: "linear-gradient(135deg, #8B7355 0%, #A0826D 100%)",
               border: "6px solid #D4AF37",
               borderRadius: "2px",
@@ -195,20 +196,19 @@ export default function Game() {
                 <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="More">⋮</button>
                 <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Close">✕</button>
               </div>
-            </div>
-          )}
+          </div>
+        )}
 
-          {showRunner && (
-            <div className="absolute bottom-4 left-4 right-4 z-10">
-              <button
-                onClick={() => setShowRunner(false)}
-                className="w-full py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"
-              >
-                ← BACK TO SLAYER
-              </button>
-            </div>
-          )}
-        </div>
+        {showRunner && (
+          <div className="w-full flex-shrink-0 p-4">
+            <button
+              onClick={() => setShowRunner(false)}
+              className="w-full py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"
+            >
+              ← BACK TO SLAYER
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Landscape: Side-by-side layout */}

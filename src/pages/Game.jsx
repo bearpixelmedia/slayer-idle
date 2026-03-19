@@ -14,6 +14,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import WeaponMode from "@/components/game/WeaponMode";
 import ActiveBuffsDisplay from "@/components/game/ActiveBuffsDisplay";
 import MenuPanel from "@/components/game/MenuPanel";
+import GameTabs from "@/components/game/GameTabs";
 
 function loadSavedMultipliers() {
   try {
@@ -129,41 +130,71 @@ export default function Game() {
           )}
 
           {!showRunner && (
-            <div className="absolute inset-0 pointer-events-none">
-              <ScrollArea className="absolute inset-0 pointer-events-auto">
-                <div className="px-4 py-2">
-                  <button
-                    onClick={() => setShowRunner(true)}
-                    className="w-full py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"
-                  >
-                    🏃 RUNNER MINIGAME
-                  </button>
-                </div>
-                <GameTabs
-                  state={state}
-                  onBuyUpgrade={buyUpgrade}
-                  onUnlockSkill={unlockSkill}
-                  onPrestige={prestige}
-                  onRevive={revive}
-                  unlockedIds={unlockedIds}
-                  damageMultiplier={damageMultiplier}
-                  offlineMultiplier={offlineMultiplier}
-                  onSwitchZone={switchZone}
-                  onUnlockZone={unlockZone}
-                  onClaimQuestReward={handleClaimQuestReward}
-                  onRepeatQuest={handleRepeatQuest}
-                  questProgress={questProgress}
-                  onUpgradeBuilding={upgradeBuilding}
-                  abilities={abilities}
-                  onActivateAbility={activateAbility}
-                  weaponMode={currentWeapon}
-                />
-                <div className="px-4 py-6 text-center">
-                  <p className="font-pixel text-[7px] text-muted-foreground/30">
-                    SLAYER IDLE • TAP & PRESTIGE RPG
-                  </p>
-                </div>
-              </ScrollArea>
+            <div className="absolute inset-0 pointer-events-auto flex flex-col" style={{
+              background: "linear-gradient(135deg, #8B7355 0%, #A0826D 100%)",
+              border: "6px solid #D4AF37",
+              borderRadius: "2px",
+              margin: "8px",
+              boxShadow: "inset 0 0 0 2px #6B5344"
+            }}>
+              {/* Inner frame */}
+              <div style={{
+                background: "linear-gradient(135deg, #4A4A4A 0%, #2D2D2D 100%)",
+                border: "2px solid #8B7355",
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                overflow: "hidden"
+              }}>
+                <ScrollArea className="flex-1 overflow-hidden">
+                  <div className="px-3 py-2 space-y-2">
+                    <button
+                      onClick={() => setShowRunner(true)}
+                      className="w-full py-2 rounded-sm bg-green-600 hover:bg-green-700 text-white font-pixel text-[9px] transition-colors border-2 border-green-800"
+                    >
+                      🏃 RUNNER
+                    </button>
+                    <GameTabs
+                      state={state}
+                      onBuyUpgrade={buyUpgrade}
+                      onUnlockSkill={unlockSkill}
+                      onPrestige={prestige}
+                      onRevive={revive}
+                      unlockedIds={unlockedIds}
+                      damageMultiplier={damageMultiplier}
+                      offlineMultiplier={offlineMultiplier}
+                      onSwitchZone={switchZone}
+                      onUnlockZone={unlockZone}
+                      onClaimQuestReward={handleClaimQuestReward}
+                      onRepeatQuest={handleRepeatQuest}
+                      questProgress={questProgress}
+                      onUpgradeBuilding={upgradeBuilding}
+                      abilities={abilities}
+                      onActivateAbility={activateAbility}
+                      weaponMode={currentWeapon}
+                    />
+                  </div>
+                </ScrollArea>
+              </div>
+              
+              {/* Bottom icon bar */}
+              <div style={{
+                background: "linear-gradient(180deg, #8B4513 0%, #654321 100%)",
+                border: "3px solid #D4AF37",
+                borderTop: "4px solid #D4AF37",
+                display: "flex",
+                justifyContent: "space-around",
+                alignItems: "center",
+                padding: "4px 2px",
+                gap: "2px"
+              }}>
+                <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Combat">⚔️</button>
+                <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Upgrades">⬆️</button>
+                <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Skills">🧑</button>
+                <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Achievements">💎</button>
+                <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="More">⋮</button>
+                <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Close">✕</button>
+              </div>
             </div>
           )}
 

@@ -32,6 +32,8 @@ export default function Game() {
     particles,
     enemyDying,
     slashEffects,
+    offlineEarnings,
+    setOfflineEarnings,
     handleTap,
     buyUpgrade,
     prestige,

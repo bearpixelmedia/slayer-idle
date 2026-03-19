@@ -25,7 +25,7 @@ export default function ZoneSelector({
 
       <div className="px-4 py-3 space-y-2">
         {ZONES.map((zone) => {
-          const isUnlocked = unlockedZoneIds?.includes(zone.id);
+          const isUnlocked = (unlockedZoneIds || []).includes(zone.id);
           const isActive = activeZoneId === zone.id;
           const zp = zoneProgress?.[zone.id];
           const canUnlock = isUnlocked || canUnlockZone(zone.id, unlockedZoneIds || [], zoneProgress || {}, slayerPoints);

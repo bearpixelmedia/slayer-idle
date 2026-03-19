@@ -4,6 +4,7 @@ import {
   getUpgradeCost, getEnemyHP, getEnemyReward, getSoulsOnPrestige, getSlayerPointsOnPrestige
 } from "@/lib/gameData";
 import { getSkillMultipliers } from "@/lib/skillTree";
+import { isBossEncounter, getBossForStage, getBossHP, getBossReward } from "@/lib/bosses";
 
 const SAVE_KEY = "idle_slayer_save";
 
@@ -31,6 +32,7 @@ function defaultState() {
     enemyHP: getEnemyHP(0, 0),
     enemyMaxHP: getEnemyHP(0, 0),
     currentEnemyName: STAGES[0].enemies[0],
+    isBossActive: false,
     lastSave: Date.now(),
   };
 }
@@ -136,10 +138,19 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   }
 
   function spawnNewEnemy(s) {
+    // Check if next enemy should be a boss
+    if (isBossEncounter(s.killCount + 1)) {
+      const boss = getBossForStage(s.stage);
+      if (boss) {
+        const hp = getBossHP(s.stage, s.killCount);
+        return { ...s, enemyHP: hp, enemyMaxHP: hp, currentEnemyName: boss.name, isBossActive: true };
+      }
+    }
+
     const stageData = STAGES[s.stage];
     const enemyName = stageData.enemies[Math.floor(Math.random() * stageData.enemies.length)];
     const hp = getEnemyHP(s.stage, s.killCount);
-    return { ...s, enemyHP: hp, enemyMaxHP: hp, currentEnemyName: enemyName };
+    return { ...s, enemyHP: hp, enemyMaxHP: hp, currentEnemyName: enemyName, isBossActive: false };
   }
 
   // Ability tick — runs every second
@@ -223,19 +234,32 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       const newHP = prev.enemyHP - finalDamage;
       
       if (newHP <= 0) {
-        const reward = getEnemyReward(prev.stage, prev.killCount);
-        const soulBonus = 1 + (prev.souls * 0.05);
-        const totalReward = Math.floor(reward * soulBonus);
+        let coinReward = 0;
+        let soulReward = 0;
+
+        // Boss encounter
+        if (prev.isBossActive) {
+          const bossRewards = getBossReward(prev.stage);
+          const soulBonus = 1 + (prev.souls * 0.05);
+          coinReward = Math.floor(bossRewards.coins * soulBonus);
+          soulReward = bossRewards.souls;
+        } else {
+          // Normal enemy
+          const reward = getEnemyReward(prev.stage, prev.killCount);
+          const soulBonus = 1 + (prev.souls * 0.05);
+          coinReward = Math.floor(reward * soulBonus);
+        }
         
-        setFloatingCoins(fc => [...fc, { id: Date.now() + Math.random(), amount: totalReward, x, y }]);
+        setFloatingCoins(fc => [...fc, { id: Date.now() + Math.random(), amount: coinReward, x, y }]);
         
-        // Spawn coin particles
-        const coinParticles = Array.from({ length: 6 }).map((_, i) => ({
+        // Spawn extra particles for boss kills
+        const particleCount = prev.isBossActive ? 12 : 6;
+        const coinParticles = Array.from({ length: particleCount }).map((_, i) => ({
           id: Date.now() + Math.random() + i,
           x,
           y,
-          emoji: "✨",
-          angle: (360 / 6) * i,
+          emoji: prev.isBossActive ? "⭐" : "✨",
+          angle: (360 / particleCount) * i,
           distance: 50 + Math.random() * 30,
           duration: 0.8,
         }));
@@ -253,8 +277,9 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         
         const newState = {
           ...prev,
-          coins: prev.coins + totalReward,
-          totalCoinsEarned: prev.totalCoinsEarned + totalReward,
+          coins: prev.coins + coinReward,
+          totalCoinsEarned: prev.totalCoinsEarned + coinReward,
+          souls: prev.souls + soulReward,
           killCount: newKillCount,
           totalKills: prev.totalKills + 1,
           stage: newStage,

@@ -34,9 +34,16 @@ export default function StatsBar({ state, tapDamage, idleCPS }) {
           <span>{formatNumber(state.totalKills)}</span>
         </div>
       </div>
-      <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-full bg-secondary/50 border border-border">
-        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: stage.color }} />
-        <span className="font-pixel text-[8px]" style={{ color: stage.color }}>{stage.name}</span>
+      <div className="hidden sm:flex items-center gap-2">
+        <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-secondary/50 border border-border">
+          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: stage.color }} />
+          <span className="font-pixel text-[8px]" style={{ color: stage.color }}>{stage.name}</span>
+        </div>
+        {state.isBossActive && (
+          <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-red-500/20 border border-red-400 animate-pulse">
+            <span className="font-pixel text-[8px] text-red-400">⚔️ BOSS</span>
+          </div>
+        )}
       </div>
     </div>
   );

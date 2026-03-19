@@ -46,9 +46,10 @@ export const UPGRADES = [
   { id: "orb", name: "Soul Orb", icon: "🔮", baseCost: 500000, costMultiplier: 1.5, basePower: 2000, description: "Increases all earnings" },
 ];
 
-export const TAP_UPGRADES = ["sword", "ring"];
+export const TAP_UPGRADES = ["sword", "ring", "bow"];
 export const IDLE_UPGRADES = ["boots", "armor", "pet", "scroll"];
 export const ALL_UPGRADES = ["crown", "orb"];
+export const BOW_UPGRADES = ["bow"];
 
 export function getUpgradeCost(upgrade, level) {
   let cost = Math.floor(upgrade.baseCost * Math.pow(upgrade.costMultiplier, level));

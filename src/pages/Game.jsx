@@ -39,6 +39,7 @@ export default function Game() {
         onTap={handleTap}
       />
       <ScrollArea className="flex-1">
+        <AbilityBar abilities={abilities} onActivate={activateAbility} />
         <PrestigePanel
           canPrestige={canPrestige}
           soulsOnPrestige={soulsOnPrestige}

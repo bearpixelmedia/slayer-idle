@@ -517,5 +517,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     getIdleCPS: () => getIdleCPS(state),
     getUpgradeLevel,
     enemyHit,
+    currentWeapon,
+    setCurrentWeapon,
   };
 }

@@ -106,6 +106,20 @@ export default function SkillTree({ slayerPoints = 0, unlockedSkillIds = [], onU
             className="overflow-hidden"
           >
             <div className="px-4 py-4 space-y-4">
+              {/* Specialization progress bar */}
+              <div className="space-y-1">
+                <div className="flex gap-2 text-[8px] font-pixel">
+                  <div className="flex-1 flex items-center gap-1">
+                    <span className="text-red-400">🔪</span>
+                    <span className="text-muted-foreground">{damageSkills} damage nodes</span>
+                  </div>
+                  <div className="flex-1 flex items-center gap-1">
+                    <span className="text-yellow-400">💰</span>
+                    <span className="text-muted-foreground">{idleSkills} idle nodes</span>
+                  </div>
+                </div>
+              </div>
+
               {/* Tier selector */}
               <div className="flex gap-2">
                 {tiers.map((tier) => {

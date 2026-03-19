@@ -18,6 +18,8 @@ export default function Game() {
     prestige,
     canPrestige,
     soulsOnPrestige,
+    abilities,
+    activateAbility,
     getTapDamage,
     getIdleCPS,
   } = useGameState();

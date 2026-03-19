@@ -46,6 +46,7 @@ export default function GameCanvas({
   state,
   enemyDying,
   floatingCoins,
+  floatingSouls,
   slashEffects,
   particles,
   onTap,

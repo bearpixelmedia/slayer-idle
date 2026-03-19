@@ -5,7 +5,7 @@ import {
   getZoneStages, canUnlockZone
 } from "@/lib/gameData";
 import { SKILLS, getSkillMultipliers } from "@/lib/skillTree";
-import { isBossEncounter, getBossForStage, getBossHP, getBossReward } from "@/lib/bosses";
+import { isBossEncounter, getBossForStage, getBossHP, getBossReward, BOSS_ENCOUNTER_INTERVAL, isBossShieldActive, getBossEnrageMultiplier } from "@/lib/bosses";
 import { BUFF_TYPES, PROC_RATES, selectRandomBuff, shouldProcBuff, getBuffMultiplier, BUFF_RULES } from "@/lib/buffs";
 
 const SAVE_VERSION = 3;
@@ -59,6 +59,10 @@ function defaultState() {
     isDead: false,
     lastSave: Date.now(),
     saveVersion: SAVE_VERSION,
+    // Boss warning and mechanic state (transient)
+    bossWarning: null, // { bossId, warningEndTime }
+    bossHitsReceived: 0, // Track hits for enrage mechanic
+    bossFightStartTime: null, // Track elapsed time for shield window mechanic
   };
 }
 
@@ -232,14 +236,45 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       const boss = getBossForStage(s.stage);
       if (boss) {
         const hp = getBossHP(s.stage, s.killCount);
-        return { ...s, enemyHP: hp, enemyMaxHP: hp, currentEnemyName: boss.name, isBossActive: true };
+        return {
+          ...s,
+          enemyHP: hp,
+          enemyMaxHP: hp,
+          currentEnemyName: boss.name,
+          isBossActive: true,
+          bossHitsReceived: 0,
+          bossFightStartTime: Date.now(),
+          bossWarning: null, // Clear warning once boss spawns
+        };
       }
     }
 
     const stageData = STAGES[s.stage] || STAGES[0];
     const enemyName = stageData.enemies[Math.floor(Math.random() * stageData.enemies.length)];
     const hp = getEnemyHP(s.stage, s.killCount);
-    return { ...s, enemyHP: hp, enemyMaxHP: hp, currentEnemyName: enemyName, isBossActive: false };
+    
+    // Calculate kills until next boss
+    const killsUntilBoss = BOSS_ENCOUNTER_INTERVAL - (s.killCount % BOSS_ENCOUNTER_INTERVAL);
+    
+    // Warn if within last 5 kills before boss
+    let nextBossWarning = null;
+    if (killsUntilBoss <= 5 && killsUntilBoss > 0) {
+      nextBossWarning = {
+        bossId: getBossForStage(s.stage)?.id,
+        warningEndTime: Date.now() + 4000, // 4 second warning
+      };
+    }
+    
+    return {
+      ...s,
+      enemyHP: hp,
+      enemyMaxHP: hp,
+      currentEnemyName: enemyName,
+      isBossActive: false,
+      bossHitsReceived: 0,
+      bossFightStartTime: null,
+      bossWarning: nextBossWarning,
+    };
   }
 
   // Ability tick — runs every second
@@ -361,15 +396,62 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     }
 
     setState(prev => {
+      // Apply boss mechanics during combat
+      let adjustedDamage = finalDamage;
+      let newBossHits = prev.bossHitsReceived;
+      
+      if (prev.isBossActive) {
+        const boss = getBossForStage(prev.stage);
+        
+        // Check shield window (mechanic: shield_window)
+        if (boss && boss.mechanic.type === "shield_window") {
+          const elapsedMs = Date.now() - (prev.bossFightStartTime || Date.now());
+          if (isBossShieldActive(elapsedMs, boss)) {
+            adjustedDamage = Math.ceil(finalDamage * (1 - boss.mechanic.damageReduction));
+          }
+        }
+        
+        // Track hits for enrage stacks
+        newBossHits = prev.bossHitsReceived + 1;
+        
+        // Check enrage (mechanic: enrage)
+        if (boss && boss.mechanic.type === "enrage") {
+          const enrageMultiplier = getBossEnrageMultiplier(newBossHits, boss);
+          // Boss damage is applied to player later
+        }
+        
+        // Check thorns (mechanic: thorns) - reflects damage to player
+        if (boss && boss.mechanic.type === "thorns") {
+          // Thorns damage will be applied to player HP
+        }
+      }
+
       // Enemy damage to player
-      const playerDamage = prev.isBossActive ? 3 : 1;
+      let playerDamage = prev.isBossActive ? 3 : 1;
+      
+      if (prev.isBossActive) {
+        const boss = getBossForStage(prev.stage);
+        
+        // Apply enrage multiplier to incoming damage
+        if (boss && boss.mechanic.type === "enrage") {
+          const enrageMultiplier = getBossEnrageMultiplier(newBossHits, boss);
+          playerDamage = Math.ceil(playerDamage * enrageMultiplier);
+        }
+        
+        // Apply thorns reflection
+        if (boss && boss.mechanic.type === "thorns") {
+          const thornsDamage = Math.ceil(finalDamage * boss.mechanic.reflectPct);
+          playerDamage += thornsDamage;
+        }
+      }
+      
       const newPlayerHP = prev.playerHP - playerDamage;
       
       if (newPlayerHP <= 0) {
         return { ...prev, playerHP: 0, isDead: true };
       }
 
-      const newHP = prev.enemyHP - finalDamage;
+      const newHP = prev.enemyHP - adjustedDamage;
       
       if (newHP <= 0) {
         let coinReward = 0;
@@ -438,6 +520,16 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
           killCount: newKillCount,
         };
         
+        // If boss was defeated and it has enrage mechanic, reset HP at 50% check
+        let bossHitsToTrack = newBossHits;
+        if (prev.isBossActive) {
+          const boss = getBossForStage(prev.stage);
+          if (boss && boss.mechanic.type === "enrage") {
+            // Reset enrage stacks for next boss fight
+            bossHitsToTrack = 0;
+          }
+        }
+        
         const newState = {
           ...prev,
           coins: prev.coins + finalCoins,
@@ -449,6 +541,8 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
           highestStage: Math.max(prev.highestStage || 0, newStage),
           zoneProgress,
           playerHP: prev.playerMaxHP,
+          bossHitsReceived: bossHitsToTrack,
+          bossFightStartTime: null,
         };
         
         return spawnNewEnemy(newState);

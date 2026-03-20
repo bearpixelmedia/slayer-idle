@@ -125,7 +125,7 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*,.json"
+            accept="image/*,.json,.aseprite"
             multiple
             onChange={handleFileSelect}
             className="hidden"

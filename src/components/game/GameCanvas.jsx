@@ -123,7 +123,7 @@ export default function GameCanvas({
       </div>
 
       {/* Player character */}
-      <div className="absolute bottom-16 left-[15%] sm:left-[20%] flex flex-col items-center gap-2">
+      <div className="absolute bottom-64 left-[15%] sm:left-[20%] flex flex-col items-center gap-2">
         <div className="w-20 h-1.5 bg-muted rounded-full overflow-hidden border border-border/50">
           <motion.div
             className="h-full bg-green-500"

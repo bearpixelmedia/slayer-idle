@@ -345,8 +345,8 @@ export default function ParallaxBackground() {
 
       {/* Layer 18: Shrubs/vegetation - speed 0.88 */}
       {createLayer("shrubs", 0.88, 60, 25, 0.88, (
-        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.3">
-          {Array.from({ length: 120 }).map((_, i) => {
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0">
+          {Array.from({ length: 200 }).map((_, i) => {
             const scale = 0.7 + (i % 5) * 0.1;
             return (
               <svg key={`shrub-${i}`} viewBox="0 0 35 35" className="flex-shrink-0" style={{ width: `${35 * scale}px`, height: "100%", opacity: 0.85 + (i % 3) * 0.1 }}>

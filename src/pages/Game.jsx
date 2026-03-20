@@ -173,24 +173,24 @@ export default function Game() {
                       🏃 RUNNER
                     </button>
                     <GameTabs
-                      state={state}
-                      onBuyUpgrade={buyUpgrade}
-                      onUnlockSkill={unlockSkill}
-                      onPrestige={prestige}
-                      onRevive={revive}
-                      unlockedIds={unlockedIds}
-                      damageMultiplier={damageMultiplier}
-                      offlineMultiplier={offlineMultiplier}
-                      onSwitchZone={switchZone}
-                      onUnlockZone={unlockZone}
-                      onClaimQuestReward={handleClaimQuestReward}
-                      onRepeatQuest={handleRepeatQuest}
-                      questProgress={questProgress}
-                      onUpgradeBuilding={upgradeBuilding}
-                      abilities={abilities}
-                      onActivateAbility={activateAbility}
-                      weaponMode={currentWeapon}
-                    />
+                       state={state}
+                       onBuyUpgrade={handleBuyUpgrade}
+                       onUnlockSkill={handleUnlockSkill}
+                       onPrestige={handlePrestige}
+                       onRevive={revive}
+                       unlockedIds={unlockedIds}
+                       damageMultiplier={damageMultiplier}
+                       offlineMultiplier={offlineMultiplier}
+                       onSwitchZone={switchZone}
+                       onUnlockZone={unlockZone}
+                       onClaimQuestReward={handleClaimQuestReward}
+                       onRepeatQuest={handleRepeatQuest}
+                       questProgress={questProgress}
+                       onUpgradeBuilding={upgradeBuilding}
+                       abilities={abilities}
+                       onActivateAbility={handleActivateAbility}
+                       weaponMode={currentWeapon}
+                     />
                   </div>
                 </ScrollArea>
               </div>

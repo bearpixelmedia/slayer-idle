@@ -16,14 +16,30 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
 
     setUploading(true);
     try {
-      // Upload all files and store URLs
       const uploadedUrls = {};
+      let asepriteFile = null;
+
+      // Upload files and check for .aseprite
       for (const file of files) {
+        if (file.name.endsWith('.aseprite')) {
+          asepriteFile = file;
+        }
         const response = await base44.integrations.Core.UploadFile({ file });
         uploadedUrls[file.name] = response.file_url;
       }
       
-      // Find the image file (spritesheet) - prefer PNG/JPG over JSON
+      // If .aseprite file, parse it
+      if (asepriteFile) {
+        const formData = new FormData();
+        formData.append('file', asepriteFile);
+        const parseRes = await base44.functions.invoke('parseAseprite', { fileUrl: uploadedUrls[asepriteFile.name] });
+        if (parseRes.data?.success) {
+          setAnimationData(parseRes.data);
+          setCurrentFrame(0);
+        }
+      }
+      
+      // Find the image file (spritesheet)
       const imageFile = Array.from(files).find(f => /\.(png|jpg|jpeg|gif)$/i.test(f.name));
       const jsonFile = Array.from(files).find(f => f.name.endsWith('.json'));
       

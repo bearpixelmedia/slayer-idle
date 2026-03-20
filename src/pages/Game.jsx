@@ -258,45 +258,36 @@ export default function Game() {
           </div>
         </div>
 
-        {/* HUD Menu Panel - Toggle */}
-        {!showRunner && hudMenuOpen && (
-          <div className="absolute right-0 top-16 w-96 h-auto border-l border-border overflow-hidden z-40 bg-card/60">
-            <MenuPanel
-              state={state}
-              onBuyUpgrade={buyUpgrade}
-              onUnlockSkill={unlockSkill}
-              onPrestige={prestige}
-              onRevive={revive}
-              unlockedIds={unlockedIds}
-              damageMultiplier={damageMultiplier}
-              offlineMultiplier={offlineMultiplier}
-              onSwitchZone={switchZone}
-              onUnlockZone={unlockZone}
-              onClaimQuestReward={handleClaimQuestReward}
-              onRepeatQuest={handleRepeatQuest}
-              questProgress={questProgress}
-              onUpgradeBuilding={upgradeBuilding}
-              abilities={abilities}
-              onActivateAbility={activateAbility}
-              weaponMode={currentWeapon}
-              onRunnerClick={() => setShowRunner(true)}
-              onClose={() => setHudMenuOpen(false)}
-            />
-          </div>
-        )}
-
-        {/* Menu toggle button */}
-        {!showRunner && !hudMenuOpen && (
-          <button
-            onClick={() => setHudMenuOpen(true)}
-            className="fixed right-4 top-1/2 -translate-y-1/2 z-50 w-12 h-12 rounded-full bg-primary hover:bg-primary/90 flex items-center justify-center text-2xl transition-all active:scale-95"
-          >
-            💼
-          </button>
-        )}
       </div>
 
-      <AbilityHUD abilities={abilities} onActivate={activateAbility} />
+      {/* Global HUD Overlay - All HUD elements in one parent */}
+      <HUDOverlay
+        state={state}
+        getTapDamage={getTapDamage}
+        getIdleCPS={getIdleCPS}
+        activeBuffs={activeBuffs}
+        currentWeapon={currentWeapon}
+        onWeaponChange={setCurrentWeapon}
+        abilities={abilities}
+        onActivateAbility={activateAbility}
+        hudMenuOpen={hudMenuOpen}
+        onMenuToggle={setHudMenuOpen}
+        onBuyUpgrade={buyUpgrade}
+        onUnlockSkill={unlockSkill}
+        onPrestige={prestige}
+        onRevive={revive}
+        unlockedIds={unlockedIds}
+        damageMultiplier={damageMultiplier}
+        offlineMultiplier={offlineMultiplier}
+        onSwitchZone={switchZone}
+        onUnlockZone={unlockZone}
+        onClaimQuestReward={handleClaimQuestReward}
+        onRepeatQuest={handleRepeatQuest}
+        questProgress={questProgress}
+        onUpgradeBuilding={upgradeBuilding}
+        onRunnerClick={() => setShowRunner(true)}
+      />
+
       <AchievementToast achievement={newUnlock} />
       <OfflineEarningsModal
         earnings={offlineEarnings}

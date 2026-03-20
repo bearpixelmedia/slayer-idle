@@ -30,12 +30,16 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
       
       // If .aseprite file, parse it
       if (asepriteFile) {
-        const formData = new FormData();
-        formData.append('file', asepriteFile);
-        const parseRes = await base44.functions.invoke('parseAseprite', { fileUrl: uploadedUrls[asepriteFile.name] });
-        if (parseRes.data?.success) {
-          setAnimationData(parseRes.data);
-          setCurrentFrame(0);
+        try {
+          const parseRes = await base44.functions.invoke('parseAseprite', { fileUrl: uploadedUrls[asepriteFile.name] });
+          if (parseRes.data?.success) {
+            setAnimationData(parseRes.data);
+            setCurrentFrame(0);
+          } else {
+            console.error('Parse failed:', parseRes.data?.error);
+          }
+        } catch (parseErr) {
+          console.error('Parse error:', parseErr);
         }
       }
       

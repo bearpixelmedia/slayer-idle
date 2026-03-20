@@ -13,27 +13,27 @@ export default function StatsBar({ state, tapDamage, idleCPS, className }) {
       <div className="flex items-center gap-3 flex-wrap">
         <div className="flex items-center gap-1">
           <span className="text-sm">🪙</span>
-          <span className="font-pixel text-primary text-xs">{formatNumber(state.coins)}</span>
+          <span className={`text-primary ${HUD_THEME.text.small}`}>{formatNumber(state.coins)}</span>
         </div>
         {state.souls > 0 && (
           <div className="flex items-center gap-1">
             <span className="text-sm">👻</span>
-            <span className="font-pixel text-accent text-xs">{formatNumber(state.souls)}</span>
+            <span className={`text-accent ${HUD_THEME.text.small}`}>{formatNumber(state.souls)}</span>
           </div>
         )}
-        <div className="flex items-center gap-1 text-muted-foreground">
-          <span className="font-pixel text-[10px]">{formatNumber(tapDamage)} ⚔️</span>
+        <div className={`flex items-center gap-1 text-muted-foreground ${HUD_THEME.text.xs}`}>
+          <span>{formatNumber(tapDamage)} ⚔️</span>
         </div>
-        <div className="flex items-center gap-1 text-muted-foreground">
-          <span className="font-pixel text-[10px]">{state.itemDrops || 0}/5 🎁</span>
+        <div className={`flex items-center gap-1 text-muted-foreground ${HUD_THEME.text.xs}`}>
+          <span>{state.itemDrops || 0}/5 🎁</span>
         </div>
         {state.stage < 6 && (
-          <div className="flex items-center gap-1 text-muted-foreground">
-            <span className="font-pixel text-[10px]">⚔️ {state.killCount % 25}/25</span>
+          <div className={`flex items-center gap-1 text-muted-foreground ${HUD_THEME.text.xs}`}>
+            <span>⚔️ {state.killCount % 25}/25</span>
           </div>
         )}
-        <div className="hidden sm:flex items-center gap-1 text-muted-foreground">
-          <span className="font-pixel text-[10px]">{formatNumber(idleCPS)}/s 💰</span>
+        <div className={`hidden sm:flex items-center gap-1 text-muted-foreground ${HUD_THEME.text.xs}`}>
+          <span>{formatNumber(idleCPS)}/s 💰</span>
         </div>
       </div>
       {state.isBossActive && (

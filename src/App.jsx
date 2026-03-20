@@ -28,6 +28,7 @@ const AuthenticatedApp = () => {
     <Routes>
       <Route path="/" element={<Navigate to="/Game" replace />} />
       <Route path="/Game" element={<Game />} />
+      <Route path="/GameSettings" element={<GameSettings />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

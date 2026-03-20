@@ -6,7 +6,9 @@ import { X } from "lucide-react";
 export default function OfflineEarningsModal({ earnings, onClose }) {
   if (!earnings) return null;
 
-  const { coins, souls, seconds } = earnings;
+  const coins = typeof earnings?.coins === "number" ? earnings.coins : 0;
+  const souls = typeof earnings?.souls === "number" ? earnings.souls : 0;
+  const seconds = typeof earnings?.seconds === "number" ? earnings.seconds : 0;
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
 
@@ -51,13 +53,13 @@ export default function OfflineEarningsModal({ earnings, onClose }) {
             <div className="flex items-center justify-between gap-3">
               <div className="flex-1 p-3 rounded-lg bg-primary/10 border border-primary/30 text-center">
                 <p className="text-[9px] text-muted-foreground mb-1">IDLE COINS</p>
-                <p className="font-pixel text-sm text-primary">+{formatNumber(coins)}</p>
+                <p className="font-pixel text-sm text-primary">+{formatNumber(coins || 0)}</p>
               </div>
 
               {souls > 0 && (
                 <div className="flex-1 p-3 rounded-lg bg-accent/10 border border-accent/30 text-center">
                   <p className="text-[9px] text-muted-foreground mb-1">SOULS</p>
-                  <p className="font-pixel text-sm text-accent">+{formatNumber(souls)}</p>
+                  <p className="font-pixel text-sm text-accent">+{formatNumber(souls || 0)}</p>
                 </div>
               )}
             </div>

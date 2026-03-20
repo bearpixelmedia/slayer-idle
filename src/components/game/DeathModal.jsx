@@ -54,7 +54,7 @@ export default function DeathModal({ isDead, souls, onRevive, onPrestige, canRev
             </div>
 
             <div className="mt-6 pt-4 border-t border-border/30 text-left space-y-2 text-[10px] text-muted-foreground">
-              <p>Current Souls: <span className="text-accent font-bold">{formatNumber(souls)}</span></p>
+              <p>Current Souls: <span className="text-accent font-bold">{formatNumber(typeof souls === "number" ? souls : 0)}</span></p>
               <p className="text-[9px]">Revive drains souls but keeps your run. Prestige resets but earns souls permanently.</p>
             </div>
           </motion.div>

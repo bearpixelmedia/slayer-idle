@@ -117,33 +117,63 @@ export default function ParallaxBackground() {
         }}
       />
 
-      {/* Layer 5/6/7: Unified treeline (all speeds/sizes matched) - speed 0.50 */}
+      {/* Layer 5: Back treeline (smaller, further away) - speed 0.35 */}
       <div 
         className="absolute left-0 right-0 pointer-events-none"
         style={{ 
-          transform: "translate3d(calc(var(--camX) * 0.50), 0, 0)",
-          top: "20%",
-          height: "55%"
+          transform: "translate3d(calc(var(--camX) * 0.35), 0, 0)",
+          top: "28%",
+          height: "30%",
+          opacity: 0.8
         }}
       >
-        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-1">
-          {Array.from({ length: 50 }).map((_, i) => {
-            const baseScale = 0.75;
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.5">
+          {Array.from({ length: 40 }).map((_, i) => {
             const offset = (i * 7) % 3;
             return (
               <svg 
-                key={`tree-unified-${i}`}
+                key={`tree-back-${i}`}
                 viewBox="0 0 50 110"
                 className="flex-shrink-0"
-                style={{ width: `${50 * baseScale}px`, height: "100%", opacity: 0.75 + (i % 3) * 0.1 }}
+                style={{ width: "50px", height: "100%", opacity: 0.7 + (i % 4) * 0.08 }}
               >
-                {/* Canopy - consistent size */}
-                <circle cx="25" cy="20" r="14" fill={`rgba(${18 + offset * 5}, ${100 + offset * 10}, ${28 + offset * 5}, 0.96)`} />
-                <circle cx="15" cy="30" r="11" fill={`rgba(${26 + offset * 5}, ${120 + offset * 10}, ${35 + offset * 5}, 0.93)`} />
-                <circle cx="35" cy="30" r="11" fill={`rgba(${26 + offset * 5}, ${120 + offset * 10}, ${35 + offset * 5}, 0.93)`} />
-                <circle cx="25" cy="42" r="10" fill={`rgba(${35 + offset * 5}, ${140 + offset * 10}, ${45 + offset * 5}, 0.88)`} />
+                {/* Canopy - consistent small size */}
+                <circle cx="25" cy="20" r="10" fill={`rgba(${12 + offset * 5}, ${70 + offset * 10}, ${20 + offset * 5}, 0.9)`} />
+                <circle cx="16" cy="28" r="8" fill={`rgba(${18 + offset * 5}, ${85 + offset * 10}, ${25 + offset * 5}, 0.88)`} />
+                <circle cx="34" cy="28" r="8" fill={`rgba(${18 + offset * 5}, ${85 + offset * 10}, ${25 + offset * 5}, 0.88)`} />
+                <circle cx="25" cy="38" r="7" fill={`rgba(${20 + offset * 5}, ${90 + offset * 10}, ${28 + offset * 5}, 0.92)`} />
+                {/* Trunk connects at y=45 */}
+                <rect x="22" y="45" width="6" height="65" fill="rgba(80, 50, 20, 0.95)" />
+              </svg>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Layer 6: Front treeline (larger, closer) - speed 0.65 */}
+      <div 
+        className="absolute bottom-1/4 left-0 right-0 h-2/5 pointer-events-none"
+        style={{ 
+          transform: "translate3d(calc(var(--camX) * 0.65), 0, 0)"
+        }}
+      >
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-1.5">
+          {Array.from({ length: 35 }).map((_, i) => {
+            const offset = (i * 7) % 3;
+            return (
+              <svg 
+                key={`tree-front-${i}`}
+                viewBox="0 0 50 110"
+                className="flex-shrink-0"
+                style={{ width: "70px", height: "100%", opacity: 0.85 + (i % 3) * 0.08 }}
+              >
+                {/* Canopy - consistent large size */}
+                <circle cx="25" cy="20" r="16" fill={`rgba(${18 + offset * 5}, ${100 + offset * 10}, ${28 + offset * 5}, 0.96)`} />
+                <circle cx="14" cy="32" r="13" fill={`rgba(${26 + offset * 5}, ${120 + offset * 10}, ${35 + offset * 5}, 0.93)`} />
+                <circle cx="36" cy="32" r="13" fill={`rgba(${26 + offset * 5}, ${120 + offset * 10}, ${35 + offset * 5}, 0.93)`} />
+                <circle cx="25" cy="46" r="11" fill={`rgba(${35 + offset * 5}, ${140 + offset * 10}, ${45 + offset * 5}, 0.88)`} />
                 {/* Trunk connects directly */}
-                <rect x="22" y="50" width="6" height="60" fill="rgb(139, 101, 58)" />
+                <rect x="22" y="55" width="6" height="55" fill="rgb(139, 101, 58)" />
               </svg>
             );
           })}

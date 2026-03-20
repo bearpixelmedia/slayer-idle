@@ -325,11 +325,11 @@ export default function ParallaxBackground() {
       {/* Layer 17: Close animals - speed 0.75 */}
       {createLayer("animals-close", 0.75, 54, 16, 0.8, (
         <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-16">
-          {Array.from({ length: 4 }).map((_, i) => {
+          {Array.from({ length: 1 }).map((_, i) => {
             const animals = ["🦝", "🐇", "🦝"];
             const animal = animals[i % 3];
-            const delay = Math.random() * 15;
-            const duration = 6 + Math.random() * 4;
+            const delay = Math.random() * 30;
+            const duration = 12 + Math.random() * 8;
             return (
               <div key={`animal-close-${i}`} className="flex-shrink-0 text-2xl relative" style={{ 
                 animation: `animal-explore ${duration}s ease-in-out infinite`,

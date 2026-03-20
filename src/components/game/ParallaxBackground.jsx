@@ -302,7 +302,7 @@ export default function ParallaxBackground() {
       {createLayer("ferns", 0.87, 64, 28, 0.85, (
         <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.5">
           {Array.from({ length: 85 }).map((_, i) => {
-            const scale = 0.75 + (i % 3) * 0.15;
+            const scale = 1.2 + (i % 3) * 0.25;
             return (
               <svg key={`fern-${i}`} viewBox="0 0 40 50" className="flex-shrink-0" style={{ width: `${40 * scale}px`, height: "100%", opacity: 0.8 + (i % 2) * 0.1 }}>
                 <circle cx="20" cy="12" r={`${8 * scale}`} fill="rgba(60, 140, 60, 0.92)" />

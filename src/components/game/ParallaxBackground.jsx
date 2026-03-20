@@ -29,16 +29,28 @@ export default function ParallaxBackground() {
     document.documentElement.style.setProperty("--camX", `${-camX}px`);
   }, [camX]);
 
+  const createLayer = (id, speed, topPercent, heightPercent, opacity, content) => (
+    <div
+      key={id}
+      className="absolute left-0 right-0 pointer-events-none"
+      style={{
+        transform: `translate3d(calc(var(--camX) * ${speed}), 0, 0)`,
+        top: `${topPercent}%`,
+        height: `${heightPercent}%`,
+        opacity: opacity,
+      }}
+    >
+      {content}
+    </div>
+  );
+
   return (
     <div className="absolute inset-0 overflow-hidden w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-sky-500">
       {/* Layer 0: Sky - static anchor (speed 0) */}
       <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-sky-500 pointer-events-none" />
 
       {/* Layer 1: Far stars - speed 0.01 */}
-      <div 
-        className="absolute inset-0 w-full h-full pointer-events-none opacity-50"
-        style={{ transform: "translate3d(calc(var(--camX) * 0.01), 0, 0)" }}
-      >
+      {createLayer("stars", 0.01, 0, 100, 0.5, (
         <div className="flex whitespace-nowrap w-[200%] h-full">
           {Array.from({ length: 50 }).map((_, i) => (
             <div
@@ -55,174 +67,245 @@ export default function ParallaxBackground() {
             />
           ))}
         </div>
-      </div>
+      ))}
 
-      {/* Layer 2: Clouds - speed 0.03 */}
-      <div 
-        className="absolute top-0 left-0 right-0 h-1/4 pointer-events-none opacity-35"
-        style={{ transform: "translate3d(calc(var(--camX) * 0.03), 0, 0)" }}
-      >
+      {/* Layer 2: Distant clouds - speed 0.02 */}
+      {createLayer("clouds-distant", 0.02, 5, 15, 0.2, (
         <div className="flex whitespace-nowrap w-[200%] h-full items-center">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <svg key={`cloud-${i}`} viewBox="0 0 100 50" className="flex-shrink-0" style={{ width: "150px", height: "75px" }}>
-              <ellipse cx="50" cy="25" rx="40" ry="22" fill="rgba(255, 255, 255, 0.25)" />
-              <ellipse cx="25" cy="32" rx="28" ry="18" fill="rgba(255, 255, 255, 0.18)" />
-              <ellipse cx="75" cy="32" rx="32" ry="18" fill="rgba(255, 255, 255, 0.18)" />
+          {Array.from({ length: 8 }).map((_, i) => (
+            <svg key={`cloud-dist-${i}`} viewBox="0 0 100 50" className="flex-shrink-0" style={{ width: "120px", height: "60px" }}>
+              <ellipse cx="50" cy="25" rx="30" ry="16" fill="rgba(200, 220, 240, 0.15)" />
             </svg>
           ))}
         </div>
-      </div>
+      ))}
 
-      {/* Layer 3: Far mountains - speed 0.08 */}
-      <div 
-        className="absolute top-0 left-0 right-0 h-1/3 pointer-events-none opacity-45"
-        style={{ transform: "translate3d(calc(var(--camX) * 0.08), 0, 0)" }}
-      >
+      {/* Layer 3: Very far mountains - speed 0.04 */}
+      {createLayer("mountains-very-far", 0.04, 8, 25, 0.3, (
         <div className="flex whitespace-nowrap w-[200%] h-full items-end">
-          {Array.from({ length: 16 }).map((_, i) => (
+          {Array.from({ length: 12 }).map((_, i) => (
+            <svg key={`mtn-vfar-${i}`} viewBox="0 0 150 200" className="flex-shrink-0" style={{ width: "150px", height: "100%" }}>
+              <polygon points="75,15 0,200 150,200" fill="rgba(25, 55, 95, 0.4)" />
+            </svg>
+          ))}
+        </div>
+      ))}
+
+      {/* Layer 4: Far mountains - speed 0.08 */}
+      {createLayer("mountains-far", 0.08, 12, 30, 0.45, (
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end">
+          {Array.from({ length: 14 }).map((_, i) => (
             <svg key={`mtn-far-${i}`} viewBox="0 0 150 220" className="flex-shrink-0" style={{ width: "150px", height: "100%" }}>
               <polygon points="75,15 0,220 150,220" fill="rgba(42, 82, 135, 0.55)" />
               <polygon points="75,60 20,220 130,220" fill="rgba(32, 72, 125, 0.65)" />
             </svg>
           ))}
         </div>
-      </div>
+      ))}
 
-      {/* Layer 4: Mid mountains - speed 0.18 */}
-      <div 
-        className="absolute top-1/4 left-0 right-0 h-2/5 pointer-events-none"
-        style={{ 
-          transform: "translate3d(calc(var(--camX) * 0.18), 0, 0)",
-          opacity: 0.75
-        }}
-      >
+      {/* Layer 5: Mid mountains - speed 0.12 */}
+      {createLayer("mountains-mid", 0.12, 18, 35, 0.6, (
         <div className="flex whitespace-nowrap w-[200%] h-full items-end">
-          {Array.from({ length: 18 }).map((_, i) => {
-            const heightVariation = 60 + (i * 17) % 80;
-            return (
-              <svg key={`mtn-mid-${i}`} viewBox="0 0 130 200" className="flex-shrink-0" style={{ width: "130px", height: `${heightVariation}px` }}>
-                <polygon points="65,20 0,200 130,200" fill={`rgba(${30 + i * 2}, ${95 + i * 2}, ${55 + i * 3}, 0.8)`} />
-                <polygon points="65,55 25,200 105,200" fill={`rgba(${20 + i * 2}, ${75 + i * 2}, ${40 + i * 3}, 0.9)`} />
-              </svg>
-            );
-          })}
+          {Array.from({ length: 16 }).map((_, i) => (
+            <svg key={`mtn-mid-${i}`} viewBox="0 0 130 200" className="flex-shrink-0" style={{ width: "130px", height: "100%" }}>
+              <polygon points="65,20 0,200 130,200" fill={`rgba(${45 + i}, ${110 + i}, ${70 + i}, 0.7)`} />
+              <polygon points="65,55 25,200 105,200" fill={`rgba(${35 + i}, ${90 + i}, ${55 + i}, 0.8)`} />
+            </svg>
+          ))}
         </div>
-      </div>
+      ))}
 
-      {/* Layer 6: Fog/Haze transition - speed 0.42 (static depth perception) */}
-      <div 
-        className="absolute inset-0 w-full h-full pointer-events-none"
-        style={{
-          background: "linear-gradient(180deg, transparent 0%, rgba(120, 160, 200, 0.08) 35%, rgba(100, 140, 180, 0.15) 65%, rgba(80, 120, 160, 0.25) 100%)"
-        }}
-      />
+      {/* Layer 6: Mist/clouds - speed 0.18 */}
+      {createLayer("mist-far", 0.18, 25, 40, 0.15, (
+        <div className="absolute inset-0 w-full h-full" style={{
+          background: "linear-gradient(180deg, transparent 0%, rgba(120, 160, 200, 0.08) 50%, transparent 100%)"
+        }} />
+      ))}
 
-      {/* Layer 5: Back treeline (smaller, further away) - speed 0.35 */}
-      <div 
-        className="absolute left-0 right-0 pointer-events-none"
-        style={{ 
-          transform: "translate3d(calc(var(--camX) * 0.35), 0, 0)",
-          top: "28%",
-          height: "30%",
-          opacity: 0.8
-        }}
-      >
+      {/* Layer 7: Very distant trees - speed 0.22 */}
+      {createLayer("trees-very-far", 0.22, 32, 28, 0.5, (
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.5">
+          {Array.from({ length: 50 }).map((_, i) => (
+            <svg key={`tree-vfar-${i}`} viewBox="0 0 50 110" className="flex-shrink-0" style={{ width: "35px", height: "100%", opacity: 0.6 }}>
+              <circle cx="25" cy="20" r="7" fill="rgba(8, 60, 15, 0.85)" />
+              <circle cx="18" cy="28" r="5" fill="rgba(10, 70, 18, 0.8)" />
+              <circle cx="32" cy="28" r="5" fill="rgba(10, 70, 18, 0.8)" />
+              <rect x="23" y="38" width="4" height="72" fill="rgba(60, 35, 15, 0.8)" />
+            </svg>
+          ))}
+        </div>
+      ))}
+
+      {/* Layer 8: Distant trees - speed 0.28 */}
+      {createLayer("trees-distant", 0.28, 35, 28, 0.65, (
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.5">
+          {Array.from({ length: 45 }).map((_, i) => (
+            <svg key={`tree-dist-${i}`} viewBox="0 0 50 110" className="flex-shrink-0" style={{ width: "42px", height: "100%", opacity: 0.7 }}>
+              <circle cx="25" cy="18" r="9" fill="rgba(12, 65, 20, 0.88)" />
+              <circle cx="16" cy="28" r="7" fill="rgba(15, 75, 25, 0.85)" />
+              <circle cx="34" cy="28" r="7" fill="rgba(15, 75, 25, 0.85)" />
+              <circle cx="25" cy="38" r="6" fill="rgba(18, 80, 28, 0.9)" />
+              <rect x="22" y="43" width="5" height="67" fill="rgba(70, 40, 18, 0.85)" />
+            </svg>
+          ))}
+        </div>
+      ))}
+
+      {/* Layer 9: Back treeline small - speed 0.35 */}
+      {createLayer("trees-back", 0.35, 38, 28, 0.75, (
         <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.5">
           {Array.from({ length: 40 }).map((_, i) => {
             const offset = (i * 7) % 3;
             return (
-              <svg 
-                key={`tree-back-${i}`}
-                viewBox="0 0 50 110"
-                className="flex-shrink-0"
-                style={{ width: "50px", height: "100%", opacity: 0.7 + (i % 4) * 0.08 }}
-              >
-                {/* Canopy - consistent small size */}
+              <svg key={`tree-back-${i}`} viewBox="0 0 50 110" className="flex-shrink-0" style={{ width: "50px", height: "100%", opacity: 0.75 + (i % 3) * 0.08 }}>
                 <circle cx="25" cy="20" r="10" fill={`rgba(${12 + offset * 5}, ${70 + offset * 10}, ${20 + offset * 5}, 0.9)`} />
                 <circle cx="16" cy="28" r="8" fill={`rgba(${18 + offset * 5}, ${85 + offset * 10}, ${25 + offset * 5}, 0.88)`} />
                 <circle cx="34" cy="28" r="8" fill={`rgba(${18 + offset * 5}, ${85 + offset * 10}, ${25 + offset * 5}, 0.88)`} />
                 <circle cx="25" cy="38" r="7" fill={`rgba(${20 + offset * 5}, ${90 + offset * 10}, ${28 + offset * 5}, 0.92)`} />
-                {/* Trunk connects at y=45 */}
                 <rect x="22" y="45" width="6" height="65" fill="rgba(80, 50, 20, 0.95)" />
               </svg>
             );
           })}
         </div>
-      </div>
+      ))}
 
-      {/* Layer 6: Front treeline (larger, closer) - speed 0.65 */}
-      <div 
-        className="absolute bottom-1/4 left-0 right-0 h-2/5 pointer-events-none"
-        style={{ 
-          transform: "translate3d(calc(var(--camX) * 0.65), 0, 0)"
-        }}
-      >
-        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-1.5">
-          {Array.from({ length: 35 }).map((_, i) => {
-            const offset = (i * 7) % 3;
+      {/* Layer 10: Mid-back trees - speed 0.43 */}
+      {createLayer("trees-mid-back", 0.43, 36, 32, 0.8, (
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.8">
+          {Array.from({ length: 38 }).map((_, i) => {
+            const offset = (i * 9) % 3;
             return (
-              <svg 
-                key={`tree-front-${i}`}
-                viewBox="0 0 50 110"
-                className="flex-shrink-0"
-                style={{ width: "70px", height: "100%", opacity: 0.85 + (i % 3) * 0.08 }}
-              >
-                {/* Canopy - consistent large size */}
-                <circle cx="25" cy="20" r="16" fill={`rgba(${18 + offset * 5}, ${100 + offset * 10}, ${28 + offset * 5}, 0.96)`} />
-                <circle cx="14" cy="32" r="13" fill={`rgba(${26 + offset * 5}, ${120 + offset * 10}, ${35 + offset * 5}, 0.93)`} />
-                <circle cx="36" cy="32" r="13" fill={`rgba(${26 + offset * 5}, ${120 + offset * 10}, ${35 + offset * 5}, 0.93)`} />
-                <circle cx="25" cy="46" r="11" fill={`rgba(${35 + offset * 5}, ${140 + offset * 10}, ${45 + offset * 5}, 0.88)`} />
-                {/* Trunk connects directly */}
-                <rect x="22" y="55" width="6" height="55" fill="rgb(139, 101, 58)" />
+              <svg key={`tree-mb-${i}`} viewBox="0 0 50 110" className="flex-shrink-0" style={{ width: "58px", height: "100%", opacity: 0.8 + (i % 2) * 0.08 }}>
+                <circle cx="25" cy="18" r="12" fill={`rgba(${15 + offset * 5}, ${80 + offset * 10}, ${25 + offset * 5}, 0.92)`} />
+                <circle cx="15" cy="30" r="10" fill={`rgba(${22 + offset * 5}, ${100 + offset * 10}, ${32 + offset * 5}, 0.9)`} />
+                <circle cx="35" cy="30" r="10" fill={`rgba(${22 + offset * 5}, ${100 + offset * 10}, ${32 + offset * 5}, 0.9)`} />
+                <circle cx="25" cy="42" r="9" fill={`rgba(${28 + offset * 5}, ${120 + offset * 10}, ${40 + offset * 5}, 0.88)`} />
+                <rect x="22" y="50" width="6" height="60" fill="rgba(90, 55, 25, 0.96)" />
               </svg>
             );
           })}
         </div>
-      </div>
+      ))}
 
-      {/* Layer 8: Shrubs/bushes - speed 0.85 */}
-      <div 
-        className="absolute bottom-1/5 left-0 right-0 h-1/4 pointer-events-none"
-        style={{ 
-          transform: "translate3d(calc(var(--camX) * 0.85), 0, 0)"
-        }}
-      >
+      {/* Layer 11: Mid trees - speed 0.50 */}
+      {createLayer("trees-mid", 0.50, 33, 37, 0.85, (
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-1">
+          {Array.from({ length: 35 }).map((_, i) => {
+            const offset = (i * 11) % 3;
+            return (
+              <svg key={`tree-mid-${i}`} viewBox="0 0 50 110" className="flex-shrink-0" style={{ width: "65px", height: "100%", opacity: 0.82 + (i % 2) * 0.08 }}>
+                <circle cx="25" cy="16" r="14" fill={`rgba(${18 + offset * 5}, ${90 + offset * 10}, ${28 + offset * 5}, 0.93)`} />
+                <circle cx="14" cy="30" r="12" fill={`rgba(${25 + offset * 5}, ${110 + offset * 10}, ${35 + offset * 5}, 0.91)`} />
+                <circle cx="36" cy="30" r="12" fill={`rgba(${25 + offset * 5}, ${110 + offset * 10}, ${35 + offset * 5}, 0.91)`} />
+                <circle cx="25" cy="44" r="10" fill={`rgba(${32 + offset * 5}, ${130 + offset * 10}, ${42 + offset * 5}, 0.89)`} />
+                <rect x="22" y="52" width="6" height="58" fill="rgba(100, 60, 28, 0.97)" />
+              </svg>
+            );
+          })}
+        </div>
+      ))}
+
+      {/* Layer 12: Mid-front trees - speed 0.57 */}
+      {createLayer("trees-mid-front", 0.57, 31, 42, 0.88, (
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-1.5">
+          {Array.from({ length: 32 }).map((_, i) => {
+            const offset = (i * 13) % 3;
+            return (
+              <svg key={`tree-mf-${i}`} viewBox="0 0 50 110" className="flex-shrink-0" style={{ width: "70px", height: "100%", opacity: 0.83 + (i % 3) * 0.07 }}>
+                <circle cx="25" cy="15" r="15" fill={`rgba(${20 + offset * 5}, ${95 + offset * 10}, ${30 + offset * 5}, 0.94)`} />
+                <circle cx="13" cy="29" r="13" fill={`rgba(${28 + offset * 5}, ${115 + offset * 10}, ${37 + offset * 5}, 0.92)`} />
+                <circle cx="37" cy="29" r="13" fill={`rgba(${28 + offset * 5}, ${115 + offset * 10}, ${37 + offset * 5}, 0.92)`} />
+                <circle cx="25" cy="44" r="11" fill={`rgba(${35 + offset * 5}, ${135 + offset * 10}, ${44 + offset * 5}, 0.9)`} />
+                <rect x="22" y="53" width="6" height="57" fill="rgba(110, 65, 30, 0.98)" />
+              </svg>
+            );
+          })}
+        </div>
+      ))}
+
+      {/* Layer 13: Front treeline large - speed 0.65 */}
+      {createLayer("trees-front", 0.65, 28, 48, 0.90, (
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-1.5">
+          {Array.from({ length: 30 }).map((_, i) => {
+            const offset = (i * 15) % 3;
+            return (
+              <svg key={`tree-front-${i}`} viewBox="0 0 50 110" className="flex-shrink-0" style={{ width: "75px", height: "100%", opacity: 0.85 + (i % 3) * 0.07 }}>
+                <circle cx="25" cy="14" r="16" fill={`rgba(${22 + offset * 5}, ${100 + offset * 10}, ${32 + offset * 5}, 0.95)`} />
+                <circle cx="12" cy="28" r="14" fill={`rgba(${30 + offset * 5}, ${120 + offset * 10}, ${39 + offset * 5}, 0.93)`} />
+                <circle cx="38" cy="28" r="14" fill={`rgba(${30 + offset * 5}, ${120 + offset * 10}, ${39 + offset * 5}, 0.93)`} />
+                <circle cx="25" cy="44" r="12" fill={`rgba(${38 + offset * 5}, ${140 + offset * 10}, ${47 + offset * 5}, 0.91)`} />
+                <rect x="22" y="54" width="6" height="56" fill="rgb(120, 70, 32)" />
+              </svg>
+            );
+          })}
+        </div>
+      ))}
+
+      {/* Layer 14: Very large foreground trees - speed 0.72 */}
+      {createLayer("trees-very-front", 0.72, 25, 52, 0.92, (
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-2">
+          {Array.from({ length: 25 }).map((_, i) => {
+            const offset = (i * 17) % 3;
+            return (
+              <svg key={`tree-vf-${i}`} viewBox="0 0 50 110" className="flex-shrink-0" style={{ width: "82px", height: "100%", opacity: 0.87 + (i % 2) * 0.06 }}>
+                <circle cx="25" cy="12" r="18" fill={`rgba(${25 + offset * 5}, ${105 + offset * 10}, ${35 + offset * 5}, 0.96)`} />
+                <circle cx="11" cy="27" r="15" fill={`rgba(${33 + offset * 5}, ${125 + offset * 10}, ${42 + offset * 5}, 0.94)`} />
+                <circle cx="39" cy="27" r="15" fill={`rgba(${33 + offset * 5}, ${125 + offset * 10}, ${42 + offset * 5}, 0.94)`} />
+                <circle cx="25" cy="43" r="13" fill={`rgba(${41 + offset * 5}, ${145 + offset * 10}, ${50 + offset * 5}, 0.92)`} />
+                <rect x="22" y="54" width="6" height="56" fill="rgb(130, 75, 35)" />
+              </svg>
+            );
+          })}
+        </div>
+      ))}
+
+      {/* Layer 15: Shrubs/vegetation - speed 0.80 */}
+      {createLayer("shrubs", 0.80, 60, 25, 0.88, (
         <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.5">
-          {Array.from({ length: 60 }).map((_, i) => {
-            const scale = 0.8 + (i % 3) * 0.15;
+          {Array.from({ length: 65 }).map((_, i) => {
+            const scale = 0.75 + (i % 4) * 0.12;
             return (
               <svg key={`shrub-${i}`} viewBox="0 0 35 35" className="flex-shrink-0" style={{ width: `${35 * scale}px`, height: "100%", opacity: 0.85 + (i % 3) * 0.1 }}>
-                <circle cx="17" cy="17" r={`${15 * scale}`} fill="rgba(38, 155, 38, 0.96)" />
-                <circle cx={`${10 * scale}`} cy={`${14 * scale}`} r={`${11 * scale}`} fill="rgba(48, 175, 48, 0.93)" />
-                <circle cx={`${24 * scale}`} cy={`${14 * scale}`} r={`${11 * scale}`} fill="rgba(48, 175, 48, 0.93)" />
+                <circle cx="17" cy="17" r={`${14 * scale}`} fill="rgba(45, 165, 45, 0.95)" />
+                <circle cx={`${10 * scale}`} cy={`${13 * scale}`} r={`${10 * scale}`} fill="rgba(55, 185, 55, 0.92)" />
+                <circle cx={`${24 * scale}`} cy={`${13 * scale}`} r={`${10 * scale}`} fill="rgba(55, 185, 55, 0.92)" />
               </svg>
             );
           })}
         </div>
-      </div>
+      ))}
 
-      {/* Layer 9: Close foreground grass - speed 1.0 (fastest) */}
-      <div 
-        className="absolute bottom-0 left-0 right-0 h-1/5 pointer-events-none"
-        style={{ 
-          transform: "translate3d(calc(var(--camX) * 1.0), 0, 0)"
-        }}
-      >
-        <div className="flex whitespace-nowrap w-[200%] h-full items-end">
-          {Array.from({ length: 140 }).map((_, i) => (
-            <div 
-              key={`grass-${i}`} 
-              className="flex-1 h-full bg-gradient-to-b from-green-900 via-green-950 to-yellow-900 border-l border-green-800/60"
-              style={{ opacity: 0.85 + (i % 2) * 0.15 }}
-            />
+      {/* Layer 16: Close grass detail - speed 0.88 */}
+      {createLayer("grass-near", 0.88, 75, 20, 0.9, (
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.5">
+          {Array.from({ length: 100 }).map((_, i) => (
+            <div key={`grass-n-${i}`} className="flex-1 h-full bg-gradient-to-b from-green-800 via-green-900 to-green-950 border-l border-green-700/40" style={{ opacity: 0.88 + (i % 2) * 0.12 }} />
           ))}
         </div>
-      </div>
+      ))}
 
-      {/* Layer 10: Ground base - static */}
-      <div className="absolute bottom-0 left-0 right-0 w-full h-20 bg-gradient-to-b from-green-950 via-green-975 to-yellow-950 pointer-events-none" />
+      {/* Layer 17: Very close grass - speed 0.95 */}
+      {createLayer("grass-very-close", 0.95, 82, 18, 0.92, (
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0">
+          {Array.from({ length: 150 }).map((_, i) => (
+            <div key={`grass-vc-${i}`} className="flex-1 h-full bg-gradient-to-b from-green-700 via-green-850 to-yellow-850 border-l border-green-700/60" style={{ opacity: 0.9 + (i % 2) * 0.1 }} />
+          ))}
+        </div>
+      ))}
 
-      {/* Layer 11: Vignette - static */}
+      {/* Layer 18: Foreground grass - speed 1.0 (fastest) */}
+      {createLayer("grass-foreground", 1.0, 85, 15, 0.95, (
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end">
+          {Array.from({ length: 180 }).map((_, i) => (
+            <div key={`grass-fg-${i}`} className="flex-1 h-full bg-gradient-to-b from-green-600 via-green-700 to-yellow-700 border-l border-green-600/70" style={{ opacity: 0.92 + (i % 2) * 0.08 }} />
+          ))}
+        </div>
+      ))}
+
+      {/* Layer 19: Ground base - static */}
+      <div className="absolute bottom-0 left-0 right-0 w-full h-20 bg-gradient-to-b from-green-700 via-green-900 to-yellow-900 pointer-events-none" />
+
+      {/* Layer 20: Vignette overlay - static */}
       <div className="absolute inset-0 pointer-events-none w-full h-full" style={{
         boxShadow: "inset 0 0 150px rgba(0,0,0,0.6), inset 0 0 200px rgba(0,0,0,0.3)"
       }} />

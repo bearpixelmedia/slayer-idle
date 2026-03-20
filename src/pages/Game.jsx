@@ -258,7 +258,7 @@ export default function Game() {
                 floatingDamage={floatingDamage}
                 particles={particles}
                 slashEffects={slashEffects}
-                onTap={handleTap}
+                onTap={handleTapGame}
                 enemyHit={enemyHit}
                 weaponMode={currentWeapon}
               />

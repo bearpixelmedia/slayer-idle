@@ -254,7 +254,8 @@ export default function Game() {
               onTap={handleTap}
               enemyHit={enemyHit}
               weaponMode={currentWeapon}
-            />
+              />
+            </div>
           ) : (
             <RunnerCanvas
               playerY={runner.playerY}

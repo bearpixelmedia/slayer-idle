@@ -7,6 +7,7 @@ import {
 import { SKILLS, getSkillMultipliers } from "@/lib/skillTree";
 import { isBossEncounter, getBossForStage, getBossHP, getBossReward, BOSS_ENCOUNTER_INTERVAL, isBossShieldActive, getBossEnrageMultiplier } from "@/lib/bosses";
 import { BUFF_TYPES, PROC_RATES, selectRandomBuff, shouldProcBuff, getBuffMultiplier, BUFF_RULES } from "@/lib/buffs";
+import { VILLAGE_BUILDINGS, computeVillageMultipliers, getBuildingUpgradeCost, canAffordUpgrade } from "@/lib/village";
 
 const SAVE_VERSION = 3;
 
@@ -64,6 +65,7 @@ function defaultState() {
     bossHitsReceived: 0, // Track hits for enrage mechanic
     bossFightStartTime: null, // Track elapsed time for shield window mechanic
     bossEnrageResetUsed: false, // Ensure enrage reset threshold triggers once per fight
+    villageBuildings: {},
   };
 }
 
@@ -98,6 +100,10 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   const [offlineEarnings, setOfflineEarnings] = useState(null);
   const [enemyHit, setEnemyHit] = useState(false);
   const [currentWeapon, setCurrentWeapon] = useState(weaponMode);
+  const currentWeaponRef = useRef(currentWeapon);
+  useEffect(() => {
+    currentWeaponRef.current = currentWeapon;
+  }, [currentWeapon]);
   const [activeBuffs, setActiveBuffs] = useState([]);
   const stateRef = useRef(state);
   stateRef.current = state;
@@ -105,8 +111,6 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   abilitiesRef.current = abilities;
   const activeBuffsRef = useRef(activeBuffs);
   activeBuffsRef.current = activeBuffs;
-  const currentWeaponRef = useRef(currentWeapon);
-  currentWeaponRef.current = currentWeapon;
   const lastBuffProcRef = useRef(Date.now());
   const lastTapTimeRef = useRef(Date.now());
 
@@ -165,8 +169,9 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     });
     const soulBonus = 1 + (s.souls * 0.05);
     const skillMults = getSkillMultipliers(s.unlockedSkills);
+    const villageMultipliers = computeVillageMultipliers(s.villageBuildings);
     const buffMult = getBuffMultiplier(buffs, "tapDamageMultiplier");
-    return Math.floor(damage * soulBonus * damageMultiplier * skillMults.damageMultiplier * buffMult);
+    return Math.floor(damage * soulBonus * damageMultiplier * skillMults.damageMultiplier * villageMultipliers.tapDamageMultiplier * buffMult);
   }
 
   function getIdleCPS(s = state) {
@@ -182,15 +187,17 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     });
     const soulBonus = 1 + (s.souls * 0.05);
     const skillMults = getSkillMultipliers(s.unlockedSkills);
-    return Math.floor(cps * soulBonus * damageMultiplier * skillMults.idleMultiplier);
+    const villageMultipliers = computeVillageMultipliers(s.villageBuildings);
+    return Math.floor(cps * soulBonus * damageMultiplier * skillMults.idleMultiplier * villageMultipliers.coinMultiplier);
   }
 
   function applyRewardMultipliers(coins, souls, s = state, buffs = activeBuffs) {
     const skillMults = getSkillMultipliers(s.unlockedSkills);
+    const villageMultipliers = computeVillageMultipliers(s.villageBuildings);
     const buffCoinMult = getBuffMultiplier(buffs, "coinMultiplier");
     const buffSoulMult = getBuffMultiplier(buffs, "soulMultiplier");
-    const coinAfterMultiplier = Math.floor(coins * skillMults.coinDropMultiplier * buffCoinMult);
-    const soulsAfterMultiplier = Math.floor(souls * skillMults.soulMultiplier * buffSoulMult);
+    const coinAfterMultiplier = Math.floor(coins * skillMults.coinDropMultiplier * villageMultipliers.coinMultiplier * buffCoinMult);
+    const soulsAfterMultiplier = Math.floor(souls * skillMults.soulMultiplier * villageMultipliers.soulMultiplier * buffSoulMult);
     return { coins: coinAfterMultiplier, souls: soulsAfterMultiplier };
   }
 
@@ -505,7 +512,9 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
           const zoneStages = getZoneStages(prev.activeZoneId);
           const stageBias = zoneStages[prev.stage]?.soulBias || 1;
           const soulBonus = 1 + (prev.souls * 0.05);
-          const bowBonus = currentWeaponRef.current === "bow" ? getBowSoulMultiplier() : 1;
+          const bowLevel = prev.upgradeLevels?.bow || 0;
+          const bowBonus =
+            currentWeaponRef.current === "bow" ? getBowSoulMultiplier(bowLevel) : 1;
           soulReward = baseSouls * stageBias * bowBonus;
           
           const reward = getEnemyReward(prev.stage, prev.killCount);
@@ -545,8 +554,9 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         const newKillCount = prev.killCount + 1;
         let newStage = prev.stage;
         const zoneStages = getZoneStages(prev.activeZoneId);
+        const maxStageInZone = zoneStages[zoneStages.length - 1];
         
-        if (newKillCount > 0 && newKillCount % 25 === 0 && prev.stage < zoneStages.length - 1) {
+        if (newKillCount > 0 && newKillCount % 25 === 0 && prev.stage < maxStageInZone) {
           newStage = prev.stage + 1;
         }
         
@@ -600,7 +610,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     lastTapTimeRef.current = Date.now();
     tryProcBuff("tap", stateRef.current);
     
-    const damage = getTapDamage(stateRef.current, currentWeapon, activeBuffsRef.current);
+    const damage = getTapDamage(stateRef.current, currentWeaponRef.current, activeBuffsRef.current);
     // Note: double damage multiplier is applied inside dealDamage via abilitiesRef
     
     setSlashEffects(prev => [...prev, { id: Date.now() + Math.random(), x, y }]);
@@ -626,11 +636,11 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   useEffect(() => {
     const interval = setInterval(() => {
       if (!abilitiesRef.current?.autoClicker?.active) return;
-      const damage = getTapDamage(stateRef.current);
+      const damage = getTapDamage(stateRef.current, currentWeaponRef.current, activeBuffsRef.current);
       dealDamage(damage, 65 + Math.random() * 20, 40 + Math.random() * 30);
     }, 500);
     return () => clearInterval(interval);
-  }, [dealDamage]);
+  }, [dealDamage, currentWeapon]);
 
   // Clean up floating coins, souls, damage numbers, and particles
   useEffect(() => {
@@ -655,6 +665,25 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         ...prev,
         coins: prev.coins - cost,
         upgradeLevels: { ...prev.upgradeLevels, [upgradeId]: level + 1 },
+      };
+    });
+  }, []);
+
+  const upgradeBuilding = useCallback((buildingId) => {
+    setState(prev => {
+      const building = VILLAGE_BUILDINGS.find(b => b.id === buildingId);
+      if (!building) return prev;
+      
+      const currentLevel = prev.villageBuildings[buildingId] || 0;
+      const cost = getBuildingUpgradeCost(building, currentLevel);
+      
+      if (!cost || !canAffordUpgrade(cost, prev)) return prev;
+      
+      return {
+        ...prev,
+        coins: prev.coins - cost.coins,
+        souls: prev.souls - cost.souls,
+        villageBuildings: { ...prev.villageBuildings, [buildingId]: currentLevel + 1 },
       };
     });
   }, []);
@@ -710,6 +739,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         totalKills: prev.totalKills,
         highestStage: prev.highestStage || 0,
         prestigeCount: (prev.prestigeCount || 0) + 1,
+        villageBuildings: prev.villageBuildings || {},
         saveVersion: SAVE_VERSION,
       };
     });
@@ -739,6 +769,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         bossWarning: null,
         bossHitsReceived: 0,
         bossFightStartTime: null,
+        bossEnrageResetUsed: false,
       };
       return spawnNewEnemy(switched);
     });
@@ -786,5 +817,6 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     switchZone,
     unlockZone,
     activeBuffs,
+    upgradeBuilding,
   };
 }

@@ -8,13 +8,13 @@ export default function ActiveBuffsDisplay({ activeBuffs }) {
   const sorted = [...activeBuffs].sort((a, b) => a.endTime - b.endTime);
 
   return (
-    <div className="px-4 py-2 flex gap-2 flex-wrap">
+    <div className="fixed top-16 right-2 z-20 flex flex-col gap-1">
       <AnimatePresence>
         {sorted.map((buff) => {
           const timeRemaining = Math.max(0, buff.endTime - Date.now());
           const totalDuration = buff.duration * 1000;
           const pct = (timeRemaining / totalDuration) * 100;
-          const isExpiring = timeRemaining < 1500; // Flash if < 1.5s
+          const isExpiring = timeRemaining < 1500;
 
           return (
             <motion.div
@@ -23,7 +23,7 @@ export default function ActiveBuffsDisplay({ activeBuffs }) {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className={`relative flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border backdrop-blur-sm transition-all ${
+              className={`relative flex items-center gap-1.5 px-2 py-1 rounded-full border backdrop-blur-sm transition-all ${
                 buff.id === "frenzy"
                   ? "bg-red-500/20 border-red-400/60"
                   : buff.id === "coin_surge"
@@ -31,15 +31,13 @@ export default function ActiveBuffsDisplay({ activeBuffs }) {
                     : "bg-purple-500/20 border-purple-400/60"
               } ${isExpiring ? "animate-pulse" : ""}`}
             >
-              <span className="text-lg">{buff.icon}</span>
-              <span className="font-pixel text-[8px] text-foreground whitespace-nowrap">
+              <span className="text-sm">{buff.icon}</span>
+              <span className="font-pixel text-[7px] text-foreground whitespace-nowrap">
                 {buff.name}
               </span>
-              <span className="font-pixel text-[7px] text-muted-foreground">
+              <span className="font-pixel text-[6px] text-muted-foreground">
                 {(timeRemaining / 1000).toFixed(1)}s
               </span>
-
-              {/* Progress bar */}
               <div className="absolute bottom-0 left-0 h-0.5 bg-white/40 rounded-full transition-all"
                 style={{ width: `${pct}%` }}
               />

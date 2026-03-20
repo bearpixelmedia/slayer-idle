@@ -1,0 +1,93 @@
+import React from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import GameTabs from "@/components/game/GameTabs";
+
+export default function MenuPanel({
+  state,
+  onBuyUpgrade,
+  onUnlockSkill,
+  onPrestige,
+  onRevive,
+  unlockedIds,
+  damageMultiplier,
+  offlineMultiplier,
+  onSwitchZone,
+  onUnlockZone,
+  onClaimQuestReward,
+  onRepeatQuest,
+  questProgress,
+  onUpgradeBuilding,
+  abilities,
+  onActivateAbility,
+  weaponMode,
+  onRunnerClick,
+}) {
+  return (
+    <div className="w-96 flex flex-col" style={{
+      background: "linear-gradient(135deg, #8B7355 0%, #A0826D 100%)",
+      border: "8px solid #D4AF37",
+      borderRadius: "4px",
+      boxShadow: "inset 0 0 0 2px #6B5344, 0 0 0 4px #1a1a1a"
+    }}>
+      {/* Inner frame */}
+      <div style={{
+        background: "linear-gradient(135deg, #4A4A4A 0%, #2D2D2D 100%)",
+        border: "2px solid #8B7355",
+        margin: "8px",
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden"
+      }}>
+        <ScrollArea className="flex-1 overflow-hidden">
+          <div className="px-3 py-2 space-y-2">
+            <button
+              onClick={onRunnerClick}
+              className="w-full py-2 rounded-sm bg-green-600 hover:bg-green-700 text-white font-pixel text-[9px] transition-colors border-2 border-green-800"
+            >
+              🏃 RUNNER
+            </button>
+            <GameTabs
+              state={state}
+              onBuyUpgrade={onBuyUpgrade}
+              onUnlockSkill={onUnlockSkill}
+              onPrestige={onPrestige}
+              onRevive={onRevive}
+              unlockedIds={unlockedIds}
+              damageMultiplier={damageMultiplier}
+              offlineMultiplier={offlineMultiplier}
+              onSwitchZone={onSwitchZone}
+              onUnlockZone={onUnlockZone}
+              onClaimQuestReward={onClaimQuestReward}
+              onRepeatQuest={onRepeatQuest}
+              questProgress={questProgress}
+              onUpgradeBuilding={onUpgradeBuilding}
+              abilities={abilities}
+              onActivateAbility={onActivateAbility}
+              weaponMode={weaponMode}
+            />
+          </div>
+        </ScrollArea>
+      </div>
+
+      {/* Bottom icon bar */}
+      <div style={{
+        background: "linear-gradient(180deg, #8B4513 0%, #654321 100%)",
+        border: "3px solid #D4AF37",
+        borderTop: "4px solid #D4AF37",
+        display: "flex",
+        justifyContent: "space-around",
+        alignItems: "center",
+        padding: "4px 2px",
+        gap: "2px"
+      }}>
+        <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Combat">⚔️</button>
+        <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Upgrades">⬆️</button>
+        <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Skills">🧑</button>
+        <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Achievements">💎</button>
+        <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="More">⋮</button>
+        <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Close">✕</button>
+      </div>
+    </div>
+  );
+}

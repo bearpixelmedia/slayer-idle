@@ -7,19 +7,14 @@ import { computeAchievementMultipliers } from "@/lib/achievements";
 import StatsBar from "@/components/game/StatsBar";
 import GameCanvas from "@/components/game/GameCanvas";
 import RunnerCanvas from "@/components/game/RunnerCanvas";
-import UpgradeShop from "@/components/game/UpgradeShop";
-import PrestigePanel from "@/components/game/PrestigePanel";
-import SkillTree from "@/components/game/SkillTree";
-import AbilityBar from "@/components/game/AbilityBar";
-import AchievementsPanel from "@/components/game/AchievementsPanel";
 import AchievementToast from "@/components/game/AchievementToast";
 import OfflineEarningsModal from "@/components/game/OfflineEarningsModal";
 import DeathModal from "@/components/game/DeathModal";
-import ZoneSelector from "@/components/game/ZoneSelector";
-import QuestLog from "@/components/game/QuestLog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import WeaponMode from "@/components/game/WeaponMode";
 import ActiveBuffsDisplay from "@/components/game/ActiveBuffsDisplay";
+import MenuPanel from "@/components/game/MenuPanel";
+import GameTabs from "@/components/game/GameTabs";
 
 function loadSavedMultipliers() {
   try {
@@ -33,8 +28,9 @@ function loadSavedMultipliers() {
 
 export default function Game() {
   // Load saved achievement multipliers synchronously so gameState starts with them
-  const [initMultipliers] = React.useState(loadSavedMultipliers);
+  const [initMultipliers] = React.useState(() => loadSavedMultipliers());
   const [showRunner, setShowRunner] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const runner = useRunnerState();
 
@@ -66,22 +62,15 @@ export default function Game() {
     switchZone,
     unlockZone,
     activeBuffs,
+    upgradeBuilding,
   } = useGameState(initMultipliers);
 
   const { unlockedIds, newUnlock, damageMultiplier, offlineMultiplier } = useAchievements(state);
 
-  const { questProgress, claimReward, resetQuestForRepeat } = useQuests(state, state.unlockedZoneIds);
+  const { questProgress, claimReward, resetQuestForRepeat } = useQuests(state, state?.unlockedZoneIds || []);
 
   const handleClaimQuestReward = (questId) => {
-    const reward = claimReward(questId);
-    if (!reward) return;
-
-    setState(prev => ({
-      ...prev,
-      coins: prev.coins + (reward.coins || 0),
-      souls: prev.souls + (reward.souls || 0),
-      slayerPoints: prev.slayerPoints + (reward.slayerPoints || 0),
-    }));
+    claimReward(questId);
   };
 
   const handleRepeatQuest = (questId) => {
@@ -89,58 +78,133 @@ export default function Game() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <StatsBar
-        state={state}
-        tapDamage={getTapDamage()}
-        idleCPS={getIdleCPS()}
-      />
-      <ActiveBuffsDisplay activeBuffs={activeBuffs} />
-      <WeaponMode
-        currentMode={currentWeapon}
-        bowUnlocked={state.upgradeLevels["bow"] > 0}
-        onModeChange={setCurrentWeapon}
-      />
-      {!showRunner ? (
-        <GameCanvas
+    <div className="fixed inset-0 bg-background flex flex-col lg:flex-row overflow-hidden">
+      {/* Portrait/Mobile: Full screen */}
+      <div className="lg:hidden w-full h-full flex flex-col relative">
+        <StatsBar
           state={state}
-          enemyDying={enemyDying}
-          floatingCoins={floatingCoins}
-          floatingSouls={floatingSouls}
-          floatingDamage={floatingDamage}
-          particles={particles}
-          slashEffects={slashEffects}
-          onTap={handleTap}
-          enemyHit={enemyHit}
-          weaponMode={currentWeapon}
+          tapDamage={getTapDamage()}
+          idleCPS={getIdleCPS()}
         />
-      ) : (
-        <RunnerCanvas
-          playerY={runner.playerY}
-          obstacles={runner.obstacles}
-          score={runner.score}
-          isGameOver={runner.isGameOver}
-          gameStarted={runner.gameStarted}
-          onTap={() => {
-            if (!runner.gameStarted) runner.startGame();
-            else if (runner.isGameOver) runner.resetGame();
-            else runner.handleJump();
-          }}
+        <ActiveBuffsDisplay activeBuffs={activeBuffs} />
+        <WeaponMode
+          currentMode={currentWeapon}
+          bowUnlocked={state.upgradeLevels["bow"] > 0}
+          onModeChange={setCurrentWeapon}
         />
-      )}
-      <ScrollArea className="flex-1">
-        {!showRunner && (
-          <div className="px-4 py-2">
-            <button
-              onClick={() => setShowRunner(true)}
-              className="w-full py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"
+
+        <div className="w-full flex-1 overflow-hidden flex flex-col min-h-0">
+          {!showRunner ? (
+            <GameCanvas
+              state={state}
+              enemyDying={enemyDying}
+              floatingCoins={floatingCoins}
+              floatingSouls={floatingSouls}
+              floatingDamage={floatingDamage}
+              particles={particles}
+              slashEffects={slashEffects}
+              onTap={handleTap}
+              enemyHit={enemyHit}
+              weaponMode={currentWeapon}
+            />
+          ) : (
+            <RunnerCanvas
+              playerY={runner.playerY}
+              obstacles={runner.obstacles}
+              score={runner.score}
+              isGameOver={runner.isGameOver}
+              gameStarted={runner.gameStarted}
+              onTap={() => {
+                if (!runner.gameStarted) runner.startGame();
+                else if (runner.isGameOver) runner.resetGame();
+                else runner.handleJump();
+              }}
+            />
+          )}
+        </div>
+
+        {!showRunner && menuOpen && (
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 lg:hidden" onClick={() => setMenuOpen(false)}>
+            <div 
+              className="fixed bottom-0 left-0 right-0 max-h-[85vh] flex flex-col pointer-events-auto rounded-t-lg"
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                background: "linear-gradient(135deg, #8B7355 0%, #A0826D 100%)",
+                border: "6px solid #D4AF37",
+                borderRadius: "12px 12px 0 0",
+                boxShadow: "inset 0 0 0 2px #6B5344"
+              }}
             >
-              🏃 RUNNER MINIGAME
-            </button>
+              {/* Inner frame */}
+              <div style={{
+                background: "linear-gradient(135deg, #4A4A4A 0%, #2D2D2D 100%)",
+                border: "2px solid #8B7355",
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                overflow: "hidden"
+              }}>
+                <ScrollArea className="flex-1 overflow-hidden">
+                  <div className="px-3 py-2 space-y-2">
+                    <button
+                      onClick={() => setShowRunner(true)}
+                      className="w-full py-2 rounded-sm bg-green-600 hover:bg-green-700 text-white font-pixel text-[9px] transition-colors border-2 border-green-800"
+                    >
+                      🏃 RUNNER
+                    </button>
+                    <GameTabs
+                      state={state}
+                      onBuyUpgrade={buyUpgrade}
+                      onUnlockSkill={unlockSkill}
+                      onPrestige={prestige}
+                      onRevive={revive}
+                      unlockedIds={unlockedIds}
+                      damageMultiplier={damageMultiplier}
+                      offlineMultiplier={offlineMultiplier}
+                      onSwitchZone={switchZone}
+                      onUnlockZone={unlockZone}
+                      onClaimQuestReward={handleClaimQuestReward}
+                      onRepeatQuest={handleRepeatQuest}
+                      questProgress={questProgress}
+                      onUpgradeBuilding={upgradeBuilding}
+                      abilities={abilities}
+                      onActivateAbility={activateAbility}
+                      weaponMode={currentWeapon}
+                    />
+                  </div>
+                </ScrollArea>
+              </div>
+              
+              {/* Bottom icon bar */}
+              <div style={{
+                background: "linear-gradient(180deg, #8B4513 0%, #654321 100%)",
+                border: "3px solid #D4AF37",
+                borderTop: "4px solid #D4AF37",
+                display: "flex",
+                justifyContent: "space-around",
+                alignItems: "center",
+                padding: "4px 2px",
+                gap: "2px"
+              }}>
+                <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Combat">⚔️</button>
+                <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Upgrades">⬆️</button>
+                <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Skills">🧑</button>
+                <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Achievements">💎</button>
+                <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="More">⋮</button>
+                <button 
+                  className="p-1.5 hover:opacity-70 text-lg transition-opacity cursor-pointer"
+                  title="Close"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
           </div>
         )}
+
         {showRunner && (
-          <div className="px-4 py-2">
+          <div className="w-full flex-shrink-0 p-4">
             <button
               onClick={() => setShowRunner(false)}
               className="w-full py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"
@@ -149,49 +213,98 @@ export default function Game() {
             </button>
           </div>
         )}
+
         {!showRunner && (
-          <>
-            <ZoneSelector
-              activeZoneId={state.activeZoneId}
-              unlockedZoneIds={state.unlockedZoneIds}
-              zoneProgress={state.zoneProgress}
-              slayerPoints={state.slayerPoints}
-              onSwitchZone={switchZone}
-              onUnlockZone={unlockZone}
-            />
-            <QuestLog
-              questProgress={questProgress}
-              onClaimReward={handleClaimQuestReward}
-              onRepeatQuest={handleRepeatQuest}
-              unlockedZoneIds={state.unlockedZoneIds}
-            />
-            <AbilityBar abilities={abilities} onActivate={activateAbility} weaponMode={currentWeapon} />
-            <PrestigePanel
-              canPrestige={canPrestige}
-              soulsOnPrestige={soulsOnPrestige}
-              slayerPointsOnPrestige={slayerPointsOnPrestige}
-              currentSouls={state.souls}
-              onPrestige={prestige}
-            />
-            <SkillTree
-              slayerPoints={state.slayerPoints}
-              unlockedSkillIds={state.unlockedSkills}
-              onUnlock={unlockSkill}
-            />
-            <AchievementsPanel
-              unlockedIds={unlockedIds}
-              damageMultiplier={damageMultiplier}
-              offlineMultiplier={offlineMultiplier}
-            />
-            <UpgradeShop state={state} onBuy={buyUpgrade} />
-            <div className="px-4 py-6 text-center">
-              <p className="font-pixel text-[7px] text-muted-foreground/30">
-                SLAYER IDLE • TAP & PRESTIGE RPG
-              </p>
-            </div>
-          </>
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="fixed bottom-4 right-4 z-40 w-12 h-12 rounded-full bg-primary hover:bg-primary/90 flex items-center justify-center text-2xl transition-all active:scale-95"
+          >
+            💼
+          </button>
         )}
-      </ScrollArea>
+      </div>
+
+      {/* Landscape: Side-by-side layout */}
+      <div className="hidden lg:flex flex-1 overflow-hidden relative">
+        <StatsBar
+          state={state}
+          tapDamage={getTapDamage()}
+          idleCPS={getIdleCPS()}
+        />
+        <ActiveBuffsDisplay activeBuffs={activeBuffs} />
+        <WeaponMode
+          currentMode={currentWeapon}
+          bowUnlocked={state.upgradeLevels["bow"] > 0}
+          onModeChange={setCurrentWeapon}
+        />
+
+        {/* Game on left */}
+        <div className="flex-1 overflow-hidden">
+          {!showRunner ? (
+            <GameCanvas
+              state={state}
+              enemyDying={enemyDying}
+              floatingCoins={floatingCoins}
+              floatingSouls={floatingSouls}
+              floatingDamage={floatingDamage}
+              particles={particles}
+              slashEffects={slashEffects}
+              onTap={handleTap}
+              enemyHit={enemyHit}
+              weaponMode={currentWeapon}
+            />
+          ) : (
+            <RunnerCanvas
+              playerY={runner.playerY}
+              obstacles={runner.obstacles}
+              score={runner.score}
+              isGameOver={runner.isGameOver}
+              gameStarted={runner.gameStarted}
+              onTap={() => {
+                if (!runner.gameStarted) runner.startGame();
+                else if (runner.isGameOver) runner.resetGame();
+                else runner.handleJump();
+              }}
+            />
+          )}
+        </div>
+
+        {/* Menu on right - Wooden frame */}
+        {!showRunner && (
+          <MenuPanel
+            state={state}
+            onBuyUpgrade={buyUpgrade}
+            onUnlockSkill={unlockSkill}
+            onPrestige={prestige}
+            onRevive={revive}
+            unlockedIds={unlockedIds}
+            damageMultiplier={damageMultiplier}
+            offlineMultiplier={offlineMultiplier}
+            onSwitchZone={switchZone}
+            onUnlockZone={unlockZone}
+            onClaimQuestReward={handleClaimQuestReward}
+            onRepeatQuest={handleRepeatQuest}
+            questProgress={questProgress}
+            onUpgradeBuilding={upgradeBuilding}
+            abilities={abilities}
+            onActivateAbility={activateAbility}
+            weaponMode={currentWeapon}
+            onRunnerClick={() => setShowRunner(true)}
+          />
+        )}
+
+        {showRunner && (
+          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-10">
+            <button
+              onClick={() => setShowRunner(false)}
+              className="px-6 py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"
+            >
+              ← BACK TO SLAYER
+            </button>
+          </div>
+        )}
+      </div>
+
       <AchievementToast achievement={newUnlock} />
       <OfflineEarningsModal
         earnings={offlineEarnings}

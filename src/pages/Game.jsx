@@ -316,7 +316,7 @@ export default function Game() {
         {!showRunner && !hudMenuOpen && (
           <button
             onClick={() => setHudMenuOpen(true)}
-            className="fixed right-4 top-1/2 -translate-y-1/2 z-40 w-12 h-12 rounded-full bg-primary hover:bg-primary/90 flex items-center justify-center text-2xl transition-all active:scale-95"
+            className="fixed right-4 top-1/2 -translate-y-1/2 z-50 w-12 h-12 rounded-full bg-primary hover:bg-primary/90 flex items-center justify-center text-2xl transition-all active:scale-95"
           >
             💼
           </button>

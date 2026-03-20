@@ -28,15 +28,29 @@ export default function MenuPanel({
   const [activeTab, setActiveTab] = React.useState("combat");
 
   return (
-    <div className="flex flex-col h-full bg-card/60 border-l border-border overflow-hidden">
+    <motion.div 
+      className="flex flex-col h-full bg-card/60 border-l border-border overflow-hidden"
+      initial={{ x: 400 }}
+      animate={{ x: 0 }}
+      exit={{ x: 400 }}
+      transition={{ duration: 0.2 }}
+    >
       {/* Header */}
-      <div className="px-4 py-3 border-b border-border/50 flex-shrink-0">
+      <div className="px-4 py-3 border-b border-border/50 flex-shrink-0 flex items-center justify-between gap-2">
         <button
           onClick={onRunnerClick}
-          className="w-full py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white font-pixel text-[9px] transition-colors border-2 border-green-800"
+          className="flex-1 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white font-pixel text-[9px] transition-colors border-2 border-green-800"
         >
           🏃 RUNNER
         </button>
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={onClose}
+          className="flex-shrink-0 p-2 rounded-lg bg-destructive hover:bg-destructive/90 text-foreground transition-colors"
+        >
+          <X className="w-4 h-4" />
+        </motion.button>
       </div>
 
       {/* Tabs content */}

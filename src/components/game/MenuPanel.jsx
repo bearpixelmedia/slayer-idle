@@ -27,12 +27,22 @@ export default function MenuPanel({
   const [activeTab, setActiveTab] = React.useState("combat");
 
   return (
-    <div className="w-96 flex flex-col" style={{
+    <div className="w-96 flex flex-col relative" style={{
       background: "linear-gradient(135deg, #8B7355 0%, #A0826D 100%)",
       border: "8px solid #D4AF37",
       borderRadius: "4px",
       boxShadow: "inset 0 0 0 2px #6B5344, 0 0 0 4px #1a1a1a"
     }}>
+      {/* Close button */}
+      {onClose && (
+        <button
+          onClick={onClose}
+          className="absolute -top-8 -right-8 z-50 w-8 h-8 rounded-full bg-destructive hover:bg-destructive/90 flex items-center justify-center text-foreground transition-colors"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      )}
+      
       {/* Inner frame */}
       <div style={{
         background: "linear-gradient(135deg, #4A4A4A 0%, #2D2D2D 100%)",

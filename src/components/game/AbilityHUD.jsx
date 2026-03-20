@@ -13,7 +13,7 @@ export default function AbilityHUD({ abilities, onActivate }) {
 
   return (
     <motion.div
-      className="fixed left-2 top-20 z-20 flex flex-col gap-2"
+      className="fixed left-2 top-20 z-20 flex flex-col gap-1"
       initial={{ x: -200, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}

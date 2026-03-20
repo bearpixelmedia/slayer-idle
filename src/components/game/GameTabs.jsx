@@ -24,11 +24,11 @@ export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestig
         <TabsTrigger value="zones" className={HUD_THEME.text.small}>🗺️ Zones</TabsTrigger>
       </TabsList>
 
-      <TabsContent value="combat" className="px-4 py-3 space-y-3">
+      <TabsContent value="combat" className={`px-4 py-3 space-y-3 ${HUD_THEME.panel.bg}`}>
         <UpgradeShop state={state} onBuy={onBuyUpgrade} />
       </TabsContent>
 
-      <TabsContent value="progression" className="px-4 py-3 space-y-3">
+      <TabsContent value="progression" className={`px-4 py-3 space-y-3 ${HUD_THEME.panel.bg}`}>
         <PrestigePanel
           canPrestige={state.totalCoinsEarned > 0}
           soulsOnPrestige={Math.max(1, Math.floor(Math.sqrt(state.totalCoinsEarned / 1000)))}

@@ -58,7 +58,7 @@ export default function PrestigePanel({ canPrestige, soulsOnPrestige, slayerPoin
                   </div>
                   <div className="pt-2 border-t border-border/30">
                     <p className="text-[10px] text-muted-foreground/80">
-                      <span className="text-foreground font-semibold">Why prestige?</span> Unlock powerful skills, multiply your earnings by {((currentSouls + soulsOnPrestige) * 5)}%, and break through cost walls with fresh upgrades.
+                      <span className="text-foreground font-semibold">Why prestige?</span> Unlock powerful skills, multiply your earnings by {(((currentSouls + soulsOnPrestige) * 5) | 0)}%, and break through cost walls with fresh upgrades.
                     </p>
                   </div>
                   <div className="pt-2">

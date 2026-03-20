@@ -150,5 +150,6 @@ export function computeVillageMultipliers(villageBuildings) {
  * Check if player can afford upgrade
  */
 export function canAffordUpgrade(cost, gameState) {
+  if (!cost) return false;
   return gameState.coins >= cost.coins && gameState.souls >= cost.souls;
 }

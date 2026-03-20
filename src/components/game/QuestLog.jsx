@@ -109,7 +109,7 @@ export default function QuestLog({ questProgress, onClaimReward, onRepeatQuest, 
   const [filter, setFilter] = useState("active"); // active, completed, all
 
   const filtered = QUESTS.filter((quest) => {
-    const qp = questProgress[quest.id];
+    const qp = questProgress?.[quest.id];
     if (!qp) return false;
 
     // Check prerequisites

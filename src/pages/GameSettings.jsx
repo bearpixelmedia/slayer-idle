@@ -193,24 +193,19 @@ export default function GameSettings() {
           <TabsContent value="enemies" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Enemy Emojis</CardTitle>
+                <CardTitle>Enemy Types</CardTitle>
                 <CardDescription>Customize the appearance of each enemy type</CardDescription>
               </CardHeader>
               <CardContent className="space-y-8">
                 <SettingGroup
-                  title="Stage 0 - Forest"
+                  title="All Enemies"
                   imageItems={[
-                    { id: "enemy_forest_1", label: "Slime", defaultValue: "🟢" },
-                    { id: "enemy_forest_2", label: "Goblin", defaultValue: "👹" },
-                    { id: "enemy_forest_3", label: "Wolf", defaultValue: "🐺" },
-                  ]}
-                />
-                <SettingGroup
-                  title="Stage 1 - Cave"
-                  imageItems={[
-                    { id: "enemy_cave_1", label: "Bat", defaultValue: "🦇" },
-                    { id: "enemy_cave_2", label: "Spider", defaultValue: "🕷️" },
-                    { id: "enemy_cave_3", label: "Troll", defaultValue: "👹" },
+                    { id: "enemy_goblin", label: "Goblin", defaultValue: "👹" },
+                    { id: "enemy_orc", label: "Orc", defaultValue: "🗡️" },
+                    { id: "enemy_skeleton", label: "Skeleton", defaultValue: "💀" },
+                    { id: "enemy_vampire", label: "Vampire", defaultValue: "🧛" },
+                    { id: "enemy_dragon", label: "Dragon", defaultValue: "🐉" },
+                    { id: "enemy_lich", label: "Lich", defaultValue: "👻" },
                   ]}
                 />
               </CardContent>

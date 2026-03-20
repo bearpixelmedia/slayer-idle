@@ -82,10 +82,10 @@ export default function SkillTree({ slayerPoints = 0, unlockedSkillIds = [], onU
   }, 0);
 
   return (
-    <div className={`mx-2 mb-2 rounded-xl ${HUD_THEME.panel.border} overflow-hidden`}>
+    <div className={`rounded-lg ${HUD_THEME.panel.border} overflow-hidden`}>
       {/* Header toggle */}
       <button
-        className={`w-full flex items-center justify-between px-4 py-3 ${HUD_THEME.panel.bg} hover:bg-card/80 transition-colors`}
+        className={`w-full flex items-center justify-between px-3 py-2 ${HUD_THEME.panel.bg} hover:bg-card/80 transition-colors`}
         onClick={() => setOpen((o) => !o)}
       >
         <div className="flex items-center gap-2">

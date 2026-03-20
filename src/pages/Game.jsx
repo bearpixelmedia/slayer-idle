@@ -236,7 +236,7 @@ export default function Game() {
         <ActiveBuffsDisplay activeBuffs={activeBuffs} />
         <WeaponMode
           currentMode={currentWeapon}
-          bowUnlocked={state.upgradeLevels["bow"] > 0}
+          bowUnlocked={(state?.upgradeLevels?.["bow"] || 0) > 0}
           onModeChange={setCurrentWeapon}
         />
         

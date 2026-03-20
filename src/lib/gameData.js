@@ -52,16 +52,32 @@ export const ENEMY_EMOJIS = {
   "Lich": "👻",
 };
 
-// Upgrade data
-export const UPGRADES = [];
-export const TAP_UPGRADES = [];
-export const IDLE_UPGRADES = [];
-export const ALL_UPGRADES = [];
-export const BOW_UPGRADES = [];
+// Upgrade definitions
+export const UPGRADES = [
+  { id: "sharp_blade",    name: "Sharp Blade",    icon: "⚔️",  description: "+5 tap damage per level",      basePower: 5,   baseCost: 50  },
+  { id: "iron_gauntlet",  name: "Iron Gauntlet",  icon: "🥊",  description: "+10 tap damage per level",     basePower: 10,  baseCost: 150 },
+  { id: "war_axe",        name: "War Axe",        icon: "🪓",  description: "+20 tap damage per level",     basePower: 20,  baseCost: 400 },
+  { id: "soul_blade",     name: "Soul Blade",     icon: "🗡️",  description: "+50 tap damage per level",     basePower: 50,  baseCost: 1200 },
+  { id: "fire_sword",     name: "Fire Sword",     icon: "🔥",  description: "+100 tap damage per level",    basePower: 100, baseCost: 4000 },
+  { id: "imp_familiar",   name: "Imp Familiar",   icon: "👿",  description: "+3 idle DPS per level",        basePower: 3,   baseCost: 100 },
+  { id: "shadow_wolf",    name: "Shadow Wolf",    icon: "🐺",  description: "+8 idle DPS per level",        basePower: 8,   baseCost: 300 },
+  { id: "golem_guard",    name: "Golem Guard",    icon: "🪨",  description: "+18 idle DPS per level",       basePower: 18,  baseCost: 800 },
+  { id: "dragon_pet",     name: "Dragon Pet",     icon: "🐲",  description: "+40 idle DPS per level",       basePower: 40,  baseCost: 2500 },
+  { id: "ancient_rune",   name: "Ancient Rune",   icon: "🔮",  description: "+15 to all damage per level",  basePower: 15,  baseCost: 600 },
+  { id: "chaos_gem",      name: "Chaos Gem",      icon: "💎",  description: "+35 to all damage per level",  basePower: 35,  baseCost: 2000 },
+  { id: "bow",            name: "Elven Bow",      icon: "🏹",  description: "Unlocks bow mode (+25% souls)", basePower: 0,  baseCost: 500 },
+];
 
-// Upgrade cost formula
-export function getUpgradeCost(basePrice, level) {
-  return Math.floor(basePrice * Math.pow(1.15, level));
+// Upgrade category IDs
+export const TAP_UPGRADES  = ["sharp_blade", "iron_gauntlet", "war_axe", "soul_blade", "fire_sword"];
+export const IDLE_UPGRADES = ["imp_familiar", "shadow_wolf", "golem_guard", "dragon_pet"];
+export const ALL_UPGRADES  = ["ancient_rune", "chaos_gem"];
+export const BOW_UPGRADES  = ["bow"];
+
+// Upgrade cost formula — accepts an upgrade object or a base price number
+export function getUpgradeCost(upgradeOrBasePrice, level) {
+  const base = typeof upgradeOrBasePrice === "object" ? upgradeOrBasePrice.baseCost : upgradeOrBasePrice;
+  return Math.floor(base * Math.pow(1.15, level));
 }
 
 // Enemy HP calculation

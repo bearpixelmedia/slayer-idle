@@ -227,7 +227,7 @@ export default function Game() {
       </div>
 
       {/* Landscape: Side-by-side layout */}
-      <div className="hidden lg:flex flex-1 overflow-hidden relative">
+      <div className="hidden lg:flex flex-col w-full h-full overflow-hidden">
         <StatsBar
           state={state}
           tapDamage={getTapDamage()}
@@ -239,6 +239,8 @@ export default function Game() {
           bowUnlocked={state.upgradeLevels["bow"] > 0}
           onModeChange={setCurrentWeapon}
         />
+        
+        <div className="flex flex-1 overflow-hidden relative">
 
         {/* Game fills full area */}
         <div className="flex-1 overflow-hidden relative">

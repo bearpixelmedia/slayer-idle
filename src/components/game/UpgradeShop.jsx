@@ -6,7 +6,7 @@ import { ChevronUp } from "lucide-react";
 
 function UpgradeCard({ upgrade, level, coins, onBuy }) {
   const cost = getUpgradeCost(upgrade, level);
-  const canAfford = coins >= cost;
+  const canAfford = (coins ?? 0) >= cost;
   const typeLabel = TAP_UPGRADES.includes(upgrade.id) ? "TAP" : IDLE_UPGRADES.includes(upgrade.id) ? "IDLE" : "ALL";
   const typeColor = TAP_UPGRADES.includes(upgrade.id) ? "text-red-400" : IDLE_UPGRADES.includes(upgrade.id) ? "text-yellow-400" : "text-purple-400";
 

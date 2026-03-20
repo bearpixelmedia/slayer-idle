@@ -55,14 +55,18 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
 
     const loadAsepriteData = async () => {
       try {
-        const basePath = value.substring(0, value.lastIndexOf('.'));
-        const jsonUrl = `${basePath}.json`;
-        const response = await fetch(jsonUrl);
-        if (response.ok) {
-          const data = await response.json();
-          setAnimationData(data);
-          setCurrentFrame(0);
+        // First check sessionStorage for uploaded JSON URL
+        const jsonUrl = sessionStorage.getItem(`aseprite_json_${value}`);
+        if (jsonUrl) {
+          const response = await fetch(jsonUrl);
+          if (response.ok) {
+            const data = await response.json();
+            setAnimationData(data);
+            setCurrentFrame(0);
+            return;
+          }
         }
+        setAnimationData(null);
       } catch (err) {
         setAnimationData(null);
       }

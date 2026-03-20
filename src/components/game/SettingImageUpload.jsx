@@ -16,7 +16,7 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
 
     setUploading(true);
     try {
-      // Upload all files and use the image file (not JSON) as the main URL
+      // Upload all files and store URLs
       const uploadedUrls = {};
       for (const file of files) {
         const response = await base44.integrations.Core.UploadFile({ file });
@@ -25,8 +25,15 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
       
       // Find the image file (spritesheet) - prefer PNG/JPG over JSON
       const imageFile = Array.from(files).find(f => /\.(png|jpg|jpeg|gif)$/i.test(f.name));
+      const jsonFile = Array.from(files).find(f => f.name.endsWith('.json'));
+      
       if (imageFile && uploadedUrls[imageFile.name]) {
         onChange(uploadedUrls[imageFile.name]);
+        
+        // Store JSON URL for animation loading
+        if (jsonFile && uploadedUrls[jsonFile.name]) {
+          sessionStorage.setItem(`aseprite_json_${uploadedUrls[imageFile.name]}`, uploadedUrls[jsonFile.name]);
+        }
       }
     } catch (err) {
       alert("Upload failed: " + err.message);

@@ -87,6 +87,15 @@ export default function GameSettings() {
     </div>
   );
 
+  const SettingImageInput = ({ label, value, onChange, defaultValue = "" }) => (
+    <SettingImageUpload
+      label={label}
+      value={value}
+      onChange={onChange}
+      currentDefault={defaultValue}
+    />
+  );
+
   const SettingGroup = ({ title, items }) => (
     <div className="space-y-4">
       <h3 className="font-semibold text-sm text-slate-800">{title}</h3>

@@ -215,17 +215,6 @@ export default function Game() {
       {/* Landscape: Side-by-side layout */}
       <div className="hidden lg:flex h-full w-full overflow-hidden">
         <div className="flex-1 flex flex-col min-h-0 w-0">
-          <StatsBar
-            state={state}
-            tapDamage={getTapDamage()}
-            idleCPS={getIdleCPS()}
-          />
-          <ActiveBuffsDisplay activeBuffs={activeBuffs} />
-          <WeaponMode
-            currentMode={currentWeapon}
-            bowUnlocked={(state?.upgradeLevels?.["bow"] || 0) > 0}
-            onModeChange={setCurrentWeapon}
-          />
           
           <div className="flex-1 overflow-hidden relative flex flex-col min-h-0">
             {!showRunner ? (

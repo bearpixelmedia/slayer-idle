@@ -4,6 +4,7 @@ import useAchievements from "@/hooks/useAchievements";
 import useQuests from "@/hooks/useQuests";
 import useRunnerState from "@/hooks/useRunnerState";
 import { computeAchievementMultipliers } from "@/lib/achievements";
+import { soundManager } from "@/lib/soundManager";
 import GameCanvas from "@/components/game/GameCanvas";
 import RunnerCanvas from "@/components/game/RunnerCanvas";
 import AchievementToast from "@/components/game/AchievementToast";

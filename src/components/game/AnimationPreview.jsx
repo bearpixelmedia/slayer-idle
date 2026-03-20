@@ -31,16 +31,23 @@ export default function AnimationPreview({ spriteUrl, animationData, currentFram
     ctx.clearRect(0, 0, 48, 48);
 
     if (imgRef.current.complete) {
+      // Calculate scaling to fit frame within canvas while maintaining aspect ratio
+      const scale = Math.min(canvas.width / frame.frame.w, canvas.height / frame.frame.h);
+      const scaledW = frame.frame.w * scale;
+      const scaledH = frame.frame.h * scale;
+      const offsetX = (canvas.width - scaledW) / 2;
+      const offsetY = (canvas.height - scaledH) / 2;
+      
       ctx.drawImage(
         imgRef.current,
         frame.frame.x,
         frame.frame.y,
         frame.frame.w,
         frame.frame.h,
-        0,
-        0,
-        frame.frame.w,
-        frame.frame.h
+        offsetX,
+        offsetY,
+        scaledW,
+        scaledH
       );
     }
   }, [animationData, currentFrame]);

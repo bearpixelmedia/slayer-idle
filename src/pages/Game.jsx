@@ -294,31 +294,31 @@ export default function Game() {
 
       {/* Global HUD Overlay - All HUD elements in one parent */}
       <HUDOverlay
-        state={state}
-        getTapDamage={getTapDamage}
-        getIdleCPS={getIdleCPS}
-        activeBuffs={activeBuffs}
-        currentWeapon={currentWeapon}
-        onWeaponChange={setCurrentWeapon}
-        abilities={abilities}
-        onActivateAbility={activateAbility}
-        hudMenuOpen={hudMenuOpen}
-        onMenuToggle={setHudMenuOpen}
-        onBuyUpgrade={buyUpgrade}
-        onUnlockSkill={unlockSkill}
-        onPrestige={prestige}
-        onRevive={revive}
-        unlockedIds={unlockedIds}
-        damageMultiplier={damageMultiplier}
-        offlineMultiplier={offlineMultiplier}
-        onSwitchZone={switchZone}
-        onUnlockZone={unlockZone}
-        onClaimQuestReward={handleClaimQuestReward}
-        onRepeatQuest={handleRepeatQuest}
-        questProgress={questProgress}
-        onUpgradeBuilding={upgradeBuilding}
-        onRunnerClick={() => setShowRunner(true)}
-      />
+         state={state}
+         getTapDamage={getTapDamage}
+         getIdleCPS={getIdleCPS}
+         activeBuffs={activeBuffs}
+         currentWeapon={currentWeapon}
+         onWeaponChange={setCurrentWeapon}
+         abilities={abilities}
+         onActivateAbility={handleActivateAbility}
+         hudMenuOpen={hudMenuOpen}
+         onMenuToggle={setHudMenuOpen}
+         onBuyUpgrade={handleBuyUpgrade}
+         onUnlockSkill={handleUnlockSkill}
+         onPrestige={handlePrestige}
+         onRevive={revive}
+         unlockedIds={unlockedIds}
+         damageMultiplier={damageMultiplier}
+         offlineMultiplier={offlineMultiplier}
+         onSwitchZone={switchZone}
+         onUnlockZone={unlockZone}
+         onClaimQuestReward={handleClaimQuestReward}
+         onRepeatQuest={handleRepeatQuest}
+         questProgress={questProgress}
+         onUpgradeBuilding={upgradeBuilding}
+         onRunnerClick={() => setShowRunner(true)}
+       />
 
       <AchievementToast achievement={newUnlock} />
       <OfflineEarningsModal

@@ -132,7 +132,7 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
         <div className="relative">
           <button
             type="button"
-            onClick={() => setShowHistory(!showHistory)}
+            onClick={() => setShowLibrary(!showLibrary)}
             className="w-12 h-12 rounded-lg border border-slate-300 bg-slate-100 flex items-center justify-center overflow-hidden hover:border-slate-400 transition-colors cursor-pointer relative"
           >
             {value ? (
@@ -145,30 +145,37 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
             ) : (
               <span className="text-lg">{currentDefault}</span>
             )}
-            {history.length > 0 && (
-              <div className="absolute bottom-0 right-0 bg-slate-400 text-white p-0.5 rounded-tl">
-                <ChevronDown className="w-2.5 h-2.5" />
-              </div>
-            )}
+            <div className="absolute bottom-0 right-0 bg-slate-400 text-white p-0.5 rounded-tl">
+              <ChevronDown className="w-2.5 h-2.5" />
+            </div>
           </button>
           
-          {showHistory && history.length > 0 && (
-            <div className="absolute top-full left-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto min-w-[120px]">
-              {history.map((item, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => handleSelectFromHistory(item)}
-                  className="w-full text-left px-3 py-2 hover:bg-slate-100 text-xs border-b border-slate-100 last:border-b-0 flex items-center gap-2"
-                >
-                  <div className="w-6 h-6 rounded bg-slate-100 flex-shrink-0 overflow-hidden">
-                    <img src={item.imageUrl} alt="" className="w-full h-full object-cover" />
-                  </div>
-                  <span className="truncate">
-                    {new Date(item.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                  </span>
-                </button>
-              ))}
+          {showLibrary && (
+            <div className="absolute top-full left-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto min-w-[140px]">
+              {loadingFiles ? (
+                <div className="px-3 py-4 flex items-center justify-center text-slate-500">
+                  <Loader className="w-4 h-4 animate-spin mr-2" />
+                  <span className="text-xs">Loading files...</span>
+                </div>
+              ) : files.length > 0 ? (
+                files.map((file, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => handleSelectFile(file.url)}
+                    className="w-full text-left px-3 py-2 hover:bg-slate-100 text-xs border-b border-slate-100 last:border-b-0 flex items-center gap-2"
+                  >
+                    <div className="w-6 h-6 rounded bg-slate-100 flex-shrink-0 overflow-hidden">
+                      <img src={file.url} alt="" className="w-full h-full object-cover" />
+                    </div>
+                    <span className="truncate text-[10px]">{file.name}</span>
+                  </button>
+                ))
+              ) : (
+                <div className="px-3 py-4 text-xs text-slate-500 text-center">
+                  No files uploaded yet
+                </div>
+              )}
             </div>
           )}
         </div>

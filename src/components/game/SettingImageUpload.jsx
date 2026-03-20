@@ -136,7 +136,7 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
         <div className="relative">
           <button
             type="button"
-            onClick={() => history.length > 0 && setShowHistory(!showHistory)}
+            onClick={() => setShowHistory(!showHistory)}
             className="w-12 h-12 rounded-lg border border-slate-300 bg-slate-100 flex items-center justify-center overflow-hidden hover:border-slate-400 transition-colors"
             title={history.length > 0 ? "Click to view history" : ""}
           >

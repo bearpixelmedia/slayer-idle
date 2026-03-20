@@ -13,6 +13,16 @@ const SAVE_VERSION = 3;
 
 const SAVE_KEY = "idle_slayer_save";
 
+/**
+ * getZoneStages(zoneId) returns global STAGES indices (numbers), not stage row objects.
+ * Game state `stage` is also a global STAGES index — never index zoneStages[stage] as if stage were local.
+ */
+function getStageDataForZone(activeZoneId, globalStageIndex) {
+  const indices = getZoneStages(activeZoneId);
+  const g = indices.includes(globalStageIndex) ? globalStageIndex : indices[0];
+  return STAGES[g] || STAGES[0];
+}
+
 function loadGame() {
   try {
     const saved = localStorage.getItem(SAVE_KEY);
@@ -262,8 +272,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         };
     }
 
-    const zoneStages = getZoneStages(s.activeZoneId);
-    const stageData = zoneStages[s.stage] || zoneStages[0] || STAGES[0];
+    const stageData = getStageDataForZone(s.activeZoneId, s.stage);
     const enemyName = stageData.enemies[Math.floor(Math.random() * stageData.enemies.length)];
     const hp = getEnemyHP(s.stage, s.killCount);
 
@@ -508,9 +517,9 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
           soulReward = bossRewards.souls;
         } else {
           // Normal enemy - base soul drops with zone bias
-          const baseSouls = getEnemySouls(prev.stage, prev.killCount);
-          const zoneStages = getZoneStages(prev.activeZoneId);
-          const stageBias = zoneStages[prev.stage]?.soulBias || 1;
+          const baseSouls = getEnemySouls(prev.stage);
+          const stageMeta = getStageDataForZone(prev.activeZoneId, prev.stage);
+          const stageBias = stageMeta?.soulBias || 1;
           const soulBonus = 1 + (prev.souls * 0.05);
           const bowLevel = prev.upgradeLevels?.bow || 0;
           const bowBonus =

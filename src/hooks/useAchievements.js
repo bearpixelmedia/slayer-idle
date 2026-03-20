@@ -13,12 +13,15 @@ function loadUnlocked() {
 }
 
 export default function useAchievements(gameState) {
-  if (!gameState || typeof gameState !== 'object') return { unlockedIds: [], newUnlock: null, damageMultiplier: 1, offlineMultiplier: 1 };
-  
   const [unlockedIds, setUnlockedIds] = useState(() => loadUnlocked());
   const [newUnlock, setNewUnlock] = useState(null); // for toast notification
   const unlockedRef = useRef(unlockedIds);
   unlockedRef.current = unlockedIds;
+
+  // Early return if gameState is invalid (cannot happen after hooks)
+  if (!gameState || typeof gameState !== 'object') {
+    return { unlockedIds, newUnlock: null, damageMultiplier: 1, offlineMultiplier: 1 };
+  }
 
   // Build stats object from game state
   const stats = {

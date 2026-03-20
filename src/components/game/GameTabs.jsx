@@ -24,7 +24,6 @@ export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestig
       </TabsList>
 
       <TabsContent value="combat" className="px-4 py-3 space-y-3">
-        <AbilityBar abilities={abilities} onActivate={onActivateAbility} weaponMode={weaponMode} />
         <UpgradeShop state={state} onBuy={onBuyUpgrade} />
       </TabsContent>
 

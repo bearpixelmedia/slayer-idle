@@ -31,6 +31,11 @@ export default function Game() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [hudMenuOpen, setHudMenuOpen] = useState(false);
 
+  // Initialize sound manager on first load
+  React.useEffect(() => {
+    soundManager.init();
+  }, []);
+
   const runner = useRunnerState();
 
   const {

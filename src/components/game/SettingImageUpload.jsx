@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload, X } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import AnimationPreview from "./AnimationPreview";
 
 export default function SettingImageUpload({ label, value, onChange, currentDefault }) {
   const fileInputRef = useRef(null);

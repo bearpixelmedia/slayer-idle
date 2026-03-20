@@ -565,7 +565,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     lastTapTimeRef.current = Date.now();
     tryProcBuff("tap", stateRef.current);
     
-    const damage = getTapDamage(stateRef.current, currentWeapon, activeBuffsRef.current);
+    const damage = getTapDamage(stateRef.current, currentWeaponRef.current, activeBuffsRef.current);
     // Note: double damage multiplier is applied inside dealDamage via abilitiesRef
     
     setSlashEffects(prev => [...prev, { id: Date.now() + Math.random(), x, y }]);

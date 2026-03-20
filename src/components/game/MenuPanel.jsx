@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import GameTabs from "@/components/game/GameTabs";
 
@@ -22,6 +22,8 @@ export default function MenuPanel({
   weaponMode,
   onRunnerClick,
 }) {
+  const [activeTab, setActiveTab] = React.useState("combat");
+
   return (
     <div className="w-96 flex flex-col" style={{
       background: "linear-gradient(135deg, #8B7355 0%, #A0826D 100%)",
@@ -65,6 +67,8 @@ export default function MenuPanel({
               abilities={abilities}
               onActivateAbility={onActivateAbility}
               weaponMode={weaponMode}
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
             />
           </div>
         </ScrollArea>
@@ -81,12 +85,20 @@ export default function MenuPanel({
         padding: "4px 2px",
         gap: "2px"
       }}>
-        <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Combat">⚔️</button>
-        <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Upgrades">⬆️</button>
-        <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Skills">🧑</button>
-        <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Achievements">💎</button>
-        <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="More">⋮</button>
-        <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Close">✕</button>
+        {[
+          { tab: "combat", icon: "⚔️", label: "Combat" },
+          { tab: "progression", icon: "📈", label: "Progress" },
+          { tab: "village", icon: "🏘️", label: "Village" },
+          { tab: "quests", icon: "📜", label: "Quests" },
+          { tab: "zones", icon: "🗺️", label: "Zones" },
+        ].map(({ tab, icon, label }) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`p-1.5 text-lg transition-opacity ${activeTab === tab ? "opacity-100" : "opacity-50 hover:opacity-80"}`}
+            title={label}
+          >{icon}</button>
+        ))}
       </div>
     </div>
   );

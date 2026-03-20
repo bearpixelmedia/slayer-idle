@@ -330,8 +330,10 @@ export default function GameSettings() {
                     key={buff.id}
                     title={buff.name}
                     items={[
-                      { id: `buff_${buff.id}_icon`, label: "Icon", defaultValue: buff.icon },
                       { id: `buff_${buff.id}_name`, label: "Name", defaultValue: buff.name },
+                    ]}
+                    imageItems={[
+                      { id: `buff_${buff.id}_icon`, label: "Icon", defaultValue: buff.icon },
                     ]}
                   />
                 ))}

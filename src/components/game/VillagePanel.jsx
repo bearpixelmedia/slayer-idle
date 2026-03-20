@@ -53,7 +53,7 @@ export default function VillagePanel({ state, onUpgradeBuilding }) {
   const [open, setOpen] = React.useState(false);
 
   const villageBuildings = state?.villageBuildings || {};
-  const upgradedCount = VILLAGE_BUILDINGS.filter((b) => (villageBuildings[b.id] || 0) > 0).length;
+  const upgradedCount = (Array.isArray(VILLAGE_BUILDINGS) ? VILLAGE_BUILDINGS : []).filter((b) => (villageBuildings[b?.id] || 0) > 0).length;
 
   return (
     <div className="mx-4 mb-4 rounded-xl border border-border/50 overflow-hidden">
@@ -82,14 +82,14 @@ export default function VillagePanel({ state, onUpgradeBuilding }) {
             className="overflow-hidden"
           >
             <div className="px-4 py-3 space-y-2">
-              {VILLAGE_BUILDINGS.map((building) => (
+              {(Array.isArray(VILLAGE_BUILDINGS) ? VILLAGE_BUILDINGS : []).map((building) => (
                 <BuildingCard
-                  key={building.id}
+                  key={building?.id}
                   building={building}
-                  level={villageBuildings[building.id] || 0}
+                  level={villageBuildings[building?.id] || 0}
                   state={state}
                   onUpgrade={onUpgradeBuilding}
-                  maxLevel={building.maxLevel}
+                  maxLevel={building?.maxLevel}
                 />
               ))}
             </div>

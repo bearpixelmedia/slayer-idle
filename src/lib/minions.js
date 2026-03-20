@@ -34,7 +34,7 @@ export const MINION_TYPES = [
     baseSpeed: 0.9,
     carryingCapacity: 1.2,
     unlock: { type: "zone_unlocked", zoneId: "shadowfell_citadel" },
-    purchaseCostSouls: 80,
+    purchaseCostSouls: 80 || 0,
   },
 ];
 

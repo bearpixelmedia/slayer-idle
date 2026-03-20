@@ -24,11 +24,11 @@ export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestig
         <TabsTrigger value="zones" className={HUD_THEME.text.small}>🗺️ Zones</TabsTrigger>
       </TabsList>
 
-      <TabsContent value="combat" className={`px-4 py-3 space-y-3 ${HUD_THEME.panel.bg}`}>
+      <TabsContent value="combat" className={`px-2 py-2 space-y-2 ${HUD_THEME.panel.bg}`}>
         <UpgradeShop state={state} onBuy={onBuyUpgrade} />
       </TabsContent>
 
-      <TabsContent value="progression" className={`px-4 py-3 space-y-3 ${HUD_THEME.panel.bg}`}>
+      <TabsContent value="progression" className={`px-2 py-2 space-y-2 ${HUD_THEME.panel.bg}`}>
         <PrestigePanel
           canPrestige={state.totalCoinsEarned > 0}
           soulsOnPrestige={Math.max(1, Math.floor(Math.sqrt(state.totalCoinsEarned / 1000)))}
@@ -48,11 +48,11 @@ export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestig
         />
       </TabsContent>
 
-      <TabsContent value="village" className={`px-4 py-3 ${HUD_THEME.panel.bg}`}>
+      <TabsContent value="village" className={`px-2 py-2 ${HUD_THEME.panel.bg}`}>
         <VillagePanel state={state} onUpgradeBuilding={onUpgradeBuilding} />
       </TabsContent>
 
-      <TabsContent value="quests" className={`px-4 py-3 ${HUD_THEME.panel.bg}`}>
+      <TabsContent value="quests" className={`px-2 py-2 ${HUD_THEME.panel.bg}`}>
         <QuestLog
           questProgress={questProgress}
           onClaimReward={onClaimQuestReward}
@@ -61,7 +61,7 @@ export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestig
         />
       </TabsContent>
 
-      <TabsContent value="zones" className={`px-4 py-3 ${HUD_THEME.panel.bg}`}>
+      <TabsContent value="zones" className={`px-2 py-2 ${HUD_THEME.panel.bg}`}>
         <ZoneSelector
           activeZoneId={state.activeZoneId}
           unlockedZoneIds={state.unlockedZoneIds}

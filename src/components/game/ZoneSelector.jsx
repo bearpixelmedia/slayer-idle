@@ -13,7 +13,7 @@ export default function ZoneSelector({
   onUnlockZone,
 }) {
   return (
-    <div className={`mx-4 my-4 rounded-xl ${HUD_THEME.panel.border} overflow-hidden ${HUD_THEME.panel.bg}`}>
+    <div className={`mx-2 my-2 rounded-xl ${HUD_THEME.panel.border} overflow-hidden ${HUD_THEME.panel.bg}`}>
       <div className={`px-4 py-3 border-b border-border/30`}>
         <div className="flex items-center gap-2">
           <span className="text-lg">🗺️</span>

@@ -18,8 +18,8 @@ export default function PrestigePanel({ canPrestige, soulsOnPrestige, slayerPoin
   if (!canPrestige) return null;
 
   return (
-    <div className="mx-4 mb-4">
-      <div className={`p-4 rounded-xl bg-gradient-to-r from-accent/20 to-purple-900/20 ${HUD_THEME.panel.border}`}>
+    <div className="mx-2 mb-2">
+      <div className={`p-3 rounded-xl bg-gradient-to-r from-accent/20 to-purple-900/20 ${HUD_THEME.panel.border}`}>
         <div className="flex items-center justify-between">
           <div>
             <h3 className={`${HUD_THEME.text.label} text-accent mb-1`}>👻 PRESTIGE AVAILABLE</h3>

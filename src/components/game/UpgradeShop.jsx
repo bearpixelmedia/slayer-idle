@@ -35,8 +35,8 @@ function UpgradeCard({ upgrade, level, coins, onBuy }) {
 
 export default function UpgradeShop({ state, onBuy }) {
   return (
-    <div className="space-y-2">
-      <h2 className={`${HUD_THEME.text.label} text-primary px-1`}>⬆️ UPGRADES</h2>
+    <div className="space-y-1.5">
+      <h2 className={`${HUD_THEME.text.label} text-primary px-0.5`}>⬆️ UPGRADES</h2>
       <div className="grid grid-cols-2 gap-2">
         {UPGRADES.map((upgrade) => (
           <UpgradeCard

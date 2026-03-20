@@ -125,16 +125,17 @@ export default function ParallaxBackground() {
             return (
               <svg 
                 key={`tree-back-${i}`} 
-                viewBox="0 0 50 100" 
+                viewBox="0 0 50 110" 
                 className="flex-shrink-0" 
                 style={{ width: `${50 * scale}px`, height: "100%", opacity: 0.7 + (i % 4) * 0.08 }}
               >
-                {/* Canopy top */}
-                <circle cx={`${25}`} cy={`${20}`} r={`${16}`} fill={`rgba(${12 + (i % 3) * 8}, ${70 + (i % 3) * 10}, ${20 + (i % 3) * 5}, 0.9)`} />
-                <circle cx={`${15}`} cy={`${28}`} r={`${13}`} fill={`rgba(${18 + (i % 3) * 8}, ${85 + (i % 3) * 10}, ${25 + (i % 3) * 5}, 0.88)`} />
-                <circle cx={`${35}`} cy={`${28}`} r={`${13}`} fill={`rgba(${18 + (i % 3) * 8}, ${85 + (i % 3) * 10}, ${25 + (i % 3) * 5}, 0.88)`} />
-                {/* Trunk */}
-                <rect x={`${22}`} y={`${40}`} width={`${6}`} height={`${60}`} fill="rgba(80, 50, 20, 0.95)" />
+                {/* Canopy - circles positioned to bottom at y=40 */}
+                <circle cx={`${25}`} cy={`${22}`} r={`${14}`} fill={`rgba(${12 + (i % 3) * 8}, ${70 + (i % 3) * 10}, ${20 + (i % 3) * 5}, 0.9)`} />
+                <circle cx={`${15}`} cy={`${32}`} r={`${12}`} fill={`rgba(${18 + (i % 3) * 8}, ${85 + (i % 3) * 10}, ${25 + (i % 3) * 5}, 0.88)`} />
+                <circle cx={`${35}`} cy={`${32}`} r={`${12}`} fill={`rgba(${18 + (i % 3) * 8}, ${85 + (i % 3) * 10}, ${25 + (i % 3) * 5}, 0.88)`} />
+                <circle cx={`${25}`} cy={`${40}`} r={`${10}`} fill={`rgba(${20 + (i % 3) * 8}, ${90 + (i % 3) * 10}, ${28 + (i % 3) * 5}, 0.92)`} />
+                {/* Trunk connects at y=40 */}
+                <rect x={`${22}`} y={`${40}`} width={`${6}`} height={`${70}`} fill="rgba(80, 50, 20, 0.95)" />
               </svg>
             );
           })}
@@ -163,17 +164,17 @@ export default function ParallaxBackground() {
             return (
               <svg 
                 key={`tree-front-${i}`}
-                viewBox="0 0 45 90"
+                viewBox="0 0 45 100"
                 className="flex-shrink-0"
                 style={{ width: `${45 * scale}px`, height: "100%" }}
               >
-                {/* Canopy - three circles stacked */}
-                <circle cx="22" cy={`${18 * scale}`} r={`${14 * scale}`} fill={`rgba(${18 + offset * 5}, ${100 + offset * 10}, ${28 + offset * 5}, 0.96)`} />
-                <circle cx={`${12 * scale}`} cy={`${26 * scale}`} r={`${11 * scale}`} fill={`rgba(${26 + offset * 5}, ${120 + offset * 10}, ${35 + offset * 5}, 0.93)`} />
-                <circle cx={`${32 * scale}`} cy={`${26 * scale}`} r={`${11 * scale}`} fill={`rgba(${26 + offset * 5}, ${120 + offset * 10}, ${35 + offset * 5}, 0.93)`} />
-                <circle cx="22" cy={`${40 * scale}`} r={`${10 * scale}`} fill={`rgba(${35 + offset * 5}, ${140 + offset * 10}, ${45 + offset * 5}, 0.88)`} />
-                {/* Trunk - directly below canopy */}
-                <rect x={`${20}`} y={`${55 * scale}`} width={`${5}`} height={`${35 * scale}`} fill="rgb(139, 101, 58)" />
+                {/* Canopy - positioned to connect at y=50 */}
+                <circle cx="22" cy="16" r="14" fill={`rgba(${18 + offset * 5}, ${100 + offset * 10}, ${28 + offset * 5}, 0.96)`} />
+                <circle cx="12" cy="26" r="11" fill={`rgba(${26 + offset * 5}, ${120 + offset * 10}, ${35 + offset * 5}, 0.93)`} />
+                <circle cx="32" cy="26" r="11" fill={`rgba(${26 + offset * 5}, ${120 + offset * 10}, ${35 + offset * 5}, 0.93)`} />
+                <circle cx="22" cy="40" r="10" fill={`rgba(${35 + offset * 5}, ${140 + offset * 10}, ${45 + offset * 5}, 0.88)`} />
+                {/* Trunk connects directly at y=50 */}
+                <rect x="20" y="50" width="5" height="50" fill="rgb(139, 101, 58)" />
               </svg>
             );
           })}

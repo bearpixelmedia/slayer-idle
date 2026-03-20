@@ -14,15 +14,13 @@ export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestig
     return <div className="p-4 text-muted-foreground text-xs">Loading game state...</div>;
   }
 
+  const tabLabels = { combat: "⚔️ COMBAT", progression: "📈 PROGRESS", village: "🏘️ VILLAGE", quests: "📜 QUESTS", zones: "🗺️ ZONES" };
+
   return (
     <Tabs value={activeTab || "combat"} onValueChange={onTabChange} className="w-full">
-      <TabsList className={`w-full grid grid-cols-5 gap-2 px-2 py-3 ${HUD_THEME.panel.bg} border-b ${HUD_THEME.panel.border}`}>
-        <TabsTrigger value="combat" className={HUD_THEME.text.small}>⚔️ Combat</TabsTrigger>
-        <TabsTrigger value="progression" className={HUD_THEME.text.small}>📈 Progress</TabsTrigger>
-        <TabsTrigger value="village" className={HUD_THEME.text.small}>🏘️ Village</TabsTrigger>
-        <TabsTrigger value="quests" className={HUD_THEME.text.small}>📜 Quests</TabsTrigger>
-        <TabsTrigger value="zones" className={HUD_THEME.text.small}>🗺️ Zones</TabsTrigger>
-      </TabsList>
+      <div className={`px-2 py-1 border-b ${HUD_THEME.panel.border} ${HUD_THEME.panel.bg}`}>
+        <h3 className={`${HUD_THEME.text.label} text-primary`}>{tabLabels[activeTab || "combat"]}</h3>
+      </div>
 
       <TabsContent value="combat" className={`px-2 py-2 space-y-2 ${HUD_THEME.panel.bg}`}>
         <UpgradeShop state={state} onBuy={onBuyUpgrade} />

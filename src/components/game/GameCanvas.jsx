@@ -280,24 +280,8 @@ export default function GameCanvas({
       className={`relative w-full flex-1 bg-gradient-to-b ${stage.bgGradient} cursor-pointer select-none overflow-hidden`}
       onClick={handleClick}
     >
-      {/* Stars */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 20 }).map((_, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full bg-white/20"
-            style={{
-              width: `${1 + (i % 3)}px`,
-              height: `${1 + (i % 3)}px`,
-              top: `${(i * 7) % 60}%`,
-              left: `${(i * 13 + 5) % 100}%`,
-              animation: `float ${2 + (i % 3)}s ease-in-out ${i * 0.3}s infinite`,
-            }}
-          />
-        ))}
-      </div>
-
-      <GroundLayer stageColor={stage.color} />
+      {/* Parallax background with sky, mountains, and foliage */}
+      <ParallaxBackground />
 
       {/* Player character */}
       <div className="absolute bottom-20 left-[15%] sm:left-[20%] flex flex-col items-center gap-2">

@@ -379,9 +379,11 @@ export default function GameSettings() {
                     key={building.id}
                     title={building.name}
                     items={[
-                      { id: `building_${building.id}_icon`, label: "Icon", defaultValue: building.icon },
                       { id: `building_${building.id}_name`, label: "Name", defaultValue: building.name },
                       { id: `building_${building.id}_desc`, label: "Description", defaultValue: building.description },
+                    ]}
+                    imageItems={[
+                      { id: `building_${building.id}_icon`, label: "Icon", defaultValue: building.icon },
                     ]}
                   />
                 ))}

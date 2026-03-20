@@ -103,22 +103,12 @@ export default function GameCanvas({
           </p>
         </div>
         <div className="relative">
-          <motion.div
-            className={`text-4xl sm:text-5xl md:text-6xl drop-shadow-lg ${
-              state.isBossActive ? "scale-125" : ""
-            }`}
-            animate={{
-              filter: enemyHit ? "brightness(1.8)" : "brightness(1)",
-            }}
-            transition={{ duration: 0.1 }}
-            style={{
-              animation: enemyDying ? "enemy-die 0.3s ease-out forwards" : 
-                         (state.isBossActive && !enemyDying) ? "float 3s ease-in-out infinite" :
-                         !enemyDying && !state.isBossActive ? "float 3s ease-in-out infinite" : "none"
-            }}
-          >
-            {enemyEmoji}
-          </motion.div>
+          <EnemyRenderer
+            enemyName={state.currentEnemyName}
+            enemyHit={enemyHit}
+            enemyDying={enemyDying}
+            isBoss={state.isBossActive}
+          />
           {/* Ground shadow */}
           <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-24 h-2 bg-black/25 rounded-full blur-md" />
         </div>

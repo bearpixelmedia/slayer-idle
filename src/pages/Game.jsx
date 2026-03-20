@@ -227,88 +227,88 @@ export default function Game() {
       </div>
 
       {/* Landscape: Side-by-side layout */}
-      <div className="hidden lg:flex flex-col w-full h-full overflow-hidden">
-        <StatsBar
-          state={state}
-          tapDamage={getTapDamage()}
-          idleCPS={getIdleCPS()}
-        />
-        <ActiveBuffsDisplay activeBuffs={activeBuffs} />
-        <WeaponMode
-          currentMode={currentWeapon}
-          bowUnlocked={(state?.upgradeLevels?.["bow"] || 0) > 0}
-          onModeChange={setCurrentWeapon}
-        />
-        
-        <div className="flex-1 overflow-hidden relative w-full flex flex-col min-h-0">
-          {!showRunner ? (
-            <GameCanvas
-              state={state}
-              enemyDying={enemyDying}
-              floatingCoins={floatingCoins}
-              floatingSouls={floatingSouls}
-              floatingDamage={floatingDamage}
-              particles={particles}
-              slashEffects={slashEffects}
-              onTap={handleTap}
-              enemyHit={enemyHit}
-              weaponMode={currentWeapon}
-            />
-          ) : (
-            <RunnerCanvas
-              playerY={runner.playerY}
-              obstacles={runner.obstacles}
-              score={runner.score}
-              isGameOver={runner.isGameOver}
-              gameStarted={runner.gameStarted}
-              onTap={() => {
-                if (!runner.gameStarted) runner.startGame();
-                else if (runner.isGameOver) runner.resetGame();
-                else runner.handleJump();
-              }}
-            />
-          )}
+      <div className="hidden lg:flex h-full overflow-hidden">
+        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+          <StatsBar
+            state={state}
+            tapDamage={getTapDamage()}
+            idleCPS={getIdleCPS()}
+          />
+          <ActiveBuffsDisplay activeBuffs={activeBuffs} />
+          <WeaponMode
+            currentMode={currentWeapon}
+            bowUnlocked={(state?.upgradeLevels?.["bow"] || 0) > 0}
+            onModeChange={setCurrentWeapon}
+          />
+          
+          <div className="flex-1 overflow-hidden relative flex flex-col min-h-0">
+            {!showRunner ? (
+              <GameCanvas
+                state={state}
+                enemyDying={enemyDying}
+                floatingCoins={floatingCoins}
+                floatingSouls={floatingSouls}
+                floatingDamage={floatingDamage}
+                particles={particles}
+                slashEffects={slashEffects}
+                onTap={handleTap}
+                enemyHit={enemyHit}
+                weaponMode={currentWeapon}
+              />
+            ) : (
+              <RunnerCanvas
+                playerY={runner.playerY}
+                obstacles={runner.obstacles}
+                score={runner.score}
+                isGameOver={runner.isGameOver}
+                gameStarted={runner.gameStarted}
+                onTap={() => {
+                  if (!runner.gameStarted) runner.startGame();
+                  else if (runner.isGameOver) runner.resetGame();
+                  else runner.handleJump();
+                }}
+              />
+            )}
 
-          {/* Menu overlay on right side */}
-          {!showRunner && (
-            <div className="absolute top-0 right-0 bottom-0 z-20 pointer-events-none">
-              <div className="pointer-events-auto h-full">
-                <MenuPanel
-                  state={state}
-                  onBuyUpgrade={buyUpgrade}
-                  onUnlockSkill={unlockSkill}
-                  onPrestige={prestige}
-                  onRevive={revive}
-                  unlockedIds={unlockedIds}
-                  damageMultiplier={damageMultiplier}
-                  offlineMultiplier={offlineMultiplier}
-                  onSwitchZone={switchZone}
-                  onUnlockZone={unlockZone}
-                  onClaimQuestReward={handleClaimQuestReward}
-                  onRepeatQuest={handleRepeatQuest}
-                  questProgress={questProgress}
-                  onUpgradeBuilding={upgradeBuilding}
-                  abilities={abilities}
-                  onActivateAbility={activateAbility}
-                  weaponMode={currentWeapon}
-                  onRunnerClick={() => setShowRunner(true)}
-                  onClose={() => setMenuOpen(false)}
-                />
+            {showRunner && (
+              <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-10">
+                <button
+                  onClick={() => setShowRunner(false)}
+                  className="px-6 py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"
+                >
+                  ← BACK TO SLAYER
+                </button>
               </div>
-            </div>
-          )}
-
-          {showRunner && (
-            <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-10">
-              <button
-                onClick={() => setShowRunner(false)}
-                className="px-6 py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"
-              >
-                ← BACK TO SLAYER
-              </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
+
+        {/* HUD Menu Panel - Always visible on right side */}
+        {!showRunner && (
+          <div className="w-96 flex-shrink-0 border-l border-border overflow-hidden">
+            <MenuPanel
+              state={state}
+              onBuyUpgrade={buyUpgrade}
+              onUnlockSkill={unlockSkill}
+              onPrestige={prestige}
+              onRevive={revive}
+              unlockedIds={unlockedIds}
+              damageMultiplier={damageMultiplier}
+              offlineMultiplier={offlineMultiplier}
+              onSwitchZone={switchZone}
+              onUnlockZone={unlockZone}
+              onClaimQuestReward={handleClaimQuestReward}
+              onRepeatQuest={handleRepeatQuest}
+              questProgress={questProgress}
+              onUpgradeBuilding={upgradeBuilding}
+              abilities={abilities}
+              onActivateAbility={activateAbility}
+              weaponMode={currentWeapon}
+              onRunnerClick={() => setShowRunner(true)}
+              onClose={() => {}}
+            />
+          </div>
+        )}
       </div>
 
       <AchievementToast achievement={newUnlock} />

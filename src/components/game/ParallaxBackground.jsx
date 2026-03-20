@@ -109,39 +109,6 @@ export default function ParallaxBackground() {
         </div>
       </div>
 
-      {/* Layer 5: Back treeline (unified trunk+canopy) - speed 0.35 */}
-      <div 
-        className="absolute left-0 right-0 pointer-events-none"
-        style={{ 
-          transform: "translate3d(calc(var(--camX) * 0.35), 0, 0)",
-          top: "28%",
-          height: "35%",
-          opacity: 0.8
-        }}
-      >
-        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.5">
-          {Array.from({ length: 40 }).map((_, i) => {
-            const scale = 0.7 + (i % 3) * 0.15;
-            return (
-              <svg 
-                key={`tree-back-${i}`} 
-                viewBox="0 0 50 110" 
-                className="flex-shrink-0" 
-                style={{ width: `${50 * scale}px`, height: "100%", opacity: 0.7 + (i % 4) * 0.08 }}
-              >
-                {/* Canopy - circles positioned to bottom at y=40 */}
-                <circle cx={`${25}`} cy={`${22}`} r={`${14}`} fill={`rgba(${12 + (i % 3) * 8}, ${70 + (i % 3) * 10}, ${20 + (i % 3) * 5}, 0.9)`} />
-                <circle cx={`${15}`} cy={`${32}`} r={`${12}`} fill={`rgba(${18 + (i % 3) * 8}, ${85 + (i % 3) * 10}, ${25 + (i % 3) * 5}, 0.88)`} />
-                <circle cx={`${35}`} cy={`${32}`} r={`${12}`} fill={`rgba(${18 + (i % 3) * 8}, ${85 + (i % 3) * 10}, ${25 + (i % 3) * 5}, 0.88)`} />
-                <circle cx={`${25}`} cy={`${40}`} r={`${10}`} fill={`rgba(${20 + (i % 3) * 8}, ${90 + (i % 3) * 10}, ${28 + (i % 3) * 5}, 0.92)`} />
-                {/* Trunk connects at y=40 */}
-                <rect x={`${22}`} y={`${40}`} width={`${6}`} height={`${70}`} fill="rgba(80, 50, 20, 0.95)" />
-              </svg>
-            );
-          })}
-        </div>
-      </div>
-
       {/* Layer 6: Fog/Haze transition - speed 0.42 (static depth perception) */}
       <div 
         className="absolute inset-0 w-full h-full pointer-events-none"
@@ -150,31 +117,33 @@ export default function ParallaxBackground() {
         }}
       />
 
-      {/* Layer 7: Front treeline (unified trunk+canopy) - speed 0.65 */}
+      {/* Layer 5/6/7: Unified treeline (all speeds/sizes matched) - speed 0.50 */}
       <div 
-        className="absolute bottom-1/4 left-0 right-0 h-2/5 pointer-events-none"
+        className="absolute left-0 right-0 pointer-events-none"
         style={{ 
-          transform: "translate3d(calc(var(--camX) * 0.65), 0, 0)"
+          transform: "translate3d(calc(var(--camX) * 0.50), 0, 0)",
+          top: "20%",
+          height: "55%"
         }}
       >
-        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-1.5">
-          {Array.from({ length: 38 }).map((_, i) => {
-            const scale = 0.85 + (i % 4) * 0.25;
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-1">
+          {Array.from({ length: 50 }).map((_, i) => {
+            const baseScale = 0.75;
             const offset = (i * 7) % 3;
             return (
               <svg 
-                key={`tree-front-${i}`}
-                viewBox="0 0 45 100"
+                key={`tree-unified-${i}`}
+                viewBox="0 0 50 110"
                 className="flex-shrink-0"
-                style={{ width: `${45 * scale}px`, height: "100%" }}
+                style={{ width: `${50 * baseScale}px`, height: "100%", opacity: 0.75 + (i % 3) * 0.1 }}
               >
-                {/* Canopy - positioned to connect at y=50 */}
-                <circle cx="22" cy="16" r="14" fill={`rgba(${18 + offset * 5}, ${100 + offset * 10}, ${28 + offset * 5}, 0.96)`} />
-                <circle cx="12" cy="26" r="11" fill={`rgba(${26 + offset * 5}, ${120 + offset * 10}, ${35 + offset * 5}, 0.93)`} />
-                <circle cx="32" cy="26" r="11" fill={`rgba(${26 + offset * 5}, ${120 + offset * 10}, ${35 + offset * 5}, 0.93)`} />
-                <circle cx="22" cy="40" r="10" fill={`rgba(${35 + offset * 5}, ${140 + offset * 10}, ${45 + offset * 5}, 0.88)`} />
-                {/* Trunk connects directly at y=50 */}
-                <rect x="20" y="50" width="5" height="50" fill="rgb(139, 101, 58)" />
+                {/* Canopy - consistent size */}
+                <circle cx="25" cy="20" r="14" fill={`rgba(${18 + offset * 5}, ${100 + offset * 10}, ${28 + offset * 5}, 0.96)`} />
+                <circle cx="15" cy="30" r="11" fill={`rgba(${26 + offset * 5}, ${120 + offset * 10}, ${35 + offset * 5}, 0.93)`} />
+                <circle cx="35" cy="30" r="11" fill={`rgba(${26 + offset * 5}, ${120 + offset * 10}, ${35 + offset * 5}, 0.93)`} />
+                <circle cx="25" cy="42" r="10" fill={`rgba(${35 + offset * 5}, ${140 + offset * 10}, ${45 + offset * 5}, 0.88)`} />
+                {/* Trunk connects directly */}
+                <rect x="22" y="50" width="6" height="60" fill="rgb(139, 101, 58)" />
               </svg>
             );
           })}

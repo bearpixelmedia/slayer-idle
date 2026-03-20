@@ -133,7 +133,12 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
       <label className="text-xs font-medium text-slate-600">{label}</label>
       <div className="flex items-center gap-2">
         {/* Preview */}
-        <div className="w-12 h-12 rounded-lg border border-slate-300 bg-slate-100 flex items-center justify-center overflow-hidden">
+        <button
+          type="button"
+          onClick={() => history.length > 0 && setShowHistory(!showHistory)}
+          className="w-12 h-12 rounded-lg border border-slate-300 bg-slate-100 flex items-center justify-center overflow-hidden hover:border-slate-400 transition-colors"
+          title={history.length > 0 ? "Click to view history" : ""}
+        >
           {value ? (
             <AnimationPreview 
               spriteUrl={value} 
@@ -144,7 +149,7 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
           ) : (
             <span className="text-lg">{currentDefault}</span>
           )}
-        </div>
+        </button>
 
         {/* Upload button */}
         <label>

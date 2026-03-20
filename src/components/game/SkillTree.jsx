@@ -70,14 +70,14 @@ export default function SkillTree({ slayerPoints = 0, unlockedSkillIds = [], onU
   }, 0);
 
   // Track specialization progress
-  const damageSkills = unlockedSkillIds.filter(id => {
+  const damageSkills = unlockedSkillIds.reduce((count, id) => {
     const skill = SKILLS.find(s => s.id === id);
-    return skill?.path === "damage";
-  }).length;
-  const idleSkills = unlockedSkillIds.filter(id => {
+    return count + (skill?.path === "damage" ? 1 : 0);
+  }, 0);
+  const idleSkills = unlockedSkillIds.reduce((count, id) => {
     const skill = SKILLS.find(s => s.id === id);
-    return skill?.path === "idle";
-  }).length;
+    return count + (skill?.path === "idle" ? 1 : 0);
+  }, 0);
 
   return (
     <div className="mx-4 mb-4 rounded-xl border border-border/50 overflow-hidden">

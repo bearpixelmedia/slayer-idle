@@ -83,11 +83,11 @@ export default function AchievementsPanel({ unlockedIds, damageMultiplier, offli
             <div className="flex gap-3 px-4 pt-3 pb-2">
               <div className="flex-1 p-2 rounded-lg bg-red-500/10 border border-red-500/20 text-center">
                 <p className="font-pixel text-[7px] text-muted-foreground">DAMAGE BONUS</p>
-                <p className="font-pixel text-xs text-red-400">×{damageMultiplier.toFixed(2)}</p>
+                <p className="font-pixel text-xs text-red-400">×{isFinite(damageMultiplier) ? damageMultiplier.toFixed(2) : "∞"}</p>
               </div>
               <div className="flex-1 p-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-center">
                 <p className="font-pixel text-[7px] text-muted-foreground">OFFLINE BONUS</p>
-                <p className="font-pixel text-xs text-yellow-400">×{offlineMultiplier.toFixed(2)}</p>
+                <p className="font-pixel text-xs text-yellow-400">×{isFinite(offlineMultiplier) ? offlineMultiplier.toFixed(2) : "∞"}</p>
               </div>
             </div>
 

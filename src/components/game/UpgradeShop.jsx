@@ -7,30 +7,83 @@ import { HUD_THEME } from "@/lib/hudTheme";
 
 function UpgradeCard({ upgrade, level, coins, onBuy }) {
   const cost = getUpgradeCost(upgrade, level);
-  const canAfford = (coins ?? 0) >= cost;
+  const canAfford1 = (coins ?? 0) >= cost;
+  const canAfford10 = (coins ?? 0) >= cost * 10;
+  const canAfford50 = (coins ?? 0) >= cost * 50;
   const typeLabel = TAP_UPGRADES.includes(upgrade.id) ? "TAP" : IDLE_UPGRADES.includes(upgrade.id) ? "IDLE" : "ALL";
   const typeColor = TAP_UPGRADES.includes(upgrade.id) ? "text-red-400" : IDLE_UPGRADES.includes(upgrade.id) ? "text-yellow-400" : "text-purple-400";
 
+  const handleBuyMax = () => {
+    let count = 0;
+    let currentLevel = level;
+    let totalCost = 0;
+    while ((coins ?? 0) >= totalCost + getUpgradeCost(upgrade, currentLevel)) {
+      totalCost += getUpgradeCost(upgrade, currentLevel);
+      currentLevel++;
+      count++;
+    }
+    if (count > 0) onBuy(upgrade.id, count);
+  };
+
   return (
-    <motion.button
-      onClick={() => canAfford && onBuy(upgrade.id)}
-      className={`relative flex flex-col items-center p-2 rounded-lg border-2 transition-all ${
-        canAfford
-          ? "bg-secondary/40 border-secondary/60 hover:border-primary/60 hover:bg-secondary/60 cursor-pointer"
-          : "bg-muted/20 border-border/30 opacity-40 cursor-not-allowed"
-      }`}
-      whileTap={canAfford ? { scale: 0.95 } : {}}
-    >
-      <div className="text-2xl mb-1">{upgrade.icon}</div>
-      <span className="font-pixel text-[7px] text-foreground truncate text-center max-w-[60px]">{upgrade.name}</span>
-      <p className="text-[7px] text-muted-foreground text-center mt-0.5 max-w-[70px] leading-tight">{upgrade.description}</p>
-      
-      <div className="mt-2 w-full flex flex-col items-center gap-1 border-t border-border/30 pt-2">
-        <span className={`font-pixel text-[6px] ${typeColor}`}>{typeLabel}</span>
-        <span className="font-pixel text-[8px] text-primary">🪙 {formatNumber(cost)}</span>
-        <span className="font-pixel text-[6px] text-muted-foreground">Lv.{level}</span>
+    <div className="flex items-start gap-2 p-2 rounded-lg border border-border/50 bg-card/40">
+      <div className="flex-shrink-0 text-2xl">{upgrade.icon}</div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-start justify-between gap-2 mb-1">
+          <div>
+            <span className="font-pixel text-[8px] text-foreground">{upgrade.name}</span>
+            <p className="text-[7px] text-muted-foreground mt-0.5">{upgrade.description}</p>
+          </div>
+          <span className="font-pixel text-[6px] text-muted-foreground flex-shrink-0">Lv.{level}</span>
+        </div>
+        <div className="flex items-center gap-2 mb-2 text-[7px]">
+          <span className={`font-pixel ${typeColor}`}>{typeLabel}</span>
+          <span className="text-primary font-pixel">🪙 {formatNumber(cost)}</span>
+        </div>
+        <div className="flex gap-1">
+          <motion.button
+            onClick={() => canAfford1 && onBuy(upgrade.id, 1)}
+            disabled={!canAfford1}
+            className={`flex-1 py-1 rounded-md font-pixel text-[7px] transition-all ${
+              canAfford1 ? "bg-primary text-primary-foreground hover:brightness-110" : "bg-muted/30 text-muted-foreground/50"
+            }`}
+            whileTap={canAfford1 ? { scale: 0.95 } : {}}
+          >
+            x1
+          </motion.button>
+          <motion.button
+            onClick={() => canAfford10 && onBuy(upgrade.id, 10)}
+            disabled={!canAfford10}
+            className={`flex-1 py-1 rounded-md font-pixel text-[7px] transition-all ${
+              canAfford10 ? "bg-primary text-primary-foreground hover:brightness-110" : "bg-muted/30 text-muted-foreground/50"
+            }`}
+            whileTap={canAfford10 ? { scale: 0.95 } : {}}
+          >
+            x10
+          </motion.button>
+          <motion.button
+            onClick={() => canAfford50 && onBuy(upgrade.id, 50)}
+            disabled={!canAfford50}
+            className={`flex-1 py-1 rounded-md font-pixel text-[7px] transition-all ${
+              canAfford50 ? "bg-primary text-primary-foreground hover:brightness-110" : "bg-muted/30 text-muted-foreground/50"
+            }`}
+            whileTap={canAfford50 ? { scale: 0.95 } : {}}
+          >
+            x50
+          </motion.button>
+          <motion.button
+            onClick={handleBuyMax}
+            disabled={!canAfford1}
+            className={`flex-1 py-1 rounded-md font-pixel text-[7px] transition-all ${
+              canAfford1 ? "bg-accent text-accent-foreground hover:brightness-110" : "bg-muted/30 text-muted-foreground/50"
+            }`}
+            whileTap={canAfford1 ? { scale: 0.95 } : {}}
+          >
+            MAX
+          </motion.button>
+        </div>
       </div>
-    </motion.button>
+    </div>
   );
 }
 
@@ -60,18 +113,16 @@ export default function UpgradeShop({ state, onBuy }) {
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="px-3 py-2">
-              <div className="grid grid-cols-2 gap-1.5">
-                {UPGRADES.map((upgrade) => (
-                  <UpgradeCard
-                    key={upgrade.id}
-                    upgrade={upgrade}
-                    level={state?.upgradeLevels?.[upgrade.id] || 0}
-                    coins={state?.coins || 0}
-                    onBuy={onBuy}
-                  />
-                ))}
-              </div>
+            <div className="px-3 py-2 space-y-1.5">
+              {UPGRADES.map((upgrade) => (
+                <UpgradeCard
+                  key={upgrade.id}
+                  upgrade={upgrade}
+                  level={state?.upgradeLevels?.[upgrade.id] || 0}
+                  coins={state?.coins || 0}
+                  onBuy={onBuy}
+                />
+              ))}
             </div>
           </motion.div>
         )}

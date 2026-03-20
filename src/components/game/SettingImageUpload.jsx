@@ -1,28 +1,40 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Upload, X, History, ChevronDown } from "lucide-react";
+import { Upload, X, ChevronDown, Loader } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import AnimationPreview from "./AnimationPreview";
-
-const HISTORY_KEY = "image_upload_history";
 
 export default function SettingImageUpload({ label, value, onChange, currentDefault }) {
   const fileInputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
   const [animationData, setAnimationData] = useState(null);
   const [currentFrame, setCurrentFrame] = useState(0);
-  const [showHistory, setShowHistory] = useState(false);
-  const [history, setHistory] = useState([]);
+  const [showLibrary, setShowLibrary] = useState(false);
+  const [files, setFiles] = useState([]);
+  const [loadingFiles, setLoadingFiles] = useState(false);
 
-  // Load history on mount
+  // Load files from app storage on mount or when opening library
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(HISTORY_KEY);
-      setHistory(saved ? JSON.parse(saved) : []);
-    } catch {
-      setHistory([]);
-    }
-  }, []);
+    if (!showLibrary || files.length > 0) return;
+    
+    const loadFiles = async () => {
+      setLoadingFiles(true);
+      try {
+        const result = await base44.integrations.Core.ListAppFiles?.();
+        if (result?.files) {
+          const imageFiles = result.files.filter(f => /\.(png|jpg|jpeg|gif|webp)$/i.test(f.name));
+          setFiles(imageFiles);
+        }
+      } catch (err) {
+        console.error('Failed to load files:', err);
+        setFiles([]);
+      } finally {
+        setLoadingFiles(false);
+      }
+    };
+    
+    loadFiles();
+  }, [showLibrary]);
 
   const addToHistory = (imageUrl, jsonUrl = null) => {
     setHistory(prev => {

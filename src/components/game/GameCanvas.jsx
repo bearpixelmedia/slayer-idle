@@ -141,7 +141,7 @@ export default function GameCanvas({
       </div>
 
       {/* Enemy */}
-      <div className="absolute bottom-16 right-[15%] sm:right-[25%] flex flex-col items-center gap-2">
+      <div className="absolute bottom-64 right-[15%] sm:right-[25%] flex flex-col items-center gap-2">
         <div className="text-center mb-1">
           {state.isBossActive && (
             <p className="font-pixel text-[8px] text-red-400 mb-1 animate-pulse">⚔️ BOSS ENCOUNTER ⚔️</p>

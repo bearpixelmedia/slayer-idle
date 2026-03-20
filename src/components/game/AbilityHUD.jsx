@@ -2,9 +2,9 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const ABILITY_CONFIG = {
-  magnet: { name: "Magnet", icon: "🧲", color: "border-cyan-500/50 bg-cyan-500/10" },
-  double_damage: { name: "Double Damage", icon: "⚡", color: "border-yellow-500/50 bg-yellow-500/10" },
-  auto_clicker: { name: "Auto Clicker", icon: "🖱️", color: "border-purple-500/50 bg-purple-500/10" },
+  magnet: { name: "Attract", icon: "✨", color: "border-blue-600/60 bg-blue-600/15" },
+  double_damage: { name: "Fury", icon: "⚔️", color: "border-red-600/60 bg-red-600/15" },
+  auto_clicker: { name: "Ethereal", icon: "👻", color: "border-purple-600/60 bg-purple-600/15" },
 };
 
 export default function AbilityHUD({ abilities, onActivate }) {

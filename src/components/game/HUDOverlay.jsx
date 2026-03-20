@@ -98,9 +98,9 @@ export default function HUDOverlay({
       {!hudMenuOpen && (
         <button
           onClick={() => onMenuToggle(true)}
-          className={`hidden lg:flex fixed right-4 bottom-20 z-50 w-12 h-12 rounded-full pointer-events-auto items-center justify-center text-2xl transition-all active:scale-95 ${HUD_THEME.button.primary}`}
+          className="hidden lg:flex fixed right-4 bottom-20 z-50 w-12 h-12 rounded-full pointer-events-auto items-center justify-center text-2xl transition-all active:scale-95 bg-amber-900 hover:bg-amber-800 border-2 border-amber-700/50"
         >
-          💼
+          📖
         </button>
       )}
     </div>

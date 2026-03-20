@@ -237,9 +237,9 @@ export default function Game() {
         {!showRunner && (
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="fixed top-20 right-4 z-40 w-12 h-12 rounded-full bg-primary hover:bg-primary/90 flex items-center justify-center text-2xl transition-all active:scale-95"
+            className="fixed top-20 right-4 z-40 w-12 h-12 rounded-full bg-amber-900 hover:bg-amber-800 flex items-center justify-center text-2xl transition-all active:scale-95 border-2 border-amber-700/50"
           >
-            💼
+            📖
           </button>
         )}
       </div>

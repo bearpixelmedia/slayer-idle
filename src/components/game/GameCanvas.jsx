@@ -48,7 +48,7 @@ function GroundLayer({ stageColor }) {
       </div>
 
       {/* Foreground layer (fastest parallax) */}
-      <div className="absolute bottom-40 left-0 right-0 h-12 bg-gradient-to-t from-black/60 to-transparent flex whitespace-nowrap animate-ground-scroll" style={{ animationDuration: "2s" }}>
+      <div className="absolute bottom-20 left-0 right-0 h-12 bg-gradient-to-t from-black/60 to-transparent flex whitespace-nowrap animate-ground-scroll" style={{ animationDuration: "2s" }}>
         <div className="flex whitespace-nowrap w-[200%]">
           {Array.from({ length: 60 }).map((_, i) => (
             <span key={`fg-${i}`} className="inline-block mx-0.5 text-foreground/80 text-sm font-bold">

@@ -9,10 +9,10 @@ import QuestLog from "@/components/game/QuestLog";
 import ZoneSelector from "@/components/game/ZoneSelector";
 import AbilityBar from "@/components/game/AbilityBar";
 
-export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestige, onRevive, unlockedIds, damageMultiplier, offlineMultiplier, onSwitchZone, onUnlockZone, onClaimQuestReward, onRepeatQuest, questProgress, onUpgradeBuilding, abilities, onActivateAbility, weaponMode }) {
+export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestige, onRevive, unlockedIds, damageMultiplier, offlineMultiplier, onSwitchZone, onUnlockZone, onClaimQuestReward, onRepeatQuest, questProgress, onUpgradeBuilding, abilities, onActivateAbility, weaponMode, activeTab, onTabChange }) {
 
   return (
-    <Tabs defaultValue="combat" className="w-full">
+    <Tabs value={activeTab || "combat"} onValueChange={onTabChange} className="w-full">
       <TabsList className="w-full grid grid-cols-5 gap-1 px-4 py-2 bg-card/60">
         <TabsTrigger value="combat" className="font-pixel text-[8px] sm:text-[9px]">⚔️ Combat</TabsTrigger>
         <TabsTrigger value="progression" className="font-pixel text-[8px] sm:text-[9px]">📈 Progress</TabsTrigger>

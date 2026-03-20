@@ -91,7 +91,7 @@ export default function Game() {
           currentMode={currentWeapon}
           bowUnlocked={state.upgradeLevels["bow"] > 0}
           onModeChange={setCurrentWeapon}
-          className="flex-shrink-0"
+          className="hidden lg:flex flex-shrink-0"
         />
 
         <div className="w-full flex-1 overflow-hidden flex flex-col min-h-0">

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { SKILLS, canUnlockSkill } from "@/lib/skillTree";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ChevronUp, Lock } from "lucide-react";
+import { HUD_THEME } from "@/lib/hudTheme";
 
 function SkillCard({ skill, unlocked, canUnlock, onUnlock }) {
   const pathColors = {
@@ -81,16 +82,16 @@ export default function SkillTree({ slayerPoints = 0, unlockedSkillIds = [], onU
   }, 0);
 
   return (
-    <div className="mx-4 mb-4 rounded-xl border border-border/50 overflow-hidden">
+    <div className={`mx-4 mb-4 rounded-xl ${HUD_THEME.panel.border} overflow-hidden`}>
       {/* Header toggle */}
       <button
-        className="w-full flex items-center justify-between px-4 py-3 bg-card/60 hover:bg-card/80 transition-colors"
+        className={`w-full flex items-center justify-between px-4 py-3 ${HUD_THEME.panel.bg} hover:bg-card/80 transition-colors`}
         onClick={() => setOpen((o) => !o)}
       >
         <div className="flex items-center gap-2">
           <span className="text-lg">🌳</span>
-          <span className="font-pixel text-[9px] text-primary">SKILL TREE</span>
-          <span className="font-pixel text-[8px] text-muted-foreground">
+          <span className={`${HUD_THEME.text.label} text-primary`}>SKILL TREE</span>
+          <span className={`${HUD_THEME.text.small} text-muted-foreground`}>
             {spentPoints}/{totalPoints} SP
           </span>
         </div>
@@ -133,10 +134,8 @@ export default function SkillTree({ slayerPoints = 0, unlockedSkillIds = [], onU
                     <button
                       key={tier}
                       onClick={() => setSelectedTier(tier)}
-                      className={`flex-1 py-2 rounded-lg text-[8px] font-pixel transition-all ${
-                        selectedTier === tier
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted/30 text-muted-foreground hover:bg-muted/50"
+                      className={`flex-1 py-2 rounded-lg ${HUD_THEME.text.small} transition-all ${
+                        selectedTier === tier ? HUD_THEME.button.primary : HUD_THEME.button.muted
                       }`}
                     >
                       Tier {tier} {tierUnlocked}/{tierTotal}

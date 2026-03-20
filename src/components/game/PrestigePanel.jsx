@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { formatNumber } from "@/lib/formatNumber";
 import { motion, AnimatePresence } from "framer-motion";
+import { HUD_THEME } from "@/lib/hudTheme";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,10 +19,10 @@ export default function PrestigePanel({ canPrestige, soulsOnPrestige, slayerPoin
 
   return (
     <div className="mx-4 mb-4">
-      <div className="p-4 rounded-xl bg-gradient-to-r from-accent/20 to-purple-900/20 border border-accent/30">
+      <div className={`p-4 rounded-xl bg-gradient-to-r from-accent/20 to-purple-900/20 ${HUD_THEME.panel.border}`}>
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-pixel text-[9px] text-accent mb-1">👻 PRESTIGE AVAILABLE</h3>
+            <h3 className={`${HUD_THEME.text.label} text-accent mb-1`}>👻 PRESTIGE AVAILABLE</h3>
             <p className="text-xs text-muted-foreground">
               Reset progress and gain <span className="text-accent font-bold">+{formatNumber(soulsOnPrestige)} souls</span>
             </p>
@@ -32,7 +33,7 @@ export default function PrestigePanel({ canPrestige, soulsOnPrestige, slayerPoin
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <motion.button
-                className="px-4 py-2 rounded-lg bg-accent text-accent-foreground font-pixel text-[8px] hover:brightness-110"
+                className={`px-4 py-2 rounded-lg ${HUD_THEME.button.primary} ${HUD_THEME.text.small} hover:brightness-110`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >

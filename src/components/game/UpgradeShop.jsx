@@ -2,7 +2,7 @@ import React from "react";
 import { UPGRADES, getUpgradeCost, TAP_UPGRADES, IDLE_UPGRADES } from "@/lib/gameData";
 import { formatNumber } from "@/lib/formatNumber";
 import { motion } from "framer-motion";
-import { ChevronUp } from "lucide-react";
+import { HUD_THEME } from "@/lib/hudTheme";
 
 function UpgradeCard({ upgrade, level, coins, onBuy }) {
   const cost = getUpgradeCost(upgrade, level);
@@ -36,7 +36,7 @@ function UpgradeCard({ upgrade, level, coins, onBuy }) {
 export default function UpgradeShop({ state, onBuy }) {
   return (
     <div className="space-y-2">
-      <h2 className="font-pixel text-[9px] text-primary px-1">⬆️ UPGRADES</h2>
+      <h2 className={`${HUD_THEME.text.label} text-primary px-1`}>⬆️ UPGRADES</h2>
       <div className="grid grid-cols-2 gap-2">
         {UPGRADES.map((upgrade) => (
           <UpgradeCard

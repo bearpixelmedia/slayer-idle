@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ACHIEVEMENTS } from "@/lib/achievements";
 import { motion, AnimatePresence } from "framer-motion";
 import { Trophy, ChevronDown, ChevronUp } from "lucide-react";
+import { HUD_THEME } from "@/lib/hudTheme";
 
 const CATEGORIES = [
   { id: "coins", label: "Coins", icon: "🪙" },
@@ -51,16 +52,16 @@ export default function AchievementsPanel({ unlockedIds, damageMultiplier, offli
   const filtered = achievements.filter((a) => a?.category === activeCategory);
 
   return (
-    <div className="mx-4 mb-4 rounded-xl border border-border/50 overflow-hidden">
+    <div className={`mx-4 mb-4 rounded-xl ${HUD_THEME.panel.border} overflow-hidden`}>
       {/* Header toggle */}
       <button
-        className="w-full flex items-center justify-between px-4 py-3 bg-card/60 hover:bg-card/80 transition-colors"
+        className={`w-full flex items-center justify-between px-4 py-3 ${HUD_THEME.panel.bg} hover:bg-card/80 transition-colors`}
         onClick={() => setOpen((o) => !o)}
       >
         <div className="flex items-center gap-2">
           <Trophy className="w-4 h-4 text-primary" />
-          <span className="font-pixel text-[9px] text-primary">ACHIEVEMENTS</span>
-          <span className="font-pixel text-[8px] text-muted-foreground">{unlockedCount}/{totalCount}</span>
+          <span className={`${HUD_THEME.text.label} text-primary`}>ACHIEVEMENTS</span>
+          <span className={`${HUD_THEME.text.small} text-muted-foreground`}>{unlockedCount}/{totalCount}</span>
         </div>
         <div className="flex items-center gap-3">
           <div className="hidden sm:flex items-center gap-3 text-[9px] font-pixel">
@@ -98,17 +99,15 @@ export default function AchievementsPanel({ unlockedIds, damageMultiplier, offli
                 const catUnlocked = achievements.filter(a => a?.category === cat?.id && unlockedIds?.includes(a?.id)).length;
                 const catTotal = achievements.filter(a => a?.category === cat?.id).length;
                 return (
-                  <button
-                    key={cat.id}
-                    onClick={() => setActiveCategory(cat.id)}
-                    className={`flex-1 py-1.5 rounded-lg text-[8px] font-pixel transition-all ${
-                      activeCategory === cat.id
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted/30 text-muted-foreground hover:bg-muted/50"
-                    }`}
-                  >
-                    {cat.icon} {catUnlocked}/{catTotal}
-                  </button>
+                 <button
+                   key={cat.id}
+                   onClick={() => setActiveCategory(cat.id)}
+                   className={`flex-1 py-1.5 rounded-lg ${HUD_THEME.text.small} transition-all ${
+                     activeCategory === cat.id ? HUD_THEME.button.primary : HUD_THEME.button.muted
+                   }`}
+                 >
+                   {cat.icon} {catUnlocked}/{catTotal}
+                 </button>
                 );
               })}
             </div>

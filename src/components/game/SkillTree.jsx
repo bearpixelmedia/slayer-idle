@@ -62,20 +62,21 @@ export default function SkillTree({ slayerPoints = 0, unlockedSkillIds = [], onU
   const [selectedTier, setSelectedTier] = useState(1);
 
   const tiers = [1, 2, 3, 4];
-  const tierSkills = SKILLS.filter((s) => s.tier === selectedTier);
+  const skills = Array.isArray(SKILLS) ? SKILLS : [];
+  const tierSkills = skills.filter((s) => s?.tier === selectedTier);
   const totalPoints = slayerPoints;
-  const spentPoints = unlockedSkillIds.reduce((sum, id) => {
-    const skill = SKILLS.find((s) => s.id === id);
-    return sum + (skill ? skill.cost : 0);
+  const spentPoints = (Array.isArray(unlockedSkillIds) ? unlockedSkillIds : []).reduce((sum, id) => {
+    const skill = skills.find((s) => s?.id === id);
+    return sum + (skill?.cost || 0);
   }, 0);
 
   // Track specialization progress
-  const damageSkills = unlockedSkillIds.reduce((count, id) => {
-    const skill = SKILLS.find(s => s.id === id);
+  const damageSkills = (Array.isArray(unlockedSkillIds) ? unlockedSkillIds : []).reduce((count, id) => {
+    const skill = skills.find(s => s?.id === id);
     return count + (skill?.path === "damage" ? 1 : 0);
   }, 0);
-  const idleSkills = unlockedSkillIds.reduce((count, id) => {
-    const skill = SKILLS.find(s => s.id === id);
+  const idleSkills = (Array.isArray(unlockedSkillIds) ? unlockedSkillIds : []).reduce((count, id) => {
+    const skill = skills.find(s => s?.id === id);
     return count + (skill?.path === "idle" ? 1 : 0);
   }, 0);
 
@@ -123,10 +124,10 @@ export default function SkillTree({ slayerPoints = 0, unlockedSkillIds = [], onU
               {/* Tier selector */}
               <div className="flex gap-2">
                 {tiers.map((tier) => {
-                  const tierUnlocked = SKILLS.filter(
-                    (s) => s.tier === tier && unlockedSkillIds.includes(s.id)
+                  const tierUnlocked = skills.filter(
+                    (s) => s?.tier === tier && unlockedSkillIds?.includes(s?.id)
                   ).length;
-                  const tierTotal = SKILLS.filter((s) => s.tier === tier).length;
+                  const tierTotal = skills.filter((s) => s?.tier === tier).length;
 
                   return (
                     <button
@@ -147,12 +148,12 @@ export default function SkillTree({ slayerPoints = 0, unlockedSkillIds = [], onU
               {/* Skills grid */}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {tierSkills.map((skill) => {
-                  const unlocked = unlockedSkillIds.includes(skill.id);
-                  const canUnlock = canUnlockSkill(skill.id, unlockedSkillIds) && slayerPoints >= skill.cost;
+                  const unlocked = unlockedSkillIds?.includes(skill?.id);
+                  const canUnlock = canUnlockSkill(skill?.id, unlockedSkillIds) && slayerPoints >= (skill?.cost || 0);
 
                   return (
                     <SkillCard
-                      key={skill.id}
+                      key={skill?.id}
                       skill={skill}
                       unlocked={unlocked}
                       canUnlock={canUnlock}

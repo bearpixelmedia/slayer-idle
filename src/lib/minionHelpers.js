@@ -32,9 +32,9 @@ export function canUnlock(condition, ctx) {
     case "default":
       return true;
     case "zone_unlocked":
-      return ctx.unlockedZoneIds.includes(condition.zoneId);
+      return Array.isArray(ctx.unlockedZoneIds) && ctx.unlockedZoneIds.includes(condition.zoneId);
     case "highest_stage_at_least":
-      return ctx.highestStage >= condition.value;
+      return typeof ctx.highestStage === "number" && ctx.highestStage >= condition.value;
     case "all":
       return Array.isArray(condition.conditions) && condition.conditions.every((subCondition) =>
         canUnlock(subCondition, ctx)
@@ -51,7 +51,8 @@ export function canUnlock(condition, ctx) {
  * @returns {MinionTypeDef[]}
  */
 export function getUnlockedMinionTypes(minionDefs, ctx) {
-  return minionDefs.filter((minion) => canUnlock(minion.unlock, ctx));
+  if (!Array.isArray(minionDefs)) return [];
+  return minionDefs.filter((minion) => canUnlock(minion?.unlock, ctx));
 }
 
 /**
@@ -61,7 +62,8 @@ export function getUnlockedMinionTypes(minionDefs, ctx) {
  * @returns {MissionDef[]}
  */
 export function getUnlockedMissionDefs(missionDefs, ctx) {
-  return missionDefs.filter((mission) => canUnlock(mission.unlock, ctx));
+  if (!Array.isArray(missionDefs)) return [];
+  return missionDefs.filter((mission) => canUnlock(mission?.unlock, ctx));
 }
 
 /**
@@ -71,9 +73,10 @@ export function getUnlockedMissionDefs(missionDefs, ctx) {
  * @returns {{ durationSec: number, expectedSoulReward: number }}
  */
 export function computeMissionOutcome(missionDef, minionType) {
-  const durationSec = Math.round(missionDef.baseDurationSec / minionType.baseSpeed);
+  if (!missionDef || !minionType) return { durationSec: 0, expectedSoulReward: 0 };
+  const durationSec = Math.round((missionDef.baseDurationSec || 0) / (minionType.baseSpeed || 1));
   const expectedSoulReward = Math.floor(
-    missionDef.baseSoulReward * minionType.carryingCapacity * missionDef.rewardMultiplier
+    (missionDef.baseSoulReward || 0) * (minionType.carryingCapacity || 1) * (missionDef.rewardMultiplier || 1)
   );
   return { durationSec, expectedSoulReward };
 }
@@ -152,12 +155,12 @@ export function startMission(params) {
     expectedSoulReward,
   });
 
-  const nextOwnedMinions = minionsState.ownedMinions.map((m) =>
-    m.instanceId === minion.instanceId
+  const nextOwnedMinions = (Array.isArray(minionsState.ownedMinions) ? minionsState.ownedMinions : []).map((m) =>
+    m?.instanceId === minion?.instanceId
       ? { ...m, status: "on_mission", activeMissionInstanceId: newMissionInstance.instanceId }
       : m
   );
-  const nextMissions = [...minionsState.missions, newMissionInstance];
+  const nextMissions = [...(Array.isArray(minionsState.missions) ? minionsState.missions : []), newMissionInstance];
 
   return {
     ok: true,
@@ -174,16 +177,16 @@ export function startMission(params) {
  */
 export function tickMissions(minionsState, nowMs) {
   let completedCount = 0;
-  const nextMissions = minionsState.missions.map((m) => {
-    if (m.status === "active" && nowMs >= m.endsAt) {
+  const nextMissions = (Array.isArray(minionsState.missions) ? minionsState.missions : []).map((m) => {
+    if (m?.status === "active" && nowMs >= m?.endsAt) {
       completedCount++;
       return { ...m, status: "completed", completedAt: nowMs };
     }
     return m;
   });
 
-  const nextOwnedMinions = minionsState.ownedMinions.map((minion) => {
-    const activeMission = nextMissions.find(m => m.instanceId === minion.activeMissionInstanceId);
+  const nextOwnedMinions = (Array.isArray(minionsState.ownedMinions) ? minionsState.ownedMinions : []).map((minion) => {
+    const activeMission = nextMissions.find(m => m?.instanceId === minion?.activeMissionInstanceId);
     if (activeMission && activeMission.status === "completed") {
       return { ...minion, status: "idle", activeMissionInstanceId: null };
     }
@@ -199,7 +202,8 @@ export function tickMissions(minionsState, nowMs) {
  * @returns {MissionInstance[]}
  */
 export function getClaimableMissions(minionsState) {
-  return minionsState.missions.filter((m) => m.status === "completed");
+  if (!Array.isArray(minionsState?.missions)) return [];
+  return minionsState.missions.filter((m) => m?.status === "completed");
 }
 
 /**
@@ -216,8 +220,8 @@ export function claimMission(params) {
   let missionFound = false;
   let errorReason = null;
 
-  const nextMissions = minionsState.missions.map((m) => {
-    if (m.instanceId === missionInstanceId) {
+  const nextMissions = (Array.isArray(minionsState.missions) ? minionsState.missions : []).map((m) => {
+    if (m?.instanceId === missionInstanceId) {
       missionFound = true;
       if (m.status === "claimed") {
         errorReason = "MISSION_ALREADY_CLAIMED";
@@ -227,7 +231,7 @@ export function claimMission(params) {
         errorReason = "MISSION_NOT_COMPLETED";
         return m;
       }
-      soulsAwarded = m.expectedSoulReward;
+      soulsAwarded = m.expectedSoulReward || 0;
       return { ...m, status: "claimed", claimedAt: nowMs };
     }
     return m;
@@ -259,9 +263,9 @@ export function claimAllMissions(params) {
   let totalSoulsAwarded = 0;
   let claimedCount = 0;
 
-  const nextMissions = minionsState.missions.map((m) => {
-    if (m.status === "completed") {
-      totalSoulsAwarded += m.expectedSoulReward;
+  const nextMissions = (Array.isArray(minionsState.missions) ? minionsState.missions : []).map((m) => {
+    if (m?.status === "completed") {
+      totalSoulsAwarded += m?.expectedSoulReward || 0;
       claimedCount++;
       return { ...m, status: "claimed", claimedAt: nowMs };
     }
@@ -297,13 +301,14 @@ export function purchaseMinion(params) {
   if (economy.souls < minionTypeDef.purchaseCostSouls) {
     return { ok: false, reason: "INSUFFICIENT_SOULS" };
   }
-  if (minionsState.ownedMinions.length >= MINION_SYSTEM_CONFIG.maxOwnedMinions) {
+  const ownedMinionsLen = Array.isArray(minionsState.ownedMinions) ? minionsState.ownedMinions.length : 0;
+  if (ownedMinionsLen >= MINION_SYSTEM_CONFIG.maxOwnedMinions) {
     return { ok: false, reason: "MAX_MINIONS_OWNED" };
   }
 
   const newMinion = {
     instanceId: newMinionInstanceId,
-    minionTypeId: minionTypeDef.id,
+    minionTypeId: minionTypeDef?.id,
     level: 1,
     status: "idle",
     activeMissionInstanceId: null,
@@ -312,8 +317,8 @@ export function purchaseMinion(params) {
 
   return {
     ok: true,
-    nextState: { ...minionsState, ownedMinions: [...minionsState.ownedMinions, newMinion] },
-    soulsSpent: minionTypeDef.purchaseCostSouls,
+    nextState: { ...minionsState, ownedMinions: [...(Array.isArray(minionsState.ownedMinions) ? minionsState.ownedMinions : []), newMinion] },
+    soulsSpent: minionTypeDef?.purchaseCostSouls || 0,
     ownedMinion: newMinion,
   };
 }
@@ -327,11 +332,13 @@ export function purchaseMinion(params) {
  * @returns {MinionsState}
  */
 export function ensureStarterMinion(minionsState, minionDefs, nowMs, makeId) {
+  if (!Array.isArray(minionDefs)) return minionsState;
   const starterMinionDef = minionDefs.find((m) => m?.unlock?.type === "default");
   if (!starterMinionDef) return minionsState;
 
-  const hasStarterMinion = minionsState.ownedMinions.some(
-    (m) => m.minionTypeId === starterMinionDef?.id
+  const ownedMinions = Array.isArray(minionsState.ownedMinions) ? minionsState.ownedMinions : [];
+  const hasStarterMinion = ownedMinions.some(
+    (m) => m?.minionTypeId === starterMinionDef?.id
   );
 
   if (!hasStarterMinion) {
@@ -343,7 +350,7 @@ export function ensureStarterMinion(minionsState, minionDefs, nowMs, makeId) {
       activeMissionInstanceId: null,
       acquiredAt: nowMs,
     };
-    return { ...minionsState, ownedMinions: [...minionsState.ownedMinions, newMinion] };
+    return { ...minionsState, ownedMinions: [...ownedMinions, newMinion] };
   }
   return minionsState;
 }

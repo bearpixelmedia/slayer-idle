@@ -108,12 +108,13 @@ export default function QuestLog({ questProgress, onClaimReward, onRepeatQuest, 
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState("active"); // active, completed, all
 
-  const filtered = QUESTS.filter((quest) => {
-    const qp = questProgress?.[quest.id];
+  const quests = Array.isArray(QUESTS) ? QUESTS : [];
+  const filtered = quests.filter((quest) => {
+    const qp = questProgress?.[quest?.id];
     if (!qp) return false;
 
     // Check prerequisites
-    const meetsPrereqs = quest.prerequisiteIds.every((prereqId) => {
+    const meetsPrereqs = Array.isArray(quest?.prerequisiteIds) && quest.prerequisiteIds.every((prereqId) => {
       const prereqQp = questProgress[prereqId];
       return prereqQp && prereqQp.completed;
     });
@@ -122,10 +123,10 @@ export default function QuestLog({ questProgress, onClaimReward, onRepeatQuest, 
     if (filter === "active") return !qp.claimed;
     if (filter === "completed") return qp.claimed;
     return true;
-  }).sort((a, b) => a.order - b.order);
+  }).sort((a, b) => (a?.order || 0) - (b?.order || 0));
 
-  const completedCount = QUESTS.filter((q) => questProgress[q.id]?.claimed).length;
-  const totalCount = QUESTS.length;
+  const completedCount = quests.filter((q) => questProgress[q?.id]?.claimed).length;
+  const totalCount = quests.length;
 
   return (
     <div className="mx-4 mb-4 rounded-xl border border-border/50 overflow-hidden">
@@ -177,9 +178,9 @@ export default function QuestLog({ questProgress, onClaimReward, onRepeatQuest, 
                   {filtered.length > 0 ? (
                     filtered.map((quest) => (
                       <QuestCard
-                        key={quest.id}
+                        key={quest?.id}
                         quest={quest}
-                        questProgress={questProgress[quest.id] || { progress: 0, completed: false, claimed: false }}
+                        questProgress={questProgress?.[quest?.id] || { progress: 0, completed: false, claimed: false }}
                         onClaim={onClaimReward}
                         onRepeat={onRepeatQuest}
                       />

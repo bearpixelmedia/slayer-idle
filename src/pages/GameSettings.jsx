@@ -199,7 +199,7 @@ export default function GameSettings() {
               <CardContent className="space-y-8">
                 <SettingGroup
                   title="Stage 0 - Forest"
-                  items={[
+                  imageItems={[
                     { id: "enemy_forest_1", label: "Slime", defaultValue: "🟢" },
                     { id: "enemy_forest_2", label: "Goblin", defaultValue: "👹" },
                     { id: "enemy_forest_3", label: "Wolf", defaultValue: "🐺" },

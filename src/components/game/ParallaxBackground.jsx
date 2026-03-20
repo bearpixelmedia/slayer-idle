@@ -362,8 +362,8 @@ export default function ParallaxBackground() {
         </div>
       ))}
 
-      {/* Layer 17: Large bushes/ferns - speed 0.92 */}
-      {createLayer("ferns", 0.92, 64, 28, 0.85, (
+      {/* Layer 17: Large bushes/ferns - speed 0.96 */}
+      {createLayer("ferns", 0.96, 64, 28, 0.85, (
         <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.5">
           {Array.from({ length: 85 }).map((_, i) => {
             const scale = 1.2 + (i % 3) * 0.25;

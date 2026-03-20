@@ -275,6 +275,58 @@ export default function ParallaxBackground() {
         </div>
       ))}
 
+      {/* Layer 16: Flowers/small plants - speed 0.84 */}
+      {createLayer("flowers", 0.84, 68, 18, 0.82, (
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.8">
+          {Array.from({ length: 90 }).map((_, i) => {
+            const flowerType = i % 3;
+            const scale = 0.5 + (i % 4) * 0.08;
+            const colors = [
+              "rgba(255, 100, 100, 0.9)",
+              "rgba(255, 255, 100, 0.9)",
+              "rgba(150, 100, 255, 0.9)"
+            ];
+            return (
+              <svg key={`flower-${i}`} viewBox="0 0 20 30" className="flex-shrink-0" style={{ width: `${20 * scale}px`, height: "100%", opacity: 0.75 + (i % 2) * 0.15 }}>
+                <circle cx="10" cy="8" r={`${3 * scale}`} fill={colors[flowerType]} />
+                <circle cx={`${7 * scale}`} cy={`${5 * scale}`} r={`${2.5 * scale}`} fill={colors[flowerType]} />
+                <circle cx={`${13 * scale}`} cy={`${5 * scale}`} r={`${2.5 * scale}`} fill={colors[flowerType]} />
+                <rect x={`${9 * scale}`} y={`${8 * scale}`} width={`${2 * scale}`} height={`${22 * scale}`} fill="rgba(50, 120, 50, 0.8)" />
+              </svg>
+            );
+          })}
+        </div>
+      ))}
+
+      {/* Layer 17: Large bushes/ferns - speed 0.87 */}
+      {createLayer("ferns", 0.87, 64, 28, 0.85, (
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.5">
+          {Array.from({ length: 85 }).map((_, i) => {
+            const scale = 0.75 + (i % 3) * 0.15;
+            return (
+              <svg key={`fern-${i}`} viewBox="0 0 40 50" className="flex-shrink-0" style={{ width: `${40 * scale}px`, height: "100%", opacity: 0.8 + (i % 2) * 0.1 }}>
+                <circle cx="20" cy="12" r={`${8 * scale}`} fill="rgba(60, 140, 60, 0.92)" />
+                <circle cx="10" cy="22" r={`${7 * scale}`} fill="rgba(70, 150, 70, 0.9)" />
+                <circle cx="30" cy="22" r={`${7 * scale}`} fill="rgba(70, 150, 70, 0.9)" />
+                <circle cx="20" cy="35" r={`${9 * scale}`} fill="rgba(50, 130, 50, 0.93)" />
+              </svg>
+            );
+          })}
+        </div>
+      ))}
+
+      {/* Layer 18: Tall grass clusters - speed 0.90 */}
+      {createLayer("tall-grass", 0.90, 70, 22, 0.88, (
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.3">
+          {Array.from({ length: 140 }).map((_, i) => {
+            const height = 30 + (i % 4) * 15;
+            return (
+              <div key={`tall-grass-${i}`} style={{ width: "6px", height: `${height}%`, background: `linear-gradient(to top, rgba(40, 100, 40, 0.9), rgba(60, 130, 60, 0.8))`, opacity: 0.75 + (i % 3) * 0.15 }} />
+            );
+          })}
+        </div>
+      ))}
+
       {/* Layer 16: Close grass detail - speed 0.88 */}
       {createLayer("grass-near", 0.88, 75, 20, 0.9, (
         <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.5">

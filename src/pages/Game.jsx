@@ -218,7 +218,8 @@ export default function Game() {
         {!showRunner && (
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="fixed bottom-4 right-4 z-40 w-12 h-12 rounded-full bg-primary hover:bg-primary/90 flex items-center justify-center text-2xl transition-all active:scale-95"
+            className="fixed bottom-6 right-4 z-40 w-12 h-12 rounded-full bg-primary hover:bg-primary/90 flex items-center justify-center text-2xl transition-all active:scale-95 safe-area-inset-bottom"
+            style={{ bottom: "max(1.5rem, calc(env(safe-area-inset-bottom) + 1rem))" }}
           >
             💼
           </button>

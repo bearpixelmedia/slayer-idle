@@ -256,19 +256,18 @@ export default function Game() {
             />
             ) : (
             <RunnerCanvas
-                playerY={runner.playerY}
-                obstacles={runner.obstacles}
-                score={runner.score}
-                isGameOver={runner.isGameOver}
-                gameStarted={runner.gameStarted}
-                onTap={() => {
-                  if (!runner.gameStarted) runner.startGame();
-                  else if (runner.isGameOver) runner.resetGame();
-                  else runner.handleJump();
-                }}
-              />
-            </div>
-          )}
+              playerY={runner.playerY}
+              obstacles={runner.obstacles}
+              score={runner.score}
+              isGameOver={runner.isGameOver}
+              gameStarted={runner.gameStarted}
+              onTap={() => {
+                if (!runner.gameStarted) runner.startGame();
+                else if (runner.isGameOver) runner.resetGame();
+                else runner.handleJump();
+              }}
+            />
+            )}
 
           {/* Menu overlay on right side */}
           {!showRunner && (

@@ -119,12 +119,19 @@ export default function ParallaxBackground() {
       {/* Layer 5: Mid mountains - speed 0.12 */}
       {createLayer("mountains-mid", 0.12, 18, 35, 0.6, (
         <div className="flex whitespace-nowrap w-[200%] h-full items-end">
-          {Array.from({ length: 16 }).map((_, i) => (
-            <svg key={`mtn-mid-${i}`} viewBox="0 0 130 200" className="flex-shrink-0" style={{ width: "130px", height: "100%" }}>
-              <polygon points="65,20 0,200 130,200" fill={`rgba(${45 + i}, ${110 + i}, ${70 + i}, 0.7)`} />
-              <polygon points="65,55 25,200 105,200" fill={`rgba(${35 + i}, ${90 + i}, ${55 + i}, 0.8)`} />
-            </svg>
-          ))}
+          {Array.from({ length: 16 }).map((_, i) => {
+            const peak1 = 12 + (i * 13) % 28;
+            const peak2 = 40 + (i * 17) % 32;
+            const peak3 = 58 + (i * 23) % 35;
+            return (
+              <svg key={`mtn-mid-${i}`} viewBox="0 0 130 200" className="flex-shrink-0" style={{ width: "130px", height: "100%" }}>
+                <polygon points={`65,${peak1} 0,200 130,200`} fill={`rgba(${45 + i}, ${110 + i}, ${70 + i}, 0.7)`} />
+                <polygon points={`38,${peak2} 5,200 80,200`} fill={`rgba(${35 + i}, ${90 + i}, ${55 + i}, 0.8)`} />
+                <polygon points={`92,${peak3} 50,200 125,200`} fill={`rgba(${35 + i}, ${90 + i}, ${55 + i}, 0.8)`} />
+                <polygon points={`65,${peak2 + 15} 20,200 110,200`} fill={`rgba(${25 + i}, ${80 + i}, ${45 + i}, 0.65)`} />
+              </svg>
+            );
+          })}
         </div>
       ))}
 

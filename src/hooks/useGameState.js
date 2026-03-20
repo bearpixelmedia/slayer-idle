@@ -178,8 +178,8 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       }
     });
     const soulBonus = 1 + (s.souls * 0.05);
-    const skillMults = getSkillMultipliers(s.unlockedSkills);
-    const villageMultipliers = computeVillageMultipliers(s.villageBuildings);
+    const skillMults = getSkillMultipliers(s.unlockedSkills) || { damageMultiplier: 1 };
+    const villageMultipliers = computeVillageMultipliers(s.villageBuildings) || { tapDamageMultiplier: 1 };
     const buffMult = getBuffMultiplier(buffs, "tapDamageMultiplier");
     return Math.floor(damage * soulBonus * damageMultiplier * skillMults.damageMultiplier * villageMultipliers.tapDamageMultiplier * buffMult);
   }
@@ -196,14 +196,14 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       }
     });
     const soulBonus = 1 + (s.souls * 0.05);
-    const skillMults = getSkillMultipliers(s.unlockedSkills);
-    const villageMultipliers = computeVillageMultipliers(s.villageBuildings);
+    const skillMults = getSkillMultipliers(s.unlockedSkills) || { idleMultiplier: 1 };
+    const villageMultipliers = computeVillageMultipliers(s.villageBuildings) || { coinMultiplier: 1 };
     return Math.floor(cps * soulBonus * damageMultiplier * skillMults.idleMultiplier * villageMultipliers.coinMultiplier);
   }
 
   function applyRewardMultipliers(coins, souls, s = state, buffs = activeBuffs) {
-    const skillMults = getSkillMultipliers(s.unlockedSkills);
-    const villageMultipliers = computeVillageMultipliers(s.villageBuildings);
+    const skillMults = getSkillMultipliers(s.unlockedSkills) || { coinDropMultiplier: 1, soulMultiplier: 1 };
+    const villageMultipliers = computeVillageMultipliers(s.villageBuildings) || { coinMultiplier: 1, soulMultiplier: 1 };
     const buffCoinMult = getBuffMultiplier(buffs, "coinMultiplier");
     const buffSoulMult = getBuffMultiplier(buffs, "soulMultiplier");
     const coinAfterMultiplier = Math.floor(coins * skillMults.coinDropMultiplier * villageMultipliers.coinMultiplier * buffCoinMult);
@@ -253,9 +253,9 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   }, []);
 
   function spawnNewEnemy(s) {
-    const boss = getBossForStage(s.stage);
+    const boss = getBossForStage(s.stage) || null;
     const warningActive = s.bossWarning && Date.now() < s.bossWarning.warningEndTime;
-    const warningForCurrentBoss = s.bossWarning && boss && s.bossWarning.bossId === boss.id;
+    const warningForCurrentBoss = s.bossWarning && boss && s.bossWarning.bossId === boss?.id;
     const shouldEncounterBoss = Boolean(boss && isBossEncounter(s.killCount));
 
     // Boss encounter has a gated warning phase first, then boss spawn.
@@ -435,15 +435,15 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       }
 
       // Apply boss mechanics during combat
-      let adjustedDamage = finalDamage;
-      let newBossHits = prev.bossHitsReceived;
-      let bossEnrageResetUsed = prev.bossEnrageResetUsed;
-      
-      if (prev.isBossActive) {
-        const boss = getBossForStage(prev.stage);
-        
-        // Check shield window (mechanic: shield_window)
-        if (boss && boss.mechanic.type === "shield_window") {
+       let adjustedDamage = finalDamage;
+       let newBossHits = prev.bossHitsReceived;
+       let bossEnrageResetUsed = prev.bossEnrageResetUsed;
+
+       if (prev.isBossActive) {
+         const boss = getBossForStage(prev.stage) || null;
+
+         // Check shield window (mechanic: shield_window)
+         if (boss && boss.mechanic?.type === "shield_window") {
           const elapsedMs = Date.now() - (prev.bossFightStartTime || Date.now());
           if (isBossShieldActive(elapsedMs, boss)) {
             adjustedDamage = Math.ceil(finalDamage * (1 - boss.mechanic.damageReduction));
@@ -467,18 +467,18 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
 
       // Enemy damage to player
       let playerDamage = prev.isBossActive ? 3 : 1;
-      
+
       if (prev.isBossActive) {
-        const boss = getBossForStage(prev.stage);
-        
+        const boss = getBossForStage(prev.stage) || null;
+
         // Apply enrage multiplier to incoming damage
-        if (boss && boss.mechanic.type === "enrage") {
+        if (boss && boss.mechanic?.type === "enrage") {
           const enrageMultiplier = getBossEnrageMultiplier(newBossHits, boss);
           playerDamage = Math.ceil(playerDamage * enrageMultiplier);
         }
         
         // Apply thorns reflection
-        if (boss && boss.mechanic.type === "thorns") {
+        if (boss && boss.mechanic?.type === "thorns") {
           const thornsDamage = Math.ceil(finalDamage * boss.mechanic.reflectPct);
           playerDamage += thornsDamage;
         }
@@ -493,12 +493,12 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       const newHP = prev.enemyHP - adjustedDamage;
 
       if (prev.isBossActive) {
-        const boss = getBossForStage(prev.stage);
+        const boss = getBossForStage(prev.stage) || null;
         if (
           boss &&
-          boss.mechanic.type === "enrage" &&
+          boss.mechanic?.type === "enrage" &&
           !bossEnrageResetUsed &&
-          typeof boss.mechanic.resetThreshold === "number" &&
+          typeof boss.mechanic?.resetThreshold === "number" &&
           newHP > 0 &&
           newHP <= prev.enemyMaxHP * boss.mechanic.resetThreshold
         ) {
@@ -579,14 +579,14 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         };
         
         // If boss was defeated and it has enrage mechanic, reset HP at 50% check
-        let bossHitsToTrack = newBossHits;
-        if (prev.isBossActive) {
-          const boss = getBossForStage(prev.stage);
-          if (boss && boss.mechanic.type === "enrage") {
-            // Reset enrage stacks for next boss fight
-            bossHitsToTrack = 0;
-          }
-        }
+         let bossHitsToTrack = newBossHits;
+         if (prev.isBossActive) {
+           const boss = getBossForStage(prev.stage) || null;
+           if (boss && boss.mechanic?.type === "enrage") {
+             // Reset enrage stacks for next boss fight
+             bossHitsToTrack = 0;
+           }
+         }
         
         const newState = {
           ...prev,
@@ -757,7 +757,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   }, []);
 
   const baseSoulsOnPrestige = getSoulsOnPrestige(state.totalCoinsEarned);
-  const prestigeSoulMult = getSkillMultipliers(state.unlockedSkills).soulMultiplier;
+  const prestigeSoulMult = (getSkillMultipliers(state.unlockedSkills) || { soulMultiplier: 1 }).soulMultiplier;
   const soulsOnPrestige =
     baseSoulsOnPrestige > 0
       ? Math.max(1, Math.floor(baseSoulsOnPrestige * prestigeSoulMult))

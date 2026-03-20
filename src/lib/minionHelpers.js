@@ -327,11 +327,11 @@ export function purchaseMinion(params) {
  * @returns {MinionsState}
  */
 export function ensureStarterMinion(minionsState, minionDefs, nowMs, makeId) {
-  const starterMinionDef = minionDefs.find((m) => m.unlock.type === "default");
+  const starterMinionDef = minionDefs.find((m) => m?.unlock?.type === "default");
   if (!starterMinionDef) return minionsState;
 
   const hasStarterMinion = minionsState.ownedMinions.some(
-    (m) => m.minionTypeId === starterMinionDef.id
+    (m) => m.minionTypeId === starterMinionDef?.id
   );
 
   if (!hasStarterMinion) {

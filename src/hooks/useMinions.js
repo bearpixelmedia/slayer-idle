@@ -45,7 +45,7 @@ function loadMinionsState() {
 }
 
 export default function useMinions(gameState, setSouls) {
-  const [minionsState, setMinionsState] = useState(loadMinionsState);
+  const [minionsState, setMinionsState] = useState(() => loadMinionsState());
   const minionsStateRef = useRef(minionsState);
   minionsStateRef.current = minionsState;
 

@@ -81,9 +81,10 @@ export default function useQuests(gameState, unlockedZoneIds = []) {
           newProgress = stageReached ? quest.target : qp.progress;
         }
 
-        // zone_souls: earned souls (global souls count)
+        // zone_souls: total souls earned lifetime (via prestige accumulation)
         if (quest.type === "zone_souls") {
-          newProgress = Math.min(gameState.souls || 0, quest.target);
+          const totalSoulsEarned = (gameState.souls || 0) + Math.floor(Math.sqrt(gameState.totalCoinsEarned || 0) / 10);
+          newProgress = Math.min(totalSoulsEarned, quest.target);
         }
 
         // prestige: prestige count milestone

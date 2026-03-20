@@ -13,7 +13,7 @@ function loadUnlocked() {
 }
 
 export default function useAchievements(gameState) {
-  const [unlockedIds, setUnlockedIds] = useState(loadUnlocked);
+  const [unlockedIds, setUnlockedIds] = useState(() => loadUnlocked());
   const [newUnlock, setNewUnlock] = useState(null); // for toast notification
   const unlockedRef = useRef(unlockedIds);
   unlockedRef.current = unlockedIds;

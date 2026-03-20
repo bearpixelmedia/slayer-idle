@@ -48,8 +48,8 @@ export default function UpgradeShop({ state, onBuy }) {
           <UpgradeCard
             key={upgrade.id}
             upgrade={upgrade}
-            level={state.upgradeLevels[upgrade.id] || 0}
-            coins={state.coins}
+            level={state?.upgradeLevels?.[upgrade.id] || 0}
+            coins={state?.coins || 0}
             onBuy={onBuy}
           />
         ))}

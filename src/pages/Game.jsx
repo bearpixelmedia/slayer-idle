@@ -254,7 +254,7 @@ export default function Game() {
               enemyHit={enemyHit}
               weaponMode={currentWeapon}
             />
-            ) : (
+          ) : (
             <RunnerCanvas
               playerY={runner.playerY}
               obstacles={runner.obstacles}
@@ -267,7 +267,7 @@ export default function Game() {
                 else runner.handleJump();
               }}
             />
-            )}
+          )}
 
           {/* Menu overlay on right side */}
           {!showRunner && (

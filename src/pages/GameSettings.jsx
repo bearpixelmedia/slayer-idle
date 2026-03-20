@@ -365,7 +365,7 @@ export default function GameSettings() {
                 <CardDescription>Customize quest titles and descriptions</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {Object.entries(QUEST_SCHEMA).slice(0, 10).map(([qid, quest]) => (
+                {QUESTS.slice(0, 10).map((quest) => (
                   <SettingGroup
                     key={qid}
                     title={quest.title}

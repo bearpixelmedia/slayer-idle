@@ -72,13 +72,43 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
       <label className="text-xs font-medium text-slate-600">{label}</label>
       <div className="flex items-center gap-2">
         {/* Preview */}
-        <div className="w-12 h-12 rounded-lg border border-slate-300 bg-slate-100 flex items-center justify-center overflow-hidden">
-          {value ? (
-            <img src={value} alt="preview" className="w-full h-full object-cover" />
-          ) : (
-            <span className="text-lg">{currentDefault}</span>
-          )}
-        </div>
+          <div className="w-12 h-12 rounded-lg border border-slate-300 bg-slate-100 flex items-center justify-center overflow-hidden">
+            {value ? (
+              animationData ? (
+                <canvas
+                  ref={(canvas) => {
+                    if (!canvas) return;
+                    const ctx = canvas.getContext("2d");
+                    const frames = animationData.frames;
+                    const frameKey = Array.isArray(frames) ? currentFrame : Object.keys(frames)[currentFrame];
+                    const frame = frames[frameKey];
+
+                    if (frame) {
+                      canvas.width = 48;
+                      canvas.height = 48;
+                      const img = new Image();
+                      img.src = value;
+                      img.onload = () => {
+                        ctx.clearRect(0, 0, 48, 48);
+                        ctx.drawImage(
+                          img,
+                          frame.frame.x, frame.frame.y,
+                          frame.frame.w, frame.frame.h,
+                          0, 0,
+                          frame.frame.w, frame.frame.h
+                        );
+                      };
+                    }
+                  }}
+                  className="w-full h-full"
+                />
+              ) : (
+                <img src={value} alt="preview" className="w-full h-full object-cover" />
+              )
+            ) : (
+              <span className="text-lg">{currentDefault}</span>
+            )}
+          </div>
 
         {/* Upload button */}
         <label>

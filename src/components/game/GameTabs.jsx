@@ -20,7 +20,7 @@ export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestig
     <Tabs value={activeTab || "combat"} onValueChange={onTabChange} className="w-full">
       <div className={`px-2 py-1 border-b ${HUD_THEME.panel.border} ${HUD_THEME.panel.bg} overflow-x-auto`}>
         <div className="flex gap-1">
-          {Object.entries(tabLabels).map(([tab, label]) => (
+          {["combat", "progression", "village", "quests", "zones"].map((tab) => (
             <button
               key={tab}
               onClick={() => onTabChange(tab)}
@@ -28,7 +28,7 @@ export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestig
                 activeTab === tab ? HUD_THEME.button.primary : HUD_THEME.button.muted
               }`}
             >
-              {label}
+              {tabLabels[tab]}
             </button>
           ))}
         </div>

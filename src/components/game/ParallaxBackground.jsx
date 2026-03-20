@@ -83,11 +83,17 @@ export default function ParallaxBackground() {
       {/* Layer 3: Very far mountains - speed 0.04 */}
       {createLayer("mountains-very-far", 0.04, 8, 25, 0.3, (
         <div className="flex whitespace-nowrap w-[200%] h-full items-end">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <svg key={`mtn-vfar-${i}`} viewBox="0 0 150 200" className="flex-shrink-0" style={{ width: "150px", height: "100%" }}>
-              <polygon points="75,15 0,200 150,200" fill="rgba(25, 55, 95, 0.4)" />
-            </svg>
-          ))}
+          {Array.from({ length: 12 }).map((_, i) => {
+            const peak1 = 10 + (i * 7) % 20;
+            const peak2 = 30 + (i * 13) % 25;
+            return (
+              <svg key={`mtn-vfar-${i}`} viewBox="0 0 150 200" className="flex-shrink-0" style={{ width: "150px", height: "100%" }}>
+                <polygon points={`75,${peak1} 0,200 150,200`} fill="rgba(25, 55, 95, 0.4)" />
+                <polygon points={`45,${peak2} 0,200 90,200`} fill="rgba(15, 45, 85, 0.35)" />
+                <polygon points={`105,${peak2 + 5} 60,200 150,200`} fill="rgba(15, 45, 85, 0.35)" />
+              </svg>
+            );
+          })}
         </div>
       ))}
 

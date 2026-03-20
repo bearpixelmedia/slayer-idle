@@ -24,19 +24,42 @@ function HealthBar({ current, max }) {
 
 function GroundLayer({ stageColor }) {
   return (
-    <div className="absolute bottom-0 left-0 right-0 h-20 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-      <div className="animate-ground-scroll flex whitespace-nowrap absolute bottom-0 left-0 w-[200%]">
-        {Array.from({ length: 40 }).map((_, i) => (
-          <span
-            key={i}
-            className="inline-block mx-1 text-muted-foreground/20"
-            style={{ fontSize: `${8 + (i % 3) * 4}px` }}
-          >
-            {["▲", "◆", "●", "■"][i % 4]}
-          </span>
-        ))}
+    <div className="absolute bottom-0 left-0 right-0 h-40 overflow-hidden">
+      {/* Back ground layer (slowest parallax) */}
+      <div className="absolute bottom-24 left-0 right-0 h-12 animate-ground-scroll" style={{ opacity: 0.3 }}>
+        <div className="flex whitespace-nowrap w-[200%]">
+          {Array.from({ length: 40 }).map((_, i) => (
+            <span key={`bg-${i}`} className="inline-block mx-2 text-muted-foreground/30 text-lg">
+              {["🏔️", "⛰️"][i % 2]}
+            </span>
+          ))}
+        </div>
       </div>
+
+      {/* Mid ground layer */}
+      <div className="absolute bottom-12 left-0 right-0 h-16 animate-ground-scroll" style={{ animationDuration: "3s", opacity: 0.5 }}>
+        <div className="flex whitespace-nowrap w-[200%]">
+          {Array.from({ length: 50 }).map((_, i) => (
+            <span key={`mid-${i}`} className="inline-block mx-1 text-muted-foreground/40 text-2xl">
+              {["🪨", "🌿", "🪨"][i % 3]}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Foreground layer (fastest parallax) */}
+      <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black/60 to-transparent flex whitespace-nowrap animate-ground-scroll" style={{ animationDuration: "2s" }}>
+        <div className="flex whitespace-nowrap w-[200%]">
+          {Array.from({ length: 60 }).map((_, i) => (
+            <span key={`fg-${i}`} className="inline-block mx-0.5 text-foreground/80 text-sm font-bold">
+              ▮
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Overlay gradient */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
     </div>
   );
 }

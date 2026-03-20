@@ -245,8 +245,8 @@ export default function ParallaxBackground() {
 
       {/* Layer 13: Front treeline large - speed 0.65 */}
       {createLayer("trees-front", 0.65, 28, 48, 0.90, (
-        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-1.5">
-          {Array.from({ length: 30 }).map((_, i) => {
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.5">
+          {Array.from({ length: 45 }).map((_, i) => {
             const offset = (i * 15) % 3;
             return (
               <svg key={`tree-front-${i}`} viewBox="0 0 50 110" className="flex-shrink-0" style={{ width: "75px", height: "100%", opacity: 0.85 + (i % 3) * 0.07 }}>

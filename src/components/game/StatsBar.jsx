@@ -22,7 +22,9 @@ export default function StatsBar({ state, tapDamage, idleCPS, className }) {
         )}
         <div className="flex items-center gap-1 text-muted-foreground">
           <span className="font-pixel text-[10px]">{formatNumber(tapDamage)} ⚔️</span>
-          <span className="font-pixel text-[10px] text-yellow-400">0/5 ⚡</span>
+        </div>
+        <div className="flex items-center gap-1 text-muted-foreground">
+          <span className="font-pixel text-[10px]">{state.itemDrops || 0}/5 🎁</span>
         </div>
         {state.stage < 6 && (
           <div className="flex items-center gap-1 text-muted-foreground">

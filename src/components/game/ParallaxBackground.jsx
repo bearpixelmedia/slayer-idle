@@ -282,11 +282,11 @@ export default function ParallaxBackground() {
       {/* Layer 15: Far forest animals - speed 0.25 */}
       {createLayer("animals-far", 0.25, 38, 22, 0.45, (
         <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-8">
-          {Array.from({ length: 5 }).map((_, i) => {
+          {Array.from({ length: 1 }).map((_, i) => {
             const animals = ["🦌", "🐿️"];
             const animal = animals[i % 2];
-            const delay = Math.random() * 10;
-            const duration = 8 + Math.random() * 6;
+            const delay = Math.random() * 20;
+            const duration = 16 + Math.random() * 12;
             const distance = 15 + Math.random() * 30;
             return (
               <div key={`animal-far-${i}`} className="flex-shrink-0 text-sm relative" style={{ 

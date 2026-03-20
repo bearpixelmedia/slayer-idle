@@ -305,9 +305,11 @@ export default function GameSettings() {
                     key={recipe.id}
                     title={recipe.name}
                     items={[
-                      { id: `recipe_${recipe.id}_icon`, label: "Icon", defaultValue: recipe.icon },
                       { id: `recipe_${recipe.id}_name`, label: "Name", defaultValue: recipe.name },
                       { id: `recipe_${recipe.id}_desc`, label: "Description", defaultValue: recipe.description },
+                    ]}
+                    imageItems={[
+                      { id: `recipe_${recipe.id}_icon`, label: "Icon", defaultValue: recipe.icon },
                     ]}
                   />
                 ))}

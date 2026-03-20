@@ -54,12 +54,13 @@ export function selectRandomBuff() {
   for (const [buffId, weight] of Object.entries(BUFF_WEIGHTS)) {
     cumulative += weight;
     if (rand < cumulative) {
-      return BUFF_TYPES[buffId];
+      const buff = BUFF_TYPES[buffId];
+      return buff || BUFF_TYPES.coin_surge;
     }
   }
 
   // Fallback (shouldn't reach)
-  return BUFF_TYPES.coin_surge;
+  return BUFF_TYPES.coin_surge || { id: "coin_surge", name: "Coin Surge", icon: "💰", duration: 8, effects: { coinMultiplier: 2.0 } };
 }
 
 // Helper: determine if a buff proc should occur

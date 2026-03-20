@@ -139,7 +139,7 @@ export function getBossReward(stage) {
 
 // Helper to check if boss shield is currently active
 export function isBossShieldActive(bossElapsedMs, boss) {
-  if (!boss || boss.mechanic.type !== "shield_window") return false;
+  if (!boss || !boss.mechanic || boss.mechanic.type !== "shield_window") return false;
   
   const cycleMs = (boss.mechanic.interval + boss.mechanic.duration) * 1000;
   const posInCycle = bossElapsedMs % cycleMs;
@@ -151,7 +151,7 @@ export function isBossShieldActive(bossElapsedMs, boss) {
 
 // Helper to get enrage damage multiplier
 export function getBossEnrageMultiplier(bossHitsReceived, boss) {
-  if (!boss || boss.mechanic.type !== "enrage") return 1;
+  if (!boss || !boss.mechanic || boss.mechanic.type !== "enrage") return 1;
   
   const stacks = Math.floor(bossHitsReceived / boss.mechanic.stackPerHits);
   return 1 + (stacks * boss.mechanic.damagePerStack);

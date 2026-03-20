@@ -175,5 +175,5 @@ export const QUESTS = [
 ];
 
 export function getQuestById(questId) {
-  return QUESTS.find((q) => q.id === questId);
+  return QUESTS.find((q) => q?.id === questId) || null;
 }

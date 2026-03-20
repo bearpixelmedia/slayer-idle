@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { X } from "lucide-react";
 import GameTabs from "@/components/game/GameTabs";
+import { motion } from "framer-motion";
 
 export default function MenuPanel({
   state,

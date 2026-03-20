@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { QUESTS, getQuestById } from "@/lib/quests";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ChevronUp, CheckCircle2, Lock } from "lucide-react";
+import { HUD_THEME } from "@/lib/hudTheme";
 
 function QuestCard({ quest, questProgress, onClaim, onRepeat }) {
   const { progress, completed, claimed } = questProgress;
@@ -129,16 +130,16 @@ export default function QuestLog({ questProgress, onClaimReward, onRepeatQuest, 
   const totalCount = quests.length;
 
   return (
-    <div className="mx-4 mb-4 rounded-xl border border-border/50 overflow-hidden">
+    <div className={`mx-4 mb-4 rounded-xl ${HUD_THEME.panel.border} overflow-hidden`}>
       {/* Header toggle */}
       <button
-        className="w-full flex items-center justify-between px-4 py-3 bg-card/60 hover:bg-card/80 transition-colors"
+        className={`w-full flex items-center justify-between px-4 py-3 ${HUD_THEME.panel.bg} hover:bg-card/80 transition-colors`}
         onClick={() => setOpen((o) => !o)}
       >
         <div className="flex items-center gap-2">
           <span className="text-lg">📜</span>
-          <span className="font-pixel text-[9px] text-primary">QUEST LOG</span>
-          <span className="font-pixel text-[8px] text-muted-foreground">
+          <span className={`${HUD_THEME.text.label} text-primary`}>QUEST LOG</span>
+          <span className={`${HUD_THEME.text.small} text-muted-foreground`}>
             {completedCount}/{totalCount}
           </span>
         </div>
@@ -158,19 +159,17 @@ export default function QuestLog({ questProgress, onClaimReward, onRepeatQuest, 
               {/* Filter tabs */}
               <div className="flex gap-2 mb-3">
                 {["active", "completed", "all"].map((f) => (
-                  <button
-                    key={f}
-                    onClick={() => setFilter(f)}
-                    className={`flex-1 py-1.5 rounded-lg text-[8px] font-pixel transition-all ${
-                      filter === f
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted/30 text-muted-foreground hover:bg-muted/50"
-                    }`}
-                  >
-                    {f === "active" ? "Active" : f === "completed" ? "Claimed" : "All"}
-                  </button>
-                ))}
-              </div>
+                    <button
+                      key={f}
+                      onClick={() => setFilter(f)}
+                      className={`flex-1 py-1.5 rounded-lg ${HUD_THEME.text.small} transition-all ${
+                        filter === f ? HUD_THEME.button.primary : HUD_THEME.button.muted
+                      }`}
+                    >
+                      {f === "active" ? "Active" : f === "completed" ? "Claimed" : "All"}
+                    </button>
+                  ))}
+                </div>
 
               {/* Quest list */}
               <div className="space-y-2 max-h-80 overflow-y-auto">

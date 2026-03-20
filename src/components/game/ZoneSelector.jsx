@@ -2,6 +2,7 @@ import React from "react";
 import { ZONES, canUnlockZone } from "@/lib/gameData";
 import { motion, AnimatePresence } from "framer-motion";
 import { Lock, ChevronRight } from "lucide-react";
+import { HUD_THEME } from "@/lib/hudTheme";
 
 export default function ZoneSelector({
   activeZoneId,
@@ -12,12 +13,12 @@ export default function ZoneSelector({
   onUnlockZone,
 }) {
   return (
-    <div className="mx-4 my-4 rounded-xl border border-border/50 overflow-hidden bg-card/60">
-      <div className="px-4 py-3 border-b border-border/30">
+    <div className={`mx-4 my-4 rounded-xl ${HUD_THEME.panel.border} overflow-hidden ${HUD_THEME.panel.bg}`}>
+      <div className={`px-4 py-3 border-b border-border/30`}>
         <div className="flex items-center gap-2">
           <span className="text-lg">🗺️</span>
-          <span className="font-pixel text-[9px] text-primary">ZONES</span>
-          <span className="font-pixel text-[8px] text-muted-foreground ml-auto">
+          <span className={`${HUD_THEME.text.label} text-primary`}>ZONES</span>
+          <span className={`${HUD_THEME.text.small} text-muted-foreground ml-auto`}>
             {(unlockedZoneIds || []).length} / {ZONES.length}
           </span>
         </div>

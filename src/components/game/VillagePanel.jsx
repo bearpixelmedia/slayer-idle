@@ -3,6 +3,7 @@ import { VILLAGE_BUILDINGS, getBuildingUpgradeCost, canUnlockBuilding, canAfford
 import { formatNumber } from "@/lib/formatNumber";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ChevronUp, Lock } from "lucide-react";
+import { HUD_THEME } from "@/lib/hudTheme";
 
 function BuildingCard({ building, level, state, onUpgrade, maxLevel }) {
   const cost = getBuildingUpgradeCost(building, level);
@@ -56,16 +57,16 @@ export default function VillagePanel({ state, onUpgradeBuilding }) {
   const upgradedCount = (Array.isArray(VILLAGE_BUILDINGS) ? VILLAGE_BUILDINGS : []).filter((b) => (villageBuildings[b?.id] || 0) > 0).length;
 
   return (
-    <div className="mx-4 mb-4 rounded-xl border border-border/50 overflow-hidden">
+    <div className={`mx-4 mb-4 rounded-xl ${HUD_THEME.panel.border} overflow-hidden`}>
       {/* Header toggle */}
       <button
-        className="w-full flex items-center justify-between px-4 py-3 bg-card/60 hover:bg-card/80 transition-colors"
+        className={`w-full flex items-center justify-between px-4 py-3 ${HUD_THEME.panel.bg} hover:bg-card/80 transition-colors`}
         onClick={() => setOpen((o) => !o)}
       >
         <div className="flex items-center gap-2">
           <span className="text-lg">🏘️</span>
-          <span className="font-pixel text-[9px] text-primary">VILLAGE</span>
-          <span className="font-pixel text-[8px] text-muted-foreground">
+          <span className={`${HUD_THEME.text.label} text-primary`}>VILLAGE</span>
+          <span className={`${HUD_THEME.text.small} text-muted-foreground`}>
             {upgradedCount}/{VILLAGE_BUILDINGS.length}
           </span>
         </div>

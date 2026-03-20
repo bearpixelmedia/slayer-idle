@@ -224,12 +224,12 @@ export function getSkillMultipliers(unlockedSkillIds) {
     }
   });
 
-  // Apply all multiplier to specific ones
+  // Apply all multiplier to all paths
   return {
     damageMultiplier: damageMultiplier * allMultiplier,
     idleMultiplier: idleMultiplier * allMultiplier,
-    coinDropMultiplier,
-    soulMultiplier,
+    coinDropMultiplier: coinDropMultiplier * allMultiplier,
+    soulMultiplier: soulMultiplier * allMultiplier,
   };
 }
 

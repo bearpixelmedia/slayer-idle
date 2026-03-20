@@ -299,18 +299,18 @@ export default function Game() {
               </div>
             </div>
           )}
-        </div>
 
-        {showRunner && (
-          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-10">
-            <button
-              onClick={() => setShowRunner(false)}
-              className="px-6 py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"
-            >
-              ← BACK TO SLAYER
-            </button>
-          </div>
-        )}
+          {showRunner && (
+            <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-10">
+              <button
+                onClick={() => setShowRunner(false)}
+                className="px-6 py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"
+              >
+                ← BACK TO SLAYER
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       <AchievementToast achievement={newUnlock} />

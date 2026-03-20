@@ -75,10 +75,37 @@ export default function Game() {
 
   const handleClaimQuestReward = (questId) => {
     claimReward(questId);
+    soundManager.play('coin-collect');
   };
 
   const handleRepeatQuest = (questId) => {
     resetQuestForRepeat(questId);
+    soundManager.play('ui-click');
+  };
+
+  const handleBuyUpgrade = (upgradeId, quantity) => {
+    buyUpgrade(upgradeId, quantity);
+    soundManager.play('upgrade');
+  };
+
+  const handleUnlockSkill = (skillId) => {
+    unlockSkill(skillId);
+    soundManager.play('upgrade');
+  };
+
+  const handlePrestige = () => {
+    prestige();
+    soundManager.play('prestige');
+  };
+
+  const handleActivateAbility = (abilityId) => {
+    activateAbility(abilityId);
+    soundManager.play('upgrade');
+  };
+
+  const handleTapGame = (e) => {
+    handleTap(e);
+    soundManager.play('tap');
   };
 
   return (

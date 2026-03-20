@@ -11,7 +11,7 @@ import { BUFF_TYPES } from "@/lib/buffs";
 import { MATERIAL_DEFS, CRAFT_RECIPES } from "@/lib/crafting";
 import { MINION_TYPES, MISSIONS } from "@/lib/minions";
 import { QUEST_SCHEMA } from "@/lib/quests";
-import { BUILDINGS } from "@/lib/village";
+import { VILLAGE_BUILDINGS } from "@/lib/village";
 
 const STORAGE_KEY = "game_settings_config";
 

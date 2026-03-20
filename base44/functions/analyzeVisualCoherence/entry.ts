@@ -10,23 +10,26 @@ Deno.serve(async (req) => {
     }
 
     const analysis = await base44.integrations.Core.InvokeLLM({
-      prompt: `Analyze this game screenshot and identify what looks out of place or unrealistic for a normal setting in the human world.
+      prompt: `Analyze this game screenshot's parallax background system, particularly the tree and foliage layers.
 
-Look for:
-1. Objects, colors, or UI elements that don't fit a natural or grounded fantasy world
-2. Visual inconsistencies (scale issues, mismatched art styles, anachronistic elements)
-3. Elements that feel "too game-like" or break immersion
-4. Lighting/color palette issues that don't match the scene
-5. Physics or perspective that feels wrong
+Focus on:
+1. **Parallax Layer Alignment**: Do the tree trunks, foliage, and leaves line up properly as they scroll? Are there gaps, overlaps, or misalignments between different tree layers?
+2. **Depth Coherence**: Do trees at different parallax speeds look like they're in the same world? Check for:
+   - Trees appearing to jump or disconnect as they scroll
+   - Leaves/canopies not matching their trunks
+   - Scale inconsistencies between foreground and background trees
+3. **Seamless Tiling**: When trees repeat, do they connect smoothly? Any visible seams or awkward gaps?
+4. **Visual Continuity**: Do the near-ground vegetation and distant treelines feel like part of the same scene or do they feel like separate layers floating?
+5. **Horizontal Alignment**: Are horizontal baselines consistent across tree layers, or do some trees appear to "float" above the ground?
 
 Provide your response as:
-- Overview: General coherence assessment
-- Out of Place Elements: List each element with WHY it doesn't fit
-- Visual Inconsistencies: Describe any art style or scale mismatches
-- Immersion Breakers: What pulls you out of the world?
-- Recommendations: Simple changes to improve realism/coherence
+- Parallax Issues: Specific alignment problems with trees/leaves
+- Seamless Tiling Problems: Where do trees fail to connect smoothly?
+- Depth Perception Breaks: Where does the illusion of depth fail?
+- Layer Disconnection: Which layers feel disconnected from the environment?
+- Fixes: Specific changes to layer speeds, positioning, or sizing to improve coherence
 
-Be specific and visual in your feedback.`,
+Be very specific about which layers need adjustment.`,
       file_urls: [imageUrl],
       model: 'gpt_5'
     });

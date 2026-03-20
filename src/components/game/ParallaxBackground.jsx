@@ -47,7 +47,7 @@ export default function ParallaxBackground() {
   return (
     <div className="absolute inset-0 overflow-hidden w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-green-900">
       {/* Layer 0: Sky - static anchor (speed 0) */}
-      <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-sky-500 pointer-events-none" />
+      <div className="absolute inset-0 w-full h-3/4 bg-gradient-to-b from-blue-950 via-blue-800 to-green-700 pointer-events-none" />
 
       {/* Layer 1: Far stars - speed 0.01 */}
       {createLayer("stars", 0.01, 0, 100, 0.5, (

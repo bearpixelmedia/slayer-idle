@@ -26,8 +26,46 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
 
   const handleClear = () => {
     onChange(null);
+    setAnimationData(null);
+    setCurrentFrame(0);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
+
+  // Load and parse Aseprite JSON metadata
+  useEffect(() => {
+    if (!value) return;
+
+    const loadAsepriteData = async () => {
+      try {
+        const basePath = value.substring(0, value.lastIndexOf('.'));
+        const jsonUrl = `${basePath}.json`;
+        const response = await fetch(jsonUrl);
+        if (response.ok) {
+          const data = await response.json();
+          setAnimationData(data);
+          setCurrentFrame(0);
+        }
+      } catch (err) {
+        setAnimationData(null);
+      }
+    };
+
+    loadAsepriteData();
+  }, [value]);
+
+  // Animation loop
+  useEffect(() => {
+    if (!animationData) return;
+
+    const frames = animationData.frames;
+    const frameCount = Array.isArray(frames) ? frames.length : Object.keys(frames).length;
+    
+    const interval = setInterval(() => {
+      setCurrentFrame((prev) => (prev + 1) % frameCount);
+    }, animationData.meta?.frameTags?.[0]?.duration || 100);
+
+    return () => clearInterval(interval);
+  }, [animationData]);
 
   return (
     <div className="space-y-2">

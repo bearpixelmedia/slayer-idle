@@ -13,28 +13,22 @@ function UpgradeCard({ upgrade, level, coins, onBuy }) {
   return (
     <motion.button
       onClick={() => canAfford && onBuy(upgrade.id)}
-      className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-all ${
+      className={`relative flex flex-col items-center p-3 rounded-lg border-2 transition-all ${
         canAfford
-          ? "bg-secondary/60 border-primary/30 hover:border-primary/60 hover:bg-secondary/80 cursor-pointer"
-          : "bg-card/40 border-border/30 opacity-50 cursor-not-allowed"
+          ? "bg-secondary/40 border-secondary/60 hover:border-primary/60 hover:bg-secondary/60 cursor-pointer"
+          : "bg-muted/20 border-border/30 opacity-40 cursor-not-allowed"
       }`}
-      whileTap={canAfford ? { scale: 0.97 } : {}}
+      whileTap={canAfford ? { scale: 0.95 } : {}}
     >
-      <div className="text-2xl flex-shrink-0">{upgrade.icon}</div>
-      <div className="flex-1 text-left min-w-0">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold text-foreground truncate">{upgrade.name}</span>
-          <span className={`font-pixel text-[7px] ${typeColor}`}>{typeLabel}</span>
-        </div>
-        <p className="text-[10px] text-muted-foreground">{upgrade.description}</p>
-        <div className="flex items-center justify-between mt-1">
-          <span className="font-pixel text-[8px] text-primary">🪙 {formatNumber(cost)}</span>
-          <span className="font-pixel text-[8px] text-muted-foreground">Lv.{level}</span>
-        </div>
+      <div className="text-2xl mb-1">{upgrade.icon}</div>
+      <span className="font-pixel text-[7px] text-foreground truncate text-center max-w-[60px]">{upgrade.name}</span>
+      <p className="text-[7px] text-muted-foreground text-center mt-0.5 max-w-[70px] leading-tight">{upgrade.description}</p>
+      
+      <div className="mt-2 w-full flex flex-col items-center gap-1 border-t border-border/30 pt-2">
+        <span className={`font-pixel text-[6px] ${typeColor}`}>{typeLabel}</span>
+        <span className="font-pixel text-[8px] text-primary">🪙 {formatNumber(cost)}</span>
+        <span className="font-pixel text-[6px] text-muted-foreground">Lv.{level}</span>
       </div>
-      {canAfford && (
-        <ChevronUp className="w-4 h-4 text-primary flex-shrink-0" />
-      )}
     </motion.button>
   );
 }

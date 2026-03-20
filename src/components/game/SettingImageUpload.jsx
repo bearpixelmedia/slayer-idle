@@ -36,15 +36,9 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
     loadFiles();
   }, [showLibrary]);
 
-  const addToHistory = (imageUrl, jsonUrl = null) => {
-    setHistory(prev => {
-      const updated = [
-        { imageUrl, jsonUrl, timestamp: Date.now() },
-        ...prev.filter(h => h.imageUrl !== imageUrl)
-      ].slice(0, 20); // Keep last 20
-      localStorage.setItem(HISTORY_KEY, JSON.stringify(updated));
-      return updated;
-    });
+  const handleSelectFile = (fileUrl) => {
+    onChange(fileUrl);
+    setShowLibrary(false);
   };
 
   const handleFileSelect = async (e) => {

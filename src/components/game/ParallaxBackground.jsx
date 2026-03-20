@@ -259,7 +259,52 @@ export default function ParallaxBackground() {
         </div>
       ))}
 
-      {/* Layer 15: Shrubs/vegetation - speed 0.80 */}
+      {/* Layer 15: Far forest animals - speed 0.25 */}
+      {createLayer("animals-far", 0.25, 40, 20, 0.4, (
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-4">
+          {Array.from({ length: 15 }).map((_, i) => {
+            const animals = ["🦌", "🐿️", "🦙"];
+            const animal = animals[i % 3];
+            return (
+              <div key={`animal-far-${i}`} className="flex-shrink-0 text-sm" style={{ animation: `float ${3 + (i % 2)}s ease-in-out infinite`, animationDelay: `${i * 0.2}s` }}>
+                {animal}
+              </div>
+            );
+          })}
+        </div>
+      ))}
+
+      {/* Layer 16: Mid forest animals - speed 0.45 */}
+      {createLayer("animals-mid", 0.45, 48, 18, 0.6, (
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-3">
+          {Array.from({ length: 25 }).map((_, i) => {
+            const animals = ["🦌", "🐿️", "🦝"];
+            const animal = animals[i % 3];
+            return (
+              <div key={`animal-mid-${i}`} className="flex-shrink-0 text-lg" style={{ animation: `float ${2.5 + (i % 3)}s ease-in-out infinite`, animationDelay: `${i * 0.15}s` }}>
+                {animal}
+              </div>
+            );
+          })}
+        </div>
+      ))}
+
+      {/* Layer 17: Close animals - speed 0.75 */}
+      {createLayer("animals-close", 0.75, 55, 15, 0.75, (
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-2">
+          {Array.from({ length: 35 }).map((_, i) => {
+            const animals = ["🦌", "🐿️", "🦝", "🐇"];
+            const animal = animals[i % 4];
+            return (
+              <div key={`animal-close-${i}`} className="flex-shrink-0 text-xl" style={{ animation: `float ${2 + (i % 2) * 0.5}s ease-in-out infinite`, animationDelay: `${i * 0.1}s` }}>
+                {animal}
+              </div>
+            );
+          })}
+        </div>
+      ))}
+
+      {/* Layer 18: Shrubs/vegetation - speed 0.80 */}
       {createLayer("shrubs", 0.80, 60, 25, 0.88, (
         <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.3">
           {Array.from({ length: 120 }).map((_, i) => {

@@ -107,9 +107,9 @@ export default function SkillTree({ slayerPoints = 0, unlockedSkillIds = [], onU
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="px-4 py-4 space-y-4">
+            <div className="px-3 py-2 space-y-2">
               {/* Specialization progress bar */}
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 <div className="flex gap-2 text-[8px] font-pixel">
                   <div className="flex-1 flex items-center gap-1">
                     <span className="text-red-400">🔪</span>
@@ -123,7 +123,7 @@ export default function SkillTree({ slayerPoints = 0, unlockedSkillIds = [], onU
               </div>
 
               {/* Tier selector */}
-              <div className="flex gap-2">
+              <div className="flex gap-1.5">
                 {tiers.map((tier) => {
                   const tierUnlocked = skills.filter(
                     (s) => s?.tier === tier && unlockedSkillIds?.includes(s?.id)
@@ -145,7 +145,7 @@ export default function SkillTree({ slayerPoints = 0, unlockedSkillIds = [], onU
               </div>
 
               {/* Skills grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {tierSkills.map((skill) => {
                   const unlocked = unlockedSkillIds?.includes(skill?.id);
                   const canUnlock = canUnlockSkill(skill?.id, unlockedSkillIds) && slayerPoints >= (skill?.cost || 0);

@@ -82,7 +82,7 @@ export default function VillagePanel({ state, onUpgradeBuilding }) {
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="px-4 py-3 space-y-2">
+            <div className="px-3 py-2 space-y-1.5">
               {(Array.isArray(VILLAGE_BUILDINGS) ? VILLAGE_BUILDINGS : []).map((building) => (
                 <BuildingCard
                   key={building?.id}

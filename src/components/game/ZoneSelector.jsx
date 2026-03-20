@@ -24,7 +24,7 @@ export default function ZoneSelector({
         </div>
       </div>
 
-      <div className="px-4 py-3 space-y-2">
+      <div className="px-3 py-2 space-y-1.5">
          {(Array.isArray(ZONES) ? ZONES : []).map((zone) => {
            const isUnlocked = (Array.isArray(unlockedZoneIds) ? unlockedZoneIds : []).includes(zone?.id);
            const isActive = activeZoneId === zone?.id;

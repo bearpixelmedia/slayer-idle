@@ -13,7 +13,7 @@ function UpgradeCard({ upgrade, level, coins, onBuy }) {
   return (
     <motion.button
       onClick={() => canAfford && onBuy(upgrade.id)}
-      className={`relative flex flex-col items-center p-3 rounded-lg border-2 transition-all ${
+      className={`relative flex flex-col items-center p-2 rounded-lg border-2 transition-all ${
         canAfford
           ? "bg-secondary/40 border-secondary/60 hover:border-primary/60 hover:bg-secondary/60 cursor-pointer"
           : "bg-muted/20 border-border/30 opacity-40 cursor-not-allowed"
@@ -37,7 +37,7 @@ export default function UpgradeShop({ state, onBuy }) {
   return (
     <div className="space-y-1.5">
       <h2 className={`${HUD_THEME.text.label} text-primary px-0.5`}>⬆️ UPGRADES</h2>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-1.5">
         {UPGRADES.map((upgrade) => (
           <UpgradeCard
             key={upgrade.id}

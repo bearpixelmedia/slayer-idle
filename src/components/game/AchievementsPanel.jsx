@@ -82,7 +82,7 @@ export default function AchievementsPanel({ unlockedIds, damageMultiplier, offli
             className="overflow-hidden"
           >
             {/* Active multipliers summary */}
-            <div className="flex gap-3 px-4 pt-3 pb-2">
+            <div className="flex gap-2 px-3 pt-2 pb-1.5">
               <div className="flex-1 p-2 rounded-lg bg-red-500/10 border border-red-500/20 text-center">
                 <p className="font-pixel text-[7px] text-muted-foreground">DAMAGE BONUS</p>
                 <p className="font-pixel text-xs text-red-400">×{isFinite(damageMultiplier) ? damageMultiplier.toFixed(2) : "∞"}</p>
@@ -94,7 +94,7 @@ export default function AchievementsPanel({ unlockedIds, damageMultiplier, offli
             </div>
 
             {/* Category tabs */}
-            <div className="flex gap-1 px-4 pb-2">
+            <div className="flex gap-1 px-3 pb-1.5">
               {CATEGORIES.map((cat) => {
                 const catUnlocked = achievements.filter(a => a?.category === cat?.id && unlockedIds?.includes(a?.id)).length;
                 const catTotal = achievements.filter(a => a?.category === cat?.id).length;
@@ -113,7 +113,7 @@ export default function AchievementsPanel({ unlockedIds, damageMultiplier, offli
             </div>
 
             {/* Achievement list */}
-            <div className="px-4 pb-4 flex flex-col gap-2">
+            <div className="px-3 pb-3 flex flex-col gap-1.5">
               {filtered.map((ach) => (
                 <AchievementRow
                   key={ach?.id}

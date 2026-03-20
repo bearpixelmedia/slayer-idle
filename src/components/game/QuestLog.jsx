@@ -155,9 +155,9 @@ export default function QuestLog({ questProgress, onClaimReward, onRepeatQuest, 
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="px-4 py-3 space-y-2">
+            <div className="px-3 py-2 space-y-1.5">
               {/* Filter tabs */}
-              <div className="flex gap-2 mb-3">
+              <div className="flex gap-1.5 mb-2">
                 {["active", "completed", "all"].map((f) => (
                     <button
                       key={f}
@@ -172,7 +172,7 @@ export default function QuestLog({ questProgress, onClaimReward, onRepeatQuest, 
                 </div>
 
               {/* Quest list */}
-              <div className="space-y-2 max-h-80 overflow-y-auto">
+              <div className="space-y-1.5 max-h-80 overflow-y-auto">
                 <AnimatePresence>
                   {filtered.length > 0 ? (
                     filtered.map((quest) => (

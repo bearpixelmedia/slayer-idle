@@ -119,7 +119,7 @@ export default function useMinions(gameState, setSouls) {
       return true;
     }
     return false;
-  }, [gameState.unlockedZoneIds, gameState.highestStage]);
+  }, [gameState?.unlockedZoneIds, gameState?.highestStage]);
 
   const buyMinion = useCallback((minionTypeDef) => {
     const result = purchaseMinion({
@@ -140,7 +140,7 @@ export default function useMinions(gameState, setSouls) {
       return true;
     }
     return false;
-  }, [gameState.unlockedZoneIds, gameState.highestStage, gameState.souls, setSouls]);
+  }, [gameState?.unlockedZoneIds, gameState?.highestStage, gameState?.souls, setSouls]);
 
   const claimMissionReward = useCallback((missionInstanceId) => {
     const result = claimMission({

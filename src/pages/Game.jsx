@@ -227,8 +227,8 @@ export default function Game() {
       </div>
 
       {/* Landscape: Side-by-side layout */}
-      <div className="hidden lg:flex h-full overflow-hidden">
-        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+      <div className="hidden lg:flex h-full w-full overflow-hidden">
+        <div className="flex-1 flex flex-col min-h-0 w-0">
           <StatsBar
             state={state}
             tapDamage={getTapDamage()}

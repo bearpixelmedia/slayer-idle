@@ -56,7 +56,6 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
 
     const loadAsepriteData = async () => {
       try {
-        // First check sessionStorage for uploaded JSON URL
         const jsonUrl = sessionStorage.getItem(`aseprite_json_${value}`);
         if (jsonUrl) {
           const response = await fetch(jsonUrl);
@@ -69,6 +68,7 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
         }
         setAnimationData(null);
       } catch (err) {
+        console.error('Failed to load animation data:', err);
         setAnimationData(null);
       }
     };

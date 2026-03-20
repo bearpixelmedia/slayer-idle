@@ -9,14 +9,14 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const formData = await req.formData();
-    const asepriteFile = formData.get('file');
+    const { fileUrl } = await req.json();
     
-    if (!asepriteFile) {
-      return Response.json({ error: 'No file provided' }, { status: 400 });
+    if (!fileUrl) {
+      return Response.json({ error: 'No file URL provided' }, { status: 400 });
     }
 
-    const buffer = await asepriteFile.arrayBuffer();
+    const response = await fetch(fileUrl);
+    const buffer = await response.arrayBuffer();
     const view = new Uint8Array(buffer);
 
     // .aseprite is a ZIP format, extract JSON from it

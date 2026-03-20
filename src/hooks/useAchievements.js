@@ -13,6 +13,8 @@ function loadUnlocked() {
 }
 
 export default function useAchievements(gameState) {
+  if (!gameState || typeof gameState !== 'object') return { unlockedIds: [], newUnlock: null, damageMultiplier: 1, offlineMultiplier: 1 };
+  
   const [unlockedIds, setUnlockedIds] = useState(() => loadUnlocked());
   const [newUnlock, setNewUnlock] = useState(null); // for toast notification
   const unlockedRef = useRef(unlockedIds);
@@ -20,15 +22,15 @@ export default function useAchievements(gameState) {
 
   // Build stats object from game state
   const stats = {
-    totalCoinsEarned: gameState.totalCoinsEarned || 0,
-    totalKills: gameState.totalKills || 0,
-    prestigeCount: gameState.prestigeCount || 0,
-    highestStage: gameState.highestStage || 0,
+    totalCoinsEarned: typeof gameState.totalCoinsEarned === 'number' ? gameState.totalCoinsEarned : 0,
+    totalKills: typeof gameState.totalKills === 'number' ? gameState.totalKills : 0,
+    prestigeCount: typeof gameState.prestigeCount === 'number' ? gameState.prestigeCount : 0,
+    highestStage: typeof gameState.highestStage === 'number' ? gameState.highestStage : 0,
   };
 
   useEffect(() => {
-    const newlyUnlocked = ACHIEVEMENTS.filter(
-      (a) => !unlockedRef.current.includes(a.id) && a.condition(stats)
+    const newlyUnlocked = (Array.isArray(ACHIEVEMENTS) ? ACHIEVEMENTS : []).filter(
+      (a) => a?.id && typeof a?.condition === 'function' && !unlockedRef.current.includes(a.id) && a.condition(stats)
     );
 
     if (newlyUnlocked.length > 0) {

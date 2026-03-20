@@ -20,6 +20,11 @@ export default function StatsBar({ state, tapDamage, idleCPS, className }) {
             <span className="font-pixel text-accent text-xs">{formatNumber(state.souls)}</span>
           </div>
         )}
+        {state.stage < 6 && (
+          <div className="flex items-center gap-1 text-muted-foreground">
+            <span className="font-pixel text-[10px]">⚔️ {state.killCount % 25}/25</span>
+          </div>
+        )}
       </div>
       <div className="hidden sm:flex items-center gap-2 text-[10px] text-muted-foreground">
         <span>{formatNumber(tapDamage)} ⚔️</span>

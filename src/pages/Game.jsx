@@ -243,21 +243,19 @@ export default function Game() {
         <div className="flex-1 overflow-hidden relative w-full flex flex-col min-h-0">
           {!showRunner ? (
             <GameCanvas
-                state={state}
-                enemyDying={enemyDying}
-                floatingCoins={floatingCoins}
-                floatingSouls={floatingSouls}
-                floatingDamage={floatingDamage}
-                particles={particles}
-                slashEffects={slashEffects}
-                onTap={handleTap}
-                enemyHit={enemyHit}
-                weaponMode={currentWeapon}
-              />
-            </div>
-          ) : (
-            <div className="w-full h-full">
-              <RunnerCanvas
+              state={state}
+              enemyDying={enemyDying}
+              floatingCoins={floatingCoins}
+              floatingSouls={floatingSouls}
+              floatingDamage={floatingDamage}
+              particles={particles}
+              slashEffects={slashEffects}
+              onTap={handleTap}
+              enemyHit={enemyHit}
+              weaponMode={currentWeapon}
+            />
+            ) : (
+            <RunnerCanvas
                 playerY={runner.playerY}
                 obstacles={runner.obstacles}
                 score={runner.score}

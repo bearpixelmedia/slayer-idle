@@ -69,7 +69,7 @@ export default function HUDOverlay({
 
       {/* Menu Panel - Right side (Desktop) */}
       {hudMenuOpen && (
-        <div className="hidden lg:block fixed right-0 top-0 w-96 h-screen overflow-hidden z-40 pointer-events-auto">
+        <div className="hidden lg:block fixed right-0 top-24 w-96 h-[calc(100vh-96px)] overflow-hidden z-40 pointer-events-auto">
           <MenuPanel
             state={state}
             onBuyUpgrade={onBuyUpgrade}

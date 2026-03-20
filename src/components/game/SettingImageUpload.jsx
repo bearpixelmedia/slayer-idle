@@ -137,7 +137,7 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
           <button
             type="button"
             onClick={() => setShowHistory(!showHistory)}
-            className="w-12 h-12 rounded-lg border border-slate-300 bg-slate-100 flex items-center justify-center overflow-hidden hover:border-slate-400 transition-colors cursor-pointer relative group"
+            className="w-12 h-12 rounded-lg border border-slate-300 bg-slate-100 flex items-center justify-center overflow-hidden hover:border-slate-400 transition-colors cursor-pointer relative"
           >
             {value ? (
               <AnimationPreview 
@@ -150,7 +150,9 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
               <span className="text-lg">{currentDefault}</span>
             )}
             {history.length > 0 && (
-              <ChevronDown className="w-3 h-3 absolute bottom-0 right-0 bg-slate-400 text-white rounded-tl opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute bottom-0 right-0 bg-slate-400 text-white p-0.5 rounded-tl">
+                <ChevronDown className="w-2.5 h-2.5" />
+              </div>
             )}
           </button>
           

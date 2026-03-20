@@ -7,7 +7,6 @@ import PrestigePanel from "@/components/game/PrestigePanel";
 import VillagePanel from "@/components/game/VillagePanel";
 import QuestLog from "@/components/game/QuestLog";
 import ZoneSelector from "@/components/game/ZoneSelector";
-import AbilityBar from "@/components/game/AbilityBar";
 
 export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestige, onRevive, unlockedIds, damageMultiplier, offlineMultiplier, onSwitchZone, onUnlockZone, onClaimQuestReward, onRepeatQuest, questProgress, onUpgradeBuilding, abilities, onActivateAbility, weaponMode, activeTab, onTabChange }) {
   if (!state || typeof state !== 'object') {

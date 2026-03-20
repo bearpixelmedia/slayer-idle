@@ -37,10 +37,10 @@ export default function MenuPanel({
       transition={{ duration: 0.2 }}
     >
       {/* Header */}
-      <div className="px-4 py-3 border-b border-border/50 flex-shrink-0 flex items-center justify-between gap-2">
+      <div className={HUD_THEME.menuPanel.header}>
         <button
           onClick={onRunnerClick}
-          className="flex-1 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white font-pixel text-[9px] transition-colors border-2 border-green-800"
+          className={`flex-1 py-2 rounded-lg font-pixel text-[9px] transition-colors border-2 bg-green-600 hover:bg-green-700 text-white border-green-800`}
         >
           🏃 RUNNER
         </button>

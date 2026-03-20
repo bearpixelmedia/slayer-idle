@@ -216,7 +216,9 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     const now = Date.now();
     const timeSinceLastProc = now - lastBuffProcRef.current;
     
-    if (timeSinceLastProc < BUFF_RULES.globalCooldown * 1000) return;
+    if (timeSinceLastProc < BUFF_RULES.globalCooldown * 1000) {
+      return;
+    }
 
     let procRate = 0;
     if (source === "tap") procRate = PROC_RATES.tap;

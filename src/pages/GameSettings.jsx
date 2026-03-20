@@ -255,9 +255,11 @@ export default function GameSettings() {
                     key={ach.id}
                     title={ach.name}
                     items={[
-                      { id: `ach_${ach.id}_icon`, label: "Icon", defaultValue: ach.icon },
                       { id: `ach_${ach.id}_name`, label: "Name", defaultValue: ach.name },
                       { id: `ach_${ach.id}_desc`, label: "Description", defaultValue: ach.description },
+                    ]}
+                    imageItems={[
+                      { id: `ach_${ach.id}_icon`, label: "Icon", defaultValue: ach.icon },
                     ]}
                   />
                 ))}

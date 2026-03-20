@@ -514,8 +514,9 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         const newKillCount = prev.killCount + 1;
         let newStage = prev.stage;
         const zoneStages = getZoneStages(prev.activeZoneId);
+        const maxStageInZone = zoneStages[zoneStages.length - 1];
         
-        if (newKillCount > 0 && newKillCount % 25 === 0 && prev.stage < zoneStages.length - 1) {
+        if (newKillCount > 0 && newKillCount % 25 === 0 && prev.stage < maxStageInZone) {
           newStage = prev.stage + 1;
         }
         

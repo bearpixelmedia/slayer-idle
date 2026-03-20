@@ -239,6 +239,7 @@ function GroundLayer({ stageColor }) {
 }
 
 import ParticleEffect from "./ParticleEffect";
+import ParallaxBackground from "./ParallaxBackground";
 
 export default function GameCanvas({
   state,

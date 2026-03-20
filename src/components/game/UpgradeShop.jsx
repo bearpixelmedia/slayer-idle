@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { UPGRADES, getUpgradeCost, TAP_UPGRADES, IDLE_UPGRADES } from "@/lib/gameData";
 import { formatNumber } from "@/lib/formatNumber";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { HUD_THEME } from "@/lib/hudTheme";
 
 function UpgradeCard({ upgrade, level, coins, onBuy }) {
@@ -34,20 +35,47 @@ function UpgradeCard({ upgrade, level, coins, onBuy }) {
 }
 
 export default function UpgradeShop({ state, onBuy }) {
+  const [open, setOpen] = useState(true);
+
   return (
-    <div className="space-y-1.5">
-      <h2 className={`${HUD_THEME.text.label} text-primary px-0.5`}>⬆️ UPGRADES</h2>
-      <div className="grid grid-cols-2 gap-1.5">
-        {UPGRADES.map((upgrade) => (
-          <UpgradeCard
-            key={upgrade.id}
-            upgrade={upgrade}
-            level={state?.upgradeLevels?.[upgrade.id] || 0}
-            coins={state?.coins || 0}
-            onBuy={onBuy}
-          />
-        ))}
-      </div>
+    <div className={`rounded-lg ${HUD_THEME.panel.border} overflow-hidden`}>
+      {/* Header toggle */}
+      <button
+        className={`w-full flex items-center justify-between px-3 py-2 ${HUD_THEME.panel.bg} hover:bg-card/80 transition-colors`}
+        onClick={() => setOpen((o) => !o)}
+      >
+        <div className="flex items-center gap-2">
+          <span className="text-lg">⬆️</span>
+          <span className={`${HUD_THEME.text.label} text-primary`}>UPGRADES</span>
+        </div>
+        {open ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <div className="px-3 py-2">
+              <div className="grid grid-cols-2 gap-1.5">
+                {UPGRADES.map((upgrade) => (
+                  <UpgradeCard
+                    key={upgrade.id}
+                    upgrade={upgrade}
+                    level={state?.upgradeLevels?.[upgrade.id] || 0}
+                    coins={state?.coins || 0}
+                    onBuy={onBuy}
+                  />
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

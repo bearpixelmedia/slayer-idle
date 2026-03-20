@@ -15,7 +15,7 @@ export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestig
 
   return (
     <Tabs value={activeTab || "combat"} onValueChange={onTabChange} className="w-full">
-      <TabsList className="w-full grid grid-cols-5 gap-1 px-4 py-2 bg-card/60">
+      <TabsList className="w-full grid grid-cols-5 gap-2 px-2 py-3 bg-card/60">
         <TabsTrigger value="combat" className="font-pixel text-[8px] sm:text-[9px]">⚔️ Combat</TabsTrigger>
         <TabsTrigger value="progression" className="font-pixel text-[8px] sm:text-[9px]">📈 Progress</TabsTrigger>
         <TabsTrigger value="village" className="font-pixel text-[8px] sm:text-[9px]">🏘️ Village</TabsTrigger>

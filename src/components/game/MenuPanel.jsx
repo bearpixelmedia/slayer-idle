@@ -40,7 +40,7 @@ export default function MenuPanel({
       <div className={HUD_THEME.menuPanel.header}>
         <button
           onClick={onRunnerClick}
-          className={`flex-1 py-2 rounded-lg font-pixel text-[9px] transition-colors border-2 bg-green-600 hover:bg-green-700 text-white border-green-800`}
+          className={`flex-1 py-2 rounded-lg ${HUD_THEME.text.label} transition-colors border-2 ${HUD_THEME.button.primary} border-primary/60`}
         >
           🏃 RUNNER
         </button>
@@ -48,7 +48,7 @@ export default function MenuPanel({
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
           onClick={onClose}
-          className="flex-shrink-0 p-2 rounded-lg bg-destructive hover:bg-destructive/90 text-foreground transition-colors"
+          className={`flex-shrink-0 p-2 rounded-lg ${HUD_THEME.button.primary} transition-colors`}
         >
           <X className="w-4 h-4" />
         </motion.button>

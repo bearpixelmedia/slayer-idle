@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload, X } from "lucide-react";
 import { base44 } from "@/api/base44Client";
@@ -6,6 +6,8 @@ import { base44 } from "@/api/base44Client";
 export default function SettingImageUpload({ label, value, onChange, currentDefault }) {
   const fileInputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
+  const [animationData, setAnimationData] = useState(null);
+  const [currentFrame, setCurrentFrame] = useState(0);
 
   const handleFileSelect = async (e) => {
     const file = e.target.files?.[0];

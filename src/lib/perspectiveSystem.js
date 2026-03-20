@@ -15,7 +15,7 @@ const FOV_VERTICAL = 45; // degrees
 const FOV_RADIANS = (FOV_VERTICAL * Math.PI) / 180;
 
 /**
- * Layer definitions: 6 layers from closest to farthest
+ * Layer definitions: 8 layers from closest to farthest
  * Each layer has:
  * - depth: distance from camera (Z-axis)
  * - parallaxSpeed: 0-1 (1 = moves with camera at ground level, lower = slower parallax)
@@ -24,7 +24,15 @@ const FOV_RADIANS = (FOV_VERTICAL * Math.PI) / 180;
  */
 export const LAYERS = [
   {
-    id: "foreground", // Layer 0: Closest grass/ground detail
+    id: "ultra-close", // Layer 0: Ultra-close ground vignette
+    depth: 10,
+    parallaxSpeed: 1.0,
+    scaleFactor: 1.33,
+    verticalOffset: 95,
+    description: "Ultra-close ground detail and vignette"
+  },
+  {
+    id: "foreground", // Layer 1: Closest grass/ground detail
     depth: 15,
     parallaxSpeed: 1.0,
     scaleFactor: 1.0,
@@ -32,7 +40,7 @@ export const LAYERS = [
     description: "Foreground grass - closest to camera"
   },
   {
-    id: "near-shrubs", // Layer 1: Bushes/shrubs
+    id: "near-shrubs", // Layer 2: Bushes/shrubs
     depth: 25,
     parallaxSpeed: 0.85,
     scaleFactor: 0.84,
@@ -40,7 +48,7 @@ export const LAYERS = [
     description: "Near shrubs and vegetation"
   },
   {
-    id: "front-trees", // Layer 2: Front treeline
+    id: "front-trees", // Layer 3: Front treeline
     depth: 40,
     parallaxSpeed: 0.65,
     scaleFactor: 0.67,
@@ -48,7 +56,7 @@ export const LAYERS = [
     description: "Front treeline with trunks and canopy"
   },
   {
-    id: "mid-trees", // Layer 3: Middle treeline
+    id: "mid-trees", // Layer 4: Middle treeline
     depth: 80,
     parallaxSpeed: 0.35,
     scaleFactor: 0.44,
@@ -56,7 +64,7 @@ export const LAYERS = [
     description: "Middle distance trees"
   },
   {
-    id: "far-mountains", // Layer 4: Far mountains
+    id: "far-mountains", // Layer 5: Far mountains
     depth: 150,
     parallaxSpeed: 0.18,
     scaleFactor: 0.27,
@@ -64,7 +72,15 @@ export const LAYERS = [
     description: "Far mountain range"
   },
   {
-    id: "sky", // Layer 5: Sky/stars - farthest
+    id: "clouds", // Layer 6: Clouds
+    depth: 220,
+    parallaxSpeed: 0.08,
+    scaleFactor: 0.18,
+    verticalOffset: 15,
+    description: "Mid-sky clouds"
+  },
+  {
+    id: "sky", // Layer 7: Sky/stars - farthest
     depth: 300,
     parallaxSpeed: 0.01,
     scaleFactor: 0.11,

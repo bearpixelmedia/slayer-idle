@@ -8,7 +8,8 @@ const ABILITY_CONFIG = {
 };
 
 export default function AbilityHUD({ abilities, onActivate }) {
-  if (!abilities || abilities.length === 0) return null;
+  const abilitiesArray = Array.isArray(abilities) ? abilities : Object.values(abilities || {});
+  if (!abilitiesArray || abilitiesArray.length === 0) return null;
 
   return (
     <motion.div
@@ -19,7 +20,7 @@ export default function AbilityHUD({ abilities, onActivate }) {
     >
       <div className="font-pixel text-[8px] text-muted-foreground px-2">ABILITIES</div>
       <AnimatePresence>
-        {abilities.map((ability) => {
+        {abilitiesArray.map((ability) => {
           const config = ABILITY_CONFIG[ability.id];
           const timeRemaining = Math.max(0, ability.readyAt - Date.now());
           const isReady = timeRemaining <= 0;

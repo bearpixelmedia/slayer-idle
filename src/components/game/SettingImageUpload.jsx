@@ -133,16 +133,42 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
       <label className="text-xs font-medium text-slate-600">{label}</label>
       <div className="flex items-center gap-2">
         {/* Preview */}
-        <div className="w-12 h-12 rounded-lg border border-slate-300 bg-slate-100 flex items-center justify-center overflow-hidden">
-          {value ? (
-            <AnimationPreview 
-              spriteUrl={value} 
-              animationData={animationData} 
-              currentFrame={currentFrame}
-              defaultEmoji={currentDefault}
-            />
-          ) : (
-            <span className="text-lg">{currentDefault}</span>
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setShowHistory(!showHistory)}
+            className="w-12 h-12 rounded-lg border border-slate-300 bg-slate-100 flex items-center justify-center overflow-hidden hover:border-slate-400 transition-colors cursor-pointer"
+          >
+            {value ? (
+              <AnimationPreview 
+                spriteUrl={value} 
+                animationData={animationData} 
+                currentFrame={currentFrame}
+                defaultEmoji={currentDefault}
+              />
+            ) : (
+              <span className="text-lg">{currentDefault}</span>
+            )}
+          </button>
+          
+          {showHistory && history.length > 0 && (
+            <div className="absolute top-full left-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto min-w-[120px]">
+              {history.map((item, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => handleSelectFromHistory(item)}
+                  className="w-full text-left px-3 py-2 hover:bg-slate-100 text-xs border-b border-slate-100 last:border-b-0 flex items-center gap-2"
+                >
+                  <div className="w-6 h-6 rounded bg-slate-100 flex-shrink-0 overflow-hidden">
+                    <img src={item.imageUrl} alt="" className="w-full h-full object-cover" />
+                  </div>
+                  <span className="truncate">
+                    {new Date(item.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  </span>
+                </button>
+              ))}
+            </div>
           )}
         </div>
 

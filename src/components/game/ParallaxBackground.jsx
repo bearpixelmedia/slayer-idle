@@ -459,6 +459,27 @@ export default function ParallaxBackground() {
           0%, 100% { opacity: 0.3; }
           50% { opacity: 0.85; }
         }
+
+        @keyframes animal-wander {
+          0%, 100% { transform: translateY(0) translateX(0); opacity: 0.4; }
+          25% { transform: translateY(-8px) translateX(15px); opacity: 0.6; }
+          50% { transform: translateY(-5px) translateX(-10px); opacity: 0.5; }
+          75% { transform: translateY(-12px) translateX(20px); opacity: 0.6; }
+        }
+
+        @keyframes animal-climb {
+          0%, 100% { transform: translateY(0) scaleX(1); opacity: 0.5; }
+          30% { transform: translateY(-25px) scaleX(1.1); opacity: 0.7; }
+          60% { transform: translateY(-40px) scaleX(0.95); opacity: 0.6; }
+          100% { transform: translateY(0) scaleX(1); opacity: 0.5; }
+        }
+
+        @keyframes animal-explore {
+          0%, 100% { transform: translateY(-5px) translateX(0); opacity: 0.7; }
+          25% { transform: translateY(-15px) translateX(25px); opacity: 0.8; }
+          50% { transform: translateY(-8px) translateX(-15px); opacity: 0.75; }
+          75% { transform: translateY(-20px) translateX(30px); opacity: 0.8; }
+        }
         
         .absolute {
           will-change: transform;

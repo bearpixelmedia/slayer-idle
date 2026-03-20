@@ -31,9 +31,9 @@ export default function StatsBar({ state, tapDamage, idleCPS, className }) {
             <span className="font-pixel text-[10px]">⚔️ {state.killCount % 25}/25</span>
           </div>
         )}
-      </div>
-      <div className="hidden sm:flex items-center gap-2 text-[10px] text-muted-foreground">
-        <span>{formatNumber(idleCPS)}/s 💰</span>
+        <div className="hidden sm:flex items-center gap-1 text-muted-foreground">
+          <span className="font-pixel text-[10px]">{formatNumber(idleCPS)}/s 💰</span>
+        </div>
       </div>
       {state.isBossActive && (
         <div className="text-[9px] font-pixel text-red-400 animate-pulse">⚔️ BOSS</div>

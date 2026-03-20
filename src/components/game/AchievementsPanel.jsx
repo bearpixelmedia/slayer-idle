@@ -63,8 +63,8 @@ export default function AchievementsPanel({ unlockedIds, damageMultiplier, offli
         </div>
         <div className="flex items-center gap-3">
           <div className="hidden sm:flex items-center gap-3 text-[9px] font-pixel">
-            <span className="text-red-400">⚔ ×{damageMultiplier.toFixed(2)}</span>
-            <span className="text-yellow-400">🌙 ×{offlineMultiplier.toFixed(2)}</span>
+           <span className="text-red-400">⚔ ×{isFinite(damageMultiplier) ? damageMultiplier.toFixed(2) : "∞"}</span>
+           <span className="text-yellow-400">🌙 ×{isFinite(offlineMultiplier) ? offlineMultiplier.toFixed(2) : "∞"}</span>
           </div>
           {open ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
         </div>

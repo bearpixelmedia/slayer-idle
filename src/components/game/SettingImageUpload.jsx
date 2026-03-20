@@ -64,13 +64,9 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
         onChange(imageUrl);
         
         // Store JSON URL for animation loading
-        let jsonUrl = null;
         if (jsonFile && uploadedUrls[jsonFile.name]) {
-          jsonUrl = uploadedUrls[jsonFile.name];
-          sessionStorage.setItem(`aseprite_json_${imageUrl}`, jsonUrl);
+          sessionStorage.setItem(`aseprite_json_${imageUrl}`, uploadedUrls[jsonFile.name]);
         }
-        
-        addToHistory(imageUrl, jsonUrl);
       }
     } catch (err) {
       alert("Upload failed: " + err.message);

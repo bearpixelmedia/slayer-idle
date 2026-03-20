@@ -304,11 +304,11 @@ export default function ParallaxBackground() {
       {/* Layer 16: Mid forest animals - speed 0.45 */}
       {createLayer("animals-mid", 0.45, 46, 20, 0.65, (
         <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-12">
-          {Array.from({ length: 6 }).map((_, i) => {
+          {Array.from({ length: 1 }).map((_, i) => {
             const animals = ["🦌", "🐿️", "🦝"];
             const animal = animals[i % 3];
-            const delay = Math.random() * 12;
-            const duration = 7 + Math.random() * 5;
+            const delay = Math.random() * 24;
+            const duration = 14 + Math.random() * 10;
             return (
               <div key={`animal-mid-${i}`} className="flex-shrink-0 text-lg relative" style={{ 
                 animation: `animal-climb ${duration}s ease-in-out infinite`,

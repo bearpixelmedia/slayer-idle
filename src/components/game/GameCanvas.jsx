@@ -331,15 +331,6 @@ export default function GameCanvas({
         <span className="font-pixel text-[7px]" style={{ color: stage.color }}>{stage.name}</span>
       </div>
 
-      {/* Kill counter for next stage */}
-      {state.stage < 6 && (
-        <div className="absolute top-2 right-2 px-2 py-1 rounded-full bg-black/40 backdrop-blur-sm border border-white/10">
-          <span className="font-pixel text-[7px] text-muted-foreground">
-            Stage {state.killCount % 25}/25
-          </span>
-        </div>
-      )}
-
       {/* Tap hint */}
       <div className="absolute bottom-2 left-1/2 -translate-x-1/2">
         <span className="font-pixel text-[7px] text-muted-foreground/50 animate-pulse">TAP TO ATTACK</span>

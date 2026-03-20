@@ -362,17 +362,51 @@ export default function ParallaxBackground() {
         </div>
       ))}
 
-      {/* Layer 17: Large bushes/ferns - speed 0.96 */}
-      {createLayer("ferns", 0.96, 64, 28, 0.85, (
+      {/* Layer 16.5: Mid bushes - speed 0.86 */}
+      {createLayer("bushes-mid", 0.86, 65, 26, 0.80, (
         <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.5">
-          {Array.from({ length: 85 }).map((_, i) => {
-            const scale = 1.2 + (i % 3) * 0.25;
+          {Array.from({ length: 45 }).map((_, i) => {
+            const scale = 0.9 + (i % 3) * 0.15;
+            return (
+              <svg key={`bush-mid-${i}`} viewBox="0 0 40 50" className="flex-shrink-0" style={{ width: `${40 * scale}px`, height: "100%", opacity: 0.75 + (i % 2) * 0.1 }}>
+                <circle cx="20" cy="12" r={`${8 * scale}`} fill="rgba(55, 135, 55, 0.88)" />
+                <circle cx="10" cy="22" r={`${7 * scale}`} fill="rgba(65, 145, 65, 0.86)" />
+                <circle cx="30" cy="22" r={`${7 * scale}`} fill="rgba(65, 145, 65, 0.86)" />
+                <circle cx="20" cy="35" r={`${9 * scale}`} fill="rgba(45, 125, 45, 0.90)" />
+              </svg>
+            );
+          })}
+        </div>
+      ))}
+
+      {/* Layer 17: Large bushes/ferns - speed 0.93 */}
+      {createLayer("ferns", 0.93, 62, 28, 0.85, (
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.5">
+          {Array.from({ length: 50 }).map((_, i) => {
+            const scale = 1.1 + (i % 3) * 0.2;
             return (
               <svg key={`fern-${i}`} viewBox="0 0 40 50" className="flex-shrink-0" style={{ width: `${40 * scale}px`, height: "100%", opacity: 0.8 + (i % 2) * 0.1 }}>
                 <circle cx="20" cy="12" r={`${8 * scale}`} fill="rgba(60, 140, 60, 0.92)" />
                 <circle cx="10" cy="22" r={`${7 * scale}`} fill="rgba(70, 150, 70, 0.9)" />
                 <circle cx="30" cy="22" r={`${7 * scale}`} fill="rgba(70, 150, 70, 0.9)" />
                 <circle cx="20" cy="35" r={`${9 * scale}`} fill="rgba(50, 130, 50, 0.93)" />
+              </svg>
+            );
+          })}
+        </div>
+      ))}
+
+      {/* Layer 17.5: Close large ferns - speed 0.98 */}
+      {createLayer("ferns-close", 0.98, 60, 30, 0.88, (
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.3">
+          {Array.from({ length: 60 }).map((_, i) => {
+            const scale = 1.3 + (i % 3) * 0.3;
+            return (
+              <svg key={`fern-close-${i}`} viewBox="0 0 40 50" className="flex-shrink-0" style={{ width: `${40 * scale}px`, height: "100%", opacity: 0.85 + (i % 2) * 0.1 }}>
+                <circle cx="20" cy="12" r={`${8 * scale}`} fill="rgba(65, 150, 65, 0.94)" />
+                <circle cx="10" cy="22" r={`${7 * scale}`} fill="rgba(75, 160, 75, 0.92)" />
+                <circle cx="30" cy="22" r={`${7 * scale}`} fill="rgba(75, 160, 75, 0.92)" />
+                <circle cx="20" cy="35" r={`${9 * scale}`} fill="rgba(55, 140, 55, 0.95)" />
               </svg>
             );
           })}

@@ -18,8 +18,20 @@ export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestig
 
   return (
     <Tabs value={activeTab || "combat"} onValueChange={onTabChange} className="w-full">
-      <div className={`px-2 py-1 border-b ${HUD_THEME.panel.border} ${HUD_THEME.panel.bg}`}>
-        <h3 className={`${HUD_THEME.text.label} text-primary`}>{tabLabels[activeTab || "combat"]}</h3>
+      <div className={`px-2 py-1 border-b ${HUD_THEME.panel.border} ${HUD_THEME.panel.bg} overflow-x-auto`}>
+        <div className="flex gap-1">
+          {Object.entries(tabLabels).map(([tab, label]) => (
+            <button
+              key={tab}
+              onClick={() => onTabChange(tab)}
+              className={`px-2 py-1 rounded-md font-pixel text-[7px] sm:text-[8px] whitespace-nowrap transition-all ${
+                activeTab === tab ? HUD_THEME.button.primary : HUD_THEME.button.muted
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <TabsContent value="combat" className={`px-2 py-2 space-y-2 ${HUD_THEME.panel.bg}`}>

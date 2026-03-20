@@ -240,9 +240,10 @@ export default function Game() {
           onModeChange={setCurrentWeapon}
         />
         
-        <div className="flex-1 overflow-hidden relative">
+        <div className="flex-1 overflow-hidden relative w-full">
           {!showRunner ? (
-            <GameCanvas
+            <div className="w-full h-full flex flex-col">
+              <GameCanvas
               state={state}
               enemyDying={enemyDying}
               floatingCoins={floatingCoins}

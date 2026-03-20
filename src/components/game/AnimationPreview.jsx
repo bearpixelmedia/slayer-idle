@@ -53,8 +53,8 @@ export default function AnimationPreview({ spriteUrl, animationData, currentFram
   }, [animationData, currentFrame]);
 
   if (animationData) {
-    return <canvas ref={canvasRef} className="w-full h-full" />;
+    return <canvas ref={canvasRef} className="w-full h-full pointer-events-none" />;
   }
 
-  return <img src={spriteUrl} alt="preview" className="w-full h-full object-cover" />;
+  return <img src={spriteUrl} alt="preview" className="w-full h-full object-cover pointer-events-none" />;
 }

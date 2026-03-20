@@ -79,12 +79,14 @@ export default function GameCanvas({
           />
         </div>
         <motion.div 
-          className="animate-run-cycle text-3xl sm:text-4xl md:text-5xl"
+          className="animate-run-cycle text-3xl sm:text-4xl md:text-5xl drop-shadow-lg"
           animate={{ scale: enemyHit ? 1.15 : 1 }}
           transition={{ duration: 0.1 }}
         >
           {weaponMode === "bow" ? "🏹" : "⚔️"}
         </motion.div>
+        {/* Ground shadow */}
+        <div className="absolute -bottom-6 w-20 h-1 bg-black/30 rounded-full blur-sm" />
       </div>
 
       {/* Enemy */}
@@ -99,22 +101,26 @@ export default function GameCanvas({
             {formatNumber(state.enemyHP)} / {formatNumber(state.enemyMaxHP)}
           </p>
         </div>
-        <motion.div
-          className={`text-4xl sm:text-5xl md:text-6xl ${
-            state.isBossActive ? "scale-125" : ""
-          }`}
-          animate={{
-            filter: enemyHit ? "brightness(1.8)" : "brightness(1)",
-          }}
-          transition={{ duration: 0.1 }}
-          style={{
-            animation: enemyDying ? "enemy-die 0.3s ease-out forwards" : 
-                       (state.isBossActive && !enemyDying) ? "float 3s ease-in-out infinite" :
-                       !enemyDying && !state.isBossActive ? "float 3s ease-in-out infinite" : "none"
-          }}
-        >
-          {enemyEmoji}
-        </motion.div>
+        <div className="relative">
+          <motion.div
+            className={`text-4xl sm:text-5xl md:text-6xl drop-shadow-lg ${
+              state.isBossActive ? "scale-125" : ""
+            }`}
+            animate={{
+              filter: enemyHit ? "brightness(1.8)" : "brightness(1)",
+            }}
+            transition={{ duration: 0.1 }}
+            style={{
+              animation: enemyDying ? "enemy-die 0.3s ease-out forwards" : 
+                         (state.isBossActive && !enemyDying) ? "float 3s ease-in-out infinite" :
+                         !enemyDying && !state.isBossActive ? "float 3s ease-in-out infinite" : "none"
+            }}
+          >
+            {enemyEmoji}
+          </motion.div>
+          {/* Ground shadow */}
+          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-24 h-2 bg-black/25 rounded-full blur-md" />
+        </div>
       </div>
 
       {/* Slash effects */}

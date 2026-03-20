@@ -93,7 +93,7 @@ export default function MenuPanel({
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`flex-1 py-2 rounded-lg text-lg transition-colors cursor-pointer ${activeTab === tab ? "bg-primary text-primary-foreground" : "bg-muted/30 text-foreground hover:bg-muted/50"}`}
+            className={`flex-1 py-2 rounded-lg text-lg transition-colors cursor-pointer ${activeTab === tab ? HUD_THEME.button.primary : HUD_THEME.button.muted}`}
             style={{ pointerEvents: "auto" }}
             title={label}
           >{icon}</button>

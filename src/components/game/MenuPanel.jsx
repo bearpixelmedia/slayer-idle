@@ -97,6 +97,6 @@ export default function MenuPanel({
           >{icon}</button>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 }

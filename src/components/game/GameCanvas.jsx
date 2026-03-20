@@ -24,7 +24,7 @@ function HealthBar({ current, max }) {
 
 function GroundLayer({ stageColor }) {
   return (
-    <div className="absolute bottom-0 left-0 right-0 h-40 overflow-hidden">
+    <div className="absolute bottom-0 left-0 right-0 h-80 overflow-hidden">
       {/* Back ground layer (slowest parallax) */}
       <div className="absolute bottom-24 left-0 right-0 h-12 animate-ground-scroll" style={{ opacity: 0.3 }}>
         <div className="flex whitespace-nowrap w-[200%]">

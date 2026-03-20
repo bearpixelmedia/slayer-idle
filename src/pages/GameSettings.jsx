@@ -380,6 +380,77 @@ export default function GameSettings() {
             </Card>
           </TabsContent>
 
+          {/* Parallax Tab */}
+          <TabsContent value="parallax" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Parallax Layer Settings</CardTitle>
+                <CardDescription>Customize parallax speeds and positions for each layer</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-8">
+                <SettingGroup
+                  title="Sky Layers"
+                  items={[
+                    { id: "parallax_stars_speed", label: "Stars Speed", defaultValue: "0.01" },
+                    { id: "parallax_clouds_speed", label: "Distant Clouds Speed", defaultValue: "0.02" },
+                    { id: "parallax_mist_speed", label: "Mist Speed", defaultValue: "0.18" },
+                  ]}
+                />
+                <SettingGroup
+                  title="Mountain Layers"
+                  items={[
+                    { id: "parallax_mountains_very_far_speed", label: "Very Far Mountains Speed", defaultValue: "0.04" },
+                    { id: "parallax_mountains_far_speed", label: "Far Mountains Speed", defaultValue: "0.08" },
+                    { id: "parallax_mountains_mid_speed", label: "Mid Mountains Speed", defaultValue: "0.12" },
+                  ]}
+                />
+                <SettingGroup
+                  title="Tree Layers"
+                  items={[
+                    { id: "parallax_trees_very_far_speed", label: "Very Far Trees Speed", defaultValue: "0.22" },
+                    { id: "parallax_trees_distant_speed", label: "Distant Trees Speed", defaultValue: "0.28" },
+                    { id: "parallax_trees_back_speed", label: "Back Treeline Speed", defaultValue: "0.35" },
+                    { id: "parallax_trees_mid_back_speed", label: "Mid-Back Trees Speed", defaultValue: "0.43" },
+                    { id: "parallax_trees_mid_speed", label: "Mid Trees Speed", defaultValue: "0.50" },
+                    { id: "parallax_trees_mid_front_speed", label: "Mid-Front Trees Speed", defaultValue: "0.57" },
+                    { id: "parallax_trees_front_speed", label: "Front Treeline Speed", defaultValue: "0.65" },
+                  ]}
+                />
+                <SettingGroup
+                  title="Vegetation Layers"
+                  items={[
+                    { id: "parallax_animals_far_speed", label: "Far Animals Speed", defaultValue: "0.25" },
+                    { id: "parallax_animals_mid_speed", label: "Mid Animals Speed", defaultValue: "0.45" },
+                    { id: "parallax_animals_close_speed", label: "Close Animals Speed", defaultValue: "0.75" },
+                    { id: "parallax_shrubs_speed", label: "Shrubs Speed", defaultValue: "0.88" },
+                    { id: "parallax_flowers_speed", label: "Flowers Speed", defaultValue: "0.84" },
+                    { id: "parallax_ferns_mid_speed", label: "Mid Ferns Speed", defaultValue: "0.86" },
+                    { id: "parallax_ferns_very_close_speed", label: "Very Close Ferns Speed", defaultValue: "0.95" },
+                    { id: "parallax_ferns_ultra_close_speed", label: "Ultra Close Ferns Speed", defaultValue: "0.97" },
+                    { id: "parallax_ferns_extreme_close_speed", label: "Extreme Close Ferns Speed", defaultValue: "0.99" },
+                  ]}
+                />
+                <SettingGroup
+                  title="Ground Layers"
+                  items={[
+                    { id: "parallax_tall_grass_speed", label: "Tall Grass Speed", defaultValue: "0.90" },
+                    { id: "parallax_rocks_speed", label: "Rocks Speed", defaultValue: "0.93" },
+                    { id: "parallax_grass_near_speed", label: "Grass Near Speed", defaultValue: "0.91" },
+                    { id: "parallax_grass_very_close_speed", label: "Grass Very Close Speed", defaultValue: "0.95" },
+                    { id: "parallax_grass_foreground_speed", label: "Grass Foreground Speed", defaultValue: "0.98" },
+                  ]}
+                />
+                <SettingGroup
+                  title="Camera Settings"
+                  items={[
+                    { id: "parallax_camera_lerp", label: "Camera Smoothing (0-1)", defaultValue: "0.12" },
+                    { id: "parallax_target_increment", label: "Camera Movement Speed", defaultValue: "2" },
+                  ]}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* Other Tab */}
           <TabsContent value="other" className="space-y-6">
             <Card>

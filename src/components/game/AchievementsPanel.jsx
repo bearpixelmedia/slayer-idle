@@ -44,10 +44,11 @@ export default function AchievementsPanel({ unlockedIds, damageMultiplier, offli
   const [open, setOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState("coins");
 
-  const unlockedCount = unlockedIds.length;
-  const totalCount = ACHIEVEMENTS.length;
+  const unlockedCount = Array.isArray(unlockedIds) ? unlockedIds.length : 0;
+  const achievements = Array.isArray(ACHIEVEMENTS) ? ACHIEVEMENTS : [];
+  const totalCount = achievements.length;
 
-  const filtered = ACHIEVEMENTS.filter((a) => a.category === activeCategory);
+  const filtered = achievements.filter((a) => a?.category === activeCategory);
 
   return (
     <div className="mx-4 mb-4 rounded-xl border border-border/50 overflow-hidden">
@@ -94,8 +95,8 @@ export default function AchievementsPanel({ unlockedIds, damageMultiplier, offli
             {/* Category tabs */}
             <div className="flex gap-1 px-4 pb-2">
               {CATEGORIES.map((cat) => {
-                const catUnlocked = ACHIEVEMENTS.filter(a => a.category === cat.id && unlockedIds.includes(a.id)).length;
-                const catTotal = ACHIEVEMENTS.filter(a => a.category === cat.id).length;
+                const catUnlocked = achievements.filter(a => a?.category === cat?.id && unlockedIds?.includes(a?.id)).length;
+                const catTotal = achievements.filter(a => a?.category === cat?.id).length;
                 return (
                   <button
                     key={cat.id}
@@ -116,9 +117,9 @@ export default function AchievementsPanel({ unlockedIds, damageMultiplier, offli
             <div className="px-4 pb-4 flex flex-col gap-2">
               {filtered.map((ach) => (
                 <AchievementRow
-                  key={ach.id}
+                  key={ach?.id}
                   achievement={ach}
-                  unlocked={unlockedIds.includes(ach.id)}
+                  unlocked={unlockedIds?.includes(ach?.id)}
                 />
               ))}
             </div>

@@ -24,17 +24,17 @@ export default function ZoneSelector({
       </div>
 
       <div className="px-4 py-3 space-y-2">
-        {ZONES.map((zone) => {
-          const isUnlocked = (unlockedZoneIds || []).includes(zone.id);
-          const isActive = activeZoneId === zone.id;
-          const zp = zoneProgress?.[zone.id];
-          const canUnlock = isUnlocked || canUnlockZone(zone.id, unlockedZoneIds || [], zoneProgress || {}, slayerPoints);
-          const req = zone.unlockRequirement;
+         {(Array.isArray(ZONES) ? ZONES : []).map((zone) => {
+           const isUnlocked = (Array.isArray(unlockedZoneIds) ? unlockedZoneIds : []).includes(zone?.id);
+           const isActive = activeZoneId === zone?.id;
+           const zp = zoneProgress?.[zone?.id];
+           const canUnlock = isUnlocked || canUnlockZone(zone?.id, Array.isArray(unlockedZoneIds) ? unlockedZoneIds : [], zoneProgress || {}, slayerPoints);
+           const req = zone?.unlockRequirement;
 
           return (
             <motion.button
-              key={zone.id}
-              onClick={() => isUnlocked ? onSwitchZone(zone.id) : onUnlockZone(zone.id)}
+              key={zone?.id}
+              onClick={() => isUnlocked ? onSwitchZone(zone?.id) : onUnlockZone(zone?.id)}
               className={`relative w-full flex items-center gap-3 p-3 rounded-lg border transition-all ${
                 isActive
                   ? "bg-primary/20 border-primary/50"
@@ -56,20 +56,20 @@ export default function ZoneSelector({
 
               <div className="flex-1 text-left min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="font-pixel text-[9px] text-foreground font-bold">{zone.name}</span>
+                  <span className="font-pixel text-[9px] text-foreground font-bold">{zone?.name}</span>
                   {isActive && <span className="font-pixel text-[7px] text-primary">● ACTIVE</span>}
                 </div>
-                <p className="text-[8px] text-muted-foreground truncate">{zone.description}</p>
+                <p className="text-[8px] text-muted-foreground truncate">{zone?.description}</p>
                 <div className="flex items-center gap-3 mt-1 text-[7px] text-muted-foreground/70">
                   {isUnlocked && zp && (
                     <>
-                      <span>Stage: {zp.stage + 1}</span>
+                      <span>Stage: {(zp?.stage || 0) + 1}</span>
                       <span>|</span>
-                      <span>Best: {zp.highestStage + 1}</span>
+                      <span>Best: {(zp?.highestStage || 0) + 1}</span>
                     </>
                   )}
                   {!isUnlocked && canUnlock && req && (
-                    <span className="text-amber-500">Cost: {req.spCost} SP</span>
+                    <span className="text-amber-500">Cost: {req?.spCost} SP</span>
                   )}
                 </div>
               </div>

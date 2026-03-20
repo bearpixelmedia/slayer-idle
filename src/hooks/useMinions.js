@@ -86,11 +86,11 @@ export default function useMinions(gameState, setSouls) {
 
   // Derived state
   const progressContext = {
-    unlockedZoneIds: gameState.unlockedZoneIds,
-    highestStage: gameState.highestStage,
+    unlockedZoneIds: Array.isArray(gameState?.unlockedZoneIds) ? gameState.unlockedZoneIds : [],
+    highestStage: typeof gameState?.highestStage === "number" ? gameState.highestStage : 0,
   };
   const economyContext = {
-    souls: gameState.souls,
+    souls: typeof gameState?.souls === "number" ? gameState.souls : 0,
   };
   const unlockedMinionTypes = getUnlockedMinionTypes(MINION_TYPES, progressContext);
   const unlockedMissionDefs = getUnlockedMissionDefs(MISSION_DEFS, progressContext);
@@ -98,7 +98,7 @@ export default function useMinions(gameState, setSouls) {
 
   // Actions
   const sendMinionOnMission = useCallback((minion, missionDef) => {
-    const minionType = MINION_TYPES.find((mt) => mt.id === minion.minionTypeId);
+    const minionType = (Array.isArray(MINION_TYPES) ? MINION_TYPES : []).find((mt) => mt?.id === minion?.minionTypeId);
     if (!minionType) return false;
 
     const result = startMission({
@@ -109,8 +109,8 @@ export default function useMinions(gameState, setSouls) {
       nowMs: Date.now(),
       newMissionInstanceId: nanoid(),
       progressContext: {
-        unlockedZoneIds: gameState.unlockedZoneIds,
-        highestStage: gameState.highestStage,
+        unlockedZoneIds: Array.isArray(gameState?.unlockedZoneIds) ? gameState.unlockedZoneIds : [],
+        highestStage: typeof gameState?.highestStage === "number" ? gameState.highestStage : 0,
       },
     });
 
@@ -126,10 +126,10 @@ export default function useMinions(gameState, setSouls) {
       minionsState: minionsStateRef.current,
       minionTypeDef,
       progress: {
-        unlockedZoneIds: gameState.unlockedZoneIds,
-        highestStage: gameState.highestStage,
+        unlockedZoneIds: Array.isArray(gameState?.unlockedZoneIds) ? gameState.unlockedZoneIds : [],
+        highestStage: typeof gameState?.highestStage === "number" ? gameState.highestStage : 0,
       },
-      economy: { souls: gameState.souls },
+      economy: { souls: typeof gameState?.souls === "number" ? gameState.souls : 0 },
       nowMs: Date.now(),
       newMinionInstanceId: nanoid(),
     });

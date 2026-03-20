@@ -82,7 +82,7 @@ export default function MenuPanel({
       </ScrollArea>
 
       {/* Bottom tab navigation */}
-      <div className={HUD_THEME.menuPanel.footer}
+      <div className={HUD_THEME.menuPanel.footer}>
         {[
           { tab: "combat", icon: "⚔️", label: "Combat" },
           { tab: "progression", icon: "📈", label: "Progress" },

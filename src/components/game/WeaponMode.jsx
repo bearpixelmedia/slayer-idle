@@ -1,11 +1,11 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-export default function WeaponMode({ currentMode, bowUnlocked, onModeChange }) {
+export default function WeaponMode({ currentMode, bowUnlocked, onModeChange, className }) {
   if (!bowUnlocked) return null;
 
   return (
-    <div className="px-4 py-3 border-b border-border/50 flex items-center justify-between">
+    <div className={`px-4 py-3 border-b border-border/50 flex items-center justify-between ${className || ""}`}>
       <div className="flex items-center gap-2">
         <span className="font-pixel text-[9px] text-muted-foreground">WEAPON</span>
         <div className="flex gap-2">

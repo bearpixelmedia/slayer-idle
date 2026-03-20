@@ -36,10 +36,10 @@ function BuildingCard({ building, level, state, onUpgrade, maxLevel }) {
         <p className="text-[10px] text-muted-foreground mb-1">{building.description}</p>
         <div className="flex items-center justify-between mt-1">
           <span className="font-pixel text-[8px] text-muted-foreground">Lv.{level}</span>
-          {cost && !isMaxed && (
+          {cost && cost.coins !== undefined && !isMaxed && (
             <span className="font-pixel text-[8px]">
               <span className={canAfford ? "text-primary" : "text-muted-foreground/50"}>
-                🪙 {formatNumber(cost.coins)} 👻 {cost.souls}
+                🪙 {formatNumber(cost.coins)} 👻 {cost.souls || 0}
               </span>
             </span>
           )}

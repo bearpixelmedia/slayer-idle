@@ -75,10 +75,12 @@ export function canCraftRecipe(recipeId, progressContext, craftedRecipeIds, mate
   }
 
   // Check material costs
-  for (const [materialId, cost] of Object.entries(recipe.costs)) {
-    const have = materials[materialId] || 0;
-    if (have < cost) {
-      return { canCraft: false, reason: "INSUFFICIENT_MATERIALS" };
+  if (recipe.costs) {
+    for (const [materialId, cost] of Object.entries(recipe.costs)) {
+      const have = materials[materialId] || 0;
+      if (have < cost) {
+        return { canCraft: false, reason: "INSUFFICIENT_MATERIALS" };
+      }
     }
   }
 
@@ -106,8 +108,10 @@ export function craftRecipe(params) {
 
   // Deduct materials
   const nextMaterials = { ...materials };
-  for (const [materialId, cost] of Object.entries(recipe.costs)) {
-    nextMaterials[materialId] = (nextMaterials[materialId] || 0) - cost;
+  if (recipe.costs) {
+    for (const [materialId, cost] of Object.entries(recipe.costs)) {
+      nextMaterials[materialId] = (nextMaterials[materialId] || 0) - cost;
+    }
   }
 
   // Add to crafted list

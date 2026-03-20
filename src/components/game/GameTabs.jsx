@@ -48,11 +48,11 @@ export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestig
         />
       </TabsContent>
 
-      <TabsContent value="village" className="px-4 py-3">
+      <TabsContent value="village" className={`px-4 py-3 ${HUD_THEME.panel.bg}`}>
         <VillagePanel state={state} onUpgradeBuilding={onUpgradeBuilding} />
       </TabsContent>
 
-      <TabsContent value="quests" className="px-4 py-3">
+      <TabsContent value="quests" className={`px-4 py-3 ${HUD_THEME.panel.bg}`}>
         <QuestLog
           questProgress={questProgress}
           onClaimReward={onClaimQuestReward}
@@ -61,7 +61,7 @@ export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestig
         />
       </TabsContent>
 
-      <TabsContent value="zones" className="px-4 py-3">
+      <TabsContent value="zones" className={`px-4 py-3 ${HUD_THEME.panel.bg}`}>
         <ZoneSelector
           activeZoneId={state.activeZoneId}
           unlockedZoneIds={state.unlockedZoneIds}

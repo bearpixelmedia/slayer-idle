@@ -2,13 +2,14 @@ import React from "react";
 import { Coins, Sword, Zap, Skull, Ghost } from "lucide-react";
 import { formatNumber } from "@/lib/formatNumber";
 import { STAGES } from "@/lib/gameData";
+import { HUD_THEME } from "@/lib/hudTheme";
 
 export default function StatsBar({ state, tapDamage, idleCPS, className }) {
   if (!state) return null;
   const stage = STAGES[state?.stage] || STAGES[0];
 
   return (
-    <div className={className || "fixed top-2 left-2 right-2 z-10 flex flex-wrap items-center justify-between gap-2 px-3 py-2 bg-card/80 backdrop-blur-md rounded-lg border border-border pointer-events-none"}>
+    <div className={className || `${HUD_THEME.statsBar.container} ${HUD_THEME.statsBar.bg} ${HUD_THEME.statsBar.border} ${HUD_THEME.statsBar.rounded} ${HUD_THEME.statsBar.pointerEvents}`}>
       <div className="flex items-center gap-3 flex-wrap">
         <div className="flex items-center gap-1">
           <span className="text-sm">🪙</span>

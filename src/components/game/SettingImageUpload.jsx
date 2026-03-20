@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Upload, X, History } from "lucide-react";
+import { Upload, X, History, ChevronDown } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import AnimationPreview from "./AnimationPreview";
 

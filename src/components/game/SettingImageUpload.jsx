@@ -10,13 +10,23 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
   const [currentFrame, setCurrentFrame] = useState(0);
 
   const handleFileSelect = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
     setUploading(true);
     try {
-      const response = await base44.integrations.Core.UploadFile({ file });
-      onChange(response.file_url);
+      // Upload all files and use the image file (not JSON) as the main URL
+      const uploadedUrls = {};
+      for (const file of files) {
+        const response = await base44.integrations.Core.UploadFile({ file });
+        uploadedUrls[file.name] = response.file_url;
+      }
+      
+      // Find the image file (spritesheet) - prefer PNG/JPG over JSON
+      const imageFile = Array.from(files).find(f => /\.(png|jpg|jpeg|gif)$/i.test(f.name));
+      if (imageFile && uploadedUrls[imageFile.name]) {
+        onChange(uploadedUrls[imageFile.name]);
+      }
     } catch (err) {
       alert("Upload failed: " + err.message);
     } finally {

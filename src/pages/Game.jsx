@@ -244,29 +244,16 @@ export default function Game() {
           <div className="flex-1 overflow-hidden">
             {!showRunner ? (
               <GameCanvas
-              state={state}
-              enemyDying={enemyDying}
-              floatingCoins={floatingCoins}
-              floatingSouls={floatingSouls}
-              floatingDamage={floatingDamage}
-              particles={particles}
-              slashEffects={slashEffects}
-              onTap={handleTap}
-              enemyHit={enemyHit}
-              weaponMode={currentWeapon}
-            />
-          ) : (
-            <RunnerCanvas
-              playerY={runner.playerY}
-              obstacles={runner.obstacles}
-              score={runner.score}
-              isGameOver={runner.isGameOver}
-              gameStarted={runner.gameStarted}
-              onTap={() => {
-                if (!runner.gameStarted) runner.startGame();
-                else if (runner.isGameOver) runner.resetGame();
-                else runner.handleJump();
-              }}
+                state={state}
+                enemyDying={enemyDying}
+                floatingCoins={floatingCoins}
+                floatingSouls={floatingSouls}
+                floatingDamage={floatingDamage}
+                particles={particles}
+                slashEffects={slashEffects}
+                onTap={handleTap}
+                enemyHit={enemyHit}
+                weaponMode={currentWeapon}
               />
             ) : (
               <RunnerCanvas

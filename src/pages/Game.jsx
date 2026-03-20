@@ -80,7 +80,7 @@ export default function Game() {
   return (
     <div className="fixed inset-0 bg-background flex flex-col lg:flex-row overflow-hidden">
       {/* Portrait/Mobile: Full screen */}
-      <div className="lg:hidden w-full h-full flex flex-col relative">
+      <div className="lg:hidden w-full h-full flex flex-col relative overflow-hidden">
         <StatsBar
           state={state}
           tapDamage={getTapDamage()}
@@ -91,6 +91,7 @@ export default function Game() {
           currentMode={currentWeapon}
           bowUnlocked={state.upgradeLevels["bow"] > 0}
           onModeChange={setCurrentWeapon}
+          className="flex-shrink-0"
         />
 
         <div className="w-full flex-1 overflow-hidden flex flex-col min-h-0">

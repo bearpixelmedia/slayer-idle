@@ -14,8 +14,10 @@ function loadQuestProgress() {
 
 function initializeQuestProgress() {
   const progress = {};
-  QUESTS.forEach((q) => {
-    progress[q.id] = { questId: q.id, progress: 0, completed: false, claimed: false };
+  (Array.isArray(QUESTS) ? QUESTS : []).forEach((q) => {
+    if (q?.id) {
+      progress[q.id] = { questId: q.id, progress: 0, completed: false, claimed: false };
+    }
   });
   return progress;
 }
@@ -36,11 +38,13 @@ export default function useQuests(gameState, unlockedZoneIds = []) {
 
   // Update quest progress based on game state
   useEffect(() => {
+    if (!gameState || typeof gameState !== 'object') return;
     setQuestProgress((prev) => {
       let updated = { ...prev };
       let changed = false;
 
-      QUESTS.forEach((quest) => {
+      (Array.isArray(QUESTS) ? QUESTS : []).forEach((quest) => {
+        if (!quest?.id || !quest?.type || !quest?.target) return;
         const qp = updated[quest.id];
         if (!qp || qp.completed || qp.claimed) return;
 
@@ -49,64 +53,69 @@ export default function useQuests(gameState, unlockedZoneIds = []) {
         // kill_enemy: killed specific enemy type in specific zone
         if (quest.type === "kill_enemy") {
           const zoneData = gameState.zoneProgress?.[quest.zoneId];
-          const killCount = zoneData?.killCount || 0;
+          const killCount = typeof zoneData?.killCount === 'number' ? zoneData.killCount : 0;
           newProgress = Math.min(killCount, quest.target);
         }
 
         // kill_zone: killed enemies in specific zone (for current run)
         if (quest.type === "kill_zone") {
           const zoneData = gameState.zoneProgress?.[quest.zoneId];
-          const killCount = zoneData?.killCount || 0;
+          const killCount = typeof zoneData?.killCount === 'number' ? zoneData.killCount : 0;
           newProgress = Math.min(killCount, quest.target);
         }
 
         // kill_any: killed any enemies (global)
         if (quest.type === "kill_any") {
-          newProgress = Math.min(gameState.totalKills || 0, quest.target);
+          const totalKills = typeof gameState.totalKills === 'number' ? gameState.totalKills : 0;
+          newProgress = Math.min(totalKills, quest.target);
         }
 
-        // kill_boss_zone: killed boss in specific zone (check isBossCheck + zone)
+        // kill_boss_zone: killed boss in specific zone
         if (quest.type === "kill_boss_zone") {
-          // Track boss kills in zone — simplified: if player reached higher stages in zone, assume boss was killed
           const zoneData = gameState.zoneProgress?.[quest.zoneId];
-          const bossKilled = (zoneData?.highestStage || 0) > 0 ? 1 : 0;
+          const bossKilled = (typeof zoneData?.highestStage === 'number' && zoneData.highestStage > 0) ? 1 : 0;
           newProgress = Math.min(bossKilled, quest.target);
         }
 
         // reach_stage: reached specific stage globally or in zone
         if (quest.type === "reach_stage") {
+          const targetStage = typeof quest.target === 'number' ? quest.target : 0;
           const stageReached = quest.zoneId
-            ? (gameState.zoneProgress?.[quest.zoneId]?.highestStage || 0) >= quest.target
-            : (gameState.highestStage || 0) >= quest.target;
+            ? (typeof gameState.zoneProgress?.[quest.zoneId]?.highestStage === 'number' && gameState.zoneProgress[quest.zoneId].highestStage >= targetStage)
+            : (typeof gameState.highestStage === 'number' && gameState.highestStage >= targetStage);
           newProgress = stageReached ? quest.target : qp.progress;
         }
 
-        // zone_souls: total souls earned lifetime (via prestige accumulation)
+        // zone_souls: total souls earned lifetime
         if (quest.type === "zone_souls") {
-          const totalSoulsEarned = (gameState.souls || 0) + Math.floor(Math.sqrt(gameState.totalCoinsEarned || 0) / 10);
+          const souls = typeof gameState.souls === 'number' ? gameState.souls : 0;
+          const coinsEarned = typeof gameState.totalCoinsEarned === 'number' ? gameState.totalCoinsEarned : 0;
+          const totalSoulsEarned = souls + Math.floor(Math.sqrt(coinsEarned) / 10);
           newProgress = Math.min(totalSoulsEarned, quest.target);
         }
 
         // prestige: prestige count milestone
         if (quest.type === "prestige") {
-          newProgress = Math.min(gameState.prestigeCount || 0, quest.target);
+          const prestigeCount = typeof gameState.prestigeCount === 'number' ? gameState.prestigeCount : 0;
+          newProgress = Math.min(prestigeCount, quest.target);
         }
 
         // spend_sp: slayer points spent — track via skill unlocks as proxy
         if (quest.type === "spend_sp") {
-          const spUnlocked = (gameState.unlockedSkills || []).length;
+          const spUnlocked = Array.isArray(gameState.unlockedSkills) ? gameState.unlockedSkills.length : 0;
           newProgress = Math.min(spUnlocked, quest.target);
         }
 
         // unlock_zone: zone unlocked
         if (quest.type === "unlock_zone") {
-          const isUnlocked = (unlockedZoneIds || []).includes(quest.zoneId) ? 1 : 0;
+          const isUnlocked = (Array.isArray(unlockedZoneIds) ? unlockedZoneIds : []).includes(quest.zoneId) ? 1 : 0;
           newProgress = Math.min(isUnlocked, quest.target);
         }
 
         // earn_coins: earned coins (global)
         if (quest.type === "earn_coins") {
-          newProgress = Math.min(gameState.totalCoinsEarned || 0, quest.target);
+          const totalCoinsEarned = typeof gameState.totalCoinsEarned === 'number' ? gameState.totalCoinsEarned : 0;
+          newProgress = Math.min(totalCoinsEarned, quest.target);
         }
 
         // Check completion

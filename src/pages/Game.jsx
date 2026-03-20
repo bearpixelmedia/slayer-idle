@@ -242,7 +242,6 @@ export default function Game() {
         
         <div className="flex flex-1 overflow-hidden relative">
 
-          {/* Game fills full area */}
           {!showRunner ? (
             <GameCanvas
               state={state}
@@ -311,6 +310,7 @@ export default function Game() {
             </div>
           )}
         </div>
+      </div>
       </div>
 
       <AchievementToast achievement={newUnlock} />

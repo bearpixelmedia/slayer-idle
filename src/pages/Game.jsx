@@ -242,8 +242,7 @@ export default function Game() {
         
         <div className="flex flex-1 overflow-hidden relative">
 
-        {/* Game fills full area */}
-        <div className="flex-1 overflow-hidden relative">
+          {/* Game fills full area */}
           {!showRunner ? (
             <GameCanvas
               state={state}

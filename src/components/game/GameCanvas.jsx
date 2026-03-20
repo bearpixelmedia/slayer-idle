@@ -25,84 +25,171 @@ function HealthBar({ current, max }) {
 function GroundLayer({ stageColor }) {
   return (
     <div className="absolute inset-0 overflow-hidden">
-      {/* Far background - Sky/distant mountains (slowest) */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/30" />
+      {/* Atmosphere haze - top to bottom gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/40" />
       
-      {/* Distant mountains layer */}
-      <div className="absolute bottom-1/2 left-0 right-0 h-1/3 animate-ground-scroll" style={{ animationDuration: "20s", opacity: 0.15 }}>
-        <div className="flex whitespace-nowrap w-[200%] h-full items-center">
-          {Array.from({ length: 30 }).map((_, i) => (
+      {/* Distant fog layer */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/5 to-transparent" style={{ opacity: 0.4 }} />
+
+      {/* Far distant mountains layer 1 - Very slow */}
+      <div className="absolute top-12 left-0 right-0 h-1/3 animate-ground-scroll" style={{ animationDuration: "60s", opacity: 0.08 }}>
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end">
+          {Array.from({ length: 20 }).map((_, i) => (
             <div
-              key={`distant-${i}`}
-              className="flex-shrink-0 h-full relative"
+              key={`mountain-far-${i}`}
+              className="flex-shrink-0"
               style={{
-                width: "120px",
-                background: `linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.3) 100%)`,
-                clipPath: `polygon(20% 100%, 0% 60%, 30% 30%, 60% 40%, 100% 50%, 80% 100%)`,
+                width: "200px",
+                height: `${180 + (i % 3) * 40}px`,
+                background: `linear-gradient(180deg, rgba(20,10,0,0.15) 0%, rgba(10,5,0,0.35) 100%)`,
+                clipPath: `polygon(${15 + (i % 4) * 5}% 0%, 0% 70%, ${20 + (i % 3) * 10}% 100%, ${80 + (i % 3) * 10}% 100%, 100% 70%, ${85 - (i % 4) * 5}% 0%)`,
               }}
             />
           ))}
         </div>
       </div>
 
-      {/* Mid-distance hills/terrain */}
-      <div className="absolute bottom-1/3 left-0 right-0 h-1/4 animate-ground-scroll" style={{ animationDuration: "12s", opacity: 0.3 }}>
+      {/* Far distant mountains layer 2 */}
+      <div className="absolute top-20 left-0 right-0 h-1/3 animate-ground-scroll" style={{ animationDuration: "45s", opacity: 0.12 }}>
         <div className="flex whitespace-nowrap w-[200%] h-full items-end">
           {Array.from({ length: 25 }).map((_, i) => (
+            <div
+              key={`mountain-mid-far-${i}`}
+              className="flex-shrink-0"
+              style={{
+                width: "140px",
+                height: `${120 + (i % 4) * 60}px`,
+                background: `linear-gradient(180deg, rgba(30,20,10,0.2) 0%, rgba(20,12,5,0.4) 100%)`,
+                clipPath: `polygon(${20 + (i % 3) * 8}% 0%, 0% 65%, ${25 + (i % 4) * 12}% 100%, ${75 + (i % 4) * 12}% 100%, 100% 65%, ${80 - (i % 3) * 8}% 0%)`,
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Mid-distance mountains layer 3 */}
+      <div className="absolute top-1/4 left-0 right-0 h-2/5 animate-ground-scroll" style={{ animationDuration: "30s", opacity: 0.18 }}>
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end">
+          {Array.from({ length: 30 }).map((_, i) => (
+            <div
+              key={`peak-${i}`}
+              className="flex-shrink-0"
+              style={{
+                width: "110px",
+                height: `${100 + (i % 5) * 80}px`,
+                background: `linear-gradient(180deg, rgba(40,30,20,0.25) 0%, rgba(25,18,10,0.45) 100%)`,
+                clipPath: `polygon(${25 + (i % 4) * 10}% 0%, 0% 60%, ${30 + (i % 5) * 15}% 100%, ${70 + (i % 5) * 15}% 100%, 100% 60%, ${75 - (i % 4) * 10}% 0%)`,
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Hills with varied terrain */}
+      <div className="absolute top-1/2 left-0 right-0 h-1/3 animate-ground-scroll" style={{ animationDuration: "18s", opacity: 0.28 }}>
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end">
+          {Array.from({ length: 40 }).map((_, i) => (
             <div
               key={`hill-${i}`}
               className="flex-shrink-0"
               style={{
-                width: "80px",
-                height: `${40 + (i % 5) * 20}px`,
-                background: `linear-gradient(180deg, rgba(60,40,20,0.4) 0%, rgba(30,20,10,0.6) 100%)`,
-                borderRadius: "50% 50% 0 0",
+                width: "70px",
+                height: `${50 + (i % 6) * 35}px`,
+                background: `linear-gradient(180deg, rgba(50,40,25,0.35) 0%, rgba(35,28,18,0.55) 100%)`,
+                borderRadius: "50% 50% 0 0 / 80% 80% 0 0",
               }}
             />
           ))}
         </div>
       </div>
 
-      {/* Rocks and stones mid layer */}
-      <div className="absolute bottom-24 left-0 right-0 h-20 animate-ground-scroll" style={{ animationDuration: "8s", opacity: 0.5 }}>
-        <div className="flex whitespace-nowrap w-[200%]">
-          {Array.from({ length: 40 }).map((_, i) => (
-            <span key={`rock-${i}`} className="inline-block mx-2 text-muted-foreground/50 text-3xl">
-              {["🪨", "🪨", "🌿"][i % 3]}
+      {/* Large rock formations */}
+      <div className="absolute bottom-40 left-0 right-0 h-28 animate-ground-scroll" style={{ animationDuration: "12s", opacity: 0.35 }}>
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end">
+          {Array.from({ length: 45 }).map((_, i) => (
+            <div
+              key={`rock-formation-${i}`}
+              className="flex-shrink-0"
+              style={{
+                width: `${45 + (i % 5) * 15}px`,
+                height: `${30 + (i % 7) * 25}px`,
+                background: `linear-gradient(135deg, rgba(60,45,30,0.5) 0%, rgba(40,30,20,0.7) 100%)`,
+                borderRadius: `${15 + (i % 3) * 10}%`,
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Smaller rocks and pebbles layer */}
+      <div className="absolute bottom-32 left-0 right-0 h-16 animate-ground-scroll" style={{ animationDuration: "8s", opacity: 0.4 }}>
+        <div className="flex whitespace-nowrap w-[200%] h-full items-center gap-1">
+          {Array.from({ length: 60 }).map((_, i) => (
+            <span key={`pebble-${i}`} className="inline-block text-muted-foreground/45 text-2xl">
+              {["🪨", "🪨", "🪨", "🌿", "🍃"][i % 5]}
             </span>
           ))}
         </div>
       </div>
 
-      {/* Foreground floor with shadow */}
-      <div className="absolute bottom-20 left-0 right-0 h-20 flex flex-col">
-        {/* Main floor */}
-        <div className="flex-1 bg-gradient-to-b from-amber-900/40 to-amber-950/60 border-t-2 border-amber-800/40 animate-ground-scroll" style={{ animationDuration: "4s" }}>
+      {/* Ground vegetation layer */}
+      <div className="absolute bottom-28 left-0 right-0 h-12 animate-ground-scroll" style={{ animationDuration: "6s", opacity: 0.3 }}>
+        <div className="flex whitespace-nowrap w-[200%]">
+          {Array.from({ length: 70 }).map((_, i) => (
+            <span key={`plant-${i}`} className="inline-block mx-0.5 text-green-700/30 text-xl">
+              {["🌿", "🍃", "🌱"][i % 3]}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Main terrain floor layer */}
+      <div className="absolute bottom-20 left-0 right-0 h-24">
+        {/* Upper earth gradient */}
+        <div className="flex-1 bg-gradient-to-b from-amber-950/50 via-amber-950/60 to-amber-950/70 border-t-4 border-amber-800/50 animate-ground-scroll" style={{ animationDuration: "5s", height: "12px" }}>
           <div className="flex whitespace-nowrap w-[200%] h-full items-center">
-            {Array.from({ length: 50 }).map((_, i) => (
-              <span key={`floor-${i}`} className="inline-block mx-1 text-amber-700/60 text-2xl font-bold">
-                ▮
+            {Array.from({ length: 80 }).map((_, i) => (
+              <span key={`earth-${i}`} className="inline-block mx-0.5 text-amber-900 text-sm font-bold">
+                ▬
               </span>
             ))}
           </div>
         </div>
-        {/* Floor shadow/depth */}
-        <div className="h-2 bg-gradient-to-b from-black/40 to-black/70" />
+
+        {/* Main floor base */}
+        <div className="flex-1 bg-gradient-to-b from-amber-950/60 to-amber-950/80" style={{ height: "8px" }} />
+
+        {/* Floor detail texture */}
+        <div className="flex-1 bg-gradient-to-b from-black/30 to-black/50 animate-ground-scroll" style={{ animationDuration: "4s", height: "6px" }}>
+          <div className="flex whitespace-nowrap w-[200%] h-full items-center">
+            {Array.from({ length: 100 }).map((_, i) => (
+              <span key={`texture-${i}`} className="inline-block text-foreground/25 text-xs">
+                ▪
+              </span>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Foreground ground detail (fastest parallax) */}
-      <div className="absolute bottom-20 left-0 right-0 h-12 animate-ground-scroll" style={{ animationDuration: "3s", opacity: 0.6 }}>
+      <div className="absolute bottom-20 left-0 right-0 h-8 animate-ground-scroll" style={{ animationDuration: "3s", opacity: 0.5 }}>
         <div className="flex whitespace-nowrap w-[200%] h-full items-center">
-          {Array.from({ length: 60 }).map((_, i) => (
-            <span key={`detail-${i}`} className="inline-block mx-0.5 text-foreground/40 text-lg">
-              {["▪", "·", "▪"][i % 3]}
+          {Array.from({ length: 120 }).map((_, i) => (
+            <span key={`detail-${i}`} className="inline-block text-foreground/35 text-xs font-bold">
+              {["▪", "·", "▪", "▫"][i % 4]}
             </span>
           ))}
         </div>
       </div>
 
-      {/* Dark vignette overlay for depth */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/50 pointer-events-none" />
+      {/* Deep shadow/depth overlay */}
+      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/70 to-transparent" />
+
+      {/* Light source from top - cinematic lighting */}
+      <div className="absolute top-0 left-0 right-0 h-1/4 bg-gradient-to-b from-black/10 via-black/5 to-transparent pointer-events-none" />
+
+      {/* Vignette edges for depth perception */}
+      <div className="absolute inset-0 shadow-inner pointer-events-none" style={{ boxShadow: "inset 0 0 60px rgba(0,0,0,0.6)" }} />
     </div>
   );
 }

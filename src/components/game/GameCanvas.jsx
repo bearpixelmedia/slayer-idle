@@ -122,6 +122,8 @@ export default function GameCanvas({
         ))}
       </div>
 
+      <GroundLayer stageColor={stage.color} />
+
       {/* Player character */}
       <div className="absolute bottom-20 left-[15%] sm:left-[20%] flex flex-col items-center gap-2">
         <div className="w-20 h-1.5 bg-muted rounded-full overflow-hidden border border-border/50">
@@ -322,8 +324,6 @@ export default function GameCanvas({
 
       {/* Particle effects */}
       <ParticleEffect particles={particles} />
-
-      <GroundLayer stageColor={stage.color} />
 
       {/* Stage indicator mobile */}
       <div className="sm:hidden absolute top-2 left-2 flex items-center gap-1.5 px-2 py-1 rounded-full bg-black/40 backdrop-blur-sm border border-white/10">

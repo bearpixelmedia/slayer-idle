@@ -242,8 +242,7 @@ export default function Game() {
         
         <div className="flex-1 overflow-hidden relative w-full">
           {!showRunner ? (
-            <div className="w-full h-full flex flex-col">
-              <GameCanvas
+            <GameCanvas
               state={state}
               enemyDying={enemyDying}
               floatingCoins={floatingCoins}
@@ -254,8 +253,7 @@ export default function Game() {
               onTap={handleTap}
               enemyHit={enemyHit}
               weaponMode={currentWeapon}
-              />
-            </div>
+            />
           ) : (
             <RunnerCanvas
               playerY={runner.playerY}

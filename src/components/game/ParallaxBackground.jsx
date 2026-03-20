@@ -384,7 +384,7 @@ export default function ParallaxBackground() {
 
       {/* Layer 16.5: Mid bushes - speed 0.86 */}
       {createLayer("bushes-mid", 0.86, 65, 26, 0.80, (
-        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.5">
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0">
           {Array.from({ length: 45 }).map((_, i) => {
             const scale = 0.9 + (i % 3) * 0.15;
             return (

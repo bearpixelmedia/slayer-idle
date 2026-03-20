@@ -207,7 +207,7 @@ export default function GameSettings() {
                 />
                 <SettingGroup
                   title="Stage 1 - Cave"
-                  items={[
+                  imageItems={[
                     { id: "enemy_cave_1", label: "Bat", defaultValue: "🦇" },
                     { id: "enemy_cave_2", label: "Spider", defaultValue: "🕷️" },
                     { id: "enemy_cave_3", label: "Troll", defaultValue: "👹" },

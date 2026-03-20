@@ -12,6 +12,7 @@ import { MATERIAL_DEFS, CRAFT_RECIPES } from "@/lib/crafting";
 import { MINION_TYPES, MISSION_DEFS } from "@/lib/minions";
 import { QUESTS } from "@/lib/quests";
 import { VILLAGE_BUILDINGS } from "@/lib/village";
+import SettingImageUpload from "@/components/game/SettingImageUpload";
 
 const STORAGE_KEY = "game_settings_config";
 

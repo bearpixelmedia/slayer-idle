@@ -327,37 +327,61 @@ export default function ParallaxBackground() {
         </div>
       ))}
 
-      {/* Layer 16: Close grass detail - speed 0.88 */}
-      {createLayer("grass-near", 0.88, 75, 20, 0.9, (
-        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.5">
-          {Array.from({ length: 100 }).map((_, i) => (
+      {/* Layer 19: Stone/rocks - speed 0.93 */}
+      {createLayer("rocks", 0.93, 72, 20, 0.87, (
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.8">
+          {Array.from({ length: 70 }).map((_, i) => {
+            const size = 8 + (i % 3) * 6;
+            return (
+              <svg key={`rock-${i}`} viewBox="0 0 30 30" className="flex-shrink-0" style={{ width: `${size}px`, height: `${size}px`, opacity: 0.8 + (i % 2) * 0.15 }}>
+                <circle cx="15" cy="15" r="14" fill={`rgba(${100 + (i % 3) * 10}, ${100 + (i % 3) * 10}, ${95 + (i % 3) * 10}, 0.85)`} />
+                <circle cx="8" cy="10" r="5" fill={`rgba(${120 + (i % 3) * 10}, ${120 + (i % 3) * 10}, ${115 + (i % 3) * 10}, 0.7)`} />
+              </svg>
+            );
+          })}
+        </div>
+      ))}
+
+      {/* Layer 20: Close grass detail - speed 0.91 */}
+      {createLayer("grass-near", 0.91, 76, 20, 0.9, (
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.4">
+          {Array.from({ length: 130 }).map((_, i) => (
             <div key={`grass-n-${i}`} className="flex-1 h-full bg-gradient-to-b from-green-800 via-green-900 to-green-950 border-l border-green-700/40" style={{ opacity: 0.88 + (i % 2) * 0.12 }} />
           ))}
         </div>
       ))}
 
-      {/* Layer 17: Very close grass - speed 0.95 */}
+      {/* Layer 21: Very close grass - speed 0.95 */}
       {createLayer("grass-very-close", 0.95, 82, 18, 0.92, (
         <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0">
-          {Array.from({ length: 150 }).map((_, i) => (
+          {Array.from({ length: 160 }).map((_, i) => (
             <div key={`grass-vc-${i}`} className="flex-1 h-full bg-gradient-to-b from-green-700 via-green-850 to-yellow-850 border-l border-green-700/60" style={{ opacity: 0.9 + (i % 2) * 0.1 }} />
           ))}
         </div>
       ))}
 
-      {/* Layer 18: Foreground grass - speed 1.0 (fastest) */}
-      {createLayer("grass-foreground", 1.0, 85, 15, 0.95, (
+      {/* Layer 22: Foreground grass - speed 0.98 */}
+      {createLayer("grass-foreground", 0.98, 85, 15, 0.95, (
         <div className="flex whitespace-nowrap w-[200%] h-full items-end">
-          {Array.from({ length: 180 }).map((_, i) => (
+          {Array.from({ length: 200 }).map((_, i) => (
             <div key={`grass-fg-${i}`} className="flex-1 h-full bg-gradient-to-b from-green-600 via-green-700 to-yellow-700 border-l border-green-600/70" style={{ opacity: 0.92 + (i % 2) * 0.08 }} />
           ))}
         </div>
       ))}
 
-      {/* Layer 19: Ground base - static */}
+      {/* Layer 23: Ultra close foreground - speed 1.0 (fastest) */}
+      {createLayer("ultra-foreground", 1.0, 88, 12, 0.97, (
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end">
+          {Array.from({ length: 220 }).map((_, i) => (
+            <div key={`ultra-fg-${i}`} className="flex-1 h-full bg-gradient-to-b from-green-500 via-green-600 to-yellow-600 border-l border-green-500/80" style={{ opacity: 0.94 + (i % 2) * 0.06 }} />
+          ))}
+        </div>
+      ))}
+
+      {/* Layer 24: Ground base - static */}
       <div className="absolute bottom-0 left-0 right-0 w-full h-20 bg-gradient-to-b from-green-700 via-green-900 to-yellow-900 pointer-events-none" />
 
-      {/* Layer 20: Vignette overlay - static */}
+      {/* Layer 25: Vignette overlay - static */}
       <div className="absolute inset-0 pointer-events-none w-full h-full" style={{
         boxShadow: "inset 0 0 150px rgba(0,0,0,0.6), inset 0 0 200px rgba(0,0,0,0.3)"
       }} />

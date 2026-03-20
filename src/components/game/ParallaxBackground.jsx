@@ -45,7 +45,7 @@ export default function ParallaxBackground() {
   );
 
   return (
-    <div className="absolute inset-0 overflow-hidden w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-sky-500">
+    <div className="absolute inset-0 overflow-hidden w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-green-900">
       {/* Layer 0: Sky - static anchor (speed 0) */}
       <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-sky-500 pointer-events-none" />
 

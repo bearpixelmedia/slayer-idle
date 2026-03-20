@@ -3,6 +3,7 @@ import { STAGES, ENEMY_EMOJIS } from "@/lib/gameData";
 import { formatNumber } from "@/lib/formatNumber";
 import { motion, AnimatePresence } from "framer-motion";
 import { getBossForStage, isBossShieldActive } from "@/lib/bosses";
+import EnemyRenderer from "./EnemyRenderer";
 
 function HealthBar({ current, max }) {
   const pct = Math.max(0, (current / max) * 100);

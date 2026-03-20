@@ -100,12 +100,19 @@ export default function ParallaxBackground() {
       {/* Layer 4: Far mountains - speed 0.08 */}
       {createLayer("mountains-far", 0.08, 12, 30, 0.45, (
         <div className="flex whitespace-nowrap w-[200%] h-full items-end">
-          {Array.from({ length: 14 }).map((_, i) => (
-            <svg key={`mtn-far-${i}`} viewBox="0 0 150 220" className="flex-shrink-0" style={{ width: "150px", height: "100%" }}>
-              <polygon points="75,15 0,220 150,220" fill="rgba(42, 82, 135, 0.55)" />
-              <polygon points="75,60 20,220 130,220" fill="rgba(32, 72, 125, 0.65)" />
-            </svg>
-          ))}
+          {Array.from({ length: 14 }).map((_, i) => {
+            const peak1 = 8 + (i * 11) % 25;
+            const peak2 = 35 + (i * 17) % 30;
+            const peak3 = 50 + (i * 19) % 35;
+            return (
+              <svg key={`mtn-far-${i}`} viewBox="0 0 150 220" className="flex-shrink-0" style={{ width: "150px", height: "100%" }}>
+                <polygon points={`75,${peak1} 0,220 150,220`} fill="rgba(42, 82, 135, 0.55)" />
+                <polygon points={`40,${peak2} 0,220 80,220`} fill="rgba(32, 72, 125, 0.65)" />
+                <polygon points={`110,${peak3} 70,220 150,220`} fill="rgba(32, 72, 125, 0.65)" />
+                <polygon points={`75,${peak2 + 10} 30,220 120,220`} fill="rgba(22, 62, 115, 0.5)" />
+              </svg>
+            );
+          })}
         </div>
       ))}
 

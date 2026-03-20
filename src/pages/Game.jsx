@@ -311,7 +311,6 @@ export default function Game() {
           )}
         </div>
       </div>
-      </div>
 
       <AchievementToast achievement={newUnlock} />
       <OfflineEarningsModal

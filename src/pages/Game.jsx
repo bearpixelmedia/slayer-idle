@@ -15,6 +15,7 @@ import WeaponMode from "@/components/game/WeaponMode";
 import ActiveBuffsDisplay from "@/components/game/ActiveBuffsDisplay";
 import MenuPanel from "@/components/game/MenuPanel";
 import GameTabs from "@/components/game/GameTabs";
+import AbilityHUD from "@/components/game/AbilityHUD";
 
 function loadSavedMultipliers() {
   try {

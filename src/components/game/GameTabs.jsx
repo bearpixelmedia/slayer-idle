@@ -10,6 +10,9 @@ import ZoneSelector from "@/components/game/ZoneSelector";
 import AbilityBar from "@/components/game/AbilityBar";
 
 export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestige, onRevive, unlockedIds, damageMultiplier, offlineMultiplier, onSwitchZone, onUnlockZone, onClaimQuestReward, onRepeatQuest, questProgress, onUpgradeBuilding, abilities, onActivateAbility, weaponMode, activeTab, onTabChange }) {
+  if (!state || typeof state !== 'object') {
+    return <div className="p-4 text-muted-foreground text-xs">Loading game state...</div>;
+  }
 
   return (
     <Tabs value={activeTab || "combat"} onValueChange={onTabChange} className="w-full">

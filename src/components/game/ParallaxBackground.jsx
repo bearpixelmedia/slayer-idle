@@ -263,7 +263,7 @@ export default function ParallaxBackground() {
 
       {/* Layer 14: Very large foreground trees - speed 0.72 */}
       {createLayer("trees-very-front", 0.72, 25, 52, 0.92, (
-        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.5">
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0">
           {Array.from({ length: 35 }).map((_, i) => {
             const offset = (i * 17) % 3;
             return (

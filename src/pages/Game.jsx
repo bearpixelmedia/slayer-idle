@@ -292,7 +292,7 @@ export default function Game() {
                   onActivateAbility={activateAbility}
                   weaponMode={currentWeapon}
                   onRunnerClick={() => setShowRunner(true)}
-                  onClose={() => {}}
+                  onClose={() => setMenuOpen(false)}
                 />
               </div>
             </div>

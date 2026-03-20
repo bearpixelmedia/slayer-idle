@@ -26,7 +26,7 @@ function GroundLayer({ stageColor }) {
   return (
     <div className="absolute bottom-0 left-0 right-0 h-80 overflow-hidden">
       {/* Back ground layer (slowest parallax) */}
-      <div className="absolute bottom-24 left-0 right-0 h-12 animate-ground-scroll" style={{ opacity: 0.3 }}>
+      <div className="absolute bottom-32 left-0 right-0 h-12 animate-ground-scroll" style={{ opacity: 0.3 }}>
         <div className="flex whitespace-nowrap w-[200%]">
           {Array.from({ length: 40 }).map((_, i) => (
             <span key={`bg-${i}`} className="inline-block mx-2 text-muted-foreground/30 text-lg">
@@ -37,7 +37,7 @@ function GroundLayer({ stageColor }) {
       </div>
 
       {/* Mid ground layer */}
-      <div className="absolute bottom-12 left-0 right-0 h-16 animate-ground-scroll" style={{ animationDuration: "3s", opacity: 0.5 }}>
+      <div className="absolute bottom-20 left-0 right-0 h-16 animate-ground-scroll" style={{ animationDuration: "3s", opacity: 0.5 }}>
         <div className="flex whitespace-nowrap w-[200%]">
           {Array.from({ length: 50 }).map((_, i) => (
             <span key={`mid-${i}`} className="inline-block mx-1 text-muted-foreground/40 text-2xl">

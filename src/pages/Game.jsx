@@ -4,18 +4,14 @@ import useAchievements from "@/hooks/useAchievements";
 import useQuests from "@/hooks/useQuests";
 import useRunnerState from "@/hooks/useRunnerState";
 import { computeAchievementMultipliers } from "@/lib/achievements";
-import StatsBar from "@/components/game/StatsBar";
 import GameCanvas from "@/components/game/GameCanvas";
 import RunnerCanvas from "@/components/game/RunnerCanvas";
 import AchievementToast from "@/components/game/AchievementToast";
 import OfflineEarningsModal from "@/components/game/OfflineEarningsModal";
 import DeathModal from "@/components/game/DeathModal";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import WeaponMode from "@/components/game/WeaponMode";
-import ActiveBuffsDisplay from "@/components/game/ActiveBuffsDisplay";
-import MenuPanel from "@/components/game/MenuPanel";
 import GameTabs from "@/components/game/GameTabs";
-import AbilityHUD from "@/components/game/AbilityHUD";
+import HUDOverlay from "@/components/game/HUDOverlay";
 
 function loadSavedMultipliers() {
   try {

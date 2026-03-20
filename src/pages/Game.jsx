@@ -284,8 +284,8 @@ export default function Game() {
           </div>
         </div>
 
-        {/* HUD Menu Panel - Always visible on right side */}
-        {!showRunner && (
+        {/* HUD Menu Panel - Toggle */}
+        {!showRunner && hudMenuOpen && (
           <div className="w-96 flex-shrink-0 border-l border-border overflow-hidden">
             <MenuPanel
               state={state}
@@ -306,9 +306,19 @@ export default function Game() {
               onActivateAbility={activateAbility}
               weaponMode={currentWeapon}
               onRunnerClick={() => setShowRunner(true)}
-              onClose={() => {}}
+              onClose={() => setHudMenuOpen(false)}
             />
           </div>
+        )}
+
+        {/* Menu toggle button */}
+        {!showRunner && !hudMenuOpen && (
+          <button
+            onClick={() => setHudMenuOpen(true)}
+            className="fixed right-4 top-1/2 -translate-y-1/2 z-40 w-12 h-12 rounded-full bg-primary hover:bg-primary/90 flex items-center justify-center text-2xl transition-all active:scale-95"
+          >
+            💼
+          </button>
         )}
       </div>
 

@@ -75,7 +75,7 @@ export default function ParallaxBackground() {
       </div>
 
       {/* Foliage/trees - fastest parallax */}
-      <div className="absolute bottom-1/5 left-0 right-0 w-full h-1/3 animate-ground-scroll" style={{ animationDuration: "12s", opacity: 1 }}>
+      <div className="absolute bottom-8 left-0 right-0 w-full h-1/4 animate-ground-scroll" style={{ animationDuration: "12s", opacity: 1 }}>
         <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-2">
           {Array.from({ length: 35 }).map((_, i) => (
             <div
@@ -90,8 +90,8 @@ export default function ParallaxBackground() {
                 <circle cx="28" cy="20" r="10" fill="rgba(25, 120, 25, 0.85)" />
                 <circle cx="20" cy="30" r="8" fill="rgba(30, 130, 30, 0.8)" />
               </svg>
-              {/* Tree trunk - shorter to float above bushes */}
-              <div className="w-2 h-16 bg-amber-900" />
+              {/* Tree trunk */}
+              <div className="w-2 flex-1 bg-amber-900" />
             </div>
           ))}
         </div>

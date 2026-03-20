@@ -287,7 +287,7 @@ export default function Game() {
 
         {/* HUD Menu Panel - Toggle */}
         {!showRunner && hudMenuOpen && (
-          <div className="w-96 flex-shrink-0 border-l border-border overflow-hidden z-40">
+          <div className="w-96 flex-shrink-0 border-l border-border overflow-hidden z-40 mt-16">
             <MenuPanel
               state={state}
               onBuyUpgrade={buyUpgrade}

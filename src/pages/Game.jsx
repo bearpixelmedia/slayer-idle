@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import useGameState from "@/hooks/useGameState";
 import useAchievements from "@/hooks/useAchievements";
 import useQuests from "@/hooks/useQuests";

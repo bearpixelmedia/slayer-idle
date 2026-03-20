@@ -22,6 +22,8 @@ export default function MenuPanel({
   weaponMode,
   onRunnerClick,
 }) {
+  const [activeTab, setActiveTab] = React.useState("combat");
+
   return (
     <div className="w-96 flex flex-col" style={{
       background: "linear-gradient(135deg, #8B7355 0%, #A0826D 100%)",

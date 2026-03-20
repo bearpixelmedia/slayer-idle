@@ -34,9 +34,9 @@ export default function ZoneSelector({
 
           return (
             <motion.button
-              key={zone?.id}
-              onClick={() => isUnlocked ? onSwitchZone(zone?.id) : onUnlockZone(zone?.id)}
-              className={`relative w-full flex items-center gap-3 p-3 rounded-lg border transition-all ${
+               key={zone?.id}
+               onClick={() => isUnlocked ? onSwitchZone(zone?.id) : onUnlockZone(zone?.id)}
+               className={`relative w-full flex items-center gap-2 p-2 rounded-lg border transition-all ${
                 isActive
                   ? "bg-primary/20 border-primary/50"
                   : isUnlocked

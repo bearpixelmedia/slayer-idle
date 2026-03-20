@@ -22,7 +22,7 @@ function SkillCard({ skill, unlocked, canUnlock, onUnlock }) {
   return (
     <motion.button
       onClick={() => canUnlock && !unlocked && onUnlock(skill.id)}
-      className={`relative flex flex-col items-center p-3 rounded-lg border transition-all ${
+      className={`relative flex flex-col items-center p-2 rounded-lg border transition-all ${
         unlocked
           ? `${borderColor} opacity-100`
           : canUnlock

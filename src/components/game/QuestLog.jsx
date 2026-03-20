@@ -16,7 +16,7 @@ function QuestCard({ quest, questProgress, onClaim, onRepeat }) {
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      className={`p-3 rounded-lg border transition-all ${
+      className={`p-2 rounded-lg border transition-all ${
         claimed
           ? "bg-green-500/10 border-green-500/30"
           : completed
@@ -26,22 +26,22 @@ function QuestCard({ quest, questProgress, onClaim, onRepeat }) {
     >
       <div className="flex items-start gap-3">
         {/* Status icon */}
-        <div className="flex-shrink-0 mt-0.5">
-          {claimed ? (
-            <CheckCircle2 className="w-5 h-5 text-green-500" />
-          ) : completed ? (
-            <div className="w-5 h-5 rounded-full bg-primary/60 flex items-center justify-center">
-              <span className="text-[8px] font-bold">✓</span>
-            </div>
-          ) : (
-            <div className="w-5 h-5 rounded-full border-2 border-muted-foreground/40" />
-          )}
-        </div>
+         <div className="flex-shrink-0 mt-0">
+           {claimed ? (
+             <CheckCircle2 className="w-4 h-4 text-green-500" />
+           ) : completed ? (
+             <div className="w-4 h-4 rounded-full bg-primary/60 flex items-center justify-center">
+               <span className="text-[6px] font-bold">✓</span>
+             </div>
+           ) : (
+             <div className="w-4 h-4 rounded-full border-2 border-muted-foreground/40" />
+           )}
+         </div>
 
-        {/* Quest info */}
-        <div className="flex-1 min-w-0">
-          <h4 className="font-pixel text-[9px] text-foreground mb-0.5">{quest.title}</h4>
-          <p className="text-[8px] text-muted-foreground mb-2">{quest.description}</p>
+         {/* Quest info */}
+         <div className="flex-1 min-w-0">
+           <h4 className="font-pixel text-[8px] text-foreground mb-0.5">{quest.title}</h4>
+           <p className="text-[7px] text-muted-foreground mb-1">{quest.description}</p>
 
           {/* Progress bar */}
           <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden mb-1">

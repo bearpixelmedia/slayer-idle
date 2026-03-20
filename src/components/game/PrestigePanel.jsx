@@ -22,11 +22,11 @@ export default function PrestigePanel({ canPrestige, soulsOnPrestige, slayerPoin
       <div className={`p-3 rounded-xl bg-gradient-to-r from-accent/20 to-purple-900/20 ${HUD_THEME.panel.border}`}>
         <div className="flex items-center justify-between">
           <div>
-            <h3 className={`${HUD_THEME.text.label} text-accent mb-1`}>👻 PRESTIGE AVAILABLE</h3>
-            <p className="text-xs text-muted-foreground">
+            <h3 className={`${HUD_THEME.text.small} text-accent mb-0.5`}>👻 PRESTIGE AVAILABLE</h3>
+            <p className="text-[8px] text-muted-foreground">
               Reset progress and gain <span className="text-accent font-bold">+{formatNumber(soulsOnPrestige)} souls</span>
             </p>
-            <p className="text-[10px] text-muted-foreground/60 mt-0.5">
+            <p className="text-[7px] text-muted-foreground/60 mt-0.5">
               Each soul gives +5% to all earnings permanently
             </p>
           </div>

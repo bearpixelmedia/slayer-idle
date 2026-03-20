@@ -13,7 +13,7 @@ const CATEGORIES = [
 
 function AchievementRow({ achievement, unlocked }) {
   return (
-    <div className={`flex items-center gap-3 p-2.5 rounded-lg border transition-all ${
+    <div className={`flex items-center gap-2 p-1.5 rounded-lg border transition-all ${
       unlocked
         ? "bg-primary/10 border-primary/30"
         : "bg-muted/20 border-border/20 opacity-50"

@@ -14,7 +14,7 @@ function BuildingCard({ building, level, state, onUpgrade, maxLevel }) {
   return (
     <motion.button
       onClick={() => canAfford && onUpgrade(building.id)}
-      className={`w-full flex items-start gap-3 p-3 rounded-lg border transition-all ${
+      className={`w-full flex items-start gap-2 p-2 rounded-lg border transition-all ${
         !unlocked
           ? "bg-muted/20 border-border/30 opacity-50 cursor-not-allowed"
           : isMaxed

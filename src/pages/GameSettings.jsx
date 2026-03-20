@@ -9,7 +9,7 @@ import { ACHIEVEMENTS } from "@/lib/achievements";
 import { BOSSES } from "@/lib/bosses";
 import { BUFF_TYPES } from "@/lib/buffs";
 import { MATERIAL_DEFS, CRAFT_RECIPES } from "@/lib/crafting";
-import { MINION_TYPES, MISSIONS } from "@/lib/minions";
+import { MINION_TYPES, MISSION_DEFS } from "@/lib/minions";
 import { QUEST_SCHEMA } from "@/lib/quests";
 import { VILLAGE_BUILDINGS } from "@/lib/village";
 

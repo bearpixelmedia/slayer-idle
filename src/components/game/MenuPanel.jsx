@@ -29,7 +29,7 @@ export default function MenuPanel({
 
   return (
     <motion.div 
-      className="flex flex-col h-full bg-card/60 border-l border-border overflow-hidden"
+      className="flex flex-col h-full bg-card/60 border-l border-border overflow-hidden mt-20 mb-4"
       initial={{ x: 400 }}
       animate={{ x: 0 }}
       exit={{ x: 400 }}

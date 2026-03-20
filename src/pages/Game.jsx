@@ -238,8 +238,8 @@ export default function Game() {
           onModeChange={setCurrentWeapon}
         />
 
-        {/* Game on left */}
-        <div className="flex-1 overflow-hidden">
+        {/* Game fills full area */}
+        <div className="flex-1 overflow-hidden relative">
           {!showRunner ? (
             <GameCanvas
               state={state}
@@ -267,31 +267,36 @@ export default function Game() {
               }}
             />
           )}
-        </div>
 
-        {/* Menu on right - Wooden frame */}
-        {!showRunner && (
-          <MenuPanel
-            state={state}
-            onBuyUpgrade={buyUpgrade}
-            onUnlockSkill={unlockSkill}
-            onPrestige={prestige}
-            onRevive={revive}
-            unlockedIds={unlockedIds}
-            damageMultiplier={damageMultiplier}
-            offlineMultiplier={offlineMultiplier}
-            onSwitchZone={switchZone}
-            onUnlockZone={unlockZone}
-            onClaimQuestReward={handleClaimQuestReward}
-            onRepeatQuest={handleRepeatQuest}
-            questProgress={questProgress}
-            onUpgradeBuilding={upgradeBuilding}
-            abilities={abilities}
-            onActivateAbility={activateAbility}
-            weaponMode={currentWeapon}
-            onRunnerClick={() => setShowRunner(true)}
-          />
-        )}
+          {/* Menu overlay on right side */}
+          {!showRunner && (
+            <div className="absolute top-0 right-0 bottom-0 z-20 pointer-events-none">
+              <div className="pointer-events-auto h-full">
+                <MenuPanel
+                  state={state}
+                  onBuyUpgrade={buyUpgrade}
+                  onUnlockSkill={unlockSkill}
+                  onPrestige={prestige}
+                  onRevive={revive}
+                  unlockedIds={unlockedIds}
+                  damageMultiplier={damageMultiplier}
+                  offlineMultiplier={offlineMultiplier}
+                  onSwitchZone={switchZone}
+                  onUnlockZone={unlockZone}
+                  onClaimQuestReward={handleClaimQuestReward}
+                  onRepeatQuest={handleRepeatQuest}
+                  questProgress={questProgress}
+                  onUpgradeBuilding={upgradeBuilding}
+                  abilities={abilities}
+                  onActivateAbility={activateAbility}
+                  weaponMode={currentWeapon}
+                  onRunnerClick={() => setShowRunner(true)}
+                  onClose={() => {}}
+                />
+              </div>
+            </div>
+          )}
+        </div>
 
         {showRunner && (
           <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-10">

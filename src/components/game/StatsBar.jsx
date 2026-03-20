@@ -8,7 +8,7 @@ export default function StatsBar({ state, tapDamage, idleCPS, className }) {
   const stage = STAGES[state?.stage] || STAGES[0];
 
   return (
-    <div className={className || "fixed top-2 left-2 right-2 z-20 flex flex-wrap items-center justify-between gap-2 px-3 py-2 bg-card/80 backdrop-blur-md rounded-lg border border-border pointer-events-none"}>
+    <div className={className || "fixed top-2 left-2 right-2 z-10 flex flex-wrap items-center justify-between gap-2 px-3 py-2 bg-card/80 backdrop-blur-md rounded-lg border border-border pointer-events-none"}>
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-1">
           <span className="text-sm">🪙</span>

@@ -342,7 +342,7 @@ export default function GameSettings() {
                 <CardDescription>Customize building names and icons</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {BUILDINGS.map((building) => (
+                {VILLAGE_BUILDINGS.map((building) => (
                   <SettingGroup
                     key={building.id}
                     title={building.name}

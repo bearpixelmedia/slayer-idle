@@ -109,28 +109,32 @@ export default function ParallaxBackground() {
         </div>
       </div>
 
-      {/* Layer 5: Back treeline - speed 0.35 */}
+      {/* Layer 5: Back treeline (unified trunk+canopy) - speed 0.35 */}
       <div 
-        className="absolute left-0 right-0 h-1/3 pointer-events-none"
+        className="absolute left-0 right-0 pointer-events-none"
         style={{ 
           transform: "translate3d(calc(var(--camX) * 0.35), 0, 0)",
           top: "28%",
+          height: "35%",
           opacity: 0.8
         }}
       >
         <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.5">
           {Array.from({ length: 40 }).map((_, i) => {
             const scale = 0.7 + (i % 3) * 0.15;
-            const baseHeight = 65;
             return (
               <svg 
                 key={`tree-back-${i}`} 
                 viewBox="0 0 50 100" 
                 className="flex-shrink-0" 
-                style={{ width: `${50 * scale}px`, height: `${baseHeight * scale}px`, opacity: 0.7 + (i % 4) * 0.08 }}
+                style={{ width: `${50 * scale}px`, height: "100%", opacity: 0.7 + (i % 4) * 0.08 }}
               >
-                <polygon points={`${25 * scale},${5 * scale} ${5 * scale},${100 * scale} ${45 * scale},${100 * scale}`} fill="rgba(12, 70, 20, 0.85)" />
-                <polygon points={`${25 * scale},${35 * scale} ${15 * scale},${100 * scale} ${35 * scale},${100 * scale}`} fill="rgba(8, 50, 15, 0.95)" />
+                {/* Canopy top */}
+                <circle cx={`${25}`} cy={`${20}`} r={`${16}`} fill={`rgba(${12 + (i % 3) * 8}, ${70 + (i % 3) * 10}, ${20 + (i % 3) * 5}, 0.9)`} />
+                <circle cx={`${15}`} cy={`${28}`} r={`${13}`} fill={`rgba(${18 + (i % 3) * 8}, ${85 + (i % 3) * 10}, ${25 + (i % 3) * 5}, 0.88)`} />
+                <circle cx={`${35}`} cy={`${28}`} r={`${13}`} fill={`rgba(${18 + (i % 3) * 8}, ${85 + (i % 3) * 10}, ${25 + (i % 3) * 5}, 0.88)`} />
+                {/* Trunk */}
+                <rect x={`${22}`} y={`${40}`} width={`${6}`} height={`${60}`} fill="rgba(80, 50, 20, 0.95)" />
               </svg>
             );
           })}
@@ -145,7 +149,7 @@ export default function ParallaxBackground() {
         }}
       />
 
-      {/* Layer 7: Front treeline - speed 0.65 */}
+      {/* Layer 7: Front treeline (unified trunk+canopy) - speed 0.65 */}
       <div 
         className="absolute bottom-1/4 left-0 right-0 h-2/5 pointer-events-none"
         style={{ 
@@ -157,19 +161,20 @@ export default function ParallaxBackground() {
             const scale = 0.85 + (i % 4) * 0.25;
             const offset = (i * 7) % 3;
             return (
-              <div 
-                key={`tree-front-${i}`} 
-                className="flex-shrink-0 flex flex-col items-center justify-end" 
-                style={{ width: `${50 * scale}px`, height: "100%" }}
+              <svg 
+                key={`tree-front-${i}`}
+                viewBox="0 0 45 90"
+                className="flex-shrink-0"
+                style={{ width: `${45 * scale}px`, height: "100%" }}
               >
-                <svg viewBox="0 0 45 90" style={{ width: `${45 * scale}px`, height: `${90 * scale}px`, marginBottom: `${5 * scale}px` }}>
-                  <circle cx="22" cy="18" r={`${14 * scale}`} fill={`rgba(${18 + offset * 5}, ${100 + offset * 10}, ${28 + offset * 5}, 0.96)`} />
-                  <circle cx={`${12 * scale}`} cy={`${26 * scale}`} r={`${11 * scale}`} fill={`rgba(${26 + offset * 5}, ${120 + offset * 10}, ${35 + offset * 5}, 0.93)`} />
-                  <circle cx={`${32 * scale}`} cy={`${26 * scale}`} r={`${11 * scale}`} fill={`rgba(${26 + offset * 5}, ${120 + offset * 10}, ${35 + offset * 5}, 0.93)`} />
-                  <circle cx="22" cy={`${40 * scale}`} r={`${10 * scale}`} fill={`rgba(${35 + offset * 5}, ${140 + offset * 10}, ${45 + offset * 5}, 0.88)`} />
-                </svg>
-                <div className="bg-amber-900" style={{ width: `${4 * scale}px`, height: `${40 * scale}px` }} />
-              </div>
+                {/* Canopy - three circles stacked */}
+                <circle cx="22" cy={`${18 * scale}`} r={`${14 * scale}`} fill={`rgba(${18 + offset * 5}, ${100 + offset * 10}, ${28 + offset * 5}, 0.96)`} />
+                <circle cx={`${12 * scale}`} cy={`${26 * scale}`} r={`${11 * scale}`} fill={`rgba(${26 + offset * 5}, ${120 + offset * 10}, ${35 + offset * 5}, 0.93)`} />
+                <circle cx={`${32 * scale}`} cy={`${26 * scale}`} r={`${11 * scale}`} fill={`rgba(${26 + offset * 5}, ${120 + offset * 10}, ${35 + offset * 5}, 0.93)`} />
+                <circle cx="22" cy={`${40 * scale}`} r={`${10 * scale}`} fill={`rgba(${35 + offset * 5}, ${140 + offset * 10}, ${45 + offset * 5}, 0.88)`} />
+                {/* Trunk - directly below canopy */}
+                <rect x={`${20}`} y={`${55 * scale}`} width={`${5}`} height={`${35 * scale}`} fill="rgb(139, 101, 58)" />
+              </svg>
             );
           })}
         </div>

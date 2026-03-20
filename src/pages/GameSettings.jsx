@@ -230,9 +230,11 @@ export default function GameSettings() {
                     key={boss.id}
                     title={`Stage ${boss.stage} - ${boss.name}`}
                     items={[
-                      { id: `boss_${boss.id}_icon`, label: "Icon", defaultValue: boss.icon },
                       { id: `boss_${boss.id}_name`, label: "Name", defaultValue: boss.name },
                       { id: `boss_${boss.id}_mechanic`, label: "Mechanic Name", defaultValue: boss.mechanic.name },
+                    ]}
+                    imageItems={[
+                      { id: `boss_${boss.id}_icon`, label: "Icon", defaultValue: boss.icon },
                     ]}
                   />
                 ))}

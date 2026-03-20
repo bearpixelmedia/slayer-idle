@@ -87,16 +87,16 @@ export default function useRunnerState() {
         });
 
         // Scoring: +1 point per obstacle passed
-        const scoredIds = [];
+        const newScored = [];
         updated.forEach((obs) => {
           if (!obs.scored && obs.x < 20) {
-            scoredIds.push(obs.id);
+            newScored.push(obs.id);
             setScore((s) => s + 1);
           }
         });
 
-        return scoredIds.length > 0
-          ? updated.map(obs => scoredIds.includes(obs.id) ? { ...obs, scored: true } : obs)
+        return newScored.length > 0
+          ? updated.map(obs => newScored.includes(obs.id) ? { ...obs, scored: true } : obs)
           : updated;
       });
     }, 30);

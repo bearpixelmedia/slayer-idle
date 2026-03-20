@@ -117,7 +117,7 @@ export function isBossEncounter(killCount) {
 }
 
 export function getBossForStage(stage) {
-  return BOSSES.find(b => b.stage === stage);
+  return BOSSES.find(b => b.stage === stage) || null;
 }
 
 export function getBossHP(stage, kills) {

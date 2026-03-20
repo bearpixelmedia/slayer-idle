@@ -69,9 +69,10 @@ export function shouldProcBuff(procRate) {
 
 // Helper: calculate active buff multiplier for a given effect key
 export function getBuffMultiplier(activeBuffs, effectKey) {
+  if (!activeBuffs?.length) return 1.0;
   let multiplier = 1.0;
   activeBuffs.forEach(buff => {
-    if (buff.effects[effectKey]) {
+    if (buff?.effects?.[effectKey]) {
       multiplier *= buff.effects[effectKey];
     }
   });

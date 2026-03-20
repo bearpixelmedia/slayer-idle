@@ -31,6 +31,7 @@ export default function Game() {
   const [initMultipliers] = React.useState(() => loadSavedMultipliers());
   const [showRunner, setShowRunner] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [hudMenuOpen, setHudMenuOpen] = useState(false);
 
   const runner = useRunnerState();
 

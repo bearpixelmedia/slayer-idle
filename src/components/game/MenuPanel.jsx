@@ -67,6 +67,8 @@ export default function MenuPanel({
               abilities={abilities}
               onActivateAbility={onActivateAbility}
               weaponMode={weaponMode}
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
             />
           </div>
         </ScrollArea>

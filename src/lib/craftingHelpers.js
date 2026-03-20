@@ -51,11 +51,11 @@ export function rollMaterialDrop(activeZoneId) {
  * @returns {{ canCraft: boolean, reason?: string }}
  */
 export function canCraftRecipe(recipeId, progressContext, craftedRecipeIds, materials) {
-  const recipe = CRAFT_RECIPES.find((r) => r.id === recipeId);
+  const recipe = CRAFT_RECIPES.find((r) => r?.id === recipeId);
   if (!recipe) return { canCraft: false, reason: "RECIPE_NOT_FOUND" };
 
   // Check if already crafted (unique items)
-  if (recipe.unique && craftedRecipeIds.includes(recipeId)) {
+  if (recipe.unique && craftedRecipeIds?.includes(recipeId)) {
     return { canCraft: false, reason: "ALREADY_CRAFTED" };
   }
 
@@ -133,19 +133,25 @@ export function craftRecipe(params) {
 export function computeCraftingMultipliers(craftedRecipeIds) {
   const multipliers = {};
 
+  if (!Array.isArray(craftedRecipeIds)) return multipliers;
+
   craftedRecipeIds.forEach((recipeId) => {
-    const recipe = CRAFT_RECIPES.find((r) => r.id === recipeId);
-    if (!recipe) return;
+    const recipe = CRAFT_RECIPES.find((r) => r?.id === recipeId);
+    if (!recipe || !recipe.reward) return;
 
     if (recipe.reward.type === "composite") {
       // Composite rewards apply multiple multipliers
-      Object.entries(recipe.reward.values).forEach(([type, value]) => {
-        multipliers[type] = (multipliers[type] || 1) * value;
-      });
+      if (recipe.reward.values && typeof recipe.reward.values === "object") {
+        Object.entries(recipe.reward.values).forEach(([type, value]) => {
+          multipliers[type] = (multipliers[type] || 1) * value;
+        });
+      }
     } else {
       // Simple single-type rewards
       const type = recipe.reward.type;
-      multipliers[type] = (multipliers[type] || 1) * recipe.reward.value;
+      if (typeof recipe.reward.value === "number") {
+        multipliers[type] = (multipliers[type] || 1) * recipe.reward.value;
+      }
     }
   });
 

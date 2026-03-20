@@ -116,7 +116,7 @@ export function getBowSoulMultiplier(bowLevel) {
 
 // Get available stage indices for a zone (returns an array of stage indices)
 export function getZoneStages(zoneId) {
-  const zone = ZONES.find(z => z.id === zoneId);
+  const zone = ZONES.find(z => z?.id === zoneId);
   if (!zone || !zone.stagesRange) return STAGES.map((_, i) => i);
   const [start, end] = zone.stagesRange;
   return Array.from({ length: end - start + 1 }, (_, i) => start + i);
@@ -124,8 +124,8 @@ export function getZoneStages(zoneId) {
 
 // Helper to check if a zone can be unlocked
 export function canUnlockZone(zoneId, unlockedZoneIds, zoneProgress, slayerPoints) {
-  const zone = ZONES.find(z => z.id === zoneId);
-  if (!zone || unlockedZoneIds.includes(zoneId)) return false;
+  const zone = ZONES.find(z => z?.id === zoneId);
+  if (!zone || unlockedZoneIds?.includes(zoneId)) return false;
   if (!zone.unlockRequirement) return true;
 
   const cost = zone.unlockRequirement.spCost;

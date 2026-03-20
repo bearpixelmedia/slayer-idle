@@ -115,14 +115,14 @@ export default function AbilityBar({ abilities, onActivate, weaponMode }) {
         )}
       </div>
       <div className="flex gap-3">
-        {ABILITIES.map((ability) => (
-          <AbilityButton
-            key={ability.id}
-            ability={ability}
-            abilityState={abilities[ability.id] || { active: false, cooldownRemaining: 0, durationRemaining: 0 }}
-            onActivate={onActivate}
-          />
-        ))}
+         {ABILITIES.map((ability) => (
+           <AbilityButton
+             key={ability.id}
+             ability={ability}
+             abilityState={abilities?.[ability.id] || { active: false, cooldownRemaining: 0, durationRemaining: 0 }}
+             onActivate={onActivate}
+           />
+         ))}
         <div className="flex-1 flex items-center px-2">
           <p className="text-[10px] text-muted-foreground/50 leading-relaxed">
             {Object.values(abilities).find(a => a.active)

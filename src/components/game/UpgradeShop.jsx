@@ -35,9 +35,9 @@ function UpgradeCard({ upgrade, level, coins, onBuy }) {
 
 export default function UpgradeShop({ state, onBuy }) {
   return (
-    <div className="px-4 py-4">
-      <h2 className="font-pixel text-xs text-primary mb-3">⬆ UPGRADES</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+    <div className="space-y-2">
+      <h2 className="font-pixel text-[9px] text-primary px-1">⬆️ UPGRADES</h2>
+      <div className="grid grid-cols-2 gap-2">
         {UPGRADES.map((upgrade) => (
           <UpgradeCard
             key={upgrade.id}

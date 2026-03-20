@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { X } from "lucide-react";
 import GameTabs from "@/components/game/GameTabs";
+import { HUD_THEME } from "@/lib/hudTheme";
 import { motion } from "framer-motion";
 
 export default function MenuPanel({
@@ -29,7 +30,7 @@ export default function MenuPanel({
 
   return (
     <motion.div 
-      className="flex flex-col h-full bg-card/60 border-l border-border overflow-hidden mt-20 mb-4"
+      className={`flex flex-col h-full ${HUD_THEME.menuPanel.container}`}
       initial={{ x: 400 }}
       animate={{ x: 0 }}
       exit={{ x: 400 }}

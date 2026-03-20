@@ -10,7 +10,7 @@ import { BOSSES } from "@/lib/bosses";
 import { BUFF_TYPES } from "@/lib/buffs";
 import { MATERIAL_DEFS, CRAFT_RECIPES } from "@/lib/crafting";
 import { MINION_TYPES, MISSION_DEFS } from "@/lib/minions";
-import { QUEST_SCHEMA } from "@/lib/quests";
+import { QUESTS } from "@/lib/quests";
 import { VILLAGE_BUILDINGS } from "@/lib/village";
 
 const STORAGE_KEY = "game_settings_config";

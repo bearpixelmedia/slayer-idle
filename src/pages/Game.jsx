@@ -323,6 +323,7 @@ export default function Game() {
         )}
       </div>
 
+      <AbilityHUD abilities={abilities} onActivate={activateAbility} />
       <AchievementToast achievement={newUnlock} />
       <OfflineEarningsModal
         earnings={offlineEarnings}

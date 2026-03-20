@@ -280,9 +280,11 @@ export default function GameSettings() {
                     key={mat.id}
                     title={mat.name}
                     items={[
-                      { id: `mat_${mat.id}_icon`, label: "Icon", defaultValue: mat.icon },
                       { id: `mat_${mat.id}_name`, label: "Name", defaultValue: mat.name },
                       { id: `mat_${mat.id}_desc`, label: "Description", defaultValue: mat.description },
+                    ]}
+                    imageItems={[
+                      { id: `mat_${mat.id}_icon`, label: "Icon", defaultValue: mat.icon },
                     ]}
                   />
                 ))}

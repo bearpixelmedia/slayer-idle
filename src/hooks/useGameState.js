@@ -63,6 +63,7 @@ function defaultState() {
     bossWarning: null, // { bossId, warningEndTime }
     bossHitsReceived: 0, // Track hits for enrage mechanic
     bossFightStartTime: null, // Track elapsed time for shield window mechanic
+    bossEnrageResetUsed: false, // Ensure enrage reset threshold triggers once per fight
   };
 }
 
@@ -104,6 +105,8 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   abilitiesRef.current = abilities;
   const activeBuffsRef = useRef(activeBuffs);
   activeBuffsRef.current = activeBuffs;
+  const currentWeaponRef = useRef(currentWeapon);
+  currentWeaponRef.current = currentWeapon;
   const lastBuffProcRef = useRef(Date.now());
   const lastTapTimeRef = useRef(Date.now());
 
@@ -231,10 +234,13 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   }, []);
 
   function spawnNewEnemy(s) {
-    // Check if next enemy should be a boss
-    if (isBossEncounter(s.killCount + 1)) {
-      const boss = getBossForStage(s.stage);
-      if (boss) {
+    const boss = getBossForStage(s.stage);
+    const warningActive = s.bossWarning && Date.now() < s.bossWarning.warningEndTime;
+    const warningForCurrentBoss = s.bossWarning && boss && s.bossWarning.bossId === boss.id;
+    const shouldEncounterBoss = Boolean(boss && isBossEncounter(s.killCount));
+
+    // Boss encounter has a gated warning phase first, then boss spawn.
+    if (shouldEncounterBoss && warningForCurrentBoss && !warningActive) {
         const hp = getBossHP(s.stage, s.killCount);
         return {
           ...s,
@@ -244,24 +250,21 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
           isBossActive: true,
           bossHitsReceived: 0,
           bossFightStartTime: Date.now(),
+          bossEnrageResetUsed: false,
           bossWarning: null, // Clear warning once boss spawns
         };
-      }
     }
 
-    const stageData = STAGES[s.stage] || STAGES[0];
+    const zoneStages = getZoneStages(s.activeZoneId);
+    const stageData = zoneStages[s.stage] || zoneStages[0] || STAGES[0];
     const enemyName = stageData.enemies[Math.floor(Math.random() * stageData.enemies.length)];
     const hp = getEnemyHP(s.stage, s.killCount);
-    
-    // Calculate kills until next boss
-    const killsUntilBoss = BOSS_ENCOUNTER_INTERVAL - (s.killCount % BOSS_ENCOUNTER_INTERVAL);
-    
-    // Warn if within last 5 kills before boss
-    let nextBossWarning = null;
-    if (killsUntilBoss <= 5 && killsUntilBoss > 0) {
+
+    let nextBossWarning = s.bossWarning || null;
+    if (shouldEncounterBoss && boss && !warningForCurrentBoss) {
       nextBossWarning = {
-        bossId: getBossForStage(s.stage)?.id,
-        warningEndTime: Date.now() + 4000, // 4 second warning
+        bossId: boss.id,
+        warningEndTime: Date.now() + 4000, // 4 second warning gate
       };
     }
     
@@ -273,6 +276,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       isBossActive: false,
       bossHitsReceived: 0,
       bossFightStartTime: null,
+      bossEnrageResetUsed: false,
       bossWarning: nextBossWarning,
     };
   }
@@ -318,6 +322,18 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     const interval = setInterval(() => {
       tryProcBuff("idle", stateRef.current);
     }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // If a warning is active and expires, spawn the pending boss immediately.
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setState(prev => {
+        if (!prev.bossWarning) return prev;
+        if (Date.now() < prev.bossWarning.warningEndTime) return prev;
+        return spawnNewEnemy(prev);
+      });
+    }, 200);
     return () => clearInterval(interval);
   }, []);
 
@@ -396,9 +412,14 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     }
 
     setState(prev => {
+      if (prev.bossWarning && Date.now() < prev.bossWarning.warningEndTime) {
+        return prev;
+      }
+
       // Apply boss mechanics during combat
       let adjustedDamage = finalDamage;
       let newBossHits = prev.bossHitsReceived;
+      let bossEnrageResetUsed = prev.bossEnrageResetUsed;
       
       if (prev.isBossActive) {
         const boss = getBossForStage(prev.stage);
@@ -452,6 +473,21 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       }
 
       const newHP = prev.enemyHP - adjustedDamage;
+
+      if (prev.isBossActive) {
+        const boss = getBossForStage(prev.stage);
+        if (
+          boss &&
+          boss.mechanic.type === "enrage" &&
+          !bossEnrageResetUsed &&
+          typeof boss.mechanic.resetThreshold === "number" &&
+          newHP > 0 &&
+          newHP <= prev.enemyMaxHP * boss.mechanic.resetThreshold
+        ) {
+          newBossHits = 0;
+          bossEnrageResetUsed = true;
+        }
+      }
       
       if (newHP <= 0) {
         let coinReward = 0;
@@ -466,9 +502,10 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         } else {
           // Normal enemy - base soul drops with zone bias
           const baseSouls = getEnemySouls(prev.stage, prev.killCount);
-          const stageBias = STAGES[prev.stage]?.soulBias || 1;
+          const zoneStages = getZoneStages(prev.activeZoneId);
+          const stageBias = zoneStages[prev.stage]?.soulBias || 1;
           const soulBonus = 1 + (prev.souls * 0.05);
-          const bowBonus = currentWeapon === "bow" ? getBowSoulMultiplier() : 1;
+          const bowBonus = currentWeaponRef.current === "bow" ? getBowSoulMultiplier() : 1;
           soulReward = baseSouls * stageBias * bowBonus;
           
           const reward = getEnemyReward(prev.stage, prev.killCount);
@@ -543,12 +580,19 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
           playerHP: prev.playerMaxHP,
           bossHitsReceived: bossHitsToTrack,
           bossFightStartTime: null,
+          bossEnrageResetUsed: false,
         };
         
         return spawnNewEnemy(newState);
       }
       
-      return { ...prev, enemyHP: newHP, playerHP: newPlayerHP };
+      return {
+        ...prev,
+        enemyHP: newHP,
+        playerHP: newPlayerHP,
+        bossHitsReceived: newBossHits,
+        bossEnrageResetUsed,
+      };
     });
   }, []);
 
@@ -684,13 +728,19 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     if (!state.unlockedZoneIds.includes(zoneId)) return;
     setState(prev => {
       const zp = prev.zoneProgress[zoneId];
-      return {
+      if (!zp) return prev;
+      const switched = {
         ...prev,
         activeZoneId: zoneId,
         stage: zp.stage,
         killCount: zp.killCount,
         highestStage: zp.highestStage,
+        isBossActive: false,
+        bossWarning: null,
+        bossHitsReceived: 0,
+        bossFightStartTime: null,
       };
+      return spawnNewEnemy(switched);
     });
   }, [state.unlockedZoneIds]);
 

@@ -55,12 +55,17 @@ export default function GameCanvas({
   enemyHit,
   weaponMode,
 }) {
-  const { useRef } = require("react");
-const canvasRef = useRef(null);
+  const canvasRef = useRef(null);
   const stage = STAGES[state?.stage] || STAGES[0];
   const enemyEmoji = ENEMY_EMOJIS[state?.currentEnemyName] || "👾";
   const boss = state?.isBossActive ? getBossForStage(state?.stage) : null;
   const showBossWarning = state?.bossWarning && Date.now() < state.bossWarning.warningEndTime;
+  const shieldActive =
+    state?.isBossActive &&
+    boss?.mechanic?.type === "shield_window" &&
+    state?.bossFightStartTime
+      ? isBossShieldActive(Date.now() - state.bossFightStartTime, boss)
+      : false;
 
   const handleClick = (e) => {
     if (state.isDead) return;
@@ -255,22 +260,31 @@ const canvasRef = useRef(null);
 
           {/* Shield window indicator */}
           {boss.mechanic.type === "shield_window" && state.bossFightStartTime && (
-            <motion.div
-              className="mt-1 h-1 bg-red-950 rounded-full overflow-hidden border border-red-500/30"
-              style={{ width: "100px" }}
-            >
+            <>
               <motion.div
-                className="h-full bg-blue-500"
-                animate={{
-                  x: ["-100%", "0%", "100%"],
-                }}
-                transition={{
-                  duration: boss.mechanic.interval + boss.mechanic.duration,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
-              />
-            </motion.div>
+                className="mt-1 h-1 bg-red-950 rounded-full overflow-hidden border border-red-500/30"
+                style={{ width: "100px" }}
+              >
+                <motion.div
+                  className="h-full bg-blue-500"
+                  animate={{
+                    x: ["-100%", "0%", "100%"],
+                  }}
+                  transition={{
+                    duration: boss.mechanic.interval + boss.mechanic.duration,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                />
+              </motion.div>
+              <p
+                className={`mt-1 font-pixel text-[7px] text-center ${
+                  shieldActive ? "text-cyan-300" : "text-red-300/70"
+                }`}
+              >
+                {shieldActive ? "SHIELD ACTIVE" : "Shield down"}
+              </p>
+            </>
           )}
 
           {/* Enrage stack indicator */}

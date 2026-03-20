@@ -151,10 +151,11 @@ export const ACHIEVEMENTS = [
 export function computeAchievementMultipliers(unlockedIds) {
   let damageMultiplier = 1;
   let offlineMultiplier = 1;
+  if (!Array.isArray(unlockedIds)) return { damageMultiplier, offlineMultiplier };
   for (const ach of ACHIEVEMENTS) {
     if (unlockedIds.includes(ach.id)) {
-      if (ach.reward.type === "damageMultiplier") damageMultiplier *= ach.reward.value;
-      if (ach.reward.type === "offlineMultiplier") offlineMultiplier *= ach.reward.value;
+      if (ach.reward?.type === "damageMultiplier") damageMultiplier *= ach.reward.value;
+      if (ach.reward?.type === "offlineMultiplier") offlineMultiplier *= ach.reward.value;
     }
   }
   return { damageMultiplier, offlineMultiplier };

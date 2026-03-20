@@ -1,5 +1,5 @@
 export function formatNumber(num) {
-  if (num === undefined || num === null) return "0";
+  if (num === undefined || num === null || !isFinite(num)) return "0";
   const abs = Math.abs(num);
   const sign = num < 0 ? "-" : "";
   if (abs < 1000) return sign + Math.floor(abs).toString();

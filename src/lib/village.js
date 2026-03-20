@@ -88,7 +88,8 @@ export const VILLAGE_BUILDINGS = [
  * Check if a building can be unlocked based on game state
  */
 export function canUnlockBuilding(building, gameState) {
-  const unlock = building.unlock;
+  const unlock = building?.unlock;
+  if (!unlock) return false;
 
   if (unlock.type === "default") {
     return true;
@@ -133,13 +134,15 @@ export function computeVillageMultipliers(villageBuildings) {
 
   VILLAGE_BUILDINGS.forEach((building) => {
     const level = villageBuildings[building.id] || 0;
-    if (level > 0) {
+    if (level > 0 && building?.bonus) {
       const bonus = building.bonus(level);
-      Object.entries(bonus).forEach(([key, value]) => {
-        if (key in multipliers && typeof value === "number") {
-          multipliers[key] *= value;
-        }
-      });
+      if (bonus && typeof bonus === "object") {
+        Object.entries(bonus).forEach(([key, value]) => {
+          if (key in multipliers && typeof value === "number") {
+            multipliers[key] *= value;
+          }
+        });
+      }
     }
   });
 

@@ -367,11 +367,11 @@ export default function GameSettings() {
               <CardContent className="space-y-6">
                 {QUESTS.slice(0, 10).map((quest) => (
                   <SettingGroup
-                    key={qid}
+                    key={quest.id}
                     title={quest.title}
                     items={[
-                      { id: `quest_${qid}_title`, label: "Title", defaultValue: quest.title },
-                      { id: `quest_${qid}_desc`, label: "Description", defaultValue: quest.description },
+                      { id: `quest_${quest.id}_title`, label: "Title", defaultValue: quest.title },
+                      { id: `quest_${quest.id}_desc`, label: "Description", defaultValue: quest.description },
                     ]}
                   />
                 ))}

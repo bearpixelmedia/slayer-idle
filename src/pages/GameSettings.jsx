@@ -354,9 +354,11 @@ export default function GameSettings() {
                     key={minion.id}
                     title={minion.name}
                     items={[
-                      { id: `minion_${minion.id}_icon`, label: "Icon", defaultValue: minion.icon },
                       { id: `minion_${minion.id}_name`, label: "Name", defaultValue: minion.name },
                       { id: `minion_${minion.id}_desc`, label: "Description", defaultValue: minion.description },
+                    ]}
+                    imageItems={[
+                      { id: `minion_${minion.id}_icon`, label: "Icon", defaultValue: minion.icon },
                     ]}
                   />
                 ))}

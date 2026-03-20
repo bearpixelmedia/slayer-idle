@@ -75,13 +75,7 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
     }
   };
 
-  const handleSelectFromHistory = (item) => {
-    onChange(item.imageUrl);
-    if (item.jsonUrl) {
-      sessionStorage.setItem(`aseprite_json_${item.imageUrl}`, item.jsonUrl);
-    }
-    setShowHistory(false);
-  };
+
 
   const handleClear = () => {
     onChange(null);

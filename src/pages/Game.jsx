@@ -79,18 +79,6 @@ export default function Game() {
     <div className="fixed inset-0 bg-background flex flex-col lg:flex-row overflow-hidden">
       {/* Portrait/Mobile: Full screen */}
       <div className="lg:hidden w-full h-full flex flex-col relative overflow-hidden">
-        <StatsBar
-          state={state}
-          tapDamage={getTapDamage()}
-          idleCPS={getIdleCPS()}
-        />
-        <ActiveBuffsDisplay activeBuffs={activeBuffs} />
-        <WeaponMode
-          currentMode={currentWeapon}
-          bowUnlocked={(state?.upgradeLevels?.["bow"] || 0) > 0}
-          onModeChange={setCurrentWeapon}
-          className="hidden lg:flex flex-shrink-0"
-        />
 
         <div className="w-full flex-1 overflow-hidden flex flex-col min-h-0">
           {!showRunner ? (

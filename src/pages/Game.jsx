@@ -241,9 +241,9 @@ export default function Game() {
         />
         
         <div className="flex flex-1 overflow-hidden relative">
-
-          {!showRunner ? (
-            <GameCanvas
+          <div className="flex-1 overflow-hidden">
+            {!showRunner ? (
+              <GameCanvas
               state={state}
               enemyDying={enemyDying}
               floatingCoins={floatingCoins}

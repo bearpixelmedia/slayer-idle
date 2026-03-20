@@ -8,7 +8,7 @@ const ABILITY_CONFIG = {
 };
 
 export default function AbilityHUD({ abilities, onActivate }) {
-  const abilitiesArray = Array.isArray(abilities) ? abilities : Object.values(abilities || {});
+  const abilitiesArray = Array.isArray(abilities) ? abilities : Object.entries(abilities || {}).map(([id, data]) => ({ id, ...data }));
   if (!abilitiesArray || abilitiesArray.length === 0) return null;
 
   return (
@@ -22,7 +22,7 @@ export default function AbilityHUD({ abilities, onActivate }) {
       <AnimatePresence>
         {abilitiesArray.map((ability) => {
           const config = ABILITY_CONFIG[ability.id];
-          const timeRemaining = Math.max(0, ability.readyAt - Date.now());
+          const timeRemaining = ability.cooldownRemaining || 0;
           const isReady = timeRemaining <= 0;
 
           return (

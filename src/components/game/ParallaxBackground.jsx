@@ -432,7 +432,7 @@ export default function ParallaxBackground() {
 
       {/* Layer 17.5c: Extreme close bushes - speed 0.99 */}
       {createLayer("ferns-extreme-close", 0.99, 57, 31, 0.89, (
-        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0.2">
+        <div className="flex whitespace-nowrap w-[200%] h-full items-end gap-0">
           {Array.from({ length: 60 }).map((_, i) => {
             const scale = 1.35 + (i % 3) * 0.32;
             return (

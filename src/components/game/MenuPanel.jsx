@@ -22,6 +22,7 @@ export default function MenuPanel({
   onActivateAbility,
   weaponMode,
   onRunnerClick,
+  onClose,
 }) {
   const [activeTab, setActiveTab] = React.useState("combat");
 

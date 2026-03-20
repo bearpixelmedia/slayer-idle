@@ -138,13 +138,13 @@ export default function useQuests(gameState, unlockedZoneIds = []) {
       return changed ? updated : prev;
     });
   }, [
-    gameState.totalKills,
-    gameState.totalCoinsEarned,
-    gameState.highestStage,
-    gameState.prestigeCount,
-    gameState.unlockedSkills,
-    gameState.zoneProgress,
-    gameState.souls,
+    gameState?.totalKills,
+    gameState?.totalCoinsEarned,
+    gameState?.highestStage,
+    gameState?.prestigeCount,
+    gameState?.unlockedSkills,
+    gameState?.zoneProgress,
+    gameState?.souls,
     unlockedZoneIds,
     saveProgress,
   ]);

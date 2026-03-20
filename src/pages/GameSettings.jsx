@@ -96,7 +96,7 @@ export default function GameSettings() {
     />
   );
 
-  const SettingGroup = ({ title, items }) => (
+  const SettingGroup = ({ title, items, imageItems = [] }) => (
     <div className="space-y-4">
       <h3 className="font-semibold text-sm text-slate-800">{title}</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -107,6 +107,15 @@ export default function GameSettings() {
             value={settings[id] || defaultValue}
             onChange={(val) => updateSetting(id, val)}
             placeholder={defaultValue}
+          />
+        ))}
+        {imageItems.map(({ id, label, defaultValue }) => (
+          <SettingImageInput
+            key={id}
+            label={label}
+            value={settings[id]}
+            onChange={(val) => updateSetting(id, val)}
+            defaultValue={defaultValue}
           />
         ))}
       </div>

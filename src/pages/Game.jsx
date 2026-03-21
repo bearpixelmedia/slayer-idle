@@ -133,7 +133,6 @@ export default function Game() {
               enemyHit={enemyHit}
               playerHit={playerHit}
               weaponMode={currentWeapon}
-              playerWorldPos={state.worldProgress}
             />
           ) : (
             <RunnerCanvas
@@ -288,7 +287,6 @@ export default function Game() {
                 enemyHit={enemyHit}
                 playerHit={playerHit}
                 weaponMode={currentWeapon}
-                playerWorldPos={state.worldProgress}
               />
             ) : (
               <RunnerCanvas

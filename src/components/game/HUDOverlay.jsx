@@ -1,10 +1,12 @@
 import React from "react";
+import { motion } from "framer-motion";
 import StatsBar from "./StatsBar";
 import ActiveBuffsDisplay from "./ActiveBuffsDisplay";
 import WeaponMode from "./WeaponMode";
 import AbilityHUD from "./AbilityHUD";
 import MenuPanel from "./MenuPanel";
 import { HUD_THEME } from "@/lib/hudTheme";
+import { UPGRADES, getUpgradeCost } from "@/lib/gameData";
 
 /**
  * HUDOverlay - Single parent container for all HUD UI elements

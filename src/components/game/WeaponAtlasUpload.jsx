@@ -585,28 +585,30 @@ Return only: {"frames": [{...}, {...}, ...]}`,
           <input ref={fileInputRef} type="file" accept="image/*,.aseprite,.ase" onChange={handleUpload} className="hidden" />
         </label>
 
-        <div className="flex items-center gap-2 text-xs text-slate-600">
-          <span>Cols:</span>
-          <input type="number" min={1} max={20} value={cols} onChange={e => setCols(Number(e.target.value))}
-            className="w-12 border border-slate-300 rounded px-1 py-0.5 text-xs" />
-          <span>Rows:</span>
-          <input type="number" min={1} max={20} value={rows} onChange={e => setRows(Number(e.target.value))}
-            className="w-12 border border-slate-300 rounded px-1 py-0.5 text-xs" />
-          {atlasUrl && (
-            <>
-              <Button type="button" size="sm" variant="outline" onClick={applyGrid} className="text-xs h-6 px-2">
-                Re-slice
-              </Button>
-              <Button type="button" size="sm" onClick={smartSlice} className="text-xs h-6 px-2 bg-violet-600 hover:bg-violet-700 text-white border-0">
-                🔍 Smart Detect
-              </Button>
-              <Button type="button" size="sm" onClick={aiDetect} disabled={aiDetecting} className="text-xs h-6 px-2 bg-emerald-600 hover:bg-emerald-700 text-white border-0">
-                {aiDetecting ? "⏳ Detecting..." : "🤖 AI Detect"}
-              </Button>
-
-            </>
-          )}
-        </div>
+        {atlasUrl && (
+          <div className="flex flex-wrap items-center gap-2">
+            <details className="text-xs text-slate-600">
+              <summary className="cursor-pointer font-medium hover:text-slate-800">⚙️ Grid Options (optional)</summary>
+              <div className="flex items-center gap-2 mt-2 p-2 bg-slate-100 rounded">
+                <span>Cols:</span>
+                <input type="number" min={1} max={20} value={cols} onChange={e => setCols(Number(e.target.value))}
+                  className="w-12 border border-slate-300 rounded px-1 py-0.5 text-xs" />
+                <span>Rows:</span>
+                <input type="number" min={1} max={20} value={rows} onChange={e => setRows(Number(e.target.value))}
+                  className="w-12 border border-slate-300 rounded px-1 py-0.5 text-xs" />
+                <Button type="button" size="sm" variant="outline" onClick={applyGrid} className="text-xs h-6 px-2">
+                  Apply Grid
+                </Button>
+              </div>
+            </details>
+            <Button type="button" size="sm" onClick={smartSlice} className="text-xs h-6 px-2 bg-violet-600 hover:bg-violet-700 text-white border-0">
+              🔍 Re-detect
+            </Button>
+            <Button type="button" size="sm" onClick={aiDetect} disabled={aiDetecting} className="text-xs h-6 px-2 bg-emerald-600 hover:bg-emerald-700 text-white border-0">
+              {aiDetecting ? "⏳ AI..." : "🤖 AI"}
+            </Button>
+          </div>
+        )}
 
         {atlasUrl && <span className={`text-xs ${frames.length > 0 ? 'text-emerald-600 font-semibold' : 'text-slate-400'}`}>{frames.length} frames • {rawImageSize?.w}×{rawImageSize?.h}px</span>}
       </div>

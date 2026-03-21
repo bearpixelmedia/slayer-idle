@@ -38,9 +38,22 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
     loadFiles();
   }, [showLibrary]);
 
-  const handleSelectFile = (fileUrl) => {
+  const handleSelectFile = (fileUrl, fileName) => {
     onChange(fileUrl);
+    // Also save to library if not already there
+    const saved = localStorage.getItem(UPLOADED_FILES_KEY);
+    const list = saved ? JSON.parse(saved) : [];
+    if (!list.find(f => f.url === fileUrl)) {
+      const updated = [{ url: fileUrl, name: fileName || fileUrl }, ...list].slice(0, 50);
+      localStorage.setItem(UPLOADED_FILES_KEY, JSON.stringify(updated));
+    }
     setShowLibrary(false);
+  };
+
+  const handleUrlSubmit = () => {
+    if (!urlInput.trim()) return;
+    handleSelectFile(urlInput.trim(), urlInput.trim().split('/').pop());
+    setUrlInput("");
   };
 
   const handleFileSelect = async (e) => {

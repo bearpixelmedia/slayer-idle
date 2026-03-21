@@ -272,7 +272,8 @@ Respond with a JSON object: {"frames": [{"x": 0, "y": 0, "w": 32, "h": 32}, ...]
 
       console.log("AI Detect raw result:", JSON.stringify(result));
       // Handle different response shapes
-      const rawFrames = result?.frames || result?.detections || (Array.isArray(result) ? result : []);
+      const unwrapped = result?.response || result;
+      const rawFrames = unwrapped?.frames || unwrapped?.detections || (Array.isArray(unwrapped) ? unwrapped : []);
       const detected = rawFrames.map(f => ({ frame: { x: Math.round(f.x), y: Math.round(f.y), w: Math.round(f.w || f.width), h: Math.round(f.h || f.height) } }));
       if (!detected.length) { alert(`AI returned no frames. Raw response: ${JSON.stringify(result)}`); return; }
       setFrames(detected);

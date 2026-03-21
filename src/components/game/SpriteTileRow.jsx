@@ -67,7 +67,6 @@ function getJsonUrl(spriteUrl) {
 
 // Renders a row of tiles, each showing a single animated frame from a spritesheet
 export default function SpriteTileRow({ spriteUrl, tileWidth, tileHeight, count, fallback }) {
-  const canvasRef = useRef(null);
   const imgRef = useRef(null);
   const [animationData, setAnimationData] = useState(null);
   const [currentFrame, setCurrentFrame] = useState(0);

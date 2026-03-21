@@ -482,7 +482,12 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       }
       
       const newPlayerHP = prev.playerHP - playerDamage;
-      
+
+      if (playerDamage > 0) {
+        setPlayerHit(true);
+        setTimeout(() => setPlayerHit(false), 150);
+      }
+
       if (newPlayerHP <= 0) {
         return { ...prev, playerHP: 0, isDead: true };
       }

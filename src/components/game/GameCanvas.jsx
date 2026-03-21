@@ -84,8 +84,8 @@ function GameCanvasComponent({
       {/* Parallax background with sky, mountains, and foliage */}
       <ParallaxBackground />
 
-      {/* Player character */}
-      <div className="absolute bottom-56 left-[15%] sm:left-[20%] flex flex-col items-center gap-2 z-20">
+      {/* Player character - running across screen */}
+      <div className="absolute bottom-56 flex flex-col items-center gap-2 z-20" style={{ left: `${Math.min(runProgress.current, 85)}%` }}>
         <div className="w-20 h-1.5 bg-muted rounded-full overflow-hidden border border-border/50">
           <motion.div
             className="h-full bg-green-500"
@@ -95,7 +95,7 @@ function GameCanvasComponent({
         </div>
         <motion.div 
           className="animate-run-cycle drop-shadow-lg"
-          animate={{ scale: enemyHit ? 1.15 : 1, x: enemyProgress.current * 60 }}
+          animate={{ scale: enemyHit ? 1.15 : 1 }}
           transition={{ duration: 0.1 }}
         >
           <PlayerRenderer
@@ -108,11 +108,9 @@ function GameCanvasComponent({
         <div className="absolute -bottom-6 w-20 h-1 bg-black/30 rounded-full blur-sm" />
       </div>
 
-      {/* Enemy */}
-      <motion.div 
+      {/* Enemy - static position */}
+      <div 
         className="absolute bottom-56 right-[15%] flex flex-col items-center gap-2 z-20"
-        animate={{ x: -enemyProgress.current * 60 }}
-        transition={{ duration: 0.1 }}
       >
         <div className="text-center mb-1">
           {state.isBossActive && (

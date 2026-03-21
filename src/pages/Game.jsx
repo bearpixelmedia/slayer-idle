@@ -155,7 +155,7 @@ export default function Game() {
               exit={{ opacity: 0 }}
             >
               <motion.div 
-                className="fixed inset-0 flex flex-col pointer-events-auto lg:hidden"
+                className="fixed bottom-0 left-0 right-0 flex flex-col pointer-events-auto lg:hidden max-h-[85vh]"
                 initial={{ y: "100%" }}
                 animate={{ y: 0 }}
                 exit={{ y: "100%" }}
@@ -175,10 +175,11 @@ export default function Game() {
                 flex: 1,
                 display: "flex",
                 flexDirection: "column",
-                overflow: "hidden"
+                overflow: "hidden",
+                minHeight: 0
               }}>
                 <ScrollArea className="flex-1 overflow-hidden">
-                  <div className="px-3 py-2 space-y-2">
+                  <div className="px-2 py-1 space-y-1">
                     <button
                       onClick={() => setShowRunner(true)}
                       className="w-full py-2 rounded-sm bg-green-600 hover:bg-green-700 text-white font-pixel text-[9px] transition-colors border-2 border-green-800"

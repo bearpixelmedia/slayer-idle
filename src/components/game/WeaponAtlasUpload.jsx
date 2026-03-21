@@ -190,7 +190,7 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
     }
 
     // Merge blobs that are close together (same weapon with disconnected parts)
-    const MARGIN = 10;
+    const MARGIN = 2;
     const used = new Array(blobs.length).fill(false);
     const merged = [];
 

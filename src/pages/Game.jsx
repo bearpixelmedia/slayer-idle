@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { motion } from "framer-motion";
 import useGameState from "@/hooks/useGameState";
 import useAchievements from "@/hooks/useAchievements";
 import useQuests from "@/hooks/useQuests";

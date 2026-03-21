@@ -1,15 +1,18 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.21';
 
 Deno.serve(async (req) => {
-  const base44 = createClientFromRequest(req);
+  try {
+    const base44 = createClientFromRequest(req);
 
-  const { imageUrl, imageWidth, imageHeight } = await req.json();
+    const body = await req.json();
+    const { imageUrl, imageWidth, imageHeight } = body;
 
-  if (!imageUrl) return Response.json({ error: "Missing imageUrl" }, { status: 400 });
+    console.log("Received request:", imageUrl, imageWidth, imageHeight);
 
-  // First, get a text description so we can see what the model sees
-  const result = await base44.integrations.Core.InvokeLLM({
-    prompt: `You are analyzing a pixel art weapon spritesheet image.
+    if (!imageUrl) return Response.json({ error: "Missing imageUrl" }, { status: 400 });
+
+    const result = await base44.integrations.Core.InvokeLLM({
+      prompt: `You are analyzing a pixel art weapon spritesheet image.
 The image is ${imageWidth}x${imageHeight} pixels and contains multiple individual weapon sprites (swords, axes, bows, etc.) on a transparent or solid background.
 
 Identify the bounding box of EACH individual weapon sprite in the image.
@@ -22,31 +25,35 @@ Rules:
 - Sort results top-to-bottom, then left-to-right
 
 Respond with a JSON object like: {"frames": [{"x": 0, "y": 0, "w": 32, "h": 32}, ...]}`,
-    file_urls: [imageUrl],
-    response_json_schema: {
-      type: "object",
-      properties: {
-        frames: {
-          type: "array",
-          items: {
-            type: "object",
-            properties: {
-              x: { type: "number" },
-              y: { type: "number" },
-              w: { type: "number" },
-              h: { type: "number" }
-            },
-            required: ["x", "y", "w", "h"]
+      file_urls: [imageUrl],
+      response_json_schema: {
+        type: "object",
+        properties: {
+          frames: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                x: { type: "number" },
+                y: { type: "number" },
+                w: { type: "number" },
+                h: { type: "number" }
+              },
+              required: ["x", "y", "w", "h"]
+            }
           }
-        }
+        },
+        required: ["frames"]
       },
-      required: ["frames"]
-    },
-    model: "gemini_3_pro"
-  });
+      model: "gemini_3_pro"
+    });
 
-  console.log("AI result:", JSON.stringify(result));
+    console.log("AI result:", JSON.stringify(result));
 
-  const frames = result?.frames || [];
-  return Response.json({ frames });
+    const frames = result?.frames || [];
+    return Response.json({ frames });
+  } catch (err) {
+    console.error("Error:", err.message, err.stack);
+    return Response.json({ error: err.message, frames: [] }, { status: 500 });
+  }
 });

@@ -71,7 +71,7 @@ export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestig
         />
       </TabsContent>
 
-      <TabsContent value="zones" className={`px-0 py-2 ${HUD_THEME.panel.bg}`}>
+      <TabsContent value="zones" className={`px-3 py-2 ${HUD_THEME.panel.bg}`}>
         <ZoneSelector
           activeZoneId={state.activeZoneId}
           unlockedZoneIds={state.unlockedZoneIds}

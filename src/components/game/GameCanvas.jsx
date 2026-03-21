@@ -124,14 +124,12 @@ function GameCanvasComponent({
         className="absolute bottom-56 flex flex-col items-center gap-2 z-20"
         style={{
           left: (() => {
-            // Scroll exactly like foreground parallax layers using player progress
+            // Calculate enemy position using same distance-based parallax as visual layers
             const playerProgress = window.__gameRunProgress?.current || 0;
             const enemyWorldPos = state.enemyCluster?.[state.currentClusterIndex]?.worldPos || state.nextEnemyWorldPos;
             const distanceAhead = enemyWorldPos - playerProgress;
-            const parallaxSpeed = 0.72; // Match foreground layer speed
-            const loopWidth = 3000;
-            const wrappedProgress = (playerProgress * 40 % loopWidth + loopWidth) % loopWidth;
-            const screenX = Math.max(-100, 80 - (wrappedProgress * parallaxSpeed / 100));
+            // Scale distance to screen: 1 progress unit ≈ 2.88% at parallax speed 0.72
+            const screenX = Math.max(-20, 80 - (playerProgress * 2.88) + (distanceAhead * 0.6));
             return `${screenX}%`;
           })(),
         }}

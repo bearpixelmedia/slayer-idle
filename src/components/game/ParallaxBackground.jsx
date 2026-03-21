@@ -363,8 +363,6 @@ const ParallaxBackgroundComponent = React.memo(function ParallaxBackground() {
       <div style={{ position: "absolute", inset: 0, pointerEvents: "none", boxShadow: "inset 0 0 120px rgba(0,0,0,0.55)" }} />
     </div>
   );
-}
-
 });
 
 export default ParallaxBackgroundComponent;

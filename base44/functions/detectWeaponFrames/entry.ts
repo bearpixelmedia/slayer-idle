@@ -7,20 +7,21 @@ Deno.serve(async (req) => {
 
   if (!imageUrl) return Response.json({ error: "Missing imageUrl" }, { status: 400 });
 
+  // First, get a text description so we can see what the model sees
   const result = await base44.integrations.Core.InvokeLLM({
-    prompt: `You are analyzing a pixel art weapon spritesheet image that is ${imageWidth}x${imageHeight} pixels.
-    
-The image contains multiple individual weapon sprites arranged in a grid on a transparent or checkerboard background.
-Your task is to identify the bounding box (x, y, width, height) of each individual weapon sprite.
+    prompt: `You are analyzing a pixel art weapon spritesheet image.
+The image is ${imageWidth}x${imageHeight} pixels and contains multiple individual weapon sprites (swords, axes, bows, etc.) on a transparent or solid background.
 
-Each weapon is a distinct item (sword, axe, bow, etc.) separated by transparent gaps.
-Do NOT merge multiple weapons into one box. Each weapon gets its own bounding box.
-Ignore empty/transparent cells entirely.
+Identify the bounding box of EACH individual weapon sprite in the image.
+For EACH distinct weapon item, output its pixel coordinates as: x (left edge), y (top edge), w (width), h (height).
 
-Return ONLY a JSON array of objects, sorted top-to-bottom then left-to-right, like:
-[{"x": 5, "y": 3, "w": 30, "h": 40}, ...]
+Rules:
+- Each separate weapon gets its own entry
+- Skip fully transparent/empty areas
+- Be as accurate as possible with pixel coordinates
+- Sort results top-to-bottom, then left-to-right
 
-Be precise with pixel coordinates. The image dimensions are ${imageWidth}x${imageHeight}.`,
+Respond with a JSON object like: {"frames": [{"x": 0, "y": 0, "w": 32, "h": 32}, ...]}`,
     file_urls: [imageUrl],
     response_json_schema: {
       type: "object",
@@ -34,13 +35,18 @@ Be precise with pixel coordinates. The image dimensions are ${imageWidth}x${imag
               y: { type: "number" },
               w: { type: "number" },
               h: { type: "number" }
-            }
+            },
+            required: ["x", "y", "w", "h"]
           }
         }
-      }
+      },
+      required: ["frames"]
     },
-    model: "claude_sonnet_4_6"
+    model: "gemini_3_pro"
   });
 
-  return Response.json({ frames: result.frames || [] });
+  console.log("AI result:", JSON.stringify(result));
+
+  const frames = result?.frames || [];
+  return Response.json({ frames });
 });

@@ -139,7 +139,7 @@ function GameCanvasComponent({
             <p className="font-pixel text-[8px] text-red-400 mb-1 animate-pulse">⚔️ BOSS ENCOUNTER ⚔️</p>
           )}
           <p className="font-pixel text-[7px] sm:text-[8px] text-foreground/80 mb-1">{state.currentEnemyName}</p>
-          <HealthBar current={state.enemyHP} max={state.enemyMaxHP} />
+          <HealthBar current={state.enemyHP} max={state.enemyMaxHP} isBoss={state.isBossActive} />
           <p className="font-pixel text-[6px] text-muted-foreground mt-0.5">
             {formatNumber(state.enemyHP)} / {formatNumber(state.enemyMaxHP)}
           </p>

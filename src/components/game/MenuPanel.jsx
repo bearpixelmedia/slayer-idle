@@ -55,8 +55,8 @@ export default function MenuPanel({
       </div>
 
       {/* Tabs content */}
-      <ScrollArea className={HUD_THEME.menuPanel.content}>
-        <div className="px-1.5 py-0.5">
+      <ScrollArea className={`${HUD_THEME.menuPanel.content} flex-1`}>
+        <div className="px-2 py-1">
           <GameTabs
             state={state}
             onBuyUpgrade={onBuyUpgrade}

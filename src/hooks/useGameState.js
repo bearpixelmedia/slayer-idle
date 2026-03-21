@@ -307,6 +307,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         name: enemyName,
         hp: getEnemyHP(s.stage, s.killCount),
         maxHp: getEnemyHP(s.stage, s.killCount),
+        worldPos: s.nextEnemyWorldPos + Math.random() * 20, // Random x position ahead
       };
     });
 
@@ -321,6 +322,9 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       };
     }
     
+    // Queue next enemy to spawn 50-80 units ahead
+    const nextSpawnDistance = 50 + Math.random() * 30;
+    
     return {
       ...s,
       enemyHP: activeEnemy.hp,
@@ -333,6 +337,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       bossWarning: nextBossWarning,
       enemyCluster: cluster,
       currentClusterIndex: 0,
+      nextEnemyWorldPos: s.nextEnemyWorldPos + nextSpawnDistance,
     };
   }
 

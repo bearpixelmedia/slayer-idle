@@ -452,7 +452,7 @@ Return only: {"frames": [{...}, {...}, ...]}`,
           )}
         </div>
 
-        {atlasUrl && <span className="text-xs text-slate-400">{frames.length} frames • {rawImageSize?.w}×{rawImageSize?.h}px</span>}
+        {atlasUrl && <span className={`text-xs ${frames.length > 0 ? 'text-emerald-600 font-semibold' : 'text-slate-400'}`}>{frames.length} frames • {rawImageSize?.w}×{rawImageSize?.h}px</span>}
       </div>
 
       {frames.length > 0 && (

@@ -109,8 +109,10 @@ function GameCanvasComponent({
       </div>
 
       {/* Enemy - static position */}
-      <div 
+      <motion.div 
         className="absolute bottom-56 right-[15%] flex flex-col items-center gap-2 z-20"
+        animate={{ x: runProgress.current }}
+        transition={{ type: "tween", duration: 0 }}
       >
         <div className="text-center mb-1">
           {state.isBossActive && (

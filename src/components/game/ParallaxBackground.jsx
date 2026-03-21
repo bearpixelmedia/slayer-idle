@@ -16,7 +16,7 @@ const PARALLAX_LAYERS = [
   { id: 10, speed: 1.05, top: 63, height: 24, opacity: 0.95 },
 ];
 
-const ParallaxBackgroundComponent = React.memo(function ParallaxBackground() {
+function ParallaxBackground() {
   const refs = useRef([]);
   const speeds = useRef([]);
   const rafId = useRef(null);
@@ -363,6 +363,6 @@ const ParallaxBackgroundComponent = React.memo(function ParallaxBackground() {
       <div style={{ position: "absolute", inset: 0, pointerEvents: "none", boxShadow: "inset 0 0 120px rgba(0,0,0,0.55)" }} />
     </div>
   );
-});
+}
 
-export default ParallaxBackgroundComponent;
+export default React.memo(ParallaxBackground);

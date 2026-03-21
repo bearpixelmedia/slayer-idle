@@ -58,7 +58,7 @@ export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestig
         />
       </TabsContent>
 
-      <TabsContent value="village" className={`px-2 py-2 ${HUD_THEME.panel.bg}`}>
+      <TabsContent value="village" className={`px-0 py-2 ${HUD_THEME.panel.bg}`}>
         <VillagePanel state={state} onUpgradeBuilding={onUpgradeBuilding} />
       </TabsContent>
 

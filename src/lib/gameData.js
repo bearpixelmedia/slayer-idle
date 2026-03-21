@@ -115,6 +115,12 @@ export function getBowSoulMultiplier(bowLevel) {
   return 1 + bowLevel * 0.05;
 }
 
+// Get enemy pack size (1 or 3+packLevel)
+export function getPackSize(packSizeLevel) {
+  if (packSizeLevel === 0) return 1;
+  return 3 + packSizeLevel - 1; // Level 1 = 3, Level 2 = 4, etc
+}
+
 // Get available stage indices for a zone (returns an array of stage indices)
 export function getZoneStages(zoneId) {
   const zone = ZONES.find(z => z?.id === zoneId);

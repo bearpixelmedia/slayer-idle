@@ -112,6 +112,11 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
       setRawImageSize(imageSize);
       setAtlasUrl(url);
 
+      // Clear old assignments
+      const cleared = {};
+      setAssignments(cleared);
+      WEAPON_SLOTS.forEach(slot => onUpdateSetting(slot.id, null));
+
       // Auto-slice with current grid settings
       const sliced = sliceGrid(url, imageSize.w, imageSize.h, cols, rows);
       setFrames(sliced);

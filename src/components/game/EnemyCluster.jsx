@@ -8,8 +8,9 @@ function EnemyCluster({ cluster, currentIndex, isBossActive, enemyHP, enemyMaxHP
     <>
       {cluster && cluster.map((enemy, idx) => {
         // Calculate screen position based on world position relative to player
-        const relativeDistance = (enemy.worldPos - playerWorldPos) * 10; // Scale factor for screen space
-        const screenX = 80 + relativeDistance; // Start at right side, move right if ahead
+        // Scale: each world unit = 1% screen width, enemy positions ahead appear to the right
+        const relativeDistance = (enemy.worldPos - playerWorldPos) * 2.5;
+        const screenX = 85 + relativeDistance; // Enemy starts at right (85%), moves further right if ahead
         const isActive = idx === currentIndex;
         const scale = isActive ? 1 : 0.7 + (0.3 * Math.max(0, 1 - Math.abs(relativeDistance) / 100));
         const opacity = isActive ? 1 : Math.max(0.2, 1 - Math.abs(relativeDistance) / 150);

@@ -674,14 +674,15 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     return () => clearInterval(interval);
   }, [dealDamage, currentWeapon]);
 
-  // Clean up floating coins, souls, damage numbers, and particles
+  // Clean up floating coins, souls, damage numbers, and particles (batch cleanup)
   useEffect(() => {
     const interval = setInterval(() => {
-      setFloatingCoins(prev => prev.filter(c => Date.now() - c.id < 1000));
-      setFloatingSouls(prev => prev.filter(s => Date.now() - s.id < 1000));
-      setFloatingDamage(prev => prev.filter(d => Date.now() - d.id < 800));
-      setParticles(prev => prev.filter(p => Date.now() - p.id < 1000));
-    }, 500);
+      const now = Date.now();
+      setFloatingCoins(prev => prev.filter(c => now - c.id < 1000));
+      setFloatingSouls(prev => prev.filter(s => now - s.id < 1000));
+      setFloatingDamage(prev => prev.filter(d => now - d.id < 800));
+      setParticles(prev => prev.filter(p => now - p.id < 1000));
+    }, 1000);
     return () => clearInterval(interval);
   }, []);
 

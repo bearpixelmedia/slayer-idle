@@ -145,19 +145,18 @@ function GameCanvasComponent({
         <div className="absolute -bottom-6 w-20 h-1 bg-black/30 rounded-full blur-sm" />
       </div>
 
-      {/* Enemy - parallax layer that scrolls with world */}
+      {/* Enemy - positioned on parallax layer, stops world when met */}
       <div 
-        className="absolute bottom-56 flex flex-col items-center gap-2 z-20"
+        className="absolute flex flex-col items-center gap-2 z-20"
         style={{
           left: (() => {
-            // Calculate enemy position using same distance-based parallax as visual layers
+            // Enemy scrolls with world parallax
             const playerProgress = window.__gameRunProgress?.current || 0;
             const enemyWorldPos = state.enemyCluster?.[state.currentClusterIndex]?.worldPos || state.nextEnemyWorldPos;
-            const distanceAhead = enemyWorldPos - playerProgress;
-            // Scale distance to screen: 1 progress unit ≈ 2.88% at parallax speed 0.72
-            const screenX = Math.max(-20, 80 - (playerProgress * 2.88) + (distanceAhead * 0.6));
-            return `${screenX}%`;
+            // Enemy stays at 80% screen X, scrolls as world moves
+            return "80%";
           })(),
+          bottom: "14rem", // Match player vertical position (bottom-56)
         }}
       >
         <div className="text-center mb-1">

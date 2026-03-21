@@ -16,13 +16,10 @@ const PARALLAX_LAYERS = [
   { id: 10, speed: 0.88, top: 65, height: 24, opacity: 0.9 },
 ];
 
-export default function ParallaxBackground() {
+function ParallaxBackgroundComponent() {
   const refs = useRef([]);
   const speeds = useRef([]);
-  const camX = useRef(0);
-  const target = useRef(0);
   const rafId = useRef(null);
-  const intId = useRef(null);
   const [sprites, setSprites] = useState({});
 
   const reloadSprites = () => {

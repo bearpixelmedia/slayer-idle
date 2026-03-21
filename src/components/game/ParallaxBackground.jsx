@@ -2,6 +2,20 @@ import React, { useEffect, useRef, useState } from "react";
 import { loadGameSettings } from "@/lib/gameSettings";
 import SpriteTileRow from "./SpriteTileRow";
 
+const PARALLAX_LAYERS = [
+  { id: 0, speed: 0.01, top: 0, height: 60, opacity: 0.5 },
+  { id: 1, speed: 0.06, top: 10, height: 30, opacity: 0.45 },
+  { id: 2, speed: 0.12, top: 20, height: 35, opacity: 0.65 },
+  { id: 3, speed: 0.22, top: 35, height: 26, opacity: 0.5 },
+  { id: 4, speed: 0.28, top: 33, height: 30, opacity: 0.65 },
+  { id: 5, speed: 0.43, top: 34, height: 34, opacity: 0.8 },
+  { id: 6, speed: 0.50, top: 31, height: 38, opacity: 0.85 },
+  { id: 7, speed: 0.57, top: 29, height: 43, opacity: 0.88 },
+  { id: 8, speed: 0.65, top: 27, height: 48, opacity: 0.9 },
+  { id: 9, speed: 0.84, top: 62, height: 22, opacity: 0.82 },
+  { id: 10, speed: 0.88, top: 65, height: 24, opacity: 0.9 },
+];
+
 export default function ParallaxBackground() {
   const refs = useRef([]);
   const speeds = useRef([]);

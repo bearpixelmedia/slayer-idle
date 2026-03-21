@@ -211,28 +211,51 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
   // Given pixel data and a seed bounding box, expand it to tightly fit all connected non-transparent pixels
   const expandBox = (data, width, height, seed, alpha = 10) => {
     let { x, y, w, h } = seed;
+    x = Math.max(0, Math.min(x, width - 1));
+    y = Math.max(0, Math.min(y, height - 1));
+    w = Math.min(w, width - x);
+    h = Math.min(h, height - y);
+    
     let changed = true;
-    while (changed) {
+    let iterations = 0;
+    while (changed && iterations < 100) {
+      iterations++;
       changed = false;
       // Expand each edge outward if there's any non-transparent pixel just outside
-      const edges = [
-        { axis: 'y', val: y - 1, range: [x, x + w], expand: () => { y--; h++; changed = true; } },
-        { axis: 'y', val: y + h, range: [x, x + w], expand: () => { h++; changed = true; } },
-        { axis: 'x', val: x - 1, range: [y, y + h], expand: () => { x--; w++; changed = true; } },
-        { axis: 'x', val: x + w, range: [y, y + h], expand: () => { w++; changed = true; } },
-      ];
-      for (const edge of edges) {
-        if (edge.val < 0 || edge.val >= (edge.axis === 'y' ? height : width)) continue;
-        const [start, end] = edge.range;
-        for (let i = start; i < end; i++) {
-          const idx = edge.axis === 'y'
-            ? (edge.val * width + i) * 4 + 3
-            : (i * width + edge.val) * 4 + 3;
-          if (data[idx] > alpha) { edge.expand(); break; }
+      if (y > 0) {
+        for (let i = Math.max(0, x); i < Math.min(width, x + w); i++) {
+          const idx = ((y - 1) * width + i) * 4 + 3;
+          if (idx >= 0 && idx < data.length && data[idx] > alpha) {
+            y--; h++; changed = true; break;
+          }
+        }
+      }
+      if (y + h < height) {
+        for (let i = Math.max(0, x); i < Math.min(width, x + w); i++) {
+          const idx = ((y + h) * width + i) * 4 + 3;
+          if (idx >= 0 && idx < data.length && data[idx] > alpha) {
+            h++; changed = true; break;
+          }
+        }
+      }
+      if (x > 0) {
+        for (let i = Math.max(0, y); i < Math.min(height, y + h); i++) {
+          const idx = (i * width + (x - 1)) * 4 + 3;
+          if (idx >= 0 && idx < data.length && data[idx] > alpha) {
+            x--; w++; changed = true; break;
+          }
+        }
+      }
+      if (x + w < width) {
+        for (let i = Math.max(0, y); i < Math.min(height, y + h); i++) {
+          const idx = (i * width + (x + w)) * 4 + 3;
+          if (idx >= 0 && idx < data.length && data[idx] > alpha) {
+            w++; changed = true; break;
+          }
         }
       }
     }
-    return { x: Math.max(0, x), y: Math.max(0, y), w: Math.min(w, width - x), h: Math.min(h, height - y) };
+    return { x: Math.max(0, x), y: Math.max(0, y), w: Math.min(Math.max(4, w), width - x), h: Math.min(Math.max(4, h), height - y) };
   };
 
   const aiDetect = async () => {

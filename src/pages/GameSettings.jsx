@@ -14,6 +14,7 @@ import { QUESTS } from "@/lib/quests";
 import { VILLAGE_BUILDINGS } from "@/lib/village";
 import SettingImageUpload from "@/components/game/SettingImageUpload";
 import WeaponAtlasUpload from "@/components/game/WeaponAtlasUpload";
+import AsepriteUpload from "@/components/game/AsepriteUpload";
 
 const STORAGE_KEY = "game_settings_config";
 
@@ -412,6 +413,22 @@ export default function GameSettings() {
 
           {/* Weapons Tab */}
           <TabsContent value="weapons" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Aseprite Files</CardTitle>
+                <CardDescription>Upload Aseprite project files (.aseprite, .ase), PNG sprites, and JSON metadata</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <AsepriteUpload 
+                  label="Aseprite Project Files"
+                  onUpload={(urls) => {
+                    if (urls.png) updateSetting('aseprite_png_url', urls.png);
+                    if (urls.json) updateSetting('aseprite_json_url', urls.json);
+                    if (urls.aseprite) updateSetting('aseprite_project_url', urls.aseprite);
+                  }}
+                />
+              </CardContent>
+            </Card>
             <Card>
               <CardHeader>
                 <CardTitle>Weapon Spritesheet Atlas</CardTitle>

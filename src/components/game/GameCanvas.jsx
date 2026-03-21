@@ -1,5 +1,4 @@
 import React, { useRef, useCallback } from "react";
-import { useRef as useRefHook } from "react";
 import { STAGES, ENEMY_EMOJIS } from "@/lib/gameData";
 import { formatNumber } from "@/lib/formatNumber";
 import { motion, AnimatePresence } from "framer-motion";

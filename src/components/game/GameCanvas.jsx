@@ -30,7 +30,7 @@ import ParallaxBackground from "./ParallaxBackground";
 import { loadGameSettings } from "@/lib/gameSettings";
 import PlayerRenderer from "./PlayerRenderer";
 
-export default function GameCanvas({
+function GameCanvasComponent({
   state,
   enemyDying,
   floatingCoins,

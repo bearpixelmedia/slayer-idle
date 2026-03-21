@@ -18,8 +18,8 @@ export default function useRunnerState() {
   const [isGameOver, setIsGameOver] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
 
-  const gameStateRef = useRef({ playerY, playerVelocity, isJumping, obstacles, score, isGameOver });
-  gameStateRef.current = { playerY, playerVelocity, isJumping, obstacles, score, isGameOver };
+  const gameStateRef = useRef({ playerY, playerVelocity, isJumping, obstacles, score, isGameOver, gameStarted });
+  gameStateRef.current = { playerY, playerVelocity, isJumping, obstacles, score, isGameOver, gameStarted };
 
   // Physics tick
   useEffect(() => {

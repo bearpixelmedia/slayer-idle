@@ -685,18 +685,27 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     return () => clearInterval(interval);
   }, []);
 
-  const buyUpgrade = useCallback((upgradeId) => {
+  const buyUpgrade = useCallback((upgradeId, count = 1) => {
     setState(prev => {
       const upgrade = UPGRADES.find(u => u.id === upgradeId);
-      const level = prev.upgradeLevels[upgradeId] || 0;
-      const cost = getUpgradeCost(upgrade, level);
+      let level = prev.upgradeLevels[upgradeId] || 0;
+      let totalCost = 0;
+      let boughtCount = 0;
       
-      if (prev.coins < cost) return prev;
+      for (let i = 0; i < count; i++) {
+        const cost = getUpgradeCost(upgrade, level);
+        if (prev.coins - totalCost < cost) break;
+        totalCost += cost;
+        level++;
+        boughtCount++;
+      }
+      
+      if (boughtCount === 0) return prev;
       
       return {
         ...prev,
-        coins: prev.coins - cost,
-        upgradeLevels: { ...prev.upgradeLevels, [upgradeId]: level + 1 },
+        coins: prev.coins - totalCost,
+        upgradeLevels: { ...prev.upgradeLevels, [upgradeId]: level },
       };
     });
   }, []);

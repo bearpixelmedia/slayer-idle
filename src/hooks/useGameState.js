@@ -391,7 +391,8 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   const activateAbility = useCallback((id) => {
     setAbilities(prev => {
       const a = prev[id];
-      if (a.active || a.cooldownRemaining > 0) return prev;
+      if (!a || a.active || a.cooldownRemaining > 0) return prev;
+      if (!ABILITY_CONFIGS[id]) return prev;
       return {
         ...prev,
         [id]: { active: true, durationRemaining: ABILITY_CONFIGS[id].duration, cooldownRemaining: 0 },
@@ -672,6 +673,8 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   const buyUpgrade = useCallback((upgradeId, count = 1) => {
     setState(prev => {
       const upgrade = UPGRADES.find(u => u.id === upgradeId);
+      if (!upgrade) return prev;
+      
       let level = prev.upgradeLevels[upgradeId] || 0;
       let totalCost = 0;
       let boughtCount = 0;
@@ -780,8 +783,8 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   const slayerPointsOnPrestige = getSlayerPointsOnPrestige(state.souls + soulsOnPrestige);
 
   const switchZone = useCallback((zoneId) => {
-    if (!state.unlockedZoneIds.includes(zoneId)) return;
     setState(prev => {
+      if (!prev.unlockedZoneIds.includes(zoneId)) return prev;
       const zp = prev.zoneProgress[zoneId];
       if (!zp) return prev;
       const switched = {
@@ -798,20 +801,22 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       };
       return spawnNewEnemy(switched);
     });
-  }, [state.unlockedZoneIds]);
+  }, []);
 
   const unlockZone = useCallback((zoneId) => {
-    if (!canUnlockZone(zoneId, state.unlockedZoneIds, state.zoneProgress, state.slayerPoints)) return;
-    
-    const zone = ZONES.find(z => z.id === zoneId);
-    if (!zone?.unlockRequirement) return;
+    setState(prev => {
+      if (!canUnlockZone(zoneId, prev.unlockedZoneIds, prev.zoneProgress, prev.slayerPoints)) return prev;
+      
+      const zone = ZONES.find(z => z.id === zoneId);
+      if (!zone?.unlockRequirement) return prev;
 
-    setState(prev => ({
-      ...prev,
-      unlockedZoneIds: [...prev.unlockedZoneIds, zoneId],
-      slayerPoints: prev.slayerPoints - zone.unlockRequirement.spCost,
-    }));
-  }, [state.unlockedZoneIds, state.zoneProgress, state.slayerPoints]);
+      return {
+        ...prev,
+        unlockedZoneIds: [...prev.unlockedZoneIds, zoneId],
+        slayerPoints: prev.slayerPoints - zone.unlockRequirement.spCost,
+      };
+    });
+  }, []);
 
   return {
     state,

@@ -120,8 +120,13 @@ function GameCanvasComponent({
         </div>
         <motion.div 
           className="animate-run-cycle drop-shadow-lg"
-          animate={{ scale: enemyHit ? 1.15 : 1, filter: playerHit ? "brightness(2)" : "brightness(1)", y: enemyHit ? -8 : 0 }}
-          transition={{ duration: 0.1 }}
+          animate={{ 
+            scale: enemyHit ? 1.15 : 1, 
+            filter: playerHit ? "brightness(2)" : "brightness(1)", 
+            y: enemyHit ? -80 : 0,
+            rotateZ: enemyHit ? 360 : 0
+          }}
+          transition={{ duration: 0.4 }}
         >
           <PlayerRenderer
             spriteUrl={weaponMode === "bow" ? gameSettings.player_bow : gameSettings.player_sword}

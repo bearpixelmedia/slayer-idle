@@ -105,12 +105,14 @@ export default function HUDOverlay({
 
       {/* Menu Toggle Button */}
       {!hudMenuOpen && (
-        <button
+        <motion.button
           onClick={() => onMenuToggle(true)}
-          className="hidden lg:flex fixed right-4 bottom-20 z-50 w-12 h-12 rounded-full pointer-events-auto items-center justify-center text-2xl transition-all active:scale-95 bg-amber-900 hover:bg-amber-800 border-2 border-amber-700/50"
+          animate={hasAffordableUpgrade ? { boxShadow: ["0 0 0 0 rgba(217, 119, 6, 0.7)", "0 0 0 12px rgba(217, 119, 6, 0)"] } : {}}
+          transition={hasAffordableUpgrade ? { duration: 1.5, repeat: Infinity } : {}}
+          className="hidden lg:flex fixed right-4 bottom-20 z-50 w-12 h-12 rounded-full pointer-events-auto items-center justify-center text-2xl transition-all active:scale-95 border-2 border-primary/60 bg-primary/15 hover:brightness-125"
         >
           📖
-        </button>
+        </motion.button>
       )}
     </div>
   );

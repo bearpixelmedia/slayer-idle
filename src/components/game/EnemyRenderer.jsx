@@ -61,25 +61,28 @@ export default function EnemyRenderer({ enemyName, enemyHit, enemyDying, isBoss,
     canvas.height = isBoss ? 96 : 64;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    if (imgRef.current.complete) {
+    const draw = () => {
       const scale = Math.min(canvas.width / frame.frame.w, canvas.height / frame.frame.h);
       const scaledW = frame.frame.w * scale;
       const scaledH = frame.frame.h * scale;
       const offsetX = (canvas.width - scaledW) / 2;
       const offsetY = (canvas.height - scaledH) / 2;
-      
+
+      ctx.imageSmoothingEnabled = false;
+      // Flip horizontally so right-facing sprite faces left (towards player)
+      ctx.save();
+      ctx.translate(canvas.width, 0);
+      ctx.scale(-1, 1);
       ctx.drawImage(
         imgRef.current,
-        frame.frame.x,
-        frame.frame.y,
-        frame.frame.w,
-        frame.frame.h,
-        offsetX,
-        offsetY,
-        scaledW,
-        scaledH
+        frame.frame.x, frame.frame.y, frame.frame.w, frame.frame.h,
+        offsetX, offsetY, scaledW, scaledH
       );
-    }
+      ctx.restore();
+    };
+
+    if (imgRef.current.complete) draw();
+    else imgRef.current.onload = draw;
   }, [animationData, currentFrame, isBoss]);
 
   if (animationData) {

@@ -57,6 +57,7 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
   const [cols, setCols] = useState(4);
   const [rows, setRows] = useState(2);
   const [rawImageSize, setRawImageSize] = useState(null);
+  const [aiDetecting, setAiDetecting] = useState(false);
 
   // Load existing atlas from localStorage
   useEffect(() => {

@@ -1,6 +1,5 @@
 import React from "react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import UpgradeShop from "@/components/game/UpgradeShop";
 import SkillTree from "@/components/game/SkillTree";
 import AchievementsPanel from "@/components/game/AchievementsPanel";
 import PrestigePanel from "@/components/game/PrestigePanel";

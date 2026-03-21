@@ -58,6 +58,7 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
   const [rows, setRows] = useState(2);
   const [rawImageSize, setRawImageSize] = useState(null);
   const [aiDetecting, setAiDetecting] = useState(false);
+  const [asepriteJson, setAsepriteJson] = useState(null);
 
   // Load existing atlas from localStorage
   useEffect(() => {
@@ -100,12 +101,13 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
 
     const aseFile = files.find(f => /\.(aseprite|ase)$/i.test(f.name));
     const imgFile = files.find(f => /\.(png|jpg|jpeg)$/i.test(f.name));
+    const jsonFile = files.find(f => /\.json$/i.test(f.name));
     
     if (!aseFile && !imgFile) { alert("Please include a .aseprite file or PNG image."); return; }
 
     setUploading(true);
     try {
-      let url, imageSize;
+      let url, imageSize, aespriteMeta = null;
 
       if (aseFile) {
         // Parse .aseprite file
@@ -115,6 +117,7 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
         const { spriteUrl, animationData } = response.data;
         
         url = spriteUrl;
+        aespriteMeta = animationData;
         sessionStorage.setItem(`aseprite_json_${spriteUrl}`, JSON.stringify(animationData));
         
         // Get image dimensions
@@ -123,7 +126,7 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
         await new Promise(res => { img.onload = res; });
         imageSize = { w: img.naturalWidth, h: img.naturalHeight };
       } else {
-        // Legacy: upload PNG only
+        // Legacy: upload PNG + optional JSON
         const imgRes = await base44.integrations.Core.UploadFile({ file: imgFile });
         url = imgRes.file_url;
 
@@ -131,25 +134,75 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
         img.src = url;
         await new Promise(res => { img.onload = res; });
         imageSize = { w: img.naturalWidth, h: img.naturalHeight };
+
+        // Parse JSON if provided
+        if (jsonFile) {
+          const text = await jsonFile.text();
+          aespriteMeta = JSON.parse(text);
+        }
       }
 
       setRawImageSize(imageSize);
       setAtlasUrl(url);
+      setAsepriteJson(aespriteMeta);
 
       // Clear old assignments
       const cleared = {};
       setAssignments(cleared);
       WEAPON_SLOTS.forEach(slot => onUpdateSetting(slot.id, null));
 
-      // Auto-slice with current grid settings
-      const sliced = sliceGrid(url, imageSize.w, imageSize.h, cols, rows);
+      // If Aseprite JSON exists, extract frames from layers
+      let sliced;
+      if (aespriteMeta?.layers) {
+        sliced = extractFramesFromLayers(aespriteMeta.layers, aespriteMeta.frames || []);
+      } else {
+        // Fallback to grid
+        sliced = sliceGrid(url, imageSize.w, imageSize.h, cols, rows);
+      }
+      
       setFrames(sliced);
-      localStorage.setItem("weapon_atlas", JSON.stringify({ url, framesData: sliced, imageSize }));
+      localStorage.setItem("weapon_atlas", JSON.stringify({ url, framesData: sliced, imageSize, aespriteMeta }));
     } catch (err) {
       alert("Upload failed: " + err.message);
     } finally {
       setUploading(false);
     }
+  };
+
+  const extractFramesFromLayers = (layers, allFrames) => {
+    // Extract frames from Aseprite layers
+    // Single-frame layer = 1 frame, multi-frame layer = animation
+    const extractedFrames = [];
+    
+    layers.forEach(layer => {
+      if (layer.data?.includes("_anim")) {
+        // Animation layer - each frame is a separate entry
+        const frameIndices = layer.data.split("_anim_")[1]?.split(",").map(Number) || [];
+        frameIndices.forEach(frameIdx => {
+          const frame = allFrames[frameIdx];
+          if (frame?.frame) {
+            extractedFrames.push({
+              frame: frame.frame,
+              layerName: layer.name,
+              isAnimation: true
+            });
+          }
+        });
+      } else if (layer.data) {
+        // Static layer - single frame
+        const frameIdx = Number(layer.data) || 0;
+        const frame = allFrames[frameIdx];
+        if (frame?.frame) {
+          extractedFrames.push({
+            frame: frame.frame,
+            layerName: layer.name,
+            isAnimation: false
+          });
+        }
+      }
+    });
+
+    return extractedFrames.length > 0 ? extractedFrames : [];
   };
 
   // Projection / histogram method — finds empty rows & columns to cut between sprites

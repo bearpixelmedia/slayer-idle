@@ -245,6 +245,33 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
     localStorage.setItem("weapon_atlas", JSON.stringify({ url: atlasUrl, framesData: merged, imageSize: rawImageSize }));
   };
 
+  // Given pixel data and a seed bounding box, expand it to tightly fit all connected non-transparent pixels
+  const expandBox = (data, width, height, seed, alpha = 10) => {
+    let { x, y, w, h } = seed;
+    let changed = true;
+    while (changed) {
+      changed = false;
+      // Expand each edge outward if there's any non-transparent pixel just outside
+      const edges = [
+        { axis: 'y', val: y - 1, range: [x, x + w], expand: () => { y--; h++; changed = true; } },
+        { axis: 'y', val: y + h, range: [x, x + w], expand: () => { h++; changed = true; } },
+        { axis: 'x', val: x - 1, range: [y, y + h], expand: () => { x--; w++; changed = true; } },
+        { axis: 'x', val: x + w, range: [y, y + h], expand: () => { w++; changed = true; } },
+      ];
+      for (const edge of edges) {
+        if (edge.val < 0 || edge.val >= (edge.axis === 'y' ? height : width)) continue;
+        const [start, end] = edge.range;
+        for (let i = start; i < end; i++) {
+          const idx = edge.axis === 'y'
+            ? (edge.val * width + i) * 4 + 3
+            : (i * width + edge.val) * 4 + 3;
+          if (data[idx] > alpha) { edge.expand(); break; }
+        }
+      }
+    }
+    return { x: Math.max(0, x), y: Math.max(0, y), w: Math.min(w, width - x), h: Math.min(h, height - y) };
+  };
+
   const aiDetect = async () => {
     if (!atlasUrl || !rawImageSize) return;
     setAiDetecting(true);

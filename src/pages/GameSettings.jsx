@@ -409,6 +409,46 @@ export default function GameSettings() {
             </Card>
           </TabsContent>
 
+          {/* Weapons Tab */}
+          <TabsContent value="weapons" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Weapon Sprites</CardTitle>
+                <CardDescription>Upload custom sprites for each weapon. Supports static images or animated spritesheets (PNG + JSON).</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-8">
+                <SettingGroup
+                  title="Melee Weapons"
+                  imageItems={[
+                    { id: "weapon_sword", label: "Sword", defaultValue: "⚔️" },
+                    { id: "weapon_axe", label: "Axe", defaultValue: "🪓" },
+                    { id: "weapon_dagger", label: "Dagger", defaultValue: "🗡️" },
+                    { id: "weapon_hammer", label: "Hammer", defaultValue: "🔨" },
+                    { id: "weapon_spear", label: "Spear", defaultValue: "🏹" },
+                  ]}
+                />
+                <SettingGroup
+                  title="Ranged Weapons"
+                  imageItems={[
+                    { id: "weapon_bow", label: "Bow", defaultValue: "🏹" },
+                    { id: "weapon_crossbow", label: "Crossbow", defaultValue: "🎯" },
+                    { id: "weapon_staff", label: "Staff", defaultValue: "🪄" },
+                    { id: "weapon_wand", label: "Wand", defaultValue: "✨" },
+                  ]}
+                />
+                <SettingGroup
+                  title="Special Weapons"
+                  imageItems={[
+                    { id: "weapon_fire_sword", label: "Fire Sword", defaultValue: "🔥" },
+                    { id: "weapon_soul_blade", label: "Soul Blade", defaultValue: "💀" },
+                    { id: "weapon_chaos_gem", label: "Chaos Gem", defaultValue: "💎" },
+                    { id: "weapon_ancient_rune", label: "Ancient Rune", defaultValue: "🔮" },
+                  ]}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* Parallax Tab */}
           <TabsContent value="parallax" className="space-y-6">
             <Card>

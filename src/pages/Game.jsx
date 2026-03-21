@@ -235,12 +235,14 @@ export default function Game() {
         )}
 
         {!showRunner && (
-          <button
+          <motion.button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="fixed top-20 right-4 z-40 w-12 h-12 rounded-full bg-amber-900 hover:bg-amber-800 flex items-center justify-center text-2xl transition-all active:scale-95 border-2 border-amber-700/50"
+            animate={state?.coins > 0 ? { boxShadow: ["0 0 0 0 rgba(45, 212, 191, 0.7)", "0 0 0 12px rgba(45, 212, 191, 0)"] } : {}}
+            transition={state?.coins > 0 ? { duration: 1.5, repeat: Infinity } : {}}
+            className="fixed top-20 right-4 z-40 w-12 h-12 rounded-full flex items-center justify-center text-2xl transition-all active:scale-95 border-2 border-primary/60 bg-primary/15 hover:brightness-125 lg:hidden"
           >
             📖
-          </button>
+          </motion.button>
         )}
       </div>
 

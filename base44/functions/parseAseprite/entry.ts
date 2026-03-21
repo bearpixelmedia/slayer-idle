@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.21';
+import AsepriteParser from 'npm:aseprite-parser@1.0.0';
 
 Deno.serve(async (req) => {
   try {
@@ -9,47 +10,78 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { fileUrl } = await req.json();
-    
-    if (!fileUrl) {
-      return Response.json({ error: 'No file URL provided' }, { status: 400 });
+    const formData = await req.formData();
+    const file = formData.get('file');
+
+    if (!file) {
+      return Response.json({ error: 'No file provided' }, { status: 400 });
     }
 
-    // Fetch the .aseprite file (ZIP format)
-    const response = await fetch(fileUrl);
-    if (!response.ok) {
-      return Response.json({ error: 'Failed to fetch file' }, { status: 400 });
+    const buffer = await file.arrayBuffer();
+    const parser = new AsepriteParser(Buffer.from(buffer));
+    const ase = parser.parse();
+
+    if (!ase || !ase.frames || ase.frames.length === 0) {
+      return Response.json({ error: 'Failed to parse .aseprite file' }, { status: 400 });
     }
 
-    const buffer = await response.arrayBuffer();
-    const view = new Uint8Array(buffer);
+    // Extract sprite image as PNG
+    const canvas = ase.toCanvas();
+    const pngBuffer = await new Promise((resolve, reject) => {
+      canvas.toBuffer((err, buf) => {
+        if (err) reject(err);
+        else resolve(buf);
+      });
+    });
 
-    // Search for JSON data in the ZIP file
-    const jsonMatch = extractJsonFromAseprite(view);
-    
-    if (!jsonMatch) {
-      return Response.json({ 
-        error: 'No animation data found in .aseprite file'
-      }, { status: 400 });
-    }
+    // Upload PNG to file storage
+    const pngFile = new File([pngBuffer], `${file.name.replace(/\..+$/, '')}.png`, { type: 'image/png' });
+    const uploadRes = await base44.integrations.Core.UploadFile({ file: pngFile });
+    const spriteUrl = uploadRes.file_url;
 
-    const animationData = JSON.parse(jsonMatch);
-    
-    return Response.json({ 
-      success: true,
-      frames: animationData.frames || {},
-      meta: animationData.meta || {}
+    // Convert Aseprite data to Aseprite JSON format
+    const animationData = {
+      meta: {
+        app: 'Aseprite Parser',
+        version: '1.0',
+        image: spriteUrl,
+        size: { w: canvas.width, h: canvas.height },
+        scale: '1',
+        frameTags: ase.frameTags?.map(tag => ({
+          name: tag.name,
+          from: tag.fromFrame,
+          to: tag.toFrame,
+          direction: tag.animDirection,
+          duration: 100
+        })) || []
+      },
+      frames: {}
+    };
+
+    // Map frames
+    ase.frames.forEach((frame, idx) => {
+      const frameName = `${idx}`;
+      animationData.frames[frameName] = {
+        frame: {
+          x: frame.left,
+          y: frame.top,
+          w: frame.width,
+          h: frame.height
+        },
+        rotated: false,
+        trimmed: false,
+        spriteSourceSize: { x: 0, y: 0, w: frame.width, h: frame.height },
+        sourceSize: { w: frame.width, h: frame.height },
+        duration: frame.duration || 100
+      };
+    });
+
+    return Response.json({
+      spriteUrl,
+      animationData
     });
   } catch (error) {
+    console.error('Aseprite parsing error:', error);
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
-
-function extractJsonFromAseprite(view) {
-  const decoder = new TextDecoder('utf-8', { fatal: false });
-  const text = decoder.decode(view);
-  
-  // Look for JSON object with frames property
-  const match = text.match(/\{[^{}]*"frames"[^{}]*(?:\{[^{}]*\}[^{}]*)*\}/);
-  return match ? match[0] : null;
-}

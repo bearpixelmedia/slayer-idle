@@ -559,6 +559,7 @@ export default function GameSettings() {
                 <SettingGroup
                   title="Background Music"
                   imageItems={[
+                    { id: "music_title", label: "Title Screen" },
                     { id: "music_main", label: "Main Theme" },
                     { id: "music_boss", label: "Boss Battle" },
                     { id: "music_zone_light", label: "Realm of Light" },

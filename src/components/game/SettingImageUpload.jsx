@@ -278,47 +278,46 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
           )}
         </div>
 
-        {/* Upload button */}
-        <label>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={uploading}
-            className="cursor-pointer"
-            asChild
-          >
-            <span className="gap-2">
-              <Upload className="w-4 h-4" />
-              {uploading ? "Uploading..." : "Upload"}
-            </span>
-          </Button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*,.json,.aseprite"
-            multiple
-            onChange={handleFileSelect}
-            className="hidden"
-          />
-        </label>
+          {/* Upload button */}
+          <label>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={uploading}
+              className="cursor-pointer"
+              asChild
+            >
+              <span className="gap-2">
+                <Upload className="w-4 h-4" />
+                {uploading ? "Uploading..." : "Upload"}
+              </span>
+            </Button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*,.json,.aseprite,.mp3,.wav,.ogg,.m4a"
+              multiple
+              onChange={handleFileSelect}
+              className="hidden"
+            />
+          </label>
 
-
-
-        {/* Clear button */}
-        {value && (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={handleClear}
-            className="gap-2"
-          >
-            <X className="w-4 h-4" />
-            Clear
-          </Button>
-        )}
-      </div>
+          {/* Clear button */}
+          {value && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleClear}
+              className="gap-2"
+            >
+              <X className="w-4 h-4" />
+              Clear
+            </Button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

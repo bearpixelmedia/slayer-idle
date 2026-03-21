@@ -54,6 +54,22 @@ function GameCanvasComponent({
     state?.bossFightStartTime
       ? isBossShieldActive(Date.now() - state.bossFightStartTime, boss)
       : false;
+  
+  // Enemy movement toward player
+  const enemyProgress = useRef(0);
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      enemyProgress.current = Math.min(enemyProgress.current + 0.005, 0.6);
+      if (enemyProgress.current >= 0.5 && !state.isDead) {
+        onTap(50, 56);
+      }
+    }, 50);
+    return () => clearInterval(interval);
+  }, [state.isDead, onTap]);
+  
+  React.useEffect(() => {
+    enemyProgress.current = 0;
+  }, [state.enemyMaxHP]);
 
   const handleClick = React.useCallback((e) => {
     if (!state || state.isDead) return;
@@ -98,7 +114,11 @@ function GameCanvasComponent({
       </div>
 
       {/* Enemy */}
-      <div className="absolute bottom-56 right-[15%] sm:right-[25%] flex flex-col items-center gap-2 z-20">
+      <motion.div 
+        className="absolute bottom-56 flex flex-col items-center gap-2 z-20"
+        style={{ right: `${25 - enemyProgress.current * 30}%` }}
+        transition={{ type: "tween", duration: 0.05 }}
+      >
         <div className="text-center mb-1">
           {state.isBossActive && (
             <p className="font-pixel text-[8px] text-red-400 mb-1 animate-pulse">⚔️ BOSS ENCOUNTER ⚔️</p>
@@ -119,7 +139,7 @@ function GameCanvasComponent({
           {/* Ground shadow */}
           <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-24 h-2 bg-black/25 rounded-full blur-md" />
         </div>
-      </div>
+      </motion.div>
 
       {/* Slash effects */}
       <AnimatePresence>

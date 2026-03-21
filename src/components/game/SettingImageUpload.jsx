@@ -237,7 +237,7 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
               </div>
             </button>
           
-          {showLibrary && (
+          {showLibrary && !isAudioFile && (
             <div className="absolute top-full left-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-50 w-72">
               <div className="p-2 border-b border-slate-100">
                 <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide mb-1.5">

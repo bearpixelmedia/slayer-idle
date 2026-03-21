@@ -264,7 +264,7 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
     try {
       console.log("AI Detect: Starting...");
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("AI detection timeout after 30s")), 30000)
+        setTimeout(() => reject(new Error("AI detection timeout after 90s")), 90000)
       );
       const result = await Promise.race([
         base44.integrations.Core.InvokeLLM({

@@ -1,28 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { loadGameSettings } from "@/lib/gameSettings";
-
-// Helper: render a tiled spritesheet row, or fall back to SVG children
-function SpriteTileRow({ spriteUrl, tileWidth, tileHeight, count, fallback }) {
-  if (!spriteUrl) return fallback;
-  return (
-    <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
-      {Array.from({ length: count }).map((_, i) => (
-        <img
-          key={i}
-          src={spriteUrl}
-          alt=""
-          style={{
-            flex: `0 0 ${tileWidth}px`,
-            height: tileHeight || "100%",
-            objectFit: "contain",
-            objectPosition: "bottom",
-            imageRendering: "pixelated",
-          }}
-        />
-      ))}
-    </div>
-  );
-}
+import SpriteTileRow from "./SpriteTileRow";
 
 export default function ParallaxBackground() {
   const refs = useRef([]);

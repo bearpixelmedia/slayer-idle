@@ -12,20 +12,14 @@ Deno.serve(async (req) => {
 
     // Use a more robust, detailed prompt with vision
     const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `Analyze this ${imageWidth}x${imageHeight}px weapon spritesheet carefully. It contains multiple individual weapon sprites arranged in a grid or rows.
+      prompt: `Analyze this ${imageWidth}x${imageHeight}px weapon spritesheet. It contains multiple DISTINCT WEAPONS (swords, axes, bows, staffs, wands, shields, etc.), each may have animation frames.
 
-Output EVERY sprite you see. For each sprite, provide:
-- x: left edge pixel (0-indexed)
-- y: top edge pixel (0-indexed)  
-- w: width in pixels
-- h: height in pixels
-
-Rules:
-1. Count carefully — a 4x8 grid = 32 sprites, output exactly 32 entries
-2. Each weapon = one entry, never merge multiple weapons
-3. Weapons typically arranged in rows with consistent spacing
-4. Return all results sorted top-to-bottom, left-to-right
-5. Include ALL sprites even if some look similar
+Extract ONE representative frame per WEAPON TYPE (typically the first/idle pose):
+- Identify unique weapons, not animation frames
+- Group animation frames of same weapon, return only the first one
+- For each weapon, provide its bounding box: {x, y, w, h}
+- Sort top-to-bottom, left-to-right
+- Expected output: ~8-13 frames (one per weapon), NOT 20+ frames
 
 Respond with ONLY valid JSON: {"frames": [{"x": 0, "y": 0, "w": 32, "h": 32}, ...]}`,
       file_urls: [imageUrl],

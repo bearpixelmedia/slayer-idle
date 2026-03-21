@@ -136,26 +136,42 @@ class MusicManager {
   getMelody(type = 'main') {
     const melodies = {
       main: [
-        { freq: 440, duration: 0.4, harmony: 330, bass: 220, chord: 110 },
-        { freq: 494, duration: 0.4, harmony: 370, bass: 247, chord: 110 },
-        { freq: 523, duration: 0.4, harmony: 392, bass: 262, chord: 131 },
-        { freq: 587, duration: 0.8, harmony: 440, bass: 294, chord: 147 },
-        { freq: 523, duration: 0.4, harmony: 392, bass: 262, chord: 131 },
-        { freq: 494, duration: 0.4, harmony: 370, bass: 247, chord: 110 },
-        { freq: 440, duration: 0.8, harmony: 330, bass: 220, chord: 110 },
-        { freq: 392, duration: 0.4, harmony: 294, bass: 196 },
-        { freq: 349, duration: 0.4, harmony: 262, bass: 175 },
-        { freq: 330, duration: 0.4, harmony: 247, bass: 165 },
-        { freq: 294, duration: 0.8, harmony: 220, bass: 147 },
+        // Opening fanfare - heroic rise
+        { freq: 330, duration: 0.3, harmony: 247, bass: 165 },
+        { freq: 392, duration: 0.3, harmony: 294, bass: 196 },
+        { freq: 494, duration: 0.3, harmony: 370, bass: 247 },
+        { freq: 587, duration: 0.6, harmony: 440, bass: 294, chord: 147 },
+        // Main theme - iconic and memorable
+        { freq: 587, duration: 0.3, harmony: 440, bass: 294 },
+        { freq: 523, duration: 0.3, harmony: 392, bass: 262 },
+        { freq: 494, duration: 0.3, harmony: 370, bass: 247 },
+        { freq: 440, duration: 0.6, harmony: 330, bass: 220, chord: 110 },
+        // Adventurous bridge
+        { freq: 659, duration: 0.3, harmony: 494, bass: 330 },
+        { freq: 587, duration: 0.3, harmony: 440, bass: 294 },
+        { freq: 523, duration: 0.3, harmony: 392, bass: 262 },
+        { freq: 494, duration: 0.6, harmony: 370, bass: 247, chord: 131 },
+        // Resolution
+        { freq: 440, duration: 0.3, harmony: 330, bass: 220 },
+        { freq: 392, duration: 0.3, harmony: 294, bass: 196 },
+        { freq: 330, duration: 0.6, harmony: 247, bass: 165, chord: 110 },
       ],
       boss: [
-        { freq: 523, duration: 0.2, harmony: 392, bass: 262, chord: 131 },
-        { freq: 587, duration: 0.2, harmony: 440, bass: 294, chord: 147 },
-        { freq: 659, duration: 0.2, harmony: 494, bass: 330, chord: 165 },
-        { freq: 784, duration: 0.4, harmony: 587, bass: 392, chord: 196 },
-        { freq: 659, duration: 0.2, harmony: 494, bass: 330, chord: 165 },
-        { freq: 587, duration: 0.2, harmony: 440, bass: 294, chord: 147 },
-        { freq: 784, duration: 0.8, harmony: 587, bass: 392, chord: 196 },
+        // Intense percussion-like rhythm
+        { freq: 587, duration: 0.15, harmony: 440, bass: 294, chord: 147 },
+        { freq: 659, duration: 0.15, harmony: 494, bass: 330, chord: 165 },
+        { freq: 587, duration: 0.15, harmony: 440, bass: 294, chord: 147 },
+        { freq: 659, duration: 0.15, harmony: 494, bass: 330, chord: 165 },
+        // Rising tension
+        { freq: 784, duration: 0.3, harmony: 587, bass: 392, chord: 196 },
+        { freq: 880, duration: 0.3, harmony: 659, bass: 440, chord: 220 },
+        // Climax
+        { freq: 987, duration: 0.6, harmony: 740, bass: 494, chord: 247 },
+        // Descending aftermath
+        { freq: 880, duration: 0.2, harmony: 659, bass: 440 },
+        { freq: 784, duration: 0.2, harmony: 587, bass: 392 },
+        { freq: 659, duration: 0.2, harmony: 494, bass: 330 },
+        { freq: 587, duration: 0.4, harmony: 440, bass: 294, chord: 147 },
       ],
     };
     return melodies[type] || melodies.main;

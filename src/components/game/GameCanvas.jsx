@@ -128,9 +128,9 @@ function GameCanvasComponent({
             const playerProgress = window.__gameRunProgress?.current || 0;
             const enemyWorldPos = state.enemyCluster?.[state.currentClusterIndex]?.worldPos || state.nextEnemyWorldPos;
             const distanceAhead = enemyWorldPos - playerProgress;
-            // Scale: player is at 20% (left), enemies at 80% (right) when close
-            // Clamp so enemy scrolls off left edge, never appears behind player
-            const screenX = Math.max(-100, 20 + (distanceAhead * 0.6));
+            // Convert world distance to screen pixels using same scale as parallax (40px per progress unit)
+            // Apply parallax speed (0.6) to match foreground layers
+            const screenX = Math.max(-100, 20 + ((distanceAhead * 40 * 0.6) / 100));
             return `${screenX}%`;
           })(),
         }}

@@ -60,7 +60,7 @@ function ParallaxBackgroundComponent() {
           // Loop the transform using modulo to create infinite scroll
           const loopWidth = 3000; // Wrap every 3000px
           const wrappedCx = (cx % loopWidth + loopWidth) % loopWidth;
-          el.style.transform = `translate3d(${-wrappedCx * speeds.current[i]}px,0,0)`;
+          el.style.transform = `translate3d(${wrappedCx * speeds.current[i]}px,0,0)`;
         }
       }
       rafId.current = requestAnimationFrame(tick);

@@ -262,7 +262,12 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
     if (!atlasUrl || !rawImageSize) return;
     setAiDetecting(true);
     try {
-      const result = await base44.integrations.Core.InvokeLLM({
+      console.log("AI Detect: Starting...");
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("AI detection timeout after 30s")), 30000)
+      );
+      const result = await Promise.race([
+        base44.integrations.Core.InvokeLLM({
         prompt: `You are analyzing a ${rawImageSize.w}x${rawImageSize.h}px pixel art weapon spritesheet. It contains multiple DISTINCT WEAPONS (swords, axes, bows, wands, staffs, shields, etc.), each with multiple animation frames stacked or arranged nearby.
 
 Your task: Identify ONE representative bounding box per WEAPON TYPE, not per animation frame.

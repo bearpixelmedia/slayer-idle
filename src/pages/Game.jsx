@@ -232,7 +232,6 @@ export default function Game() {
                 </button>
               </div>
             </motion.div>
-            </motion.div>
           )}
         </AnimatePresence>
 

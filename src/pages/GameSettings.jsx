@@ -175,7 +175,7 @@ export default function GameSettings() {
       {/* Content */}
       <div className="max-w-6xl mx-auto px-4 py-8">
         <Tabs defaultValue="enemies" className="w-full">
-          <TabsList className="grid w-full grid-cols-6 lg:grid-cols-11">
+          <TabsList className="grid w-full grid-cols-6 lg:grid-cols-12">
             <TabsTrigger value="enemies">Enemies</TabsTrigger>
             <TabsTrigger value="bosses">Bosses</TabsTrigger>
             <TabsTrigger value="achievements">Achievements</TabsTrigger>
@@ -185,6 +185,7 @@ export default function GameSettings() {
             <TabsTrigger value="minions">Minions</TabsTrigger>
             <TabsTrigger value="buildings">Buildings</TabsTrigger>
             <TabsTrigger value="quests">Quests</TabsTrigger>
+            <TabsTrigger value="weapons">Weapons</TabsTrigger>
             <TabsTrigger value="parallax">Parallax</TabsTrigger>
             <TabsTrigger value="other">Other</TabsTrigger>
           </TabsList>

@@ -113,14 +113,16 @@ export default function ParallaxBackground() {
 
       {/* Far mountains */}
       {layer(1, 0.06, 10, 30, 0.45,
-        <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
-          {Array.from({ length: 8 }).map((_, i) => (
-            <svg key={i} viewBox="0 0 150 200" style={{ flex: "0 0 150px", height: "100%" }}>
-              <polygon points={`75,${15 + (i * 11) % 30} 0,200 150,200`} fill="rgba(30,65,110,0.5)" />
-              <polygon points={`40,${35 + (i * 17) % 30} 0,200 80,200`} fill="rgba(20,55,100,0.4)" />
-            </svg>
-          ))}
-        </div>
+        <SpriteTileRow spriteUrl={sprites.mountainFar} tileWidth={150} count={8} fallback={
+          <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
+            {Array.from({ length: 8 }).map((_, i) => (
+              <svg key={i} viewBox="0 0 150 200" style={{ flex: "0 0 150px", height: "100%" }}>
+                <polygon points={`75,${15 + (i * 11) % 30} 0,200 150,200`} fill="rgba(30,65,110,0.5)" />
+                <polygon points={`40,${35 + (i * 17) % 30} 0,200 80,200`} fill="rgba(20,55,100,0.4)" />
+              </svg>
+            ))}
+          </div>
+        } />
       )}
 
       {/* Mid mountains / hills */}

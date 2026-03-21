@@ -178,14 +178,16 @@ export default function Game() {
                 overflow: "hidden",
                 minHeight: 0
               }}>
-                <ScrollArea className="flex-1 overflow-hidden">
+                <div className="px-2 py-1 pb-0">
+                  <button
+                    onClick={() => setShowRunner(true)}
+                    className="w-full py-2 rounded-sm bg-green-600 hover:bg-green-700 text-white font-pixel text-[9px] transition-colors border-2 border-green-800"
+                  >
+                    🏃 RUNNER
+                  </button>
+                </div>
+                <ScrollArea className="flex-1 overflow-hidden min-h-0">
                   <div className="px-2 py-1 space-y-1">
-                    <button
-                      onClick={() => setShowRunner(true)}
-                      className="w-full py-2 rounded-sm bg-green-600 hover:bg-green-700 text-white font-pixel text-[9px] transition-colors border-2 border-green-800"
-                    >
-                      🏃 RUNNER
-                    </button>
                     <GameTabs
                        state={state}
                        onBuyUpgrade={handleBuyUpgrade}

@@ -38,7 +38,7 @@ export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestig
         <UpgradeShop state={state} onBuy={onBuyUpgrade} />
       </TabsContent>
 
-      <TabsContent value="progression" className={`px-2 py-2 space-y-2 ${HUD_THEME.panel.bg}`}>
+      <TabsContent value="progression" className={`px-0 py-2 space-y-2 ${HUD_THEME.panel.bg}`}>
         <PrestigePanel
           canPrestige={state.totalCoinsEarned > 0}
           soulsOnPrestige={Math.max(1, Math.floor(Math.sqrt(state.totalCoinsEarned / 1000)))}

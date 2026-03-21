@@ -145,40 +145,42 @@ function GameCanvasComponent({
         <div className="absolute -bottom-6 w-20 h-1 bg-black/30 rounded-full blur-sm" />
       </div>
 
-      {/* Enemy - positioned on parallax layer, stops world when met */}
-      <div 
-        className="absolute flex flex-col items-center gap-2 z-20"
-        style={{
-          left: (() => {
-            // Enemy scrolls with world parallax
-            const playerProgress = window.__gameRunProgress?.current || 0;
-            const enemyWorldPos = state.enemyCluster?.[state.currentClusterIndex]?.worldPos || state.nextEnemyWorldPos;
-            // Enemy stays at 80% screen X, scrolls as world moves
-            return "80%";
-          })(),
-          bottom: "14rem", // Match player vertical position (bottom-56)
-        }}
-      >
-        <div className="text-center mb-1">
-          {state.isBossActive && (
-            <p className="font-pixel text-[8px] text-red-400 mb-1 animate-pulse">⚔️ BOSS ENCOUNTER ⚔️</p>
+      {/* Enemy cluster - line up behind each other */}
+      {state.enemyCluster && state.enemyCluster.map((enemy, idx) => (
+        <div 
+          key={idx}
+          className="absolute flex flex-col items-center gap-2 z-20"
+          style={{
+            left: "80%",
+            bottom: `calc(14rem + ${idx * 4}rem)`, // Stack vertically behind
+            opacity: idx === state.currentClusterIndex ? 1 : 0.5,
+          }}
+        >
+          {idx === state.currentClusterIndex && (
+            <>
+              <div className="text-center mb-1">
+                {state.isBossActive && (
+                  <p className="font-pixel text-[8px] text-red-400 mb-1 animate-pulse">⚔️ BOSS ENCOUNTER ⚔️</p>
+                )}
+                <p className="font-pixel text-[7px] sm:text-[8px] text-foreground/80 mb-1">{state.currentEnemyName}</p>
+                <HealthBar current={state.enemyHP} max={state.enemyMaxHP} isBoss={state.isBossActive} />
+                <p className="font-pixel text-[6px] text-muted-foreground mt-0.5">
+                  {formatNumber(state.enemyHP)} / {formatNumber(state.enemyMaxHP)}
+                </p>
+              </div>
+            </>
           )}
-          <p className="font-pixel text-[7px] sm:text-[8px] text-foreground/80 mb-1">{state.currentEnemyName}</p>
-          <HealthBar current={state.enemyHP} max={state.enemyMaxHP} isBoss={state.isBossActive} />
-          <p className="font-pixel text-[6px] text-muted-foreground mt-0.5">
-            {formatNumber(state.enemyHP)} / {formatNumber(state.enemyMaxHP)}
-          </p>
+          <div className="relative">
+            <EnemyRenderer
+              enemyName={enemy.name}
+              enemyHit={enemyHit && idx === state.currentClusterIndex}
+              enemyDying={enemyDying && idx === state.currentClusterIndex}
+              isBoss={state.isBossActive}
+            />
+            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-24 h-2 bg-black/25 rounded-full blur-md" />
+          </div>
         </div>
-        <div className="relative">
-          <EnemyRenderer
-            enemyName={state.currentEnemyName}
-            enemyHit={enemyHit}
-            enemyDying={enemyDying}
-            isBoss={state.isBossActive}
-          />
-          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-24 h-2 bg-black/25 rounded-full blur-md" />
-        </div>
-      </div>
+      ))}
 
       {/* Slash effects */}
       <AnimatePresence>

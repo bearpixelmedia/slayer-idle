@@ -643,36 +643,34 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     dealDamage(damage, x, y);
   }, [dealDamage, tryProcBuff]);
 
-  // Idle damage tick
+  // Consolidated attack loop - idle, auto-clicker, auto-walk
   useEffect(() => {
+    let tickCounter = 0;
     const interval = setInterval(() => {
-      const cps = getIdleCPS(stateRef.current);
-      if (cps > 0) {
-        dealDamage(Math.max(1, Math.floor(cps / 2)), 50 + Math.random() * 20, 50 + Math.random() * 20);
+      tickCounter++;
+      
+      // Idle damage every 10 ticks (1000ms)
+      if (tickCounter % 10 === 0) {
+        const cps = getIdleCPS(stateRef.current);
+        if (cps > 0) {
+          dealDamage(Math.max(1, Math.floor(cps / 2)), 50 + Math.random() * 20, 50 + Math.random() * 20);
+        }
       }
-    }, 1000);
+      
+      // Auto-clicker every 5 ticks (500ms)
+      if (tickCounter % 5 === 0 && abilitiesRef.current?.autoClicker?.active) {
+        const damage = getTapDamage(stateRef.current, currentWeaponRef.current, activeBuffsRef.current);
+        dealDamage(damage, 65 + Math.random() * 20, 40 + Math.random() * 30);
+      }
+      
+      // Auto-walk every 6 ticks (600ms)
+      if (tickCounter % 6 === 0 && autoWalkingRef.current && !stateRef.current.isDead) {
+        const damage = getTapDamage(stateRef.current, currentWeaponRef.current, activeBuffsRef.current);
+        dealDamage(damage, 65 + Math.random() * 10, 50 + Math.random() * 10);
+      }
+    }, 100);
     return () => clearInterval(interval);
   }, [dealDamage]);
-
-  // Auto-clicker ability: deal tap damage every 0.5 seconds while active
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (!abilitiesRef.current?.autoClicker?.active) return;
-      const damage = getTapDamage(stateRef.current, currentWeaponRef.current, activeBuffsRef.current);
-      dealDamage(damage, 65 + Math.random() * 20, 40 + Math.random() * 30);
-    }, 500);
-    return () => clearInterval(interval);
-  }, [dealDamage, currentWeapon]);
-
-  // Auto-walk and auto-attack: character walks forward and attacks when close to enemy
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (!autoWalkingRef.current || stateRef.current.isDead) return;
-      const damage = getTapDamage(stateRef.current, currentWeaponRef.current, activeBuffsRef.current);
-      dealDamage(damage, 65 + Math.random() * 10, 50 + Math.random() * 10);
-    }, 600);
-    return () => clearInterval(interval);
-  }, [dealDamage, currentWeapon]);
 
   // Clean up floating coins, souls, damage numbers, and particles (batch cleanup)
   useEffect(() => {

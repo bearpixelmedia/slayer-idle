@@ -69,20 +69,33 @@ export default function useRunnerState() {
 
     const interval = setInterval(() => {
       setObstacles((prev) => {
-        const updated = prev
+        let updated = prev
           .map((obs) => ({ ...obs, x: obs.x - OBSTACLE_SPEED }))
           .filter((obs) => obs.x > -OBSTACLE_WIDTH);
 
-        // Collision detection
+        // Collision detection and blocking
+        const playerX = 20;
+        let blockedByObstacle = false;
+
         updated.forEach((obs) => {
-          const playerX = 20;
           const collidingX = playerX < obs.x + OBSTACLE_WIDTH && playerX + PLAYER_SIZE > obs.x;
           const collidingY =
             gameStateRef.current.playerY < GROUND_Y - OBSTACLE_HEIGHT + 5 &&
             gameStateRef.current.playerY + PLAYER_SIZE > GROUND_Y - OBSTACLE_HEIGHT;
 
+          // If player hits obstacle at ground level, block forward movement
           if (collidingX && collidingY) {
             setIsGameOver(true);
+            blockedByObstacle = true;
+          }
+          
+          // If obstacle is right in front of player at ground level, stop it from moving past
+          const obstacleApproaching = obs.x > playerX && obs.x < playerX + 40;
+          const atGroundLevel = gameStateRef.current.playerY >= GROUND_Y - 2;
+          
+          if (obstacleApproaching && atGroundLevel && collidingX) {
+            // Push obstacle back to maintain collision boundary
+            obs.x = playerX + PLAYER_SIZE + 2;
           }
         });
 

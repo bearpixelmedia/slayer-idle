@@ -55,14 +55,14 @@ export default function GameCanvas({
       ? isBossShieldActive(Date.now() - state.bossFightStartTime, boss)
       : false;
 
-  const handleClick = (e) => {
+  const handleClick = React.useCallback((e) => {
     if (!state || state.isDead) return;
     const rect = canvasRef.current?.getBoundingClientRect();
     if (!rect) return;
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
     onTap(x, y);
-  };
+  }, [state, onTap]);
 
   return (
     <div

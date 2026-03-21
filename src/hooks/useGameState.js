@@ -168,7 +168,8 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     return state.upgradeLevels[id] || 0;
   }
 
-  function getTapDamage(s = state, weapon = currentWeapon, buffs = activeBuffs) {
+  // Memoize getTapDamage calculation
+  const getTapDamage = useCallback((s = state, weapon = currentWeapon, buffs = activeBuffs) => {
     if (!s || typeof s !== 'object') return 1;
     let damage = 1;
     const upgradeLevels = s.upgradeLevels || {};
@@ -188,9 +189,10 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     const villageMultipliers = computeVillageMultipliers(s.villageBuildings || {}) || { tapDamageMultiplier: 1 };
     const buffMult = getBuffMultiplier(Array.isArray(buffs) ? buffs : [], "tapDamageMultiplier");
     return Math.floor(damage * soulBonus * damageMultiplier * (skillMults?.damageMultiplier || 1) * (villageMultipliers?.tapDamageMultiplier || 1) * buffMult);
-  }
+  }, [damageMultiplier, state, currentWeapon, activeBuffs]);
 
-  function getIdleCPS(s = state) {
+  // Memoize getIdleCPS calculation
+  const getIdleCPS = useCallback((s = state) => {
     if (!s || typeof s !== 'object') return 0;
     let cps = 0;
     const upgradeLevels = s.upgradeLevels || {};
@@ -209,7 +211,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     const skillMults = getSkillMultipliers(Array.isArray(s.unlockedSkills) ? s.unlockedSkills : []) || { idleMultiplier: 1 };
     const villageMultipliers = computeVillageMultipliers(s.villageBuildings || {}) || { coinMultiplier: 1 };
     return Math.floor(cps * soulBonus * damageMultiplier * (skillMults?.idleMultiplier || 1) * (villageMultipliers?.coinMultiplier || 1));
-  }
+  }, [damageMultiplier, state]);
 
   function applyRewardMultipliers(coins, souls, s = state, buffs = activeBuffs) {
     if (!s || typeof s !== 'object') return { coins: 0, souls: 0 };

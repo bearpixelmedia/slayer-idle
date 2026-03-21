@@ -86,6 +86,18 @@ function GameCanvasComponent({
     onTap(x, y);
   }, [state, onTap]);
 
+  // Spacebar attack/jump input
+  React.useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.code === "Space" && !state.isDead) {
+        e.preventDefault();
+        onTap(50, 50);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [state.isDead, onTap]);
+
   return (
     <div
       ref={canvasRef}

@@ -263,14 +263,14 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
     setAiDetecting(true);
     try {
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are analyzing a ${rawImageSize.w}x${rawImageSize.h}px pixel art weapon spritesheet. It contains multiple weapon sprites (swords, axes, bows, wands, staffs, etc.) arranged in rows/columns with transparent gaps between them.
+        prompt: `You are analyzing a ${rawImageSize.w}x${rawImageSize.h}px pixel art weapon spritesheet. It contains multiple DISTINCT WEAPONS (swords, axes, bows, wands, staffs, shields, etc.), each with multiple animation frames stacked or arranged nearby.
 
-For EVERY visible weapon, output its bounding box as {x, y, w, h}.
-- x, y = top-left corner (0-indexed)
-- w, h = pixel width and height of the sprite
+Your task: Identify ONE representative bounding box per WEAPON TYPE, not per animation frame.
+- Group animation frames of the same weapon together
+- Return only the FIRST/IDLE frame of each weapon
+- Output: {x, y, w, h} for each unique weapon
 - Sort results: top-to-bottom, left-to-right
-- Be precise: one box per weapon
-- If you see a grid, count the rows and columns carefully and output every cell
+- Expected result: ~8-13 frames (one per weapon type), NOT 20+
 
 Return only: {"frames": [{...}, {...}, ...]}`,
         file_urls: [atlasUrl],

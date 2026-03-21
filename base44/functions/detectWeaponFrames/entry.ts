@@ -45,7 +45,7 @@ Respond with a JSON object like: {"frames": [{"x": 0, "y": 0, "w": 32, "h": 32},
         },
         required: ["frames"]
       },
-      model: "gemini_3_pro"
+      model: "claude_sonnet_4_6"
     });
 
     console.log("AI result:", JSON.stringify(result));

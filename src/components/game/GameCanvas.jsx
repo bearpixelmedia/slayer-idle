@@ -106,7 +106,7 @@ function GameCanvasComponent({
         </div>
         <motion.div 
           className="animate-run-cycle drop-shadow-lg"
-          animate={{ scale: enemyHit ? 1.15 : 1 }}
+          animate={{ scale: enemyHit ? 1.15 : 1, filter: playerHit ? "brightness(2)" : "brightness(1)" }}
           transition={{ duration: 0.1 }}
         >
           <PlayerRenderer

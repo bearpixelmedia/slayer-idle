@@ -86,59 +86,121 @@ export default function ParallaxBackground() {
         </div>
       )}
 
-      {/* Far trees */}
-      {layer(3, 0.25, 33, 30, 0.6,
+      {/* Very far trees */}
+      {layer(3, 0.22, 35, 26, 0.5,
         <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
-          {Array.from({ length: 20 }).map((_, i) => (
-            <svg key={i} viewBox="0 0 50 110" style={{ flex: "0 0 40px", height: "100%" }}>
-              <circle cx="25" cy="20" r="12" fill="rgba(10,65,20,0.88)" />
-              <circle cx="15" cy="30" r="10" fill="rgba(15,75,25,0.85)" />
-              <circle cx="35" cy="30" r="10" fill="rgba(15,75,25,0.85)" />
-              <rect x="22" y="40" width="6" height="70" fill="rgba(80,50,20,0.9)" />
+          {Array.from({ length: 50 }).map((_, i) => (
+            <svg key={i} viewBox="0 0 50 110" style={{ flex: "0 0 35px", height: "100%" }}>
+              <circle cx="25" cy="20" r="8" fill="rgba(8,60,15,0.85)" />
+              <circle cx="18" cy="28" r="6" fill="rgba(10,70,18,0.8)" />
+              <circle cx="32" cy="28" r="6" fill="rgba(10,70,18,0.8)" />
+              <rect x="23" y="36" width="4" height="74" fill="rgba(60,35,15,0.8)" />
+            </svg>
+          ))}
+        </div>
+      )}
+
+      {/* Far trees */}
+      {layer(4, 0.28, 33, 30, 0.65,
+        <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
+          {Array.from({ length: 45 }).map((_, i) => (
+            <svg key={i} viewBox="0 0 50 110" style={{ flex: "0 0 42px", height: "100%" }}>
+              <circle cx="25" cy="18" r="10" fill="rgba(12,65,20,0.88)" />
+              <circle cx="16" cy="28" r="8" fill="rgba(15,75,25,0.85)" />
+              <circle cx="34" cy="28" r="8" fill="rgba(15,75,25,0.85)" />
+              <circle cx="25" cy="38" r="7" fill="rgba(18,80,28,0.9)" />
+              <rect x="22" y="44" width="5" height="66" fill="rgba(70,40,18,0.85)" />
+            </svg>
+          ))}
+        </div>
+      )}
+
+      {/* Mid-back trees */}
+      {layer(5, 0.43, 34, 34, 0.8,
+        <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
+          {Array.from({ length: 38 }).map((_, i) => (
+            <svg key={i} viewBox="0 0 50 110" style={{ flex: "0 0 58px", height: "100%" }}>
+              <circle cx="25" cy="18" r="12" fill="rgba(15,80,25,0.92)" />
+              <circle cx="15" cy="30" r="10" fill="rgba(22,100,32,0.9)" />
+              <circle cx="35" cy="30" r="10" fill="rgba(22,100,32,0.9)" />
+              <circle cx="25" cy="42" r="9" fill="rgba(28,120,40,0.88)" />
+              <rect x="22" y="50" width="6" height="60" fill="rgba(90,55,25,0.96)" />
             </svg>
           ))}
         </div>
       )}
 
       {/* Mid trees */}
-      {layer(4, 0.45, 30, 40, 0.78,
+      {layer(6, 0.50, 31, 38, 0.85,
         <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
-          {Array.from({ length: 18 }).map((_, i) => (
-            <svg key={i} viewBox="0 0 50 110" style={{ flex: "0 0 60px", height: "100%" }}>
-              <circle cx="25" cy="18" r="14" fill="rgba(18,85,28,0.92)" />
-              <circle cx="14" cy="30" r="12" fill="rgba(25,100,35,0.9)" />
-              <circle cx="36" cy="30" r="12" fill="rgba(25,100,35,0.9)" />
-              <rect x="22" y="42" width="6" height="68" fill="rgba(90,55,25,0.95)" />
+          {Array.from({ length: 35 }).map((_, i) => (
+            <svg key={i} viewBox="0 0 50 110" style={{ flex: "0 0 65px", height: "100%" }}>
+              <circle cx="25" cy="16" r="14" fill="rgba(18,90,28,0.93)" />
+              <circle cx="14" cy="30" r="12" fill="rgba(25,110,35,0.91)" />
+              <circle cx="36" cy="30" r="12" fill="rgba(25,110,35,0.91)" />
+              <circle cx="25" cy="44" r="10" fill="rgba(32,130,42,0.89)" />
+              <rect x="22" y="52" width="6" height="58" fill="rgba(100,60,28,0.97)" />
+            </svg>
+          ))}
+        </div>
+      )}
+
+      {/* Mid-front trees */}
+      {layer(7, 0.57, 29, 43, 0.88,
+        <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
+          {Array.from({ length: 32 }).map((_, i) => (
+            <svg key={i} viewBox="0 0 50 110" style={{ flex: "0 0 70px", height: "100%" }}>
+              <circle cx="25" cy="15" r="15" fill="rgba(20,95,30,0.94)" />
+              <circle cx="13" cy="29" r="13" fill="rgba(28,115,37,0.92)" />
+              <circle cx="37" cy="29" r="13" fill="rgba(28,115,37,0.92)" />
+              <circle cx="25" cy="44" r="11" fill="rgba(35,135,44,0.9)" />
+              <rect x="22" y="53" width="6" height="57" fill="rgba(110,65,30,0.98)" />
             </svg>
           ))}
         </div>
       )}
 
       {/* Front trees */}
-      {layer(5, 0.65, 27, 48, 0.9,
+      {layer(8, 0.65, 27, 48, 0.9,
         <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
-          {Array.from({ length: 16 }).map((_, i) => (
+          {Array.from({ length: 45 }).map((_, i) => (
             <svg key={i} viewBox="0 0 50 110" style={{ flex: "0 0 75px", height: "100%" }}>
-              <circle cx="25" cy="15" r="16" fill="rgba(25,100,35,0.95)" />
-              <circle cx="12" cy="28" r="14" fill="rgba(30,115,40,0.93)" />
-              <circle cx="38" cy="28" r="14" fill="rgba(30,115,40,0.93)" />
-              <circle cx="25" cy="42" r="12" fill="rgba(35,130,45,0.91)" />
-              <rect x="22" y="52" width="6" height="58" fill="rgba(110,65,30,0.98)" />
+              <circle cx="25" cy="14" r="16" fill="rgba(22,100,32,0.95)" />
+              <circle cx="12" cy="28" r="14" fill="rgba(30,120,39,0.93)" />
+              <circle cx="38" cy="28" r="14" fill="rgba(30,120,39,0.93)" />
+              <circle cx="25" cy="44" r="12" fill="rgba(38,140,47,0.91)" />
+              <rect x="22" y="54" width="6" height="56" fill="rgba(120,70,32,1)" />
             </svg>
           ))}
         </div>
       )}
 
-      {/* Shrubs */}
-      {layer(6, 0.85, 63, 25, 0.88,
+      {/* Shrubs - back layer */}
+      {layer(9, 0.84, 62, 22, 0.82,
         <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
-          {Array.from({ length: 35 }).map((_, i) => {
-            const s = 20 + (i % 4) * 8;
+          {Array.from({ length: 60 }).map((_, i) => {
+            const s = 18 + (i % 5) * 7;
             return (
-              <svg key={i} viewBox="0 0 35 35" style={{ flex: `0 0 ${s}px`, height: `${s}px` }}>
-                <circle cx="17" cy="17" r="14" fill="rgba(45,160,45,0.95)" />
-                <circle cx="10" cy="13" r="10" fill="rgba(55,180,55,0.9)" />
-                <circle cx="24" cy="13" r="10" fill="rgba(55,180,55,0.9)" />
+              <svg key={i} viewBox="0 0 35 35" style={{ flex: `0 0 ${s}px`, height: `${s}px`, opacity: 0.8 + (i % 3) * 0.07 }}>
+                <circle cx="17" cy="17" r="14" fill="rgba(45,155,45,0.92)" />
+                <circle cx="10" cy="13" r="10" fill="rgba(55,175,55,0.88)" />
+                <circle cx="24" cy="13" r="10" fill="rgba(55,175,55,0.88)" />
+              </svg>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Shrubs - front layer */}
+      {layer(10, 0.88, 65, 24, 0.9,
+        <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
+          {Array.from({ length: 80 }).map((_, i) => {
+            const s = 22 + (i % 4) * 9;
+            return (
+              <svg key={i} viewBox="0 0 35 35" style={{ flex: `0 0 ${s}px`, height: `${s}px`, opacity: 0.85 + (i % 3) * 0.1 }}>
+                <circle cx="17" cy="17" r="14" fill="rgba(45,165,45,0.95)" />
+                <circle cx="10" cy="13" r="10" fill="rgba(55,185,55,0.92)" />
+                <circle cx="24" cy="13" r="10" fill="rgba(55,185,55,0.92)" />
               </svg>
             );
           })}

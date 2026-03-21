@@ -311,12 +311,27 @@ Respond with a JSON object: {"frames": [{"x": 0, "y": 0, "w": 32, "h": 32}, ...]
         model: "claude_sonnet_4_6"
       });
 
-      console.log("AI Detect raw result:", JSON.stringify(result));
-      // Handle different response shapes
       const unwrapped = result?.response || result;
       const rawFrames = unwrapped?.frames || unwrapped?.detections || (Array.isArray(unwrapped) ? unwrapped : []);
-      const detected = rawFrames.map(f => ({ frame: { x: Math.round(f.x), y: Math.round(f.y), w: Math.round(f.w || f.width), h: Math.round(f.h || f.height) } }));
-      if (!detected.length) { alert(`AI returned no frames. Raw response: ${JSON.stringify(result)}`); return; }
+      if (!rawFrames.length) { alert("AI couldn't detect any frames. Try grid slicing instead."); return; }
+
+      // Load image pixel data to expand AI seed boxes to tight pixel bounds
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = atlasUrl;
+      await new Promise(res => { img.onload = res; img.onerror = res; });
+      const offscreen = document.createElement("canvas");
+      offscreen.width = img.naturalWidth; offscreen.height = img.naturalHeight;
+      const ctx = offscreen.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      let pixelData;
+      try { pixelData = ctx.getImageData(0, 0, offscreen.width, offscreen.height).data; } catch (e) { pixelData = null; }
+
+      const detected = rawFrames.map(f => {
+        const seed = { x: Math.round(f.x), y: Math.round(f.y), w: Math.round(f.w || f.width), h: Math.round(f.h || f.height) };
+        const tight = pixelData ? expandBox(pixelData, offscreen.width, offscreen.height, seed) : seed;
+        return { frame: tight };
+      });
       setFrames(detected);
       setAssignments({});
       WEAPON_SLOTS.forEach(slot => onUpdateSetting(slot.id, null));

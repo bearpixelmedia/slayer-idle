@@ -302,8 +302,22 @@ Return only: {"frames": [{...}, {...}, ...]}`,
       else if (typeof result === 'object') rawFrames = Object.values(result).find(v => Array.isArray(v)) || [];
 
       if (!rawFrames || rawFrames.length === 0) {
-        alert("AI couldn't detect any frames. Try Smart Detect or Grid Slice instead.");
-        return;
+        // Try backend detection as fallback
+        try {
+          const backendResult = await base44.functions.invoke('detectWeaponFramesV2', {
+            imageUrl: atlasUrl,
+            imageWidth: rawImageSize.w,
+            imageHeight: rawImageSize.h
+          });
+          rawFrames = backendResult.data?.frames || [];
+          if (!rawFrames.length) {
+            alert("AI couldn't detect any frames. Try Smart Detect or Grid Slice instead.");
+            return;
+          }
+        } catch (e) {
+          alert("AI couldn't detect any frames. Try Smart Detect or Grid Slice instead.");
+          return;
+        }
       }
 
       // Expand bounding boxes to tight pixel bounds

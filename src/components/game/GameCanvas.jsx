@@ -73,6 +73,15 @@ function GameCanvasComponent({
     if (!rect) return;
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
+    
+    // Only allow tap if enemy is close (within 40% horizontal distance)
+    const enemyX = 85; // Enemy position (right side)
+    const playerX = 20; // Player position (left side)
+    const distance = Math.abs(enemyX - playerX);
+    const closestDistance = distance * 0.4; // Can attack if within 40% of distance
+    
+    if (Math.abs(x - enemyX) > closestDistance) return; // Enemy too far
+    
     onTap(x, y);
   }, [state, onTap]);
 

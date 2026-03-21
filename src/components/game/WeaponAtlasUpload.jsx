@@ -203,7 +203,12 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
 
       {frames.length > 0 && (
         <div className="space-y-2">
-          <p className="text-xs text-slate-500">Assign each frame to a weapon slot:</p>
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-slate-500">Assign each frame to a weapon slot:</p>
+            <Button type="button" size="sm" variant="outline" onClick={autoAssign} className="text-xs h-6 px-2">
+              ✨ Auto-Assign (skip transparent)
+            </Button>
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {frames.map((frame, i) => (
               <div key={i} className="flex items-center gap-2 p-2 border border-slate-200 rounded-lg bg-slate-50">

@@ -4,6 +4,8 @@ import { Upload, X, ChevronDown, Loader } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import AnimationPreview from "./AnimationPreview";
 
+const UPLOADED_FILES_KEY = "setting_uploaded_files";
+
 export default function SettingImageUpload({ label, value, onChange, currentDefault }) {
   const fileInputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
@@ -13,18 +15,16 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
   const [files, setFiles] = useState([]);
   const [loadingFiles, setLoadingFiles] = useState(false);
 
-  // Load files from app storage on mount or when opening library
+  // Load files from localStorage on mount or when opening library
   useEffect(() => {
-    if (!showLibrary || files.length > 0) return;
+    if (!showLibrary) return;
     
-    const loadFiles = async () => {
+    const loadFiles = () => {
       setLoadingFiles(true);
       try {
-        const result = await base44.integrations.Core.ListAppFiles?.();
-        if (result?.files) {
-          const imageFiles = result.files.filter(f => /\.(png|jpg|jpeg|gif|webp)$/i.test(f.name));
-          setFiles(imageFiles);
-        }
+        const saved = localStorage.getItem(UPLOADED_FILES_KEY);
+        const uploadedFiles = saved ? JSON.parse(saved) : [];
+        setFiles(uploadedFiles);
       } catch (err) {
         console.error('Failed to load files:', err);
         setFiles([]);

@@ -132,7 +132,8 @@ function GameCanvasComponent({
         </motion.div>
         {/* Ground shadow */}
         <div className="absolute -bottom-6 w-20 h-1 bg-black/30 rounded-full blur-sm" />
-      </motion.div>
+        </motion.div>
+      </div>
 
       {/* Enemy - parallax layer that scrolls with world */}
       <div 

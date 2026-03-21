@@ -664,6 +664,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       setFloatingSouls(prev => prev.filter(s => now - s.id < 1000));
       setFloatingDamage(prev => prev.filter(d => now - d.id < 800));
       setParticles(prev => prev.filter(p => now - p.id < 1000));
+      setSlashEffects(prev => prev.slice(Math.max(0, prev.length - 1)));
     }, 1000);
     return () => clearInterval(interval);
   }, []);

@@ -38,7 +38,7 @@ export default function MenuPanel({
       transition={{ duration: 0.2 }}
     >
       {/* Header */}
-      <div className={`${HUD_THEME.menuPanel.header} px-2 py-2`} style={{ boxSizing: "border-box" }}>
+      <div className={`${HUD_THEME.menuPanel.header} px-2 py-2 hidden`} style={{ boxSizing: "border-box" }}>
         <button
           onClick={onRunnerClick}
           className={`flex-1 py-2.5 rounded-lg text-[10px] sm:text-[11px] transition-colors border-2 ${HUD_THEME.button.primary} border-primary/60 min-h-[36px] flex items-center justify-center`}

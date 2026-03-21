@@ -54,13 +54,14 @@ function ParallaxBackgroundComponent() {
       // Use player's run progress for world scroll
       const playerProgress = window.__gameRunProgress?.current || 0;
       const cx = playerProgress * 40; // Convert progress units to pixels
+      const loopWidth = 3000; // Wrap every 3000px
       for (let i = 0; i < refs.current.length; i++) {
         const el = refs.current[i];
         if (el) {
           // Loop the transform using modulo to create infinite scroll
-          const loopWidth = 3000; // Wrap every 3000px
-          const wrappedCx = (cx % loopWidth + loopWidth) % loopWidth;
-          el.style.transform = `translate3d(${-wrappedCx * speeds.current[i]}px,0,0)`;
+          const wrappedCx = ((cx % loopWidth) + loopWidth) % loopWidth;
+          const offset = -wrappedCx * speeds.current[i];
+          el.style.transform = `translate3d(${offset}px,0,0)`;
         }
       }
       rafId.current = requestAnimationFrame(tick);

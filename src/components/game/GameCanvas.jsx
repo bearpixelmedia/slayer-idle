@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from "react";
+import React, { useRef, useCallback, useEffect, useMemo } from "react";
 import { STAGES, ENEMY_EMOJIS } from "@/lib/gameData";
 import { formatNumber } from "@/lib/formatNumber";
 import { motion, AnimatePresence } from "framer-motion";
@@ -157,18 +157,16 @@ function GameCanvasComponent({
           }}
         >
           {idx === state.currentClusterIndex && (
-            <>
-              <div className="text-center mb-1">
-                {state.isBossActive && (
-                  <p className="font-pixel text-[8px] text-red-400 mb-1 animate-pulse">⚔️ BOSS ENCOUNTER ⚔️</p>
-                )}
-                <p className="font-pixel text-[7px] sm:text-[8px] text-foreground/80 mb-1">{state.currentEnemyName}</p>
-                <HealthBar current={state.enemyHP} max={state.enemyMaxHP} isBoss={state.isBossActive} />
-                <p className="font-pixel text-[6px] text-muted-foreground mt-0.5">
-                  {formatNumber(state.enemyHP)} / {formatNumber(state.enemyMaxHP)}
-                </p>
-              </div>
-            </>
+            <div className="text-center mb-1">
+              {state.isBossActive && (
+                <p className="font-pixel text-[8px] text-red-400 mb-1 animate-pulse">⚔️ BOSS ENCOUNTER ⚔️</p>
+              )}
+              <p className="font-pixel text-[7px] sm:text-[8px] text-foreground/80 mb-1">{state.currentEnemyName}</p>
+              <HealthBar current={state.enemyHP} max={state.enemyMaxHP} isBoss={state.isBossActive} />
+              <p className="font-pixel text-[6px] text-muted-foreground mt-0.5">
+                {formatNumber(state.enemyHP)} / {formatNumber(state.enemyMaxHP)}
+              </p>
+            </div>
           )}
           <div className="relative">
             <EnemyRenderer

@@ -118,10 +118,9 @@ function GameCanvasComponent({
         <div className="absolute -bottom-6 w-20 h-1 bg-black/30 rounded-full blur-sm" />
       </div>
 
-      {/* Enemy - moves with world scroll */}
+      {/* Enemy - static position */}
       <div 
         className="absolute bottom-56 right-[15%] flex flex-col items-center gap-2 z-20"
-        style={{ transform: `translateX(${runProgress.current * 40}px)` }}
       >
         <div className="text-center mb-1">
           {state.isBossActive && (

@@ -320,7 +320,11 @@ export default function Game() {
          onRunnerClick={() => setShowRunner(true)}
        />
 
-      <AchievementToast achievement={newUnlock} />
+      {/* Notifications */}
+      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
+        <AchievementToast achievement={newUnlock} />
+      </div>
+
       <OfflineEarningsModal
         earnings={offlineEarnings}
         onClose={() => setOfflineEarnings(null)}

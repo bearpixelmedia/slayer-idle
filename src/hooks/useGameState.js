@@ -689,7 +689,13 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       // Update world progress every tick (100ms), simulating player moving forward
       setState(prev => {
         if (prev.isDead) return prev;
-        const newProgress = prev.worldProgress + 0.095; // Match visual progression
+        
+        // Check if player has reached enemy (within 5 world units)
+        const enemyWorldPos = prev.enemyCluster?.[prev.currentClusterIndex]?.worldPos || prev.nextEnemyWorldPos;
+        const inCombat = prev.worldProgress >= enemyWorldPos - 5;
+        
+        // Only advance world progress if not in direct combat with enemy
+        let newProgress = inCombat ? prev.worldProgress : prev.worldProgress + 0.095;
         
         // Check if next enemy should spawn
         if (newProgress >= prev.nextEnemyWorldPos && !prev.isBossActive) {

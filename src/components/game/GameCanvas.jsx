@@ -95,8 +95,23 @@ function GameCanvasComponent({
       {/* Parallax background with sky, mountains, and foliage */}
       <ParallaxBackground />
 
-      {/* Player character - running across screen */}
-      <div className="absolute bottom-56 left-[20%] flex flex-col items-center gap-2 z-20">
+      {/* Player character - moves toward enemy when in combat */}
+      <motion.div 
+        className="absolute bottom-56 flex flex-col items-center gap-2 z-20"
+        style={{
+          left: (() => {
+            const playerProgress = window.__gameRunProgress?.current || 0;
+            const enemyWorldPos = state.enemyCluster?.[state.currentClusterIndex]?.worldPos || state.nextEnemyWorldPos;
+            const inCombat = playerProgress >= enemyWorldPos - 5;
+            // Player advances toward enemy when in combat (moves from 20% toward enemy at 80%)
+            const baseLeft = 20;
+            const combatAdvance = inCombat ? Math.min(40, (playerProgress - (enemyWorldPos - 5)) * 8) : 0;
+            return `calc(20% + ${combatAdvance}px)`;
+          })(),
+        }}
+        animate={{ y: enemyHit ? -8 : 0 }}
+        transition={{ duration: 0.1 }}
+      >
         <div className="w-20 h-1.5 bg-muted rounded-full overflow-hidden border border-border/50">
           <motion.div
             className="h-full bg-green-500"
@@ -117,7 +132,7 @@ function GameCanvasComponent({
         </motion.div>
         {/* Ground shadow */}
         <div className="absolute -bottom-6 w-20 h-1 bg-black/30 rounded-full blur-sm" />
-      </div>
+      </motion.div>
 
       {/* Enemy - parallax layer that scrolls with world */}
       <div 

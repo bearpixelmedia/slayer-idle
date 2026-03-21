@@ -66,6 +66,7 @@ export const UPGRADES = [
   { id: "ancient_rune",   name: "Ancient Rune",   icon: "🔮",  description: "+15 to all damage per level",  basePower: 15,  baseCost: 600 },
   { id: "chaos_gem",      name: "Chaos Gem",      icon: "💎",  description: "+35 to all damage per level",  basePower: 35,  baseCost: 2000 },
   { id: "bow",            name: "Elven Bow",      icon: "🏹",  description: "Unlocks bow mode (+25% souls)", basePower: 0,  baseCost: 500 },
+  { id: "pack_size",      name: "Pack Size",      icon: "👥",  description: "+1 max enemy cluster size",     basePower: 1,  baseCost: 800 },
 ];
 
 // Upgrade category IDs

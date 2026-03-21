@@ -46,7 +46,7 @@ function FrameCanvas({ imgSrc, frame, size = 48 }) {
     else img.onload = draw;
   }, [imgSrc, frame, size]);
 
-  return <canvas ref={canvasRef} style={{ width: size, height: size, imageRendering: "pixelated" }} />;
+  return <canvas ref={canvasRef} className="pixel-canvas" style={{ width: size, height: size }} />;
 }
 
 export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {

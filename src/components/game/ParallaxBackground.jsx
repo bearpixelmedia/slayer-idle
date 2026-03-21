@@ -191,17 +191,19 @@ export default function ParallaxBackground() {
 
       {/* Mid trees */}
       {layer(6, 0.50, 31, 38, 0.85,
-        <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
-          {Array.from({ length: 35 }).map((_, i) => (
-            <svg key={i} viewBox="0 0 50 110" style={{ flex: "0 0 65px", height: "100%" }}>
-              <circle cx="25" cy="16" r="14" fill="rgba(18,90,28,0.93)" />
-              <circle cx="14" cy="30" r="12" fill="rgba(25,110,35,0.91)" />
-              <circle cx="36" cy="30" r="12" fill="rgba(25,110,35,0.91)" />
-              <circle cx="25" cy="44" r="10" fill="rgba(32,130,42,0.89)" />
-              <rect x="22" y="52" width="6" height="58" fill="rgba(100,60,28,0.97)" />
-            </svg>
-          ))}
-        </div>
+        <SpriteTileRow spriteUrl={sprites.treeMid} tileWidth={65} count={35} fallback={
+          <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
+            {Array.from({ length: 35 }).map((_, i) => (
+              <svg key={i} viewBox="0 0 50 110" style={{ flex: "0 0 65px", height: "100%" }}>
+                <circle cx="25" cy="16" r="14" fill="rgba(18,90,28,0.93)" />
+                <circle cx="14" cy="30" r="12" fill="rgba(25,110,35,0.91)" />
+                <circle cx="36" cy="30" r="12" fill="rgba(25,110,35,0.91)" />
+                <circle cx="25" cy="44" r="10" fill="rgba(32,130,42,0.89)" />
+                <rect x="22" y="52" width="6" height="58" fill="rgba(100,60,28,0.97)" />
+              </svg>
+            ))}
+          </div>
+        } />
       )}
 
       {/* Mid-front trees */}

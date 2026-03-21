@@ -51,6 +51,7 @@ export default function GameSettings() {
     if (window.confirm("Reset all settings to defaults?")) {
       localStorage.removeItem(STORAGE_KEY);
       setSettings({});
+      setVersion(1);
       setHasChanges(false);
     }
   };

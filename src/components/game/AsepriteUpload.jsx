@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import { Upload, Check, AlertCircle } from "lucide-react";
+import { Upload, Check, AlertCircle, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { base44 } from "@/api/base44Client";
+import { toast } from "sonner";
 
 export default function AsepriteUpload({ label, onUpload }) {
   const [uploading, setUploading] = useState(false);
   const [status, setStatus] = useState(null);
   const [files, setFiles] = useState({ png: null, json: null, aseprite: null });
+  const [uploadedUrls, setUploadedUrls] = useState(null);
 
   const handleFileChange = (e) => {
     const newFiles = { ...files };
@@ -50,10 +52,13 @@ export default function AsepriteUpload({ label, onUpload }) {
       }
 
       onUpload(uploadedUrls);
+      setUploadedUrls(uploadedUrls);
       setStatus({ type: 'success', message: 'Files uploaded successfully!' });
       setFiles({ png: null, json: null, aseprite: null });
+      toast.success('✓ Aseprite files uploaded!', { duration: 4 });
     } catch (err) {
       setStatus({ type: 'error', message: `Upload failed: ${err.message}` });
+      toast.error(`Upload failed: ${err.message}`);
     } finally {
       setUploading(false);
     }
@@ -115,6 +120,55 @@ export default function AsepriteUpload({ label, onUpload }) {
         >
           {uploading ? 'Uploading...' : 'Upload Files'}
         </Button>
+
+        {/* Uploaded URLs display */}
+        {uploadedUrls && (
+          <div className="p-3 bg-blue-50 rounded-lg border border-blue-200 space-y-2">
+            <p className="text-xs font-semibold text-blue-900">📁 Uploaded Files:</p>
+            {uploadedUrls.png && (
+              <div className="flex items-center justify-between gap-2 p-2 bg-white rounded border border-blue-100 text-xs">
+                <span className="text-blue-700 truncate">PNG: {uploadedUrls.png.split('/').pop()}</span>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(uploadedUrls.png);
+                    toast.success('URL copied!');
+                  }}
+                  className="p-1 hover:bg-blue-100 rounded"
+                >
+                  <Copy className="w-3 h-3 text-blue-600" />
+                </button>
+              </div>
+            )}
+            {uploadedUrls.json && (
+              <div className="flex items-center justify-between gap-2 p-2 bg-white rounded border border-blue-100 text-xs">
+                <span className="text-blue-700 truncate">JSON: {uploadedUrls.json.split('/').pop()}</span>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(uploadedUrls.json);
+                    toast.success('URL copied!');
+                  }}
+                  className="p-1 hover:bg-blue-100 rounded"
+                >
+                  <Copy className="w-3 h-3 text-blue-600" />
+                </button>
+              </div>
+            )}
+            {uploadedUrls.aseprite && (
+              <div className="flex items-center justify-between gap-2 p-2 bg-white rounded border border-blue-100 text-xs">
+                <span className="text-blue-700 truncate">Aseprite: {uploadedUrls.aseprite.split('/').pop()}</span>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(uploadedUrls.aseprite);
+                    toast.success('URL copied!');
+                  }}
+                  className="p-1 hover:bg-blue-100 rounded"
+                >
+                  <Copy className="w-3 h-3 text-blue-600" />
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </Card>
   );

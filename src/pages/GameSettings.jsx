@@ -552,6 +552,24 @@ export default function GameSettings() {
           <TabsContent value="other" className="space-y-6">
             <Card>
               <CardHeader>
+                <CardTitle>Music & Audio</CardTitle>
+                <CardDescription>Upload MP3 files for game music and sound effects</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <SettingGroup
+                  title="Background Music"
+                  imageItems={[
+                    { id: "music_main", label: "Main Theme" },
+                    { id: "music_boss", label: "Boss Battle" },
+                    { id: "music_zone_light", label: "Realm of Light" },
+                    { id: "music_zone_woods", label: "Whispering Woods" },
+                    { id: "music_zone_citadel", label: "Shadowfell Citadel" },
+                  ]}
+                />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
                 <CardTitle>Player Character</CardTitle>
                 <CardDescription>Upload custom sprites for the player character in each weapon mode</CardDescription>
               </CardHeader>

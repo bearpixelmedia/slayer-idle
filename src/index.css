@@ -209,3 +209,9 @@
   padding: 4px 2px;
   gap: 2px;
 }
+
+/* Canvas and Image Rendering */
+.pixel-canvas {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}

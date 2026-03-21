@@ -125,7 +125,7 @@ function ParallaxBackgroundComponent() {
 
       {/* Mid mountains / hills */}
       {layer(2, 0.12, 20, 35, 0.65,
-        <SpriteTileRow spriteUrl={sprites.mountainMid} tileWidth={150} count={10} fallback={
+        <SpriteTileRow spriteUrl={sprites.mountainMid} tileWidth={150} count={20} fallback={
           <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
             {Array.from({ length: 10 }).map((_, i) => (
               <svg key={i} viewBox="0 0 150 200" style={{ flex: "0 0 150px", height: "100%" }}>

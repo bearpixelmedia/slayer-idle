@@ -435,7 +435,7 @@ Return only: {"frames": [{...}, {...}, ...]}`,
               {uploading ? "Uploading..." : "Upload Spritesheet"}
             </span>
           </Button>
-          <input ref={fileInputRef} type="file" accept="image/*" onChange={handleUpload} className="hidden" />
+          <input ref={fileInputRef} type="file" accept="image/*,.aseprite,.ase" onChange={handleUpload} className="hidden" />
         </label>
 
         <div className="flex items-center gap-2 text-xs text-slate-600">

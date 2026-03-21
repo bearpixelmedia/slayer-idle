@@ -3,17 +3,17 @@ import { loadGameSettings } from "@/lib/gameSettings";
 import SpriteTileRow from "./SpriteTileRow";
 
 const PARALLAX_LAYERS = [
-  { id: 0, speed: 0.05, top: 0, height: 60, opacity: 0.3 },
-  { id: 1, speed: 0.10, top: 5, height: 30, opacity: 0.35 },
-  { id: 2, speed: 0.15, top: 15, height: 35, opacity: 0.5 },
-  { id: 3, speed: 0.22, top: 25, height: 26, opacity: 0.4 },
-  { id: 4, speed: 0.32, top: 30, height: 30, opacity: 0.55 },
-  { id: 5, speed: 0.42, top: 35, height: 34, opacity: 0.7 },
-  { id: 6, speed: 0.52, top: 38, height: 38, opacity: 0.8 },
-  { id: 7, speed: 0.62, top: 40, height: 43, opacity: 0.85 },
-  { id: 8, speed: 0.72, top: 42, height: 48, opacity: 0.92 },
+  { id: 0, speed: 0.03, top: 0, height: 60, opacity: 0.3 },
+  { id: 1, speed: 0.06, top: 5, height: 30, opacity: 0.35 },
+  { id: 2, speed: 0.09, top: 15, height: 35, opacity: 0.5 },
+  { id: 3, speed: 0.14, top: 25, height: 26, opacity: 0.4 },
+  { id: 4, speed: 0.20, top: 30, height: 30, opacity: 0.55 },
+  { id: 5, speed: 0.28, top: 35, height: 34, opacity: 0.7 },
+  { id: 6, speed: 0.38, top: 38, height: 38, opacity: 0.8 },
+  { id: 7, speed: 0.50, top: 40, height: 43, opacity: 0.85 },
+  { id: 8, speed: 0.65, top: 42, height: 48, opacity: 0.92 },
   { id: 9, speed: 0.82, top: 60, height: 22, opacity: 0.88 },
-  { id: 10, speed: 0.92, top: 63, height: 24, opacity: 0.95 },
+  { id: 10, speed: 0.98, top: 63, height: 24, opacity: 0.95 },
 ];
 
 function ParallaxBackgroundComponent() {

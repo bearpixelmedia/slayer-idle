@@ -130,6 +130,7 @@ export default function Game() {
               slashEffects={slashEffects}
               onTap={handleTapGame}
               enemyHit={enemyHit}
+              playerHit={playerHit}
               weaponMode={currentWeapon}
             />
           ) : (

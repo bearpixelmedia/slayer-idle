@@ -111,7 +111,6 @@ function GameCanvasComponent({
       <div 
         className="absolute bottom-56 left-[20%] flex flex-col items-center gap-2 z-20"
       >
-        <motion.div animate={{ y: enemyHit ? -8 : 0 }} transition={{ duration: 0.1 }}>
         <div className="w-20 h-1.5 bg-muted rounded-full overflow-hidden border border-border/50">
           <motion.div
             className="h-full bg-green-500"
@@ -121,7 +120,7 @@ function GameCanvasComponent({
         </div>
         <motion.div 
           className="animate-run-cycle drop-shadow-lg"
-          animate={{ scale: enemyHit ? 1.15 : 1, filter: playerHit ? "brightness(2)" : "brightness(1)" }}
+          animate={{ scale: enemyHit ? 1.15 : 1, filter: playerHit ? "brightness(2)" : "brightness(1)", y: enemyHit ? -8 : 0 }}
           transition={{ duration: 0.1 }}
         >
           <PlayerRenderer
@@ -132,7 +131,6 @@ function GameCanvasComponent({
         </motion.div>
         {/* Ground shadow */}
         <div className="absolute -bottom-6 w-20 h-1 bg-black/30 rounded-full blur-sm" />
-        </motion.div>
       </div>
 
       {/* Enemy - parallax layer that scrolls with world */}

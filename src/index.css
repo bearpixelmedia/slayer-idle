@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -33,6 +33,7 @@
     --radius: 0.75rem;
     --font-pixel: 'Press Start 2P', monospace;
     --font-inter: 'Inter', sans-serif;
+    --font-manrope: 'Manrope', sans-serif;
     --sidebar-background: 260 18% 10%;
     --sidebar-foreground: 45 100% 95%;
     --sidebar-primary: 45 100% 55%;
@@ -84,7 +85,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-manrope;
   }
 }
 

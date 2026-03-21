@@ -7,6 +7,7 @@ module.exports = {
   		fontFamily: {
   			pixel: ['var(--font-pixel)'],
   			inter: ['var(--font-inter)'],
+  			manrope: ['var(--font-manrope)'],
   		},
   		borderRadius: {
   			lg: 'var(--radius)',

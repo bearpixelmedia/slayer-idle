@@ -67,6 +67,13 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
         if (jsonFile && uploadedUrls[jsonFile.name]) {
           sessionStorage.setItem(`aseprite_json_${imageUrl}`, uploadedUrls[jsonFile.name]);
         }
+
+        // Add to uploaded files library
+        const saved = localStorage.getItem(UPLOADED_FILES_KEY);
+        const uploadedFilesList = saved ? JSON.parse(saved) : [];
+        const newFile = { url: imageUrl, name: imageFile.name };
+        const updated = [newFile, ...uploadedFilesList.filter(f => f.url !== imageUrl)].slice(0, 50);
+        localStorage.setItem(UPLOADED_FILES_KEY, JSON.stringify(updated));
       }
     } catch (err) {
       alert("Upload failed: " + err.message);

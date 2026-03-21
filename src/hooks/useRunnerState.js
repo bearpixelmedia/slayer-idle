@@ -119,12 +119,12 @@ export default function useRunnerState() {
 
   // Jump input handling
   const handleJump = useCallback(() => {
-    if (isGameOver || !gameStarted) return;
+    if (gameStateRef.current.isGameOver || !gameStateRef.current.gameStarted) return;
     if (gameStateRef.current.playerY >= GROUND_Y - 2) {
       setPlayerVelocity(JUMP_STRENGTH);
       setIsJumping(true);
     }
-  }, [isGameOver, gameStarted]);
+  }, []);
 
   // Keyboard input
   useEffect(() => {

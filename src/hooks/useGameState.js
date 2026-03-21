@@ -114,6 +114,8 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   useEffect(() => {
     currentWeaponRef.current = currentWeapon;
   }, [currentWeapon]);
+  const [autoWalking, setAutoWalking] = useState(true);
+  const autoWalkingRef = useRef(true);
   const [activeBuffs, setActiveBuffs] = useState([]);
   const stateRef = useRef(state);
   stateRef.current = state;
@@ -662,6 +664,16 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     return () => clearInterval(interval);
   }, [dealDamage, currentWeapon]);
 
+  // Auto-walk and auto-attack: character walks forward and attacks when close to enemy
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!autoWalkingRef.current || stateRef.current.isDead) return;
+      const damage = getTapDamage(stateRef.current, currentWeaponRef.current, activeBuffsRef.current);
+      dealDamage(damage, 65 + Math.random() * 10, 50 + Math.random() * 10);
+    }, 600);
+    return () => clearInterval(interval);
+  }, [dealDamage, currentWeapon]);
+
   // Clean up floating coins, souls, damage numbers, and particles
   useEffect(() => {
     const interval = setInterval(() => {
@@ -838,5 +850,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     unlockZone,
     activeBuffs,
     upgradeBuilding,
+    autoWalking,
+    setAutoWalking,
   };
 }

@@ -6,6 +6,7 @@ import PrestigePanel from "@/components/game/PrestigePanel";
 import VillagePanel from "@/components/game/VillagePanel";
 import QuestLog from "@/components/game/QuestLog";
 import ZoneSelector from "@/components/game/ZoneSelector";
+import UpgradeShop from "@/components/game/UpgradeShop";
 import { HUD_THEME } from "@/lib/hudTheme";
 
 export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestige, onRevive, unlockedIds, damageMultiplier, offlineMultiplier, onSwitchZone, onUnlockZone, onClaimQuestReward, onRepeatQuest, questProgress, onUpgradeBuilding, abilities, onActivateAbility, weaponMode, activeTab, onTabChange }) {

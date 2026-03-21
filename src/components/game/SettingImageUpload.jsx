@@ -38,13 +38,21 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
     loadFiles();
   }, [showLibrary]);
 
-  const saveToLibrary = (fileUrl, fileName) => {
+  const saveToLibrary = (fileUrl, fileName, jsonUrl) => {
     const saved = localStorage.getItem(UPLOADED_FILES_KEY);
     const list = saved ? JSON.parse(saved) : [];
-    if (!list.find(f => f.url === fileUrl)) {
-      const updated = [{ url: fileUrl, name: fileName || fileUrl }, ...list].slice(0, 50);
+    const existing = list.find(f => f.url === fileUrl);
+    if (!existing) {
+      const entry = { url: fileUrl, name: fileName || fileUrl, jsonUrl: jsonUrl || null };
+      const updated = [entry, ...list].slice(0, 50);
       localStorage.setItem(UPLOADED_FILES_KEY, JSON.stringify(updated));
       setFiles(updated);
+      if (jsonUrl) sessionStorage.setItem(`aseprite_json_${fileUrl}`, jsonUrl);
+    } else if (jsonUrl && !existing.jsonUrl) {
+      existing.jsonUrl = jsonUrl;
+      localStorage.setItem(UPLOADED_FILES_KEY, JSON.stringify(list));
+      setFiles([...list]);
+      sessionStorage.setItem(`aseprite_json_${fileUrl}`, jsonUrl);
     }
   };
 

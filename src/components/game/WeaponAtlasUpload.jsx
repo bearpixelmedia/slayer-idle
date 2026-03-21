@@ -123,6 +123,42 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
     }
   };
 
+  const autoAssign = async () => {
+    if (!atlasUrl || !frames.length) return;
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = atlasUrl;
+    await new Promise(res => { img.onload = res; img.onerror = res; });
+
+    const offscreen = document.createElement("canvas");
+    const ctx = offscreen.getContext("2d");
+    const newAssignments = { ...assignments };
+    let slotIdx = 0;
+
+    for (let i = 0; i < frames.length; i++) {
+      if (slotIdx >= WEAPON_SLOTS.length) break;
+      const { x, y, w, h } = frames[i].frame;
+      offscreen.width = w;
+      offscreen.height = h;
+      ctx.clearRect(0, 0, w, h);
+      ctx.drawImage(img, x, y, w, h, 0, 0, w, h);
+      const data = ctx.getImageData(0, 0, w, h).data;
+      // Check if any pixel has alpha > 10
+      let hasContent = false;
+      for (let p = 3; p < data.length; p += 4) {
+        if (data[p] > 10) { hasContent = true; break; }
+      }
+      if (hasContent) {
+        const slot = WEAPON_SLOTS[slotIdx];
+        const key = `atlas_frame::${atlasUrl}::${i}`;
+        newAssignments[slot.id] = key;
+        onUpdateSetting(slot.id, key);
+        slotIdx++;
+      }
+    }
+    setAssignments(newAssignments);
+  };
+
   const assignFrame = (frameIndex, slotId) => {
     const key = `atlas_frame::${atlasUrl}::${frameIndex}`;
     const newAssignments = { ...assignments, [slotId]: key };

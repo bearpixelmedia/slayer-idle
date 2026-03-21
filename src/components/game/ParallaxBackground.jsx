@@ -39,13 +39,10 @@ export default function ParallaxBackground() {
   }, []);
 
   useEffect(() => {
-    intId.current = setInterval(() => {
-      target.current = (target.current + 2) % 10000;
-    }, 60);
-
     const tick = () => {
-      camX.current += (target.current - camX.current) * 0.12;
-      const cx = camX.current;
+      // Use player's run progress for world scroll
+      const playerProgress = window.__gameRunProgress?.current || 0;
+      const cx = playerProgress * 40; // Convert progress units to pixels
       for (let i = 0; i < refs.current.length; i++) {
         const el = refs.current[i];
         if (el) el.style.transform = `translate3d(${-cx * speeds.current[i]}px,0,0)`;
@@ -56,7 +53,6 @@ export default function ParallaxBackground() {
 
     return () => {
       cancelAnimationFrame(rafId.current);
-      clearInterval(intId.current);
     };
   }, []);
 

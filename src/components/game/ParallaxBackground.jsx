@@ -141,16 +141,18 @@ export default function ParallaxBackground() {
 
       {/* Very far trees */}
       {layer(3, 0.22, 35, 26, 0.5,
-        <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
-          {Array.from({ length: 50 }).map((_, i) => (
-            <svg key={i} viewBox="0 0 50 110" style={{ flex: "0 0 35px", height: "100%" }}>
-              <circle cx="25" cy="20" r="8" fill="rgba(8,60,15,0.85)" />
-              <circle cx="18" cy="28" r="6" fill="rgba(10,70,18,0.8)" />
-              <circle cx="32" cy="28" r="6" fill="rgba(10,70,18,0.8)" />
-              <rect x="23" y="36" width="4" height="74" fill="rgba(60,35,15,0.8)" />
-            </svg>
-          ))}
-        </div>
+        <SpriteTileRow spriteUrl={sprites.treeVeryFar} tileWidth={35} count={50} fallback={
+          <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
+            {Array.from({ length: 50 }).map((_, i) => (
+              <svg key={i} viewBox="0 0 50 110" style={{ flex: "0 0 35px", height: "100%" }}>
+                <circle cx="25" cy="20" r="8" fill="rgba(8,60,15,0.85)" />
+                <circle cx="18" cy="28" r="6" fill="rgba(10,70,18,0.8)" />
+                <circle cx="32" cy="28" r="6" fill="rgba(10,70,18,0.8)" />
+                <rect x="23" y="36" width="4" height="74" fill="rgba(60,35,15,0.8)" />
+              </svg>
+            ))}
+          </div>
+        } />
       )}
 
       {/* Far trees */}

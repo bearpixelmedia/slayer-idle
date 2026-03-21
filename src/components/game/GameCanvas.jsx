@@ -114,6 +114,7 @@ function GameCanvasComponent({
         enemyDying={enemyDying}
         boss={boss}
         shieldActive={shieldActive}
+        playerWorldPos={state.worldProgress}
       />
       <FloatingElements
         floatingCoins={floatingCoins}

@@ -520,6 +520,21 @@ export default function GameSettings() {
           <TabsContent value="other" className="space-y-6">
             <Card>
               <CardHeader>
+                <CardTitle>Player Character</CardTitle>
+                <CardDescription>Upload custom sprites for the player character in each weapon mode</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <SettingGroup
+                  title="Player Sprites"
+                  imageItems={[
+                    { id: "player_sword", label: "Sword Mode", defaultValue: "⚔️" },
+                    { id: "player_bow", label: "Bow Mode", defaultValue: "🏹" },
+                  ]}
+                />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
                 <CardTitle>Game UI Text</CardTitle>
                 <CardDescription>Customize labels and UI text</CardDescription>
               </CardHeader>

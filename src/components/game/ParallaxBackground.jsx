@@ -359,5 +359,4 @@ function ParallaxBackgroundComponent() {
   );
 }
 
-const ParallaxBackground = React.memo(ParallaxBackgroundComponent);
-export default ParallaxBackground;
+export default React.memo(ParallaxBackgroundComponent);

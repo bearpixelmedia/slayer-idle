@@ -187,14 +187,7 @@ export default function Game() {
                 minHeight: 0,
                 boxSizing: "border-box"
               }}>
-                <div className="px-2 py-1.5 pb-0">
-                  <button
-                    onClick={() => setShowRunner(true)}
-                    className="w-full py-3 rounded-sm bg-green-600 hover:bg-green-700 text-white font-pixel text-[10px] transition-colors border-2 border-green-800 active:scale-95"
-                  >
-                    🏃 RUNNER
-                  </button>
-                </div>
+
                 <ScrollArea className="flex-1 overflow-hidden min-h-0" style={{ boxSizing: "border-box" }}>
                    <div className="space-y-1 overflow-x-hidden">
                      <GameTabs

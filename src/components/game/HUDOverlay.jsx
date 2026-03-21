@@ -109,7 +109,7 @@ export default function HUDOverlay({
           onClick={() => onMenuToggle(true)}
           animate={hasAffordableUpgrade ? { boxShadow: ["0 0 0 0 rgba(217, 119, 6, 0.9)", "0 0 0 20px rgba(217, 119, 6, 0)"], scale: [1, 1.1, 1] } : {}}
           transition={hasAffordableUpgrade ? { duration: 1, repeat: Infinity } : {}}
-          className={`hidden lg:flex fixed left-4 bottom-4 z-50 w-12 h-12 rounded-full pointer-events-auto items-center justify-center text-2xl transition-all active:scale-95 border-2 border-primary/60 hover:brightness-125 ${hasAffordableUpgrade ? 'bg-primary/40 border-primary' : 'bg-primary/15'}`}
+          className={`hidden lg:flex fixed right-4 bottom-4 z-50 w-12 h-12 rounded-full pointer-events-auto items-center justify-center text-2xl transition-all active:scale-95 border-2 border-primary/60 hover:brightness-125 ${hasAffordableUpgrade ? 'bg-primary/40 border-primary' : 'bg-primary/15'}`}
         >
           📖
         </motion.button>

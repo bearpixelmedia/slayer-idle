@@ -242,7 +242,7 @@ function ParallaxBackgroundComponent() {
       {layer(9, 0.84, 62, 22, 0.82,
         sprites.shrubBack ? <SpriteTileRow spriteUrl={sprites.shrubBack} tileWidth={40} count={120} /> :
         <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end", gap: "2px" }}>
-          {Array.from({ length: 60 }).map((_, i) => {
+          {Array.from({ length: 120 }).map((_, i) => {
             const type = i % 4;
             const s = 18 + (i % 5) * 7;
             const g1 = `rgba(${35 + (i%3)*8},${140 + (i%4)*10},${35 + (i%3)*5},0.9)`;

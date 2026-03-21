@@ -155,7 +155,7 @@ export default function Game() {
               exit={{ opacity: 0 }}
             >
               <motion.div 
-                className="fixed bottom-0 left-0 right-0 flex flex-col pointer-events-auto lg:hidden max-h-[90vh] w-screen"
+                className="fixed bottom-0 left-0 right-0 flex flex-col pointer-events-auto lg:hidden max-h-[90vh]"
                 initial={{ y: "100%" }}
                 animate={{ y: 0 }}
                 exit={{ y: "100%" }}

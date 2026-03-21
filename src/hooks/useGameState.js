@@ -76,6 +76,9 @@ function defaultState() {
     bossFightStartTime: null, // Track elapsed time for shield window mechanic
     bossEnrageResetUsed: false, // Ensure enrage reset threshold triggers once per fight
     villageBuildings: {},
+    // Enemy cluster state
+    enemyCluster: [], // Array of enemy objects in current cluster
+    currentClusterIndex: 0, // Which enemy in cluster is active
   };
 }
 

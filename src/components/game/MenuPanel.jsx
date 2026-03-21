@@ -38,10 +38,10 @@ export default function MenuPanel({
       transition={{ duration: 0.2 }}
     >
       {/* Header */}
-      <div className={`${HUD_THEME.menuPanel.header} px-2 py-2`}>
+      <div className={`${HUD_THEME.menuPanel.header} px-2 py-2`} style={{ boxSizing: "border-box" }}>
         <button
           onClick={onRunnerClick}
-          className={`flex-1 py-2 rounded-lg ${HUD_THEME.text.label} transition-colors border-2 ${HUD_THEME.button.primary} border-primary/60`}
+          className={`flex-1 py-2.5 rounded-lg text-[10px] sm:text-[11px] transition-colors border-2 ${HUD_THEME.button.primary} border-primary/60 min-h-[36px] flex items-center justify-center`}
         >
           🏃 RUNNER
         </button>
@@ -49,9 +49,9 @@ export default function MenuPanel({
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
           onClick={onClose}
-          className={`flex-shrink-0 p-2 rounded-lg ${HUD_THEME.button.primary} transition-colors`}
+          className={`flex-shrink-0 p-2 rounded-lg ${HUD_THEME.button.primary} transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center`}
         >
-          <X className="w-4 h-4" />
+          <X className="w-5 h-5" />
         </motion.button>
       </div>
 

@@ -18,15 +18,15 @@ function AchievementRow({ achievement, unlocked }) {
         ? "bg-primary/10 border-primary/30"
         : "bg-muted/20 border-border/20 opacity-50"
     }`}>
-      <span className="text-xl flex-shrink-0">{achievement.icon}</span>
+      <span className="text-lg sm:text-xl flex-shrink-0">{achievement.icon}</span>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className={`text-sm font-semibold truncate ${unlocked ? "text-foreground" : "text-muted-foreground"}`}>
-            {achievement.name}
-          </span>
-          {unlocked && <span className="text-[8px] font-pixel text-primary">✓ DONE</span>}
-        </div>
-        <p className="text-[10px] text-muted-foreground truncate">{achievement.description}</p>
+          <span className={`text-[9px] sm:text-sm font-semibold truncate ${unlocked ? "text-foreground" : "text-muted-foreground"}`}>
+               {achievement.name}
+              </span>
+              {unlocked && <span className="text-[7px] font-pixel text-primary">✓</span>}
+            </div>
+            <p className="text-[8px] sm:text-[10px] text-muted-foreground truncate">{achievement.description}</p>
       </div>
       <div className={`text-right flex-shrink-0 px-2 py-1 rounded-md text-[8px] font-pixel ${
         unlocked

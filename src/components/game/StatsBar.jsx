@@ -10,31 +10,35 @@ export default function StatsBar({ state, tapDamage, idleCPS, className }) {
 
   return (
     <div className={className || `${HUD_THEME.statsBar.container} ${HUD_THEME.statsBar.bg} ${HUD_THEME.statsBar.border} ${HUD_THEME.statsBar.rounded} ${HUD_THEME.statsBar.pointerEvents}`}>
-      <div className="flex items-center gap-3 flex-wrap">
-        <div className="flex items-center gap-1">
-          <span className="text-sm">🪙</span>
-          <span className={`text-primary ${HUD_THEME.text.small}`}>{formatNumber(state.coins)}</span>
-        </div>
-        {state.souls > 0 && (
-          <div className="flex items-center gap-1">
-            <span className="text-sm">👻</span>
-            <span className={`text-accent ${HUD_THEME.text.small}`}>{formatNumber(state.souls)}</span>
-          </div>
-        )}
-        <div className={`flex items-center gap-1 text-muted-foreground ${HUD_THEME.text.xs}`}>
-          <span>{formatNumber(tapDamage)} ⚔️</span>
-        </div>
-        <div className={`flex items-center gap-1 text-muted-foreground ${HUD_THEME.text.xs}`}>
-          <span>{state.itemDrops || 0}/5 🎁</span>
-        </div>
-        {state.stage < 6 && (
-          <div className={`flex items-center gap-1 text-muted-foreground ${HUD_THEME.text.xs}`}>
-            <span>⚔️ {state.killCount % 25}/25</span>
-          </div>
-        )}
-        <div className={`hidden sm:flex items-center gap-1 text-muted-foreground ${HUD_THEME.text.xs}`}>
-          <span>{formatNumber(idleCPS)}/s 💰</span>
-        </div>
+      <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+         <div className="flex items-center gap-1">
+          <span className="text-xs sm:text-sm">🪙</span>
+          <span className={`text-primary text-[8px] sm:text-[9px] font-pixel`}>{formatNumber(state.coins)}</span>
+         </div>
+         {state.souls > 0 && (
+           <div className="flex items-center gap-1">
+             <span className="text-xs sm:text-sm">👻</span>
+             <span className={`text-accent text-[8px] sm:text-[9px] font-pixel`}>{formatNumber(state.souls)}</span>
+           </div>
+         )}
+         <div className={`flex items-center gap-1 text-muted-foreground text-[7px] sm:text-[8px]`}>
+           <span className="font-pixel">{formatNumber(tapDamage)}</span>
+           <span>⚔️</span>
+         </div>
+         <div className={`flex items-center gap-1 text-muted-foreground text-[7px] sm:text-[8px]`}>
+           <span className="font-pixel">{state.itemDrops || 0}/5</span>
+           <span>🎁</span>
+         </div>
+         {state.stage < 6 && (
+           <div className={`flex items-center gap-1 text-muted-foreground text-[7px] sm:text-[8px]`}>
+             <span>⚔️</span>
+             <span className="font-pixel">{state.killCount % 25}/25</span>
+           </div>
+         )}
+         <div className={`hidden sm:flex items-center gap-1 text-muted-foreground text-[8px]`}>
+           <span className="font-pixel">{formatNumber(idleCPS)}/s</span>
+           <span>💰</span>
+         </div>
       </div>
       {state.isBossActive && (
         <div className="text-[9px] font-pixel text-red-400 animate-pulse">⚔️ BOSS</div>

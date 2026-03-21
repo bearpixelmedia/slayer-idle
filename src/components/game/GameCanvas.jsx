@@ -288,4 +288,5 @@ function GameCanvasComponent({
   );
 }
 
-export default React.memo(GameCanvasComponent);
+const GameCanvas = React.memo(GameCanvasComponent);
+export default GameCanvas;

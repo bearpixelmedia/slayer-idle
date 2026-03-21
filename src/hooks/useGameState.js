@@ -691,9 +691,9 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       setState(prev => {
         if (prev.isDead) return prev;
         
-        // Check if player has reached enemy (within 5 world units)
+        // Check if player has reached enemy (within ~1 world unit - sprite size distance)
         const enemyWorldPos = prev.enemyCluster?.[prev.currentClusterIndex]?.worldPos || prev.nextEnemyWorldPos;
-        const inCombat = prev.worldProgress >= enemyWorldPos - 5;
+        const inCombat = prev.worldProgress >= enemyWorldPos - 1;
         
         // Only advance world progress if not in direct combat with enemy
         let newProgress = inCombat ? prev.worldProgress : prev.worldProgress + 0.095;
@@ -723,9 +723,9 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         dealDamage(damage, 65 + Math.random() * 20, 40 + Math.random() * 30);
       }
       
-      // Auto-walk/auto-attack only when in combat range (within 40% distance)
+      // Auto-walk/auto-attack only when in combat range (within ~1 world unit)
       const enemyWorldPos = state.enemyCluster?.[state.currentClusterIndex]?.worldPos || state.nextEnemyWorldPos;
-      const inCombatRange = state.worldProgress >= enemyWorldPos - 5;
+      const inCombatRange = state.worldProgress >= enemyWorldPos - 1;
       
       if (tickCounter % 2 === 0 && inCombatRange) {
         const damage = getTapDamage(state, currentWeaponRef.current, activeBuffsRef.current);

@@ -287,3 +287,5 @@ function GameCanvasComponent({
     </div>
   );
 }
+
+export default React.memo(GameCanvasComponent);

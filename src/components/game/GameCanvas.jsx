@@ -198,16 +198,16 @@ function GameCanvasComponent({
       </AnimatePresence>
 
       {/* Floating coin rewards */}
-      <AnimatePresence>
+      <AnimatePresence mode="popLayout">
         {floatingCoins.map((c) => (
           <motion.div
             key={c.id}
             className="absolute pointer-events-none font-pixel text-primary text-xs sm:text-sm font-bold"
             style={{ left: `${c.x}%`, top: `${c.y}%` }}
-            initial={{ opacity: 1, y: 0 }}
-            animate={{ opacity: 0, y: -50 }}
+            initial={{ opacity: 1, y: 0, scale: 1 }}
+            animate={{ opacity: 0, y: -50, scale: 0.8 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
           >
             +{formatNumber(c.amount)} 🪙
           </motion.div>
@@ -215,7 +215,7 @@ function GameCanvasComponent({
       </AnimatePresence>
 
       {/* Floating soul rewards */}
-      <AnimatePresence>
+      <AnimatePresence mode="popLayout">
         {floatingSouls?.map((s) => (
           <motion.div
             key={s.id}
@@ -224,7 +224,7 @@ function GameCanvasComponent({
             initial={{ opacity: 1, y: 0, scale: 0.8 }}
             animate={{ opacity: 0, y: -60, scale: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 1 }}
+            transition={{ duration: 1, ease: "easeOut" }}
           >
             +{s.amount.toFixed(1)} 👻
           </motion.div>
@@ -232,18 +232,18 @@ function GameCanvasComponent({
       </AnimatePresence>
 
       {/* Floating damage numbers */}
-      <AnimatePresence>
+      <AnimatePresence mode="popLayout">
         {floatingDamage?.map((d) => (
           <motion.div
             key={d.id}
             className={`absolute pointer-events-none font-pixel font-bold text-sm sm:text-base ${
-              d.isCritical ? "text-red-400" : "text-orange-400"
+              d.isCritical ? "text-red-400 drop-shadow-lg" : "text-orange-400"
             }`}
             style={{ left: `${d.x}%`, top: `${d.y}%` }}
             initial={{ opacity: 1, y: 0, scale: 1 }}
             animate={{ opacity: 0, y: -60, scale: d.isCritical ? 1.3 : 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
           >
             {d.isCritical ? "⚡" : ""}{formatNumber(d.amount)}
           </motion.div>
@@ -347,5 +347,4 @@ function GameCanvasComponent({
   );
 }
 
-const GameCanvas = React.memo(GameCanvasComponent);
-export default GameCanvas;
+export default React.memo(GameCanvasComponent);

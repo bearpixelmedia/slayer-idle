@@ -176,7 +176,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   // Memoize getTapDamage calculation
   const getTapDamage = useCallback((s = state, weapon = currentWeapon, buffs = activeBuffs) => {
     if (!s || typeof s !== 'object') return 1;
-    let damage = 1;
+    let damage = 0.5; // Base damage
     const upgradeLevels = s.upgradeLevels || {};
     Array.isArray(UPGRADES) && UPGRADES.forEach(u => {
       if (!u?.id) return;
@@ -719,8 +719,8 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         dealDamage(damage, 65 + Math.random() * 20, 40 + Math.random() * 30);
       }
       
-      // Auto-walk/auto-attack every 2 ticks (200ms) - always active, feels like player is running through world
-      if (tickCounter % 2 === 0 && !stateRef.current.isDead) {
+      // Auto-walk/auto-attack every 2 ticks (200ms) - continuous combat feedback
+      if (tickCounter % 2 === 0 && !stateRef.current.isDead && !stateRef.current.bossWarning) {
         const damage = getTapDamage(stateRef.current, currentWeaponRef.current, activeBuffsRef.current);
         dealDamage(damage, 65 + Math.random() * 10, 50 + Math.random() * 10);
       }

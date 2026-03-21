@@ -16,7 +16,7 @@ const PARALLAX_LAYERS = [
   { id: 10, speed: 1.05, top: 63, height: 24, opacity: 0.95 },
 ];
 
-function ParallaxBackgroundComponent() {
+const ParallaxBackgroundComponent = React.memo(function ParallaxBackground() {
   const refs = useRef([]);
   const speeds = useRef([]);
   const rafId = useRef(null);
@@ -87,7 +87,7 @@ function ParallaxBackgroundComponent() {
   };
 
   return (
-    <div style={{ position: "absolute", inset: 0, overflow: "hidden", background: "linear-gradient(to bottom, #0a1628, #1e3a5f, #1a4a2e)" }}>
+    <div style={{ position: "absolute", inset: 0, overflow: "hidden", background: "linear-gradient(to bottom, #0a1628 0%, #1e4080 40%, #2d6e3a 100%)", willChange: "transform" }}>
       {/* Sky */}
       <div style={{ position: "absolute", inset: 0, height: "75%", background: "linear-gradient(to bottom, #0a1628, #1e4080, #2d6e3a)", pointerEvents: "none" }} />
 
@@ -365,4 +365,6 @@ function ParallaxBackgroundComponent() {
   );
 }
 
-export default React.memo(ParallaxBackgroundComponent);
+});
+
+export default ParallaxBackgroundComponent;

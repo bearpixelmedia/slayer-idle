@@ -42,7 +42,7 @@ function UpgradeCard({ upgrade, level, coins, onBuy }) {
         <motion.button
           onClick={() => canAfford1 && onBuy(upgrade.id, 1)}
           disabled={!canAfford1}
-          className={`px-2 py-1 rounded font-pixel text-[7px] transition-all ${
+          className={`px-2 py-1.5 rounded font-pixel text-[8px] transition-all min-h-[32px] flex items-center justify-center ${
             canAfford1 ? "bg-primary text-primary-foreground hover:brightness-110" : "bg-muted/30 text-muted-foreground/50"
           }`}
           whileTap={canAfford1 ? { scale: 0.95 } : {}}
@@ -52,7 +52,7 @@ function UpgradeCard({ upgrade, level, coins, onBuy }) {
         <motion.button
           onClick={() => canAfford10 && onBuy(upgrade.id, 10)}
           disabled={!canAfford10}
-          className={`px-2 py-1 rounded font-pixel text-[7px] transition-all ${
+          className={`px-2 py-1.5 rounded font-pixel text-[8px] transition-all min-h-[32px] flex items-center justify-center ${
             canAfford10 ? "bg-primary text-primary-foreground hover:brightness-110" : "bg-muted/30 text-muted-foreground/50"
           }`}
           whileTap={canAfford10 ? { scale: 0.95 } : {}}
@@ -62,7 +62,7 @@ function UpgradeCard({ upgrade, level, coins, onBuy }) {
         <motion.button
           onClick={() => canAfford50 && onBuy(upgrade.id, 50)}
           disabled={!canAfford50}
-          className={`px-2 py-1 rounded font-pixel text-[7px] transition-all ${
+          className={`px-2 py-1.5 rounded font-pixel text-[8px] transition-all min-h-[32px] flex items-center justify-center ${
             canAfford50 ? "bg-primary text-primary-foreground hover:brightness-110" : "bg-muted/30 text-muted-foreground/50"
           }`}
           whileTap={canAfford50 ? { scale: 0.95 } : {}}
@@ -72,7 +72,7 @@ function UpgradeCard({ upgrade, level, coins, onBuy }) {
         <motion.button
           onClick={handleBuyMax}
           disabled={!canAfford1}
-          className={`px-2 py-1 rounded font-pixel text-[7px] transition-all ${
+          className={`px-2 py-1.5 rounded font-pixel text-[8px] transition-all min-h-[32px] flex items-center justify-center ${
             canAfford1 ? "bg-accent text-accent-foreground hover:brightness-110" : "bg-muted/30 text-muted-foreground/50"
           }`}
           whileTap={canAfford1 ? { scale: 0.95 } : {}}

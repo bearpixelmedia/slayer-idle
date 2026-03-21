@@ -155,7 +155,7 @@ export default function Game() {
               exit={{ opacity: 0 }}
             >
               <motion.div 
-                className="fixed bottom-0 left-0 right-0 flex flex-col pointer-events-auto lg:hidden max-h-[85vh]"
+                className="fixed bottom-0 left-0 right-0 flex flex-col pointer-events-auto lg:hidden max-h-[90vh] w-screen"
                 initial={{ y: "100%" }}
                 animate={{ y: 0 }}
                 exit={{ y: "100%" }}
@@ -168,7 +168,9 @@ export default function Game() {
                   boxShadow: "inset 0 0 0 2px #6B5344",
                   margin: 0,
                   padding: 0,
-                  boxSizing: "border-box"
+                  boxSizing: "border-box",
+                  maxWidth: "100vw",
+                  overflow: "hidden"
                 }}
               >
               {/* Inner frame */}
@@ -179,18 +181,19 @@ export default function Game() {
                 display: "flex",
                 flexDirection: "column",
                 overflow: "hidden",
-                minHeight: 0
+                minHeight: 0,
+                boxSizing: "border-box"
               }}>
-                <div className="px-2 py-1 pb-0">
+                <div className="px-2 py-1.5 pb-0">
                   <button
                     onClick={() => setShowRunner(true)}
-                    className="w-full py-2 rounded-sm bg-green-600 hover:bg-green-700 text-white font-pixel text-[9px] transition-colors border-2 border-green-800"
+                    className="w-full py-3 rounded-sm bg-green-600 hover:bg-green-700 text-white font-pixel text-[10px] transition-colors border-2 border-green-800 active:scale-95"
                   >
                     🏃 RUNNER
                   </button>
                 </div>
-                <ScrollArea className="flex-1 overflow-hidden min-h-0">
-                  <div className="px-2 py-1 space-y-1">
+                <ScrollArea className="flex-1 overflow-hidden min-h-0" style={{ boxSizing: "border-box" }}>
+                  <div className="px-2 py-1 space-y-1 overflow-x-hidden">
                     <GameTabs
                        state={state}
                        onBuyUpgrade={handleBuyUpgrade}

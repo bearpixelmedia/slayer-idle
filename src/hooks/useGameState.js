@@ -80,11 +80,6 @@ function defaultState() {
     enemyCluster: [], // Array of enemy objects in current cluster
     currentClusterIndex: 0, // Which enemy in cluster is active
   };
-
-function defaultUiState() {
-  return {
-    autoWalking: true, // Auto-attack is always on by default
-  };
 }
 
 const ABILITY_CONFIGS = {

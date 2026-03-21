@@ -35,8 +35,8 @@ export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestig
       </div>
 
       <TabsContent value="combat" className={`px-3 py-2 space-y-2 ${HUD_THEME.panel.bg}`}>
-        {/* Upgrades moved to standalone component */}
-      </TabsContent>
+         <UpgradeShop state={state} onBuy={onBuyUpgrade} />
+       </TabsContent>
 
       <TabsContent value="progression" className={`px-3 py-2 space-y-2 ${HUD_THEME.panel.bg}`}>
         <PrestigePanel

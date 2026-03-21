@@ -74,7 +74,9 @@ export default function GameSettings() {
     reader.onload = (ev) => {
       try {
         const imported = JSON.parse(ev.target?.result || "{}");
+        const newVersion = (imported._version || 0) + 1;
         setSettings(imported);
+        setVersion(newVersion);
         setHasChanges(true);
       } catch (err) {
         alert("Invalid settings file");

@@ -27,6 +27,7 @@ function HealthBar({ current, max }) {
 
 import ParticleEffect from "./ParticleEffect";
 import ParallaxBackground from "./ParallaxBackground";
+import { loadGameSettings } from "@/lib/gameSettings";
 
 export default function GameCanvas({
   state,

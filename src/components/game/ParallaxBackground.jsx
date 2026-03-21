@@ -94,17 +94,21 @@ export default function ParallaxBackground() {
 
       {/* Stars */}
       {layer(0, 0.01, 0, 60, 0.5,
-        <div style={{ position: "relative", width: "200%", height: "100%" }}>
-          {Array.from({ length: 30 }).map((_, i) => (
-            <div key={i} style={{
-              position: "absolute",
-              width: `${1 + i % 3}px`, height: `${1 + i % 3}px`,
-              borderRadius: "50%", background: "white",
-              top: `${5 + (i * 13) % 40}%`, left: `${(i * 6.7) % 100}%`,
-              opacity: 0.2 + (i % 4) * 0.1,
-            }} />
-          ))}
-        </div>
+        sprites.stars ? (
+          <SpriteTileRow spriteUrl={sprites.stars} tileWidth={200} count={10} />
+        ) : (
+          <div style={{ position: "relative", width: "200%", height: "100%" }}>
+            {Array.from({ length: 30 }).map((_, i) => (
+              <div key={i} style={{
+                position: "absolute",
+                width: `${1 + i % 3}px`, height: `${1 + i % 3}px`,
+                borderRadius: "50%", background: "white",
+                top: `${5 + (i * 13) % 40}%`, left: `${(i * 6.7) % 100}%`,
+                opacity: 0.2 + (i % 4) * 0.1,
+              }} />
+            ))}
+          </div>
+        )
       )}
 
       {/* Far mountains */}

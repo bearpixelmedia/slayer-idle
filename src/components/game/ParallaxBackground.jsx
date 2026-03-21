@@ -284,18 +284,8 @@ export default function ParallaxBackground() {
         </div>
       )}
 
-      {/* Mid grass */}
-      {layer(11, 0.91, 77, 20, 0.9,
-        <div style={{ display: "flex", width: "200%", height: "100%", background: "linear-gradient(to bottom, rgba(40,100,40,0.9), rgba(20,60,20,1))" }} />
-      )}
-
-      {/* Foreground grass */}
-      {layer(12, 0.98, 85, 15, 0.96,
-        <div style={{ display: "flex", width: "200%", height: "100%", background: "linear-gradient(to bottom, rgba(55,130,55,0.95), rgba(30,70,30,1))" }} />
-      )}
-
       {/* Static ground */}
-      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "80px", background: "linear-gradient(to bottom, #2d6e1a, #1a3d0a)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "18%", background: "linear-gradient(to bottom, #1e5c14, #0f2e08)", pointerEvents: "none" }} />
 
       {/* Vignette */}
       <div style={{ position: "absolute", inset: 0, pointerEvents: "none", boxShadow: "inset 0 0 120px rgba(0,0,0,0.55)" }} />

@@ -86,7 +86,13 @@ export default function GameCanvas({
           animate={{ scale: enemyHit ? 1.15 : 1 }}
           transition={{ duration: 0.1 }}
         >
-          {weaponMode === "bow" ? "🏹" : "⚔️"}
+          {weaponMode === "bow"
+            ? (gameSettings.player_bow
+                ? <img src={gameSettings.player_bow} alt="player" style={{ width: "1em", height: "1em", objectFit: "contain", imageRendering: "pixelated" }} />
+                : "🏹")
+            : (gameSettings.player_sword
+                ? <img src={gameSettings.player_sword} alt="player" style={{ width: "1em", height: "1em", objectFit: "contain", imageRendering: "pixelated" }} />
+                : "⚔️")}
         </motion.div>
         {/* Ground shadow */}
         <div className="absolute -bottom-6 w-20 h-1 bg-black/30 rounded-full blur-sm" />

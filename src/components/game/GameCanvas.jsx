@@ -37,6 +37,7 @@ function GameCanvasComponent({
   particles,
   onTap,
   enemyHit,
+  playerHit,
   weaponMode,
 }) {
   const canvasRef = useRef(null);

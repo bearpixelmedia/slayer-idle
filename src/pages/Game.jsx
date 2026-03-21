@@ -6,6 +6,7 @@ import useQuests from "@/hooks/useQuests";
 import useRunnerState from "@/hooks/useRunnerState";
 import { computeAchievementMultipliers } from "@/lib/achievements";
 import { soundManager } from "@/lib/soundManager";
+import { musicManager } from "@/lib/musicManager";
 import GameCanvas from "@/components/game/GameCanvas";
 import RunnerCanvas from "@/components/game/RunnerCanvas";
 import AchievementToast from "@/components/game/AchievementToast";
@@ -33,9 +34,11 @@ export default function Game() {
   const [hudMenuOpen, setHudMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("combat");
 
-  // Initialize sound manager on first load
+  // Initialize sound manager and music on first load
   React.useEffect(() => {
     soundManager.init();
+    musicManager.init();
+    musicManager.start('main');
   }, []);
 
   const runner = useRunnerState();

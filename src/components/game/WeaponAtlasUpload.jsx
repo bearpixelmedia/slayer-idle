@@ -191,31 +191,45 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
       }
     }
 
-    // Merge blobs that are close together (same weapon with disconnected parts)
-    const MARGIN = 2;
-    const used = new Array(blobs.length).fill(false);
-    const merged = [];
+    // Multi-pass merge: blobs that are close together (same weapon with gaps/disconnected parts)
+    // Use a larger margin and repeat until stable
+    const MARGIN = 10;
+    let boxes = blobs.map(([x0, y0, x1, y1]) => [x0, y0, x1, y1]);
 
-    for (let i = 0; i < blobs.length; i++) {
-      if (used[i]) continue;
-      let [x0, y0, x1, y1] = blobs[i];
-      used[i] = true;
-      let changed = true;
-      while (changed) {
-        changed = false;
-        for (let j = 0; j < blobs.length; j++) {
+    let merging = true;
+    while (merging) {
+      merging = false;
+      const used = new Array(boxes.length).fill(false);
+      const next = [];
+      for (let i = 0; i < boxes.length; i++) {
+        if (used[i]) continue;
+        let [x0, y0, x1, y1] = boxes[i];
+        used[i] = true;
+        for (let j = i + 1; j < boxes.length; j++) {
           if (used[j]) continue;
-          const [bx0, by0, bx1, by1] = blobs[j];
+          const [bx0, by0, bx1, by1] = boxes[j];
           if (bx0 <= x1 + MARGIN && bx1 >= x0 - MARGIN && by0 <= y1 + MARGIN && by1 >= y0 - MARGIN) {
             x0 = Math.min(x0, bx0); y0 = Math.min(y0, by0);
             x1 = Math.max(x1, bx1); y1 = Math.max(y1, by1);
             used[j] = true;
-            changed = true;
+            merging = true;
           }
         }
+        next.push([x0, y0, x1, y1]);
       }
-      merged.push({ frame: { x: x0, y: y0, w: x1 - x0 + 1, h: y1 - y0 + 1 } });
+      boxes = next;
     }
+
+    // Add padding around each frame and clamp to image bounds
+    const PAD = 2;
+    const merged = boxes.map(([x0, y0, x1, y1]) => ({
+      frame: {
+        x: Math.max(0, x0 - PAD),
+        y: Math.max(0, y0 - PAD),
+        w: Math.min(width, x1 + PAD) - Math.max(0, x0 - PAD) + 1,
+        h: Math.min(height, y1 + PAD) - Math.max(0, y0 - PAD) + 1,
+      }
+    }));
 
     // Sort top-to-bottom, left-to-right
     const avgH = merged.reduce((s, b) => s + b.frame.h, 0) / (merged.length || 1);

@@ -202,16 +202,16 @@ export default function GameCanvas({
             transition={{ duration: 0.3 }}
           >
             <motion.div
-              className="text-center"
+              className="text-center px-4 max-w-xs"
               initial={{ scale: 0.5, y: -30 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.5, y: -30 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
-              <p className="font-pixel text-2xl sm:text-4xl text-red-500 font-bold mb-2 drop-shadow-lg whitespace-nowrap [text-shadow:0_0_10px_#ef4444]">
+              <p className="font-pixel text-xl sm:text-2xl text-red-500 font-bold mb-2 drop-shadow-lg [text-shadow:0_0_10px_#ef4444]">
                 ⚠️ BOSS APPROACHING ⚠️
               </p>
-              <p className="font-pixel text-sm sm:text-base text-yellow-400 drop-shadow-lg whitespace-nowrap">
+              <p className="font-pixel text-xs sm:text-sm text-yellow-400 drop-shadow-lg">
                 Prepare for battle!
               </p>
             </motion.div>

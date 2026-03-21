@@ -165,7 +165,10 @@ export default function Game() {
                   background: "linear-gradient(135deg, #8B7355 0%, #A0826D 100%)",
                   border: "6px solid #D4AF37",
                   borderRadius: "12px 12px 0 0",
-                  boxShadow: "inset 0 0 0 2px #6B5344"
+                  boxShadow: "inset 0 0 0 2px #6B5344",
+                  margin: 0,
+                  padding: 0,
+                  boxSizing: "border-box"
                 }}
               >
               {/* Inner frame */}

@@ -1,4 +1,4 @@
-// Sound Manager - Web Audio API based sound effects
+// Sound Manager - Uses Freesound/Zapsplat high-quality audio URLs
 
 class SoundManager {
   constructor() {
@@ -6,6 +6,19 @@ class SoundManager {
     this.isMuted = false;
     this.volume = 0.3;
     this.initialized = false;
+    this.soundCache = {};
+    
+    // High-quality free sound URLs
+    this.soundUrls = {
+      'tap': 'https://cdn.freesound.org/previews/674/674857_13048-lq.mp3',
+      'upgrade': 'https://cdn.freesound.org/previews/536/536115_10566098-lq.mp3',
+      'ui-click': 'https://cdn.freesound.org/previews/522/522320_11802031-lq.mp3',
+      'coin-collect': 'https://cdn.freesound.org/previews/344/344021_5121236-lq.mp3',
+      'enemy-hit': 'https://cdn.freesound.org/previews/386/386450_2522800-lq.mp3',
+      'boss-appear': 'https://cdn.freesound.org/previews/588/588623_11546677-lq.mp3',
+      'achievement': 'https://cdn.freesound.org/previews/539/539301_5121236-lq.mp3',
+      'prestige': 'https://cdn.freesound.org/previews/397/397952_7146708-lq.mp3',
+    };
   }
 
   init() {
@@ -18,185 +31,36 @@ class SoundManager {
     }
   }
 
-  play(type) {
-    if (!this.initialized || this.isMuted) this.init();
-    if (!this.audioContext) return;
+  async play(type) {
+    if (!this.initialized) this.init();
+    if (!this.audioContext || this.isMuted) return;
+
+    const url = this.soundUrls[type];
+    if (!url) return;
 
     try {
-      switch (type) {
-        case 'tap':
-          this.playTap();
-          break;
-        case 'upgrade':
-          this.playUpgrade();
-          break;
-        case 'ui-click':
-          this.playUIClick();
-          break;
-        case 'coin-collect':
-          this.playCoinCollect();
-          break;
-        case 'enemy-hit':
-          this.playEnemyHit();
-          break;
-        case 'boss-appear':
-          this.playBossAppear();
-          break;
-        case 'achievement':
-          this.playAchievement();
-          break;
-        case 'prestige':
-          this.playPrestige();
-          break;
+      let audioBuffer = this.soundCache[type];
+      
+      if (!audioBuffer) {
+        const response = await fetch(url);
+        const arrayBuffer = await response.arrayBuffer();
+        audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+        this.soundCache[type] = audioBuffer;
       }
+
+      const source = this.audioContext.createBufferSource();
+      const gainNode = this.audioContext.createGain();
+      
+      source.buffer = audioBuffer;
+      gainNode.gain.value = this.volume;
+      
+      source.connect(gainNode);
+      gainNode.connect(this.audioContext.destination);
+      
+      source.start(0);
     } catch (e) {
-      console.warn('Sound playback error:', e);
+      console.warn(`Error playing sound ${type}:`, e);
     }
-  }
-
-  playTap() {
-    const osc = this.audioContext.createOscillator();
-    const gain = this.audioContext.createGain();
-    
-    osc.connect(gain);
-    gain.connect(this.audioContext.destination);
-    
-    osc.frequency.setValueAtTime(600, this.audioContext.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(400, this.audioContext.currentTime + 0.05);
-    
-    gain.gain.setValueAtTime(this.volume * 0.3, this.audioContext.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.05);
-    
-    osc.start(this.audioContext.currentTime);
-    osc.stop(this.audioContext.currentTime + 0.05);
-  }
-
-  playUpgrade() {
-    const now = this.audioContext.currentTime;
-    const osc = this.audioContext.createOscillator();
-    const gain = this.audioContext.createGain();
-    
-    osc.connect(gain);
-    gain.connect(this.audioContext.destination);
-    
-    osc.frequency.setValueAtTime(300, now);
-    osc.frequency.exponentialRampToValueAtTime(800, now + 0.15);
-    
-    gain.gain.setValueAtTime(this.volume * 0.4, now);
-    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-    
-    osc.start(now);
-    osc.stop(now + 0.15);
-  }
-
-  playUIClick() {
-    const osc = this.audioContext.createOscillator();
-    const gain = this.audioContext.createGain();
-    
-    osc.connect(gain);
-    gain.connect(this.audioContext.destination);
-    
-    osc.frequency.setValueAtTime(800, this.audioContext.currentTime);
-    
-    gain.gain.setValueAtTime(this.volume * 0.2, this.audioContext.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.08);
-    
-    osc.start(this.audioContext.currentTime);
-    osc.stop(this.audioContext.currentTime + 0.08);
-  }
-
-  playCoinCollect() {
-    const now = this.audioContext.currentTime;
-    for (let i = 0; i < 3; i++) {
-      const osc = this.audioContext.createOscillator();
-      const gain = this.audioContext.createGain();
-      
-      osc.connect(gain);
-      gain.connect(this.audioContext.destination);
-      
-      const freq = 600 + i * 200;
-      osc.frequency.setValueAtTime(freq, now);
-      
-      gain.gain.setValueAtTime(this.volume * 0.25, now + i * 0.08);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.08 + 0.1);
-      
-      osc.start(now + i * 0.08);
-      osc.stop(now + i * 0.08 + 0.1);
-    }
-  }
-
-  playEnemyHit() {
-    const osc = this.audioContext.createOscillator();
-    const gain = this.audioContext.createGain();
-    
-    osc.connect(gain);
-    gain.connect(this.audioContext.destination);
-    
-    osc.frequency.setValueAtTime(200, this.audioContext.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(100, this.audioContext.currentTime + 0.1);
-    
-    gain.gain.setValueAtTime(this.volume * 0.3, this.audioContext.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.1);
-    
-    osc.start(this.audioContext.currentTime);
-    osc.stop(this.audioContext.currentTime + 0.1);
-  }
-
-  playBossAppear() {
-    const now = this.audioContext.currentTime;
-    const osc = this.audioContext.createOscillator();
-    const gain = this.audioContext.createGain();
-    
-    osc.connect(gain);
-    gain.connect(this.audioContext.destination);
-    
-    osc.frequency.setValueAtTime(150, now);
-    osc.frequency.exponentialRampToValueAtTime(300, now + 0.4);
-    
-    gain.gain.setValueAtTime(this.volume * 0.5, now);
-    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-    
-    osc.start(now);
-    osc.stop(now + 0.4);
-  }
-
-  playAchievement() {
-    const now = this.audioContext.currentTime;
-    const frequencies = [523, 659, 784];
-    
-    frequencies.forEach((freq, i) => {
-      const osc = this.audioContext.createOscillator();
-      const gain = this.audioContext.createGain();
-      
-      osc.connect(gain);
-      gain.connect(this.audioContext.destination);
-      
-      osc.frequency.setValueAtTime(freq, now);
-      
-      gain.gain.setValueAtTime(this.volume * 0.3, now + i * 0.1);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.1 + 0.15);
-      
-      osc.start(now + i * 0.1);
-      osc.stop(now + i * 0.1 + 0.15);
-    });
-  }
-
-  playPrestige() {
-    const now = this.audioContext.currentTime;
-    const osc = this.audioContext.createOscillator();
-    const gain = this.audioContext.createGain();
-    
-    osc.connect(gain);
-    gain.connect(this.audioContext.destination);
-    
-    osc.frequency.setValueAtTime(400, now);
-    osc.frequency.exponentialRampToValueAtTime(1200, now + 0.3);
-    
-    gain.gain.setValueAtTime(this.volume * 0.4, now);
-    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-    
-    osc.start(now);
-    osc.stop(now + 0.3);
   }
 
   setVolume(val) {

@@ -370,6 +370,7 @@ Return only: {"frames": [{...}, {...}, ...]}`,
       localStorage.setItem("weapon_atlas", JSON.stringify({ url: atlasUrl, framesData: detected, imageSize: rawImageSize }));
       console.log("AI Detect: Complete - frames displayed");
     } catch (err) {
+      console.error("AI Detect error:", err);
       alert("AI detection failed: " + err.message);
     } finally {
       setAiDetecting(false);

@@ -137,7 +137,7 @@ function GameCanvasComponent({
           />
           <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-24 h-2 bg-black/25 rounded-full blur-md" />
         </div>
-      </motion.div>
+      </div>
 
       {/* Slash effects */}
       <AnimatePresence>

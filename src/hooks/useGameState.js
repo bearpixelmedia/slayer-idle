@@ -79,6 +79,9 @@ function defaultState() {
     // Enemy cluster state
     enemyCluster: [], // Array of enemy objects in current cluster
     currentClusterIndex: 0, // Which enemy in cluster is active
+    // World state
+    worldProgress: 0, // How far the player has traveled
+    nextEnemyWorldPos: 0, // Position in world where next enemy spawns
   };
 }
 

@@ -680,11 +680,24 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     dealDamage(damage, x, y);
   }, [dealDamage, tryProcBuff]);
 
-  // Consolidated attack loop - idle, auto-clicker, auto-walk
+  // Consolidated attack loop - idle, auto-clicker, auto-walk, and world progress
   useEffect(() => {
     let tickCounter = 0;
     const interval = setInterval(() => {
       tickCounter++;
+      
+      // Update world progress every tick (100ms), simulating player moving forward
+      setState(prev => {
+        if (prev.isDead) return prev;
+        const newProgress = prev.worldProgress + 0.095; // Match visual progression
+        
+        // Check if next enemy should spawn
+        if (newProgress >= prev.nextEnemyWorldPos && !prev.isBossActive) {
+          return spawnNewEnemy({ ...prev, worldProgress: newProgress });
+        }
+        
+        return { ...prev, worldProgress: newProgress };
+      });
       
       // Idle damage every 10 ticks (1000ms)
       if (tickCounter % 10 === 0) {
@@ -707,7 +720,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       }
     }, 100);
     return () => clearInterval(interval);
-  }, [dealDamage]);
+  }, [dealDamage, spawnNewEnemy]);
 
   // Clean up floating coins, souls, damage numbers, and particles (batch cleanup)
   useEffect(() => {

@@ -406,8 +406,6 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     const multiplier = abilitiesRef.current.doubleDamage.active ? 2 : 1;
     const finalDamage = damage * multiplier;
     const isCritical = multiplier > 1;
-    
-    playSound(isCritical ? "critical" : "hit");
 
     // Spawn particles for critical hits
     if (isCritical) {

@@ -83,17 +83,15 @@ export default function GameCanvas({
           />
         </div>
         <motion.div 
-          className="animate-run-cycle text-3xl sm:text-4xl md:text-5xl drop-shadow-lg"
+          className="animate-run-cycle drop-shadow-lg"
           animate={{ scale: enemyHit ? 1.15 : 1 }}
           transition={{ duration: 0.1 }}
         >
-          {weaponMode === "bow"
-            ? (gameSettings.player_bow
-                ? <img src={gameSettings.player_bow} alt="player" style={{ width: "1em", height: "1em", objectFit: "contain", imageRendering: "pixelated" }} />
-                : "🏹")
-            : (gameSettings.player_sword
-                ? <img src={gameSettings.player_sword} alt="player" style={{ width: "1em", height: "1em", objectFit: "contain", imageRendering: "pixelated" }} />
-                : "⚔️")}
+          <PlayerRenderer
+            spriteUrl={weaponMode === "bow" ? gameSettings.player_bow : gameSettings.player_sword}
+            fallbackEmoji={weaponMode === "bow" ? "🏹" : "⚔️"}
+            className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16"
+          />
         </motion.div>
         {/* Ground shadow */}
         <div className="absolute -bottom-6 w-20 h-1 bg-black/30 rounded-full blur-sm" />

@@ -78,4 +78,18 @@ function FloatingElements({ floatingCoins, floatingSouls, floatingDamage, slashE
   );
 }
 
-export default React.memo(FloatingElements);
+// Custom comparison to prevent re-renders when array refs change but content doesn't
+function areEqual(prevProps, nextProps) {
+  // Check if arrays have same length first (cheap check)
+  if (
+    prevProps.floatingCoins.length !== nextProps.floatingCoins.length ||
+    prevProps.floatingSouls.length !== nextProps.floatingSouls.length ||
+    prevProps.floatingDamage.length !== nextProps.floatingDamage.length ||
+    prevProps.slashEffects.length !== nextProps.slashEffects.length
+  ) {
+    return false;
+  }
+  return true;
+}
+
+export default React.memo(FloatingElements, areEqual);

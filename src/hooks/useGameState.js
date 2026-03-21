@@ -439,7 +439,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     const finalDamage = damage * multiplier;
     const isCritical = multiplier > 1;
 
-    // Spawn particles for critical hits
+    // Batch particle spawning
     if (isCritical) {
       const particleCount = 8;
       const newParticles = Array.from({ length: particleCount }).map((_, i) => ({
@@ -454,6 +454,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       setParticles(prev => [...prev, ...newParticles]);
     }
 
+    // Batch all state updates into single setState call
     setState(prev => {
       if (prev.bossWarning && Date.now() < prev.bossWarning.warningEndTime) {
         return prev;
@@ -704,9 +705,12 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         return { ...prev, worldProgress: newProgress };
       });
       
+      const state = stateRef.current;
+      if (state.isDead || state.bossWarning) return;
+      
       // Idle damage every 10 ticks (1000ms)
       if (tickCounter % 10 === 0) {
-        const cps = getIdleCPS(stateRef.current);
+        const cps = getIdleCPS(state);
         if (cps > 0) {
           dealDamage(Math.max(1, Math.floor(cps / 2)), 50 + Math.random() * 20, 50 + Math.random() * 20);
         }
@@ -714,13 +718,16 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       
       // Auto-clicker every 5 ticks (500ms)
       if (tickCounter % 5 === 0 && abilitiesRef.current?.autoClicker?.active) {
-        const damage = getTapDamage(stateRef.current, currentWeaponRef.current, activeBuffsRef.current);
+        const damage = getTapDamage(state, currentWeaponRef.current, activeBuffsRef.current);
         dealDamage(damage, 65 + Math.random() * 20, 40 + Math.random() * 30);
       }
       
-      // Auto-walk/auto-attack every 2 ticks (200ms) - continuous combat feedback
-      if (tickCounter % 2 === 0 && !stateRef.current.isDead && !stateRef.current.bossWarning) {
-        const damage = getTapDamage(stateRef.current, currentWeaponRef.current, activeBuffsRef.current);
+      // Auto-walk/auto-attack only when in combat range (within 40% distance)
+      const enemyWorldPos = state.enemyCluster?.[state.currentClusterIndex]?.worldPos || state.nextEnemyWorldPos;
+      const inCombatRange = state.worldProgress >= enemyWorldPos - 5;
+      
+      if (tickCounter % 2 === 0 && inCombatRange) {
+        const damage = getTapDamage(state, currentWeaponRef.current, activeBuffsRef.current);
         dealDamage(damage, 65 + Math.random() * 10, 50 + Math.random() * 10);
       }
     }, 100);

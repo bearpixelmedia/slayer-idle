@@ -208,7 +208,7 @@ export default function ParallaxBackground() {
       )}
 
       {/* Mid grass */}
-      {layer(7, 0.91, 77, 20, 0.9,
+      {layer(11, 0.91, 77, 20, 0.9,
         <div style={{ display: "flex", width: "200%", height: "100%", background: "linear-gradient(to bottom, rgba(40,100,40,0.9), rgba(20,60,20,1))" }} />
       )}
 

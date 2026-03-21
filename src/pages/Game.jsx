@@ -203,6 +203,8 @@ export default function Game() {
                        abilities={abilities}
                        onActivateAbility={handleActivateAbility}
                        weaponMode={currentWeapon}
+                       activeTab={activeTab}
+                       onTabChange={setActiveTab}
                      />
                   </div>
                 </ScrollArea>

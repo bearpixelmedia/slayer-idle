@@ -195,7 +195,7 @@ export default function GameCanvas({
       <AnimatePresence>
         {showBossWarning && (
           <motion.div
-            className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50 pointer-events-none"
+            className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-[1000] pointer-events-none"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -208,10 +208,10 @@ export default function GameCanvas({
               exit={{ scale: 0.5, y: -30 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
-              <p className="font-pixel text-2xl sm:text-4xl text-red-500 font-bold mb-2 drop-shadow-lg [text-shadow:0_0_10px_#ef4444]">
+              <p className="font-pixel text-2xl sm:text-4xl text-red-500 font-bold mb-2 drop-shadow-lg whitespace-nowrap [text-shadow:0_0_10px_#ef4444]">
                 ⚠️ BOSS APPROACHING ⚠️
               </p>
-              <p className="font-pixel text-sm sm:text-base text-yellow-400 drop-shadow-lg">
+              <p className="font-pixel text-sm sm:text-base text-yellow-400 drop-shadow-lg whitespace-nowrap">
                 Prepare for battle!
               </p>
             </motion.div>

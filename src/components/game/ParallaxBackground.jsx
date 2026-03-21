@@ -33,7 +33,7 @@ export default function ParallaxBackground() {
   const intId = useRef(null);
   const [sprites, setSprites] = useState({});
 
-  useEffect(() => {
+  const reloadSprites = () => {
     const s = loadGameSettings();
     setSprites({
       treeVeryFar: s.parallax_tree_very_far || null,
@@ -51,6 +51,13 @@ export default function ParallaxBackground() {
       clouds: s.parallax_clouds || null,
       stars: s.parallax_stars || null,
     });
+  };
+
+  useEffect(() => {
+    reloadSprites();
+    // Reload when localStorage changes (e.g. after saving in GameSettings)
+    window.addEventListener("storage", reloadSprites);
+    return () => window.removeEventListener("storage", reloadSprites);
   }, []);
 
   useEffect(() => {

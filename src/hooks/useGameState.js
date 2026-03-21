@@ -699,8 +699,8 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         dealDamage(damage, 65 + Math.random() * 20, 40 + Math.random() * 30);
       }
       
-      // Auto-walk every 6 ticks (600ms)
-      if (tickCounter % 6 === 0 && autoWalkingRef.current && !stateRef.current.isDead) {
+      // Auto-walk/auto-attack every 2 ticks (200ms) - always active, feels like player is running through world
+      if (tickCounter % 2 === 0 && !stateRef.current.isDead) {
         const damage = getTapDamage(stateRef.current, currentWeaponRef.current, activeBuffsRef.current);
         dealDamage(damage, 65 + Math.random() * 10, 50 + Math.random() * 10);
       }

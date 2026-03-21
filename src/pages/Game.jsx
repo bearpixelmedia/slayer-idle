@@ -144,28 +144,29 @@ export default function Game() {
           )}
         </div>
 
-        {!showRunner && menuOpen && (
-          <motion.div 
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 lg:hidden" 
-            onClick={() => setMenuOpen(false)}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
+        <AnimatePresence>
+          {!showRunner && menuOpen && (
             <motion.div 
-              className="fixed bottom-0 left-0 right-0 max-h-[85vh] flex flex-col pointer-events-auto rounded-t-lg"
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                background: "linear-gradient(135deg, #8B7355 0%, #A0826D 100%)",
-                border: "6px solid #D4AF37",
-                borderRadius: "12px 12px 0 0",
-                boxShadow: "inset 0 0 0 2px #6B5344"
-              }}
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 lg:hidden" 
+              onClick={() => setMenuOpen(false)}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
             >
+              <motion.div 
+                className="fixed bottom-0 left-0 right-0 max-h-[85vh] flex flex-col pointer-events-auto rounded-t-lg"
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "100%" }}
+                transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                  background: "linear-gradient(135deg, #8B7355 0%, #A0826D 100%)",
+                  border: "6px solid #D4AF37",
+                  borderRadius: "12px 12px 0 0",
+                  boxShadow: "inset 0 0 0 2px #6B5344"
+                }}
+              >
               {/* Inner frame */}
               <div style={{
                 background: "linear-gradient(135deg, #4A4A4A 0%, #2D2D2D 100%)",

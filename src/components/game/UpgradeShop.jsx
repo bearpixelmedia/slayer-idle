@@ -26,23 +26,23 @@ function UpgradeCard({ upgrade, level, coins, onBuy }) {
   };
 
   return (
-    <div className="flex items-center gap-3 p-3 rounded-lg border border-border/50 bg-card/40">
-      <div className="flex-shrink-0 text-3xl">{upgrade.icon}</div>
+    <div className="flex items-center gap-2 p-2 rounded-md border border-border/50 bg-card/40 text-[7px]">
+      <div className="flex-shrink-0 text-2xl">{upgrade.icon}</div>
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="font-pixel text-[9px] text-foreground">{upgrade.name}</span>
-          <span className="font-pixel text-[7px] text-muted-foreground">Lv.{level}</span>
+        <div className="flex items-center gap-1">
+          <span className="font-pixel text-foreground">{upgrade.name}</span>
+          <span className="font-pixel text-muted-foreground">L{level}</span>
         </div>
-        <div className="flex items-center gap-2 text-[8px]">
+        <div className="flex items-center gap-1 text-[7px]">
           <span className={`font-pixel ${typeColor}`}>{typeLabel}</span>
           <span className="text-primary font-pixel">🪙 {formatNumber(cost)}</span>
         </div>
       </div>
-      <div className="flex gap-2 flex-shrink-0">
+      <div className="flex gap-1 flex-shrink-0">
         <motion.button
           onClick={() => canAfford1 && onBuy(upgrade.id, 1)}
           disabled={!canAfford1}
-          className={`px-3 py-1.5 rounded-md font-pixel text-[8px] transition-all ${
+          className={`px-2 py-1 rounded font-pixel text-[7px] transition-all ${
             canAfford1 ? "bg-primary text-primary-foreground hover:brightness-110" : "bg-muted/30 text-muted-foreground/50"
           }`}
           whileTap={canAfford1 ? { scale: 0.95 } : {}}
@@ -52,7 +52,7 @@ function UpgradeCard({ upgrade, level, coins, onBuy }) {
         <motion.button
           onClick={() => canAfford10 && onBuy(upgrade.id, 10)}
           disabled={!canAfford10}
-          className={`px-3 py-1.5 rounded-md font-pixel text-[8px] transition-all ${
+          className={`px-2 py-1 rounded font-pixel text-[7px] transition-all ${
             canAfford10 ? "bg-primary text-primary-foreground hover:brightness-110" : "bg-muted/30 text-muted-foreground/50"
           }`}
           whileTap={canAfford10 ? { scale: 0.95 } : {}}
@@ -62,7 +62,7 @@ function UpgradeCard({ upgrade, level, coins, onBuy }) {
         <motion.button
           onClick={() => canAfford50 && onBuy(upgrade.id, 50)}
           disabled={!canAfford50}
-          className={`px-3 py-1.5 rounded-md font-pixel text-[8px] transition-all ${
+          className={`px-2 py-1 rounded font-pixel text-[7px] transition-all ${
             canAfford50 ? "bg-primary text-primary-foreground hover:brightness-110" : "bg-muted/30 text-muted-foreground/50"
           }`}
           whileTap={canAfford50 ? { scale: 0.95 } : {}}
@@ -72,7 +72,7 @@ function UpgradeCard({ upgrade, level, coins, onBuy }) {
         <motion.button
           onClick={handleBuyMax}
           disabled={!canAfford1}
-          className={`px-3 py-1.5 rounded-md font-pixel text-[8px] transition-all ${
+          className={`px-2 py-1 rounded font-pixel text-[7px] transition-all ${
             canAfford1 ? "bg-accent text-accent-foreground hover:brightness-110" : "bg-muted/30 text-muted-foreground/50"
           }`}
           whileTap={canAfford1 ? { scale: 0.95 } : {}}

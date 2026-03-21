@@ -352,7 +352,13 @@ export default function ParallaxBackground() {
       )}
 
       {/* Static ground */}
-      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "18%", background: "linear-gradient(to bottom, #1e5c14, #0f2e08)", pointerEvents: "none" }} />
+      {sprites.ground ? (
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "18%", pointerEvents: "none", display: "flex", alignItems: "flex-end" }}>
+          <SpriteTileRow spriteUrl={sprites.ground} tileWidth={200} count={12} />
+        </div>
+      ) : (
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "18%", background: "linear-gradient(to bottom, #1e5c14, #0f2e08)", pointerEvents: "none" }} />
+      )}
 
       {/* Vignette */}
       <div style={{ position: "absolute", inset: 0, pointerEvents: "none", boxShadow: "inset 0 0 120px rgba(0,0,0,0.55)" }} />

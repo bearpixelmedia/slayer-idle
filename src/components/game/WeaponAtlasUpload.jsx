@@ -130,6 +130,7 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
     }
   };
 
+  // Projection / histogram method — finds empty rows & columns to cut between sprites
   const smartSlice = async () => {
     if (!atlasUrl) return;
     const img = new Image();
@@ -153,96 +154,58 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
 
     const { data, width, height } = imageData;
     const ALPHA = 10;
-    const visited = new Uint8Array(width * height);
-    const blobs = [];
 
-    // Connected component labeling (8-connectivity, iterative DFS)
-    for (let sy = 0; sy < height; sy++) {
-      for (let sx = 0; sx < width; sx++) {
-        const si = sy * width + sx;
-        if (visited[si] || data[si * 4 + 3] <= ALPHA) continue;
+    // Build row and column opacity counts
+    const rowCount = new Int32Array(height);
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        if (data[(y * width + x) * 4 + 3] > ALPHA) rowCount[y]++;
+      }
+    }
 
-        const stack = [[sx, sy]];
-        visited[si] = 1;
-        let x0 = sx, x1 = sx, y0 = sy, y1 = sy;
+    // Find horizontal bands (groups of non-empty rows)
+    const rowBands = [];
+    let inBand = false, bandStart = 0;
+    for (let y = 0; y <= height; y++) {
+      const empty = y === height || rowCount[y] === 0;
+      if (!inBand && !empty) { inBand = true; bandStart = y; }
+      else if (inBand && empty) { inBand = false; rowBands.push([bandStart, y - 1]); }
+    }
 
-        while (stack.length) {
-          const [cx, cy] = stack.pop();
-          if (cx < x0) x0 = cx; if (cx > x1) x1 = cx;
-          if (cy < y0) y0 = cy; if (cy > y1) y1 = cy;
-
-          for (let dy = -1; dy <= 1; dy++) {
-            for (let dx = -1; dx <= 1; dx++) {
-              if (!dx && !dy) continue;
-              const nx = cx + dx, ny = cy + dy;
-              if (nx < 0 || nx >= width || ny < 0 || ny >= height) continue;
-              const ni = ny * width + nx;
-              if (!visited[ni] && data[ni * 4 + 3] > ALPHA) {
-                visited[ni] = 1;
-                stack.push([nx, ny]);
-              }
-            }
-          }
+    // For each band, find column groups within that band
+    const detected = [];
+    for (const [y0, y1] of rowBands) {
+      const bandColCount = new Int32Array(width);
+      for (let y = y0; y <= y1; y++) {
+        for (let x = 0; x < width; x++) {
+          if (data[(y * width + x) * 4 + 3] > ALPHA) bandColCount[x]++;
         }
+      }
 
-        if (x1 - x0 > 3 && y1 - y0 > 3) {
-          blobs.push([x0, y0, x1, y1]);
+      let inCol = false, colStart = 0;
+      for (let x = 0; x <= width; x++) {
+        const empty = x === width || bandColCount[x] === 0;
+        if (!inCol && !empty) { inCol = true; colStart = x; }
+        else if (inCol && empty) {
+          inCol = false;
+          const fw = x - colStart;
+          const fh = y1 - y0 + 1;
+          if (fw > 3 && fh > 3) {
+            detected.push({ frame: { x: colStart, y: y0, w: fw, h: fh } });
+          }
         }
       }
     }
 
-    // Multi-pass merge: blobs that are close together (same weapon with gaps/disconnected parts)
-    // Use a larger margin and repeat until stable
-    const MARGIN = 3;
-    let boxes = blobs.map(([x0, y0, x1, y1]) => [x0, y0, x1, y1]);
-
-    let merging = true;
-    while (merging) {
-      merging = false;
-      const used = new Array(boxes.length).fill(false);
-      const next = [];
-      for (let i = 0; i < boxes.length; i++) {
-        if (used[i]) continue;
-        let [x0, y0, x1, y1] = boxes[i];
-        used[i] = true;
-        for (let j = i + 1; j < boxes.length; j++) {
-          if (used[j]) continue;
-          const [bx0, by0, bx1, by1] = boxes[j];
-          if (bx0 <= x1 + MARGIN && bx1 >= x0 - MARGIN && by0 <= y1 + MARGIN && by1 >= y0 - MARGIN) {
-            x0 = Math.min(x0, bx0); y0 = Math.min(y0, by0);
-            x1 = Math.max(x1, bx1); y1 = Math.max(y1, by1);
-            used[j] = true;
-            merging = true;
-          }
-        }
-        next.push([x0, y0, x1, y1]);
-      }
-      boxes = next;
+    if (!detected.length) {
+      alert("No sprites detected. The image may have no transparent gaps — try Grid Slice instead.");
+      return;
     }
 
-    // Add padding around each frame and clamp to image bounds
-    const PAD = 2;
-    const merged = boxes.map(([x0, y0, x1, y1]) => ({
-      frame: {
-        x: Math.max(0, x0 - PAD),
-        y: Math.max(0, y0 - PAD),
-        w: Math.min(width, x1 + PAD) - Math.max(0, x0 - PAD) + 1,
-        h: Math.min(height, y1 + PAD) - Math.max(0, y0 - PAD) + 1,
-      }
-    }));
-
-    // Sort top-to-bottom, left-to-right
-    const avgH = merged.reduce((s, b) => s + b.frame.h, 0) / (merged.length || 1);
-    merged.sort((a, b) => {
-      const ar = Math.round(a.frame.y / avgH);
-      const br = Math.round(b.frame.y / avgH);
-      return ar !== br ? ar - br : a.frame.x - b.frame.x;
-    });
-
-    setFrames(merged);
+    setFrames(detected);
     setAssignments({});
     WEAPON_SLOTS.forEach(slot => onUpdateSetting(slot.id, null));
-    localStorage.setItem("weapon_atlas", JSON.stringify({ url: atlasUrl, framesData: merged, imageSize: rawImageSize }));
+    localStorage.setItem("weapon_atlas", JSON.stringify({ url: atlasUrl, framesData: detected, imageSize: rawImageSize }));
   };
 
   // Given pixel data and a seed bounding box, expand it to tightly fit all connected non-transparent pixels

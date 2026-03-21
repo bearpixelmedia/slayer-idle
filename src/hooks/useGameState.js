@@ -173,6 +173,10 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     return state.upgradeLevels[id] || 0;
   }
 
+  // Cache skill and village multipliers to avoid recalculation
+  const skillMults = useMemo(() => getSkillMultipliers(state.unlockedSkills || []), [state.unlockedSkills]);
+  const villageMultipliers = useMemo(() => computeVillageMultipliers(state.villageBuildings || {}), [state.villageBuildings]);
+  
   // Memoize getTapDamage calculation
   const getTapDamage = useCallback((s = state, weapon = currentWeapon, buffs = activeBuffs) => {
     if (!s || typeof s !== 'object') return 1;
@@ -190,11 +194,9 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     });
     const souls = typeof s.souls === 'number' ? s.souls : 0;
     const soulBonus = 1 + (souls * 0.05);
-    const skillMults = getSkillMultipliers(Array.isArray(s.unlockedSkills) ? s.unlockedSkills : []) || { damageMultiplier: 1 };
-    const villageMultipliers = computeVillageMultipliers(s.villageBuildings || {}) || { tapDamageMultiplier: 1 };
     const buffMult = getBuffMultiplier(Array.isArray(buffs) ? buffs : [], "tapDamageMultiplier");
     return Math.floor(damage * soulBonus * damageMultiplier * (skillMults?.damageMultiplier || 1) * (villageMultipliers?.tapDamageMultiplier || 1) * buffMult);
-  }, [damageMultiplier, state, currentWeapon, activeBuffs]);
+  }, [damageMultiplier, state, currentWeapon, activeBuffs, skillMults, villageMultipliers]);
 
   // Memoize getIdleCPS calculation
   const getIdleCPS = useCallback((s = state) => {
@@ -213,15 +215,11 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     });
     const souls = typeof s.souls === 'number' ? s.souls : 0;
     const soulBonus = 1 + (souls * 0.05);
-    const skillMults = getSkillMultipliers(Array.isArray(s.unlockedSkills) ? s.unlockedSkills : []) || { idleMultiplier: 1 };
-    const villageMultipliers = computeVillageMultipliers(s.villageBuildings || {}) || { coinMultiplier: 1 };
     return Math.floor(cps * soulBonus * damageMultiplier * (skillMults?.idleMultiplier || 1) * (villageMultipliers?.coinMultiplier || 1));
-  }, [damageMultiplier, state]);
+  }, [damageMultiplier, state, skillMults, villageMultipliers]);
 
   function applyRewardMultipliers(coins, souls, s = state, buffs = activeBuffs) {
     if (!s || typeof s !== 'object') return { coins: 0, souls: 0 };
-    const skillMults = getSkillMultipliers(Array.isArray(s.unlockedSkills) ? s.unlockedSkills : []) || { coinDropMultiplier: 1, soulMultiplier: 1 };
-    const villageMultipliers = computeVillageMultipliers(s.villageBuildings || {}) || { coinMultiplier: 1, soulMultiplier: 1 };
     const buffCoinMult = getBuffMultiplier(Array.isArray(buffs) ? buffs : [], "coinMultiplier");
     const buffSoulMult = getBuffMultiplier(Array.isArray(buffs) ? buffs : [], "soulMultiplier");
     const coinAfterMultiplier = Math.floor(coins * (skillMults?.coinDropMultiplier || 1) * (villageMultipliers?.coinMultiplier || 1) * buffCoinMult);

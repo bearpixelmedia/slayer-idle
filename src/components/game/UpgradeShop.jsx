@@ -88,17 +88,16 @@ export default function UpgradeShop({ state, onBuy }) {
   const [open, setOpen] = useState(true);
 
   return (
-    <div className={`rounded-lg ${HUD_THEME.panel.border} overflow-hidden`}>
-      {/* Header toggle */}
+    <div className={`rounded-md ${HUD_THEME.panel.border} overflow-hidden`}>
       <button
-        className={`w-full flex items-center justify-between px-3 py-2 ${HUD_THEME.panel.bg} hover:bg-card/80 transition-colors animate-pulse border-l-4 border-accent`}
+        className={`w-full flex items-center justify-between px-2 py-1 ${HUD_THEME.panel.bg} hover:bg-card/80 transition-colors animate-pulse border-l-4 border-accent text-[9px]`}
         onClick={() => setOpen((o) => !o)}
       >
-        <div className="flex items-center gap-2">
-          <span className="text-lg">⬆️</span>
+        <div className="flex items-center gap-1">
+          <span>⬆️</span>
           <span className={`${HUD_THEME.text.label} text-accent font-bold`}>UPGRADE NOW!</span>
         </div>
-        {open ? <ChevronUp className="w-4 h-4 text-accent" /> : <ChevronDown className="w-4 h-4 text-accent" />}
+        {open ? <ChevronUp className="w-3 h-3 text-accent" /> : <ChevronDown className="w-3 h-3 text-accent" />}
       </button>
 
       <AnimatePresence>
@@ -108,9 +107,9 @@ export default function UpgradeShop({ state, onBuy }) {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="overflow-y-auto max-h-96"
+            className="overflow-y-auto max-h-80"
           >
-            <div className="px-3 py-2 space-y-2">
+            <div className="px-2 py-1 space-y-1">
               {UPGRADES.map((upgrade) => (
                 <UpgradeCard
                   key={upgrade.id}

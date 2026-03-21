@@ -26,6 +26,10 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
       try {
         const saved = localStorage.getItem(UPLOADED_FILES_KEY);
         const uploadedFiles = saved ? JSON.parse(saved) : [];
+        // Restore sessionStorage entries for animation data
+        uploadedFiles.forEach(f => {
+          if (f.jsonUrl) sessionStorage.setItem(`aseprite_json_${f.url}`, f.jsonUrl);
+        });
         setFiles(uploadedFiles);
       } catch (err) {
         console.error('Failed to load files:', err);

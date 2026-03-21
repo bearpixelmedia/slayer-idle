@@ -412,7 +412,44 @@ export default function GameSettings() {
           <TabsContent value="parallax" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Parallax Layer Settings</CardTitle>
+                <CardTitle>Parallax Spritesheets</CardTitle>
+                <CardDescription>Upload custom spritesheets for parallax layers. Upload a PNG + matching JSON (Aseprite export) together for animation.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-8">
+                <SettingGroup
+                  title="Tree Layers"
+                  imageItems={[
+                    { id: "parallax_tree_very_far", label: "Very Far Trees" },
+                    { id: "parallax_tree_far", label: "Far Trees" },
+                    { id: "parallax_tree_mid_back", label: "Mid-Back Trees" },
+                    { id: "parallax_tree_mid", label: "Mid Trees" },
+                    { id: "parallax_tree_mid_front", label: "Mid-Front Trees" },
+                    { id: "parallax_tree_front", label: "Front Trees" },
+                  ]}
+                />
+                <SettingGroup
+                  title="Vegetation & Ground"
+                  imageItems={[
+                    { id: "parallax_shrub_back", label: "Back Shrubs" },
+                    { id: "parallax_shrub_front", label: "Front Shrubs" },
+                    { id: "parallax_mountain_far", label: "Far Mountains" },
+                    { id: "parallax_mountain_mid", label: "Mid Mountains" },
+                    { id: "parallax_ground", label: "Ground Strip" },
+                  ]}
+                />
+                <SettingGroup
+                  title="Background & Effects"
+                  imageItems={[
+                    { id: "parallax_sky", label: "Sky / Background" },
+                    { id: "parallax_clouds", label: "Clouds" },
+                    { id: "parallax_stars", label: "Stars / Night Sky" },
+                  ]}
+                />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Parallax Layer Speeds</CardTitle>
                 <CardDescription>Customize parallax speeds and positions for each layer</CardDescription>
               </CardHeader>
               <CardContent className="space-y-8">

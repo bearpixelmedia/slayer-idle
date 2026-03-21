@@ -304,7 +304,7 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
           </label>
 
           {/* Clear button */}
-          {value && (
+          {value && !isAudioFile && (
             <Button
               type="button"
               variant="outline"

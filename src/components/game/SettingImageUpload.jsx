@@ -175,31 +175,56 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
     return () => clearInterval(interval);
   }, [animationData]);
 
+  const isAudioFile = value && /\.(mp3|wav|ogg|m4a)$/i.test(value);
+
   return (
     <div className="space-y-2">
       <label className="text-xs font-medium text-slate-600">{label}</label>
-      <div className="flex items-center gap-2">
-        {/* Preview */}
-        <div className="relative">
-          <button
+      
+      {/* Audio Player */}
+      {isAudioFile && (
+        <div className="flex items-center gap-2 p-3 bg-slate-50 border border-slate-200 rounded-lg">
+          <audio 
+            src={value} 
+            controls 
+            className="flex-1 h-8"
+            style={{ minWidth: 0 }}
+          />
+          <Button
             type="button"
-            onClick={() => setShowLibrary(!showLibrary)}
-            className="w-12 h-12 rounded-lg border border-slate-300 bg-slate-100 flex items-center justify-center overflow-hidden hover:border-slate-400 transition-colors cursor-pointer relative"
+            variant="outline"
+            size="sm"
+            onClick={handleClear}
+            className="gap-1 text-destructive hover:text-destructive"
           >
-            {value ? (
-              <AnimationPreview 
-                spriteUrl={value} 
-                animationData={animationData} 
-                currentFrame={currentFrame}
-                defaultEmoji={currentDefault}
-              />
-            ) : (
-              <span className="text-lg">{currentDefault}</span>
-            )}
-            <div className="absolute bottom-0 right-0 bg-slate-400 text-white p-0.5 rounded-tl">
-              <ChevronDown className="w-2.5 h-2.5" />
-            </div>
-          </button>
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </div>
+      )}
+
+      {!isAudioFile && (
+        <div className="flex items-center gap-2">
+          {/* Preview */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setShowLibrary(!showLibrary)}
+              className="w-12 h-12 rounded-lg border border-slate-300 bg-slate-100 flex items-center justify-center overflow-hidden hover:border-slate-400 transition-colors cursor-pointer relative"
+            >
+              {value ? (
+                <AnimationPreview 
+                  spriteUrl={value} 
+                  animationData={animationData} 
+                  currentFrame={currentFrame}
+                  defaultEmoji={currentDefault}
+                />
+              ) : (
+                <span className="text-lg">{currentDefault}</span>
+              )}
+              <div className="absolute bottom-0 right-0 bg-slate-400 text-white p-0.5 rounded-tl">
+                <ChevronDown className="w-2.5 h-2.5" />
+              </div>
+            </button>
           
           {showLibrary && (
             <div className="absolute top-full left-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-50 w-72">

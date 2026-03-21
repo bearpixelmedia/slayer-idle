@@ -13,6 +13,7 @@ import { MINION_TYPES, MISSION_DEFS } from "@/lib/minions";
 import { QUESTS } from "@/lib/quests";
 import { VILLAGE_BUILDINGS } from "@/lib/village";
 import SettingImageUpload from "@/components/game/SettingImageUpload";
+import WeaponAtlasUpload from "@/components/game/WeaponAtlasUpload";
 
 const STORAGE_KEY = "game_settings_config";
 

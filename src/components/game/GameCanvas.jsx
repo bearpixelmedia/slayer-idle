@@ -59,7 +59,7 @@ function GameCanvasComponent({
   const enemyProgress = useRef(0);
   React.useEffect(() => {
     const interval = setInterval(() => {
-      enemyProgress.current = Math.min(enemyProgress.current + 0.005, 0.6);
+      enemyProgress.current = Math.min(enemyProgress.current + 0.02, 0.6);
       if (enemyProgress.current >= 0.5 && !state.isDead) {
         onTap(50, 56);
       }

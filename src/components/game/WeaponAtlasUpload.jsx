@@ -240,20 +240,16 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
     setAiDetecting(true);
     try {
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are a pixel-perfect sprite atlas parser. The image is ${rawImageSize.w}x${rawImageSize.h} pixels and is a WEAPON SPRITESHEET containing many individual weapon icons arranged in a grid or rows.
+        prompt: `You are analyzing a ${rawImageSize.w}x${rawImageSize.h}px pixel art weapon spritesheet. It contains multiple weapon sprites (swords, axes, bows, wands, staffs, etc.) arranged in rows/columns with transparent gaps between them.
 
-Your job: output the bounding box of EVERY individual weapon sprite.
+For EVERY visible weapon, output its bounding box as {x, y, w, h}.
+- x, y = top-left corner (0-indexed)
+- w, h = pixel width and height of the sprite
+- Sort results: top-to-bottom, left-to-right
+- Be precise: one box per weapon
+- If you see a grid, count the rows and columns carefully and output every cell
 
-CRITICAL RULES:
-1. Each weapon is a SEPARATE entry — do NOT merge multiple weapons into one box
-2. Look for the natural grid layout — weapons are typically arranged in rows and columns with gaps between them
-3. Each box should tightly contain exactly ONE weapon
-4. x,y is the top-left pixel (0-indexed), w is width in pixels, h is height in pixels
-5. Sort top-to-bottom row by row, left-to-right within each row
-6. Count carefully — if you see a 4x8 grid that means 32 total frames, output 32 entries
-
-Output ONLY a JSON object with a "frames" array. No explanations.
-Example for a 2x2 grid of 32px sprites: {"frames":[{"x":0,"y":0,"w":32,"h":32},{"x":32,"y":0,"w":32,"h":32},{"x":0,"y":32,"w":32,"h":32},{"x":32,"y":32,"w":32,"h":32}]}`,
+Return only: {"frames": [{...}, {...}, ...]}`,
         file_urls: [atlasUrl],
         response_json_schema: {
           type: "object",
@@ -267,37 +263,59 @@ Example for a 2x2 grid of 32px sprites: {"frames":[{"x":0,"y":0,"w":32,"h":32},{
                   y: { type: "number" },
                   w: { type: "number" },
                   h: { type: "number" }
-                },
-                required: ["x", "y", "w", "h"]
+                }
               }
             }
-          },
-          required: ["frames"]
+          }
         },
-        model: "claude_sonnet_4_6"
+        model: "gpt_5"
       });
 
-      const unwrapped = result?.response || result;
-      const rawFrames = unwrapped?.frames || unwrapped?.detections || (Array.isArray(unwrapped) ? unwrapped : []);
-      if (!rawFrames.length) { alert("AI couldn't detect any frames. Try grid slicing instead."); return; }
+      // Extract frames from result (handle various response structures)
+      let rawFrames = [];
+      if (result?.frames) rawFrames = result.frames;
+      else if (result?.data?.frames) rawFrames = result.data.frames;
+      else if (Array.isArray(result)) rawFrames = result;
+      else if (typeof result === 'object') rawFrames = Object.values(result).find(v => Array.isArray(v)) || [];
 
-      // Load image pixel data to expand AI seed boxes to tight pixel bounds
+      if (!rawFrames || rawFrames.length === 0) {
+        alert("AI couldn't detect any frames. Try Smart Detect or Grid Slice instead.");
+        return;
+      }
+
+      // Expand bounding boxes to tight pixel bounds
       const img = new Image();
       img.crossOrigin = "anonymous";
       img.src = atlasUrl;
       await new Promise(res => { img.onload = res; img.onerror = res; });
       const offscreen = document.createElement("canvas");
-      offscreen.width = img.naturalWidth; offscreen.height = img.naturalHeight;
+      offscreen.width = img.naturalWidth;
+      offscreen.height = img.naturalHeight;
       const ctx = offscreen.getContext("2d");
       ctx.drawImage(img, 0, 0);
       let pixelData;
-      try { pixelData = ctx.getImageData(0, 0, offscreen.width, offscreen.height).data; } catch (e) { pixelData = null; }
+      try {
+        pixelData = ctx.getImageData(0, 0, offscreen.width, offscreen.height).data;
+      } catch (e) {
+        pixelData = null;
+      }
 
       const detected = rawFrames.map(f => {
-        const seed = { x: Math.round(f.x), y: Math.round(f.y), w: Math.round(f.w || f.width), h: Math.round(f.h || f.height) };
+        const seed = {
+          x: Math.max(0, Math.round(f.x || 0)),
+          y: Math.max(0, Math.round(f.y || 0)),
+          w: Math.max(4, Math.round(f.w || f.width || 32)),
+          h: Math.max(4, Math.round(f.h || f.height || 32))
+        };
         const tight = pixelData ? expandBox(pixelData, offscreen.width, offscreen.height, seed) : seed;
         return { frame: tight };
-      });
+      }).filter(d => d.frame.w > 3 && d.frame.h > 3);
+
+      if (detected.length === 0) {
+        alert("No valid frames after processing. Try Smart Detect or Grid Slice instead.");
+        return;
+      }
+
       setFrames(detected);
       setAssignments({});
       WEAPON_SLOTS.forEach(slot => onUpdateSetting(slot.id, null));

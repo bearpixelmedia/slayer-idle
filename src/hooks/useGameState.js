@@ -897,8 +897,6 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     unlockZone,
     activeBuffs,
     upgradeBuilding,
-    autoWalking,
-    setAutoWalking,
     playerHit,
   };
 }

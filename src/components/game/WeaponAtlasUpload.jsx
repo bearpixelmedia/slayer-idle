@@ -363,9 +363,7 @@ Respond with a JSON object: {"frames": [{"x": 0, "y": 0, "w": 32, "h": 32}, ...]
               <Button type="button" size="sm" onClick={smartSlice} className="text-xs h-6 px-2 bg-violet-600 hover:bg-violet-700 text-white border-0">
                 🔍 Smart Detect
               </Button>
-              <Button type="button" size="sm" onClick={aiDetect} disabled={aiDetecting} className="text-xs h-6 px-2 bg-emerald-600 hover:bg-emerald-700 text-white border-0">
-                {aiDetecting ? "⏳ Detecting..." : "🤖 AI Detect"}
-              </Button>
+
             </>
           )}
         </div>

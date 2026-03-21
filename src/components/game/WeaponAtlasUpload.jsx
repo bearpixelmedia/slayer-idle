@@ -268,7 +268,7 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
       );
       const result = await Promise.race([
         base44.integrations.Core.InvokeLLM({
-        prompt: `You are analyzing a ${rawImageSize.w}x${rawImageSize.h}px pixel art weapon spritesheet. It contains multiple DISTINCT WEAPONS (swords, axes, bows, wands, staffs, shields, etc.), each with multiple animation frames stacked or arranged nearby.
+          prompt: `You are analyzing a ${rawImageSize.w}x${rawImageSize.h}px pixel art weapon spritesheet. It contains multiple DISTINCT WEAPONS (swords, axes, bows, wands, staffs, shields, etc.), each with multiple animation frames stacked or arranged nearby.
 
 Your task: Identify ONE representative bounding box per WEAPON TYPE, not per animation frame.
 - Group animation frames of the same weapon together
@@ -278,26 +278,26 @@ Your task: Identify ONE representative bounding box per WEAPON TYPE, not per ani
 - Expected result: ~8-13 frames (one per weapon type), NOT 20+
 
 Return only: {"frames": [{...}, {...}, ...]}`,
-        file_urls: [atlasUrl],
-        response_json_schema: {
-          type: "object",
-          properties: {
-            frames: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  x: { type: "number" },
-                  y: { type: "number" },
-                  w: { type: "number" },
-                  h: { type: "number" }
+          file_urls: [atlasUrl],
+          response_json_schema: {
+            type: "object",
+            properties: {
+              frames: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    x: { type: "number" },
+                    y: { type: "number" },
+                    w: { type: "number" },
+                    h: { type: "number" }
+                  }
                 }
               }
             }
-          }
-        },
-        model: "gpt_5"
-      }),
+          },
+          model: "gpt_5"
+        }),
         timeoutPromise
       ]);
 

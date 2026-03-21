@@ -550,11 +550,19 @@ Return only: {"frames": [{...}, {...}, ...]}`,
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {frames.map((frame, i) => (
               <div key={i} className="flex items-center gap-2 p-2 border border-slate-200 rounded-lg bg-slate-50">
-                <div className="w-12 h-12 bg-slate-200 rounded flex items-center justify-center overflow-hidden flex-shrink-0">
-                  <FrameCanvas imgSrc={atlasUrl} frame={frame} size={48} />
+                <div className="w-12 h-12 bg-slate-200 rounded flex items-center justify-center overflow-hidden flex-shrink-0 relative">
+                  <FrameCanvas imgSrc={atlasUrl} frame={frame.frame || frame} size={48} />
+                  {frame.isAnimation && (
+                    <div className="absolute top-0 right-0 bg-red-500 text-white text-[8px] px-1 rounded-bl font-bold">
+                      🎬
+                    </div>
+                  )}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-[10px] text-slate-400 truncate mb-1">Frame {i + 1}</p>
+                  <p className="text-[10px] text-slate-400 truncate mb-1">
+                    {frame.layerName ? `${frame.layerName}` : `Frame ${i + 1}`}
+                    {frame.isAnimation && <span className="text-red-500"> (anim)</span>}
+                  </p>
                   <select
                     value={getAssignedSlot(i)}
                     onChange={e => assignFrame(i, e.target.value)}

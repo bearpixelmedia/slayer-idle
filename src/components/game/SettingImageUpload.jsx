@@ -94,12 +94,9 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
         const imageUrl = uploadedUrls[imageFile.name];
         onChange(imageUrl);
         
-        // Store JSON URL for animation loading
-        if (jsonFile && uploadedUrls[jsonFile.name]) {
-          sessionStorage.setItem(`aseprite_json_${imageUrl}`, uploadedUrls[jsonFile.name]);
-        }
-
-        saveToLibrary(imageUrl, imageFile.name);
+        const jsonUrl = jsonFile && uploadedUrls[jsonFile.name] ? uploadedUrls[jsonFile.name] : null;
+        if (jsonUrl) sessionStorage.setItem(`aseprite_json_${imageUrl}`, jsonUrl);
+        saveToLibrary(imageUrl, imageFile.name, jsonUrl);
       }
     } catch (err) {
       alert("Upload failed: " + err.message);

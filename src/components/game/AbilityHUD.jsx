@@ -42,7 +42,7 @@ export default function AbilityHUD({ abilities, onActivate }) {
                 {config?.name}
               </span>
               <span className="font-pixel text-[6px] text-primary mt-0.5">
-                {isReady ? "READY" : `${(timeRemaining / 1000).toFixed(1)}s`}
+                {isReady ? "READY" : `${timeRemaining}s`}
               </span>
 
               {!isReady && (

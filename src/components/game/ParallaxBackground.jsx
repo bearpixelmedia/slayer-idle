@@ -56,7 +56,12 @@ function ParallaxBackgroundComponent() {
       const cx = playerProgress * 40; // Convert progress units to pixels
       for (let i = 0; i < refs.current.length; i++) {
         const el = refs.current[i];
-        if (el) el.style.transform = `translate3d(${-cx * speeds.current[i]}px,0,0)`;
+        if (el) {
+          // Loop the transform using modulo to create infinite scroll
+          const loopWidth = 3000; // Wrap every 3000px
+          const wrappedCx = (cx % loopWidth + loopWidth) % loopWidth;
+          el.style.transform = `translate3d(${-wrappedCx * speeds.current[i]}px,0,0)`;
+        }
       }
       rafId.current = requestAnimationFrame(tick);
     };

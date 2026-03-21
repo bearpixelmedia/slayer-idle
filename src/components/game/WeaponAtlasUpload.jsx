@@ -297,8 +297,11 @@ Return only: {"frames": [{...}, {...}, ...]}`,
           }
         },
         model: "gpt_5"
-      });
+      }),
+        timeoutPromise
+      ]);
 
+      console.log("AI Detect: Got response", result);
       // Extract frames from result (handle various response structures)
       let rawFrames = [];
       if (result?.frames) rawFrames = result.frames;

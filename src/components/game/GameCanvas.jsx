@@ -55,21 +55,16 @@ function GameCanvasComponent({
       ? isBossShieldActive(Date.now() - state.bossFightStartTime, boss)
       : false;
   
-  // Enemy movement toward player
-  const enemyProgress = useRef(0);
+  // Player run speed - constant forward motion
+  const runProgress = useRef(0);
   React.useEffect(() => {
     const interval = setInterval(() => {
-      enemyProgress.current = Math.min(enemyProgress.current + 0.15, 1);
-      if (enemyProgress.current >= 0.9 && !state.isDead) {
-        onTap(50, 56);
+      if (!state.isDead) {
+        runProgress.current += 2; // Fast constant speed
       }
     }, 50);
     return () => clearInterval(interval);
-  }, [state.isDead, onTap]);
-  
-  React.useEffect(() => {
-    enemyProgress.current = 0;
-  }, [state.enemyMaxHP]);
+  }, [state.isDead]);
 
   const handleClick = React.useCallback((e) => {
     if (!state || state.isDead) return;

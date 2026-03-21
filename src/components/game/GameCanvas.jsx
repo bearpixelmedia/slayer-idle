@@ -56,7 +56,7 @@ function GameCanvasComponent({
   React.useEffect(() => {
     const interval = setInterval(() => {
       if (!state.isDead) {
-        runProgress.current += 2;
+        runProgress.current += 0.5;
       }
     }, 50);
     return () => clearInterval(interval);

@@ -71,6 +71,7 @@ function ParallaxBackgroundComponent() {
     speeds.current[idx] = speed;
     return (
       <div
+        key={`layer-${idx}`}
         ref={el => { refs.current[idx] = el; }}
         style={{ position: "absolute", left: 0, right: 0, top: `${top}%`, height: `${height}%`, opacity, pointerEvents: "none", willChange: "transform" }}
       >

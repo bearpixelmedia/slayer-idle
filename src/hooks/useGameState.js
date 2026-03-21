@@ -368,8 +368,12 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
 
   // Magnet ability: award bonus coins every second while active
   useEffect(() => {
+    let magnetCounter = 0;
     const interval = setInterval(() => {
+      magnetCounter++;
       if (!abilitiesRef.current.magnet.active) return;
+      if (magnetCounter % 10 !== 0) return; // Only trigger every 1 second
+      
       const cps = getIdleCPS(stateRef.current);
       const bonus = Math.max(10, cps * 3);
       setState(prev => ({
@@ -378,7 +382,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         totalCoinsEarned: prev.totalCoinsEarned + bonus,
       }));
       setFloatingCoins(fc => [...fc, { id: Date.now() + Math.random(), amount: bonus, x: 30 + Math.random() * 40, y: 30 + Math.random() * 30 }]);
-    }, 1000);
+    }, 100);
     return () => clearInterval(interval);
   }, []);
 

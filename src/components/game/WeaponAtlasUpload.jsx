@@ -240,17 +240,20 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
     setAiDetecting(true);
     try {
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are analyzing a pixel art weapon spritesheet image that is ${rawImageSize.w}x${rawImageSize.h} pixels.
-It contains multiple individual weapon sprites (swords, axes, bows, etc.) arranged on a transparent or solid-color background.
+        prompt: `You are a pixel-perfect sprite atlas parser. The image is ${rawImageSize.w}x${rawImageSize.h} pixels and is a WEAPON SPRITESHEET containing many individual weapon icons arranged in a grid or rows.
 
-Identify the bounding box of EACH individual weapon sprite.
-Rules:
-- Each separate weapon gets its own entry
-- Skip fully empty/transparent areas
-- Sort results top-to-bottom, then left-to-right within each row
-- Be precise with pixel coordinates
+Your job: output the bounding box of EVERY individual weapon sprite.
 
-Respond with a JSON object: {"frames": [{"x": 0, "y": 0, "w": 32, "h": 32}, ...]}`,
+CRITICAL RULES:
+1. Each weapon is a SEPARATE entry — do NOT merge multiple weapons into one box
+2. Look for the natural grid layout — weapons are typically arranged in rows and columns with gaps between them
+3. Each box should tightly contain exactly ONE weapon
+4. x,y is the top-left pixel (0-indexed), w is width in pixels, h is height in pixels
+5. Sort top-to-bottom row by row, left-to-right within each row
+6. Count carefully — if you see a 4x8 grid that means 32 total frames, output 32 entries
+
+Output ONLY a JSON object with a "frames" array. No explanations.
+Example for a 2x2 grid of 32px sprites: {"frames":[{"x":0,"y":0,"w":32,"h":32},{"x":32,"y":0,"w":32,"h":32},{"x":0,"y":32,"w":32,"h":32},{"x":32,"y":32,"w":32,"h":32}]}`,
         file_urls: [atlasUrl],
         response_json_schema: {
           type: "object",

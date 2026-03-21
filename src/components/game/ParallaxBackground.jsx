@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { loadGameSettings } from "@/lib/gameSettings";
 
 export default function ParallaxBackground() {
   const refs = useRef([]);

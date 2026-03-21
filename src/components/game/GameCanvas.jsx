@@ -124,10 +124,10 @@ function GameCanvasComponent({
         className="absolute bottom-56 flex flex-col items-center gap-2 z-20 transition-all duration-100"
         style={{
           left: (() => {
-            // Enemy position in world space relative to player
+            // Use real-time player progress for smooth scrolling like parallax layers
+            const playerProgress = window.__gameRunProgress?.current || 0;
             const enemyWorldPos = state.enemyCluster?.[state.currentClusterIndex]?.worldPos || state.nextEnemyWorldPos;
-            const playerWorldPos = state.worldProgress;
-            const distanceAhead = enemyWorldPos - playerWorldPos;
+            const distanceAhead = enemyWorldPos - playerProgress;
             // Scale: player is at 20% (left), enemies at 80% (right) when close
             // Enemies scroll left off screen when player passes them
             const screenX = 20 + (distanceAhead * 0.6);

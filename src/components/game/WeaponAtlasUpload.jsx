@@ -137,17 +137,32 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <label>
           <Button type="button" variant="outline" size="sm" disabled={uploading} asChild>
             <span className="gap-2 cursor-pointer">
               <Upload className="w-4 h-4" />
-              {uploading ? "Uploading..." : "Upload Spritesheet + JSON"}
+              {uploading ? "Uploading..." : "Upload Spritesheet"}
             </span>
           </Button>
-          <input ref={fileInputRef} type="file" accept="image/*,.json" multiple onChange={handleUpload} className="hidden" />
+          <input ref={fileInputRef} type="file" accept="image/*" onChange={handleUpload} className="hidden" />
         </label>
-        {atlasUrl && <span className="text-xs text-slate-500">{frames.length} frames loaded</span>}
+
+        <div className="flex items-center gap-2 text-xs text-slate-600">
+          <span>Cols:</span>
+          <input type="number" min={1} max={20} value={cols} onChange={e => setCols(Number(e.target.value))}
+            className="w-12 border border-slate-300 rounded px-1 py-0.5 text-xs" />
+          <span>Rows:</span>
+          <input type="number" min={1} max={20} value={rows} onChange={e => setRows(Number(e.target.value))}
+            className="w-12 border border-slate-300 rounded px-1 py-0.5 text-xs" />
+          {atlasUrl && (
+            <Button type="button" size="sm" variant="outline" onClick={applyGrid} className="text-xs h-6 px-2">
+              Re-slice
+            </Button>
+          )}
+        </div>
+
+        {atlasUrl && <span className="text-xs text-slate-400">{frames.length} frames • {rawImageSize?.w}×{rawImageSize?.h}px</span>}
       </div>
 
       {frames.length > 0 && (

@@ -17,6 +17,17 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
   const [loadingFiles, setLoadingFiles] = useState(false);
   const [urlInput, setUrlInput] = useState("");
 
+  // Restore sessionStorage from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(UPLOADED_FILES_KEY);
+      const uploadedFiles = saved ? JSON.parse(saved) : [];
+      uploadedFiles.forEach(f => {
+        if (f.jsonUrl) sessionStorage.setItem(`aseprite_json_${f.url}`, f.jsonUrl);
+      });
+    } catch (err) { /* ignore */ }
+  }, []);
+
   // Load files from localStorage on mount or when opening library
   useEffect(() => {
     if (!showLibrary) return;

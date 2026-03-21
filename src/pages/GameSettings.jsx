@@ -143,7 +143,7 @@ export default function GameSettings() {
             </button>
             <div>
               <h1 className="text-2xl font-bold text-slate-900">Game Settings</h1>
-              <p className="text-sm text-slate-600">Customize every emoji and value</p>
+              <p className="text-sm text-slate-600">Customize every emoji and value • <span className="text-xs text-slate-500">v{version}</span></p>
             </div>
           </div>
           

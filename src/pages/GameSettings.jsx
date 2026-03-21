@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { APP_VERSION } from "@/lib/appVersion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -146,7 +147,7 @@ export default function GameSettings() {
             </button>
             <div>
               <h1 className="text-2xl font-bold text-slate-900">Game Settings</h1>
-              <p className="text-sm text-slate-600">Customize every emoji and value • <span className="text-xs text-slate-500">v{version}</span></p>
+              <p className="text-sm text-slate-600">Customize every emoji and value • <span className="text-xs text-slate-500">{APP_VERSION}</span></p>
             </div>
           </div>
           

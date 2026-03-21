@@ -97,6 +97,16 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
         uploadedUrls[file.name] = response.file_url;
       }
       
+      // Check if audio file
+      const audioFile = Array.from(files).find(f => /\.(mp3|wav|ogg|m4a)$/i.test(f.name));
+      if (audioFile && uploadedUrls[audioFile.name]) {
+        const audioUrl = uploadedUrls[audioFile.name];
+        onChange(audioUrl);
+        saveToLibrary(audioUrl, audioFile.name, null);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        return;
+      }
+      
       // Find the image file (spritesheet) and JSON
       const imageFile = Array.from(files).find(f => /\.(png|jpg|jpeg|gif)$/i.test(f.name));
       const jsonFile = Array.from(files).find(f => f.name.endsWith('.json'));
@@ -109,6 +119,7 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
         if (jsonUrl) sessionStorage.setItem(`aseprite_json_${imageUrl}`, jsonUrl);
         saveToLibrary(imageUrl, imageFile.name, jsonUrl);
       }
+      if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (err) {
       alert("Upload failed: " + err.message);
     } finally {

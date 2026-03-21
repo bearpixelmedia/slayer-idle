@@ -3,7 +3,7 @@ import { formatNumber } from "@/lib/formatNumber";
 import EnemyRenderer from "./EnemyRenderer";
 import HealthBar from "./HealthBar";
 
-function EnemyCluster({ cluster, currentIndex, isBossActive, enemyHP, enemyMaxHP, currentEnemyName, enemyHit, enemyDying, boss, shieldActive, playerWorldPos }) {
+function EnemyCluster({ cluster, currentIndex, isBossActive, enemyHP, enemyMaxHP, currentEnemyName, enemyHit, enemyDying, boss, shieldActive, playerWorldPos = 0 }) {
   return (
     <>
       {cluster && cluster.map((enemy, idx) => {

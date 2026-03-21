@@ -65,6 +65,11 @@ function GameCanvasComponent({
     }, 50);
     return () => clearInterval(interval);
   }, [state.isDead]);
+  
+  // Expose runProgress to window for ParallaxBackground to access
+  React.useEffect(() => {
+    window.__gameRunProgress = runProgress;
+  }, []);
 
   const handleClick = React.useCallback((e) => {
     if (!state || state.isDead) return;

@@ -40,10 +40,12 @@ export default function useAchievements(gameState) {
       const newIds = newlyUnlocked.map((a) => a.id);
       const updated = [...unlockedRef.current, ...newIds];
       setUnlockedIds(updated);
+      unlockedRef.current = updated;
       localStorage.setItem(SAVE_KEY, JSON.stringify(updated));
       // Show the most recent unlock as a toast
       setNewUnlock(newlyUnlocked[newlyUnlocked.length - 1]);
-      setTimeout(() => setNewUnlock(null), 4000);
+      const timer = setTimeout(() => setNewUnlock(null), 3500);
+      return () => clearTimeout(timer);
     }
   }, [stats.totalCoinsEarned, stats.totalKills, stats.prestigeCount, stats.highestStage]);
 

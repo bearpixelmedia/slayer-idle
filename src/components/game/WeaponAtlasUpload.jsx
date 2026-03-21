@@ -193,7 +193,7 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
 
     // Multi-pass merge: blobs that are close together (same weapon with gaps/disconnected parts)
     // Use a larger margin and repeat until stable
-    const MARGIN = 10;
+    const MARGIN = 3;
     let boxes = blobs.map(([x0, y0, x1, y1]) => [x0, y0, x1, y1]);
 
     let merging = true;

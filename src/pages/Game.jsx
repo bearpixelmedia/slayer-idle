@@ -230,8 +230,8 @@ export default function Game() {
                   ✕
                 </button>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         )}
 
         {showRunner && (

@@ -568,18 +568,11 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         // Buff proc on kill
         tryProcBuff("kill", prev);
         
-        setFloatingCoins(fc => [...fc, { id: Date.now() + Math.random(), amount: finalCoins, x, y }]);
-        setFloatingDamage(fd => [...fd, { id: Date.now() + Math.random(), amount: finalDamage, x, y, isCritical }]);
-        
-        // Show soul drops separately
-        if (finalSouls > 0) {
-          setFloatingSouls(fs => [...fs, { id: Date.now() + Math.random() * 0.1, amount: finalSouls, x: x + 15, y }]);
-        }
-        
-        // Spawn extra particles for boss kills
+        // Batch float element updates
+        const now = Date.now();
         const particleCount = prev.isBossActive ? 12 : 6;
         const coinParticles = Array.from({ length: particleCount }).map((_, i) => ({
-          id: Date.now() + Math.random() + i,
+          id: now + Math.random() + i,
           x,
           y,
           emoji: prev.isBossActive ? "⭐" : "✨",
@@ -587,6 +580,12 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
           distance: 50 + Math.random() * 30,
           duration: 0.8,
         }));
+        
+        setFloatingCoins(fc => [...fc, { id: now + Math.random(), amount: finalCoins, x, y }]);
+        setFloatingDamage(fd => [...fd, { id: now + Math.random(), amount: finalDamage, x, y, isCritical }]);
+        if (finalSouls > 0) {
+          setFloatingSouls(fs => [...fs, { id: now + Math.random() * 0.1, amount: finalSouls, x: x + 15, y }]);
+        }
         setParticles(prev => [...prev, ...coinParticles]);
 
         setEnemyDying(true);
@@ -728,16 +727,17 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     return () => clearInterval(interval);
   }, [dealDamage, spawnNewEnemy]);
 
-  // Clean up floating coins, souls, damage numbers, and particles (batch cleanup)
+  // Consolidated cleanup for all floating elements (single interval)
   useEffect(() => {
-    const interval = setInterval(() => {
+    const cleanup = () => {
       const now = Date.now();
       setFloatingCoins(prev => prev.filter(c => now - c.id < 1000));
       setFloatingSouls(prev => prev.filter(s => now - s.id < 1000));
       setFloatingDamage(prev => prev.filter(d => now - d.id < 800));
       setParticles(prev => prev.filter(p => now - p.id < 1000));
       setSlashEffects(prev => prev.slice(Math.max(0, prev.length - 1)));
-    }, 1000);
+    };
+    const interval = setInterval(cleanup, 500);
     return () => clearInterval(interval);
   }, []);
 

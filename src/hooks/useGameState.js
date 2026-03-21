@@ -362,7 +362,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         if (Date.now() < prev.bossWarning.warningEndTime) return prev;
         return spawnNewEnemy(prev);
       });
-    }, 200);
+    }, 500);
     return () => clearInterval(interval);
   }, []);
 

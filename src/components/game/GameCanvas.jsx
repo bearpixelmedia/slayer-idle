@@ -119,18 +119,19 @@ function GameCanvasComponent({
         <div className="absolute -bottom-6 w-20 h-1 bg-black/30 rounded-full blur-sm" />
       </div>
 
-      {/* Enemy - positioned based on world distance */}
+      {/* Enemy - parallax layer that scrolls with world */}
       <div 
-        className="absolute bottom-56 flex flex-col items-center gap-2 z-20"
+        className="absolute bottom-56 flex flex-col items-center gap-2 z-20 transition-all duration-100"
         style={{
           left: (() => {
-            // Enemy world pos relative to player world pos, scaled to screen space
+            // Enemy position in world space relative to player
             const enemyWorldPos = state.enemyCluster?.[state.currentClusterIndex]?.worldPos || state.nextEnemyWorldPos;
             const playerWorldPos = state.worldProgress;
             const distanceAhead = enemyWorldPos - playerWorldPos;
-            // Map distance to screen: 100+ units ahead = right edge, 0 = center, negative = left
-            const screenPercent = Math.max(0, Math.min(100, 50 + (distanceAhead / 2)));
-            return `${screenPercent}%`;
+            // Scale: player is at 20% (left), enemies at 80% (right) when close
+            // Enemies scroll left off screen when player passes them
+            const screenX = 20 + (distanceAhead * 0.6);
+            return `${screenX}%`;
           })(),
         }}
       >

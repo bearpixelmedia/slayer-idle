@@ -288,12 +288,29 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
           bossFightStartTime: Date.now(),
           bossEnrageResetUsed: false,
           bossWarning: null, // Clear warning once boss spawns
+          enemyCluster: [],
+          currentClusterIndex: 0,
         };
     }
 
     const stageData = getStageDataForZone(s.activeZoneId, s.stage);
-    const enemyName = stageData.enemies[Math.floor(Math.random() * stageData.enemies.length)];
-    const hp = getEnemyHP(s.stage, s.killCount);
+    const packSizeLevel = s.upgradeLevels?.pack_size || 0;
+    const packSize = getPackSize(packSizeLevel);
+    
+    // Generate cluster of 1 or packSize enemies
+    const useCluster = Math.random() < 0.7; // 70% chance for cluster
+    const clusterSize = useCluster ? packSize : 1;
+    const cluster = Array.from({ length: clusterSize }).map(() => {
+      const enemyName = stageData.enemies[Math.floor(Math.random() * stageData.enemies.length)];
+      return {
+        name: enemyName,
+        hp: getEnemyHP(s.stage, s.killCount),
+        maxHp: getEnemyHP(s.stage, s.killCount),
+      };
+    });
+
+    // Set first enemy as active
+    const activeEnemy = cluster[0];
 
     let nextBossWarning = s.bossWarning || null;
     if (shouldEncounterBoss && boss && !warningForCurrentBoss) {
@@ -305,14 +322,16 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     
     return {
       ...s,
-      enemyHP: hp,
-      enemyMaxHP: hp,
-      currentEnemyName: enemyName,
+      enemyHP: activeEnemy.hp,
+      enemyMaxHP: activeEnemy.maxHp,
+      currentEnemyName: activeEnemy.name,
       isBossActive: false,
       bossHitsReceived: 0,
       bossFightStartTime: null,
       bossEnrageResetUsed: false,
       bossWarning: nextBossWarning,
+      enemyCluster: cluster,
+      currentClusterIndex: 0,
     };
   }
 

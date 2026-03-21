@@ -131,7 +131,17 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
 
     const loadAsepriteData = async () => {
       try {
-        const jsonUrl = sessionStorage.getItem(`aseprite_json_${value}`);
+        // Try sessionStorage first, then fall back to localStorage entries
+        let jsonUrl = sessionStorage.getItem(`aseprite_json_${value}`);
+        if (!jsonUrl) {
+          const saved = localStorage.getItem(UPLOADED_FILES_KEY);
+          const list = saved ? JSON.parse(saved) : [];
+          const entry = list.find(f => f.url === value);
+          if (entry?.jsonUrl) {
+            jsonUrl = entry.jsonUrl;
+            sessionStorage.setItem(`aseprite_json_${value}`, jsonUrl);
+          }
+        }
         if (jsonUrl) {
           const response = await fetch(jsonUrl);
           if (response.ok) {

@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -19,9 +19,12 @@ const itemVariants = {
 
 export default function TitleScreen() {
   const navigate = useNavigate();
+  const reduceMotion = useReducedMotion();
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-b from-slate-950 via-purple-950 to-slate-900 flex flex-col items-center justify-center overflow-hidden">
+    <div
+      className="fixed inset-0 min-h-dvh bg-gradient-to-b from-slate-950 via-purple-950 to-slate-900 flex flex-col items-center justify-center overflow-x-hidden overflow-y-auto overscroll-y-contain pl-[max(0.5rem,env(safe-area-inset-left))] pr-[max(0.5rem,env(safe-area-inset-right))] pt-[max(0.75rem,env(safe-area-inset-top))] pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+    >
       {/* Background orbs: static on mobile (avoids layout shift / jank); animated md+ */}
       <div className="absolute inset-0 opacity-40">
         <div className="absolute inset-0 md:hidden pointer-events-none">
@@ -50,7 +53,7 @@ export default function TitleScreen() {
 
       {/* Content */}
       <motion.div
-        className="relative z-10 text-center space-y-6 sm:space-y-8 px-2 sm:px-4 max-w-3xl w-full min-w-0"
+        className="relative z-10 text-center space-y-5 sm:space-y-8 px-2 sm:px-4 max-w-3xl w-full min-w-0 my-auto py-4 sm:py-6"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -58,15 +61,29 @@ export default function TitleScreen() {
         {/* Title */}
         <motion.div variants={itemVariants} className="space-y-2">
           <motion.h1
-            className="font-pixel text-3xl sm:text-5xl md:text-8xl text-primary drop-shadow-2xl break-words px-1"
-            whileHover={{ scale: 1.05, textShadow: "0 0 20px rgba(45, 212, 191, 0.8)" }}
+            className="font-pixel text-3xl sm:text-5xl md:text-8xl text-primary drop-shadow-2xl break-words px-1 leading-[1.08] sm:leading-tight tracking-tight"
+            whileHover={
+              reduceMotion
+                ? undefined
+                : { scale: 1.05, textShadow: "0 0 20px rgba(45, 212, 191, 0.8)" }
+            }
             transition={{ type: "spring", stiffness: 100 }}
           >
             CLICKER QUEST
           </motion.h1>
           <motion.div
-            className="h-1 w-32 bg-gradient-to-r from-primary via-accent to-primary mx-auto rounded-full"
-            animate={{ boxShadow: ["0 0 10px rgba(45, 212, 191, 0.5)", "0 0 30px rgba(45, 212, 191, 0.9)", "0 0 10px rgba(45, 212, 191, 0.5)"] }}
+            className="h-1 w-24 sm:w-32 max-w-[min(100%,8rem)] sm:max-w-none bg-gradient-to-r from-primary via-accent to-primary mx-auto rounded-full"
+            animate={
+              reduceMotion
+                ? false
+                : {
+                    boxShadow: [
+                      "0 0 10px rgba(45, 212, 191, 0.5)",
+                      "0 0 30px rgba(45, 212, 191, 0.9)",
+                      "0 0 10px rgba(45, 212, 191, 0.5)",
+                    ],
+                  }
+            }
             transition={{ duration: 3, repeat: Infinity }}
           />
         </motion.div>
@@ -74,7 +91,7 @@ export default function TitleScreen() {
         {/* Subtitle */}
         <motion.p
           variants={itemVariants}
-          className="text-base sm:text-lg md:text-2xl text-foreground/80 font-inter leading-relaxed px-1"
+          className="text-base sm:text-lg md:text-2xl text-foreground/80 font-inter leading-snug sm:leading-relaxed px-1 max-w-[min(100%,22rem)] sm:max-w-none mx-auto"
         >
           Defeat endless enemies, grow stronger, and prestige to eternal power
         </motion.p>
@@ -82,7 +99,7 @@ export default function TitleScreen() {
         {/* Features */}
         <motion.div
           variants={itemVariants}
-          className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 py-4 sm:py-6"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 py-3 sm:py-6 max-w-md mx-auto sm:max-w-none w-full"
         >
           {[
             { icon: "⚔️", title: "Strategic Combat", color: "from-primary" },
@@ -92,30 +109,31 @@ export default function TitleScreen() {
             <motion.div
               key={i}
               className={`p-4 sm:p-5 rounded-xl bg-gradient-to-br ${feature.color} to-transparent border border-white/10 backdrop-blur-sm hover:border-white/30 transition-all`}
-              whileHover={{ y: -5, boxShadow: "0 10px 30px rgba(0,0,0,0.3)" }}
+              whileHover={reduceMotion ? undefined : { y: -5, boxShadow: "0 10px 30px rgba(0,0,0,0.3)" }}
             >
-              <p className="text-3xl mb-3">{feature.icon}</p>
-              <p className="text-sm font-pixel text-foreground/80">{feature.title}</p>
+              <p className="text-2xl sm:text-3xl mb-2 sm:mb-3">{feature.icon}</p>
+              <p className="text-xs sm:text-sm font-pixel text-foreground/80 leading-tight">{feature.title}</p>
             </motion.div>
           ))}
         </motion.div>
 
         {/* CTA Button */}
-        <motion.div variants={itemVariants} className="pt-4">
+        <motion.div variants={itemVariants} className="pt-2 sm:pt-4 flex justify-center">
           <motion.button
+            type="button"
             onClick={() => navigate("/Game")}
-            className="relative px-6 py-3 sm:px-12 sm:py-4 text-base sm:text-lg font-pixel text-primary-foreground bg-gradient-to-r from-primary to-accent rounded-lg overflow-hidden group"
-            whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.95 }}
+            className="relative inline-flex items-center justify-center min-h-[44px] min-w-[44px] px-6 py-3 sm:px-12 sm:py-4 text-base sm:text-lg font-pixel text-primary-foreground bg-gradient-to-r from-primary to-accent rounded-lg overflow-hidden group touch-manipulation max-w-[min(100vw-2rem,20rem)] sm:max-w-none"
+            whileHover={reduceMotion ? undefined : { scale: 1.08 }}
+            whileTap={{ scale: 0.97 }}
           >
             <motion.div
               className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20"
               initial={false}
             />
-            <span className="relative flex items-center gap-3 justify-center">
+            <span className="relative flex items-center gap-2 sm:gap-3 justify-center">
               START GAME
               <motion.span
-                animate={{ x: [0, 8, 0] }}
+                animate={reduceMotion ? false : { x: [0, 8, 0] }}
                 transition={{ duration: 1.5, repeat: Infinity }}
               >
                 →
@@ -133,29 +151,31 @@ export default function TitleScreen() {
         </motion.p>
       </motion.div>
 
-      {/* Floating particles — md+ only to reduce mobile animation load */}
-      <div className="absolute inset-0 pointer-events-none hidden md:block">
-        {[...Array(5)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-primary rounded-full opacity-50"
-            animate={{
-              y: [0, -300],
-              opacity: [0, 1, 0],
-              x: Math.sin(i) * 100,
-            }}
-            transition={{
-              duration: 5 + i,
-              repeat: Infinity,
-              delay: i * 0.5,
-            }}
-            style={{
-              left: `${20 + i * 15}%`,
-              bottom: 0,
-            }}
-          />
-        ))}
-      </div>
+      {/* Floating particles — md+ only; off when prefers-reduced-motion */}
+      {!reduceMotion ? (
+        <div className="absolute inset-0 pointer-events-none hidden md:block">
+          {[...Array(5)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-1 h-1 bg-primary rounded-full opacity-50"
+              animate={{
+                y: [0, -300],
+                opacity: [0, 1, 0],
+                x: Math.sin(i) * 100,
+              }}
+              transition={{
+                duration: 5 + i,
+                repeat: Infinity,
+                delay: i * 0.5,
+              }}
+              style={{
+                left: `${20 + i * 15}%`,
+                bottom: 0,
+              }}
+            />
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }

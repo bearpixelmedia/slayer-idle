@@ -210,14 +210,39 @@ export default function GameSettings() {
               </CardHeader>
               <CardContent className="space-y-8">
                 <SettingGroup
-                  title="All Enemies"
+                  title="Core enemies"
                   imageItems={[
-                    { id: "enemy_goblin", label: "Goblin", defaultValue: "👹" },
-                    { id: "enemy_orc", label: "Orc", defaultValue: "🗡️" },
+                    { id: "enemy_goblin", label: "Goblin", defaultValue: "👺" },
+                    { id: "enemy_orc", label: "Orc", defaultValue: "🧌" },
+                    { id: "enemy_ogre", label: "Ogre", defaultValue: "👹" },
                     { id: "enemy_skeleton", label: "Skeleton", defaultValue: "💀" },
                     { id: "enemy_vampire", label: "Vampire", defaultValue: "🧛" },
                     { id: "enemy_dragon", label: "Dragon", defaultValue: "🐉" },
-                    { id: "enemy_lich", label: "Lich", defaultValue: "👻" },
+                    { id: "enemy_lich", label: "Lich", defaultValue: "☠️" },
+                    { id: "enemy_zombie", label: "Zombie", defaultValue: "🧟" },
+                  ]}
+                />
+                <SettingGroup
+                  title="Fantasy enemies"
+                  imageItems={[
+                    { id: "enemy_ghost", label: "Ghost", defaultValue: "👻" },
+                    { id: "enemy_spider", label: "Spider", defaultValue: "🕷️" },
+                    { id: "enemy_genie", label: "Genie", defaultValue: "🧞" },
+                    { id: "enemy_princess", label: "Princess", defaultValue: "👸" },
+                    { id: "enemy_prince", label: "Prince", defaultValue: "🫅" },
+                    { id: "enemy_merchant", label: "Merchant", defaultValue: "👲" },
+                    { id: "enemy_sorceress", label: "Sorceress", defaultValue: "🧙‍♀️" },
+                    { id: "enemy_sorcerer", label: "Sorcerer", defaultValue: "🧙‍♂️" },
+                    { id: "enemy_mage", label: "Mage", defaultValue: "🧙" },
+                    { id: "enemy_pixie", label: "Pixie", defaultValue: "🧚‍♀️" },
+                    { id: "enemy_sprite", label: "Sprite", defaultValue: "🧚‍♂️" },
+                    { id: "enemy_fairy", label: "Fairy", defaultValue: "🧚" },
+                    { id: "enemy_mermaid", label: "Mermaid", defaultValue: "🧜‍♀️" },
+                    { id: "enemy_merman", label: "Merman", defaultValue: "🧜‍♂️" },
+                    { id: "enemy_merfolk", label: "Merfolk", defaultValue: "🧜" },
+                    { id: "enemy_elf_archer", label: "Elf Archer", defaultValue: "🧝‍♀️" },
+                    { id: "enemy_elf_ranger", label: "Elf Ranger", defaultValue: "🧝‍♂️" },
+                    { id: "enemy_elf", label: "Elf", defaultValue: "🧝" },
                   ]}
                 />
               </CardContent>

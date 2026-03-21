@@ -68,7 +68,7 @@ export default function HUDOverlay({
         currentMode={currentWeapon}
         bowUnlocked={(state?.upgradeLevels?.["bow"] || 0) > 0}
         onModeChange={onWeaponChange}
-        className="hidden lg:flex fixed top-32 left-2 right-2 z-10 pointer-events-auto"
+        className="flex fixed top-28 left-2 right-2 z-10 pointer-events-auto sm:top-32 max-w-[min(100vw-1rem,28rem)]"
       />
 
       {/* Ability HUD - Left side */}

@@ -1,4 +1,10 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useLayoutEffect, useState, useCallback, forwardRef } from "react";
+
+function assignRef(ref, node) {
+  if (ref == null) return;
+  if (typeof ref === "function") ref(node);
+  else ref.current = node;
+}
 
 const UPLOADED_FILES_KEY = "setting_uploaded_files";
 
@@ -18,8 +24,21 @@ function getJsonUrlForSprite(spriteUrl) {
   return jsonUrl;
 }
 
-export default function PlayerRenderer({ spriteUrl, fallbackEmoji, className }) {
+const PlayerRenderer = forwardRef(function PlayerRenderer(
+  { spriteUrl, fallbackEmoji, className, emojiClassName, onCharacterBoundsChange, combatGlyphRef },
+  ref
+) {
   const canvasRef = useRef(null);
+  const emojiGlyphRef = useRef(null);
+  const imgMeasureRef = useRef(null);
+  const setCanvasRef = useCallback(
+    (node) => {
+      canvasRef.current = node;
+      assignRef(ref, node);
+      assignRef(combatGlyphRef, node);
+    },
+    [ref, combatGlyphRef]
+  );
   const imgRef = useRef(null);
   const [animationData, setAnimationData] = useState(null);
   const [currentFrame, setCurrentFrame] = useState(0);
@@ -85,12 +104,74 @@ export default function PlayerRenderer({ spriteUrl, fallbackEmoji, className }) 
     else imgRef.current.onload = draw;
   }, [animationData, currentFrame]);
 
-  if (!spriteUrl) return <span className={className}>{fallbackEmoji}</span>;
+  const boundsDeps = `${spriteUrl ?? ""}|${animationData ? "a" : "s"}|${fallbackEmoji ?? ""}`;
+  const onBoundsRef = useRef(onCharacterBoundsChange);
+  onBoundsRef.current = onCharacterBoundsChange;
+
+  useLayoutEffect(() => {
+    if (!onCharacterBoundsChange) return;
+    const pickEl = () => {
+      if (!spriteUrl) return emojiGlyphRef.current;
+      if (animationData) return canvasRef.current;
+      return imgMeasureRef.current;
+    };
+    const el = pickEl();
+    if (!el) return;
+
+    const report = () => {
+      const r = el.getBoundingClientRect();
+      onBoundsRef.current?.({ width: r.width, height: r.height });
+    };
+
+    const ro = new ResizeObserver(() => report());
+    ro.observe(el);
+    report();
+
+    return () => ro.disconnect();
+  }, [animationData, boundsDeps, onCharacterBoundsChange, spriteUrl]);
+
+  if (!spriteUrl) {
+    return (
+      <span ref={ref} className={emojiClassName ?? className}>
+        <span
+          ref={(node) => {
+            emojiGlyphRef.current = node;
+            assignRef(combatGlyphRef, node);
+          }}
+          className="inline-block select-none align-bottom [line-height:1]"
+        >
+          {fallbackEmoji}
+        </span>
+      </span>
+    );
+  }
 
   if (animationData) {
-    return <canvas ref={canvasRef} className={className} style={{ imageRendering: "pixelated" }} />;
+    return (
+      <canvas
+        ref={setCanvasRef}
+        className={className}
+        style={{ imageRendering: "pixelated" }}
+      />
+    );
   }
 
   // No animation data — show full spritesheet as static image
-  return <img src={spriteUrl} alt="player" className={className} style={{ objectFit: "contain", imageRendering: "pixelated" }} />;
-}
+  return (
+    <img
+      ref={(node) => {
+        imgMeasureRef.current = node;
+        assignRef(ref, node);
+        assignRef(combatGlyphRef, node);
+      }}
+      src={spriteUrl}
+      alt="player"
+      className={className}
+      style={{ objectFit: "contain", imageRendering: "pixelated" }}
+    />
+  );
+});
+
+PlayerRenderer.displayName = "PlayerRenderer";
+
+export default PlayerRenderer;

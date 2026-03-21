@@ -2,16 +2,25 @@ import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
   ZONES, STAGES, UPGRADES, TAP_UPGRADES, IDLE_UPGRADES, ALL_UPGRADES, BOW_UPGRADES,
   getUpgradeCost, getEnemyHP, getEnemyReward, getEnemySouls, getSoulsOnPrestige, getSlayerPointsOnPrestige, getBowSoulMultiplier,
-  getZoneStages, canUnlockZone, getPackSize
+  getZoneStages, canUnlockZone
 } from "@/lib/gameData";
 import { SKILLS, getSkillMultipliers } from "@/lib/skillTree";
 import { isBossEncounter, getBossForStage, getBossHP, getBossReward, BOSS_ENCOUNTER_INTERVAL, isBossShieldActive, getBossEnrageMultiplier } from "@/lib/bosses";
 import { BUFF_TYPES, PROC_RATES, selectRandomBuff, shouldProcBuff, getBuffMultiplier, BUFF_RULES } from "@/lib/buffs";
 import { VILLAGE_BUILDINGS, computeVillageMultipliers, getBuildingUpgradeCost, canAffordUpgrade } from "@/lib/village";
+import {
+  isInCombatAlongPath,
+  resolveCombatEnemyWorldPos,
+  getEnemyScreenAnchorPercent,
+  pathGap,
+} from "@/lib/combatHitboxes";
 
-const SAVE_VERSION = 3;
+const SAVE_VERSION = 4;
 
 const SAVE_KEY = "idle_slayer_save";
+
+/** Matches `enemy-die` / `setEnemyDying` duration — keep cluster / spawn until animation finishes. */
+const DEATH_ANIM_MS = 300;
 
 /**
  * getZoneStages(zoneId) returns global STAGES indices (numbers), not stage row objects.
@@ -23,17 +32,260 @@ function getStageDataForZone(activeZoneId, globalStageIndex) {
   return STAGES[g] || STAGES[0];
 }
 
+function newEnemyId() {
+  if (typeof crypto !== "undefined" && crypto.randomUUID) return crypto.randomUUID();
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+}
+
+/**
+ * @param {object} s - game state
+ * @param {{ afterKillWorldPos?: number }} [opts] - when set, first spawn is forced ahead of this anchor (fixes snap-back when nextEnemyWorldPos lags the sprite you just killed)
+ */
+function spawnNewEnemy(s, opts = {}) {
+  const boss = getBossForStage(s.stage) || null;
+  const warningActive = s.bossWarning && Date.now() < s.bossWarning.warningEndTime;
+  const warningForCurrentBoss = s.bossWarning && boss && s.bossWarning.bossId === boss?.id;
+  const shouldEncounterBoss = Boolean(boss && isBossEncounter(s.killCount));
+
+  // Boss encounter has a gated warning phase first, then boss spawn.
+  if (shouldEncounterBoss && warningForCurrentBoss && !warningActive) {
+    const hp = getBossHP(s.stage, s.killCount);
+    return {
+      ...s,
+      enemyHP: hp,
+      enemyMaxHP: hp,
+      currentEnemyName: boss.name,
+      isBossActive: true,
+      bossHitsReceived: 0,
+      bossFightStartTime: Date.now(),
+      bossEnrageResetUsed: false,
+      bossWarning: null, // Clear warning once boss spawns
+      enemyCluster: [],
+      currentClusterIndex: 0,
+      // Anchor boss to current progress so combat range checks stay true while isBossActive
+      nextEnemyWorldPos: s.worldProgress ?? 0,
+    };
+  }
+
+  const stageData = getStageDataForZone(s.activeZoneId, s.stage);
+  const enemies = stageData.enemies; // Cache enemy list
+
+  const clusterSize = 1 + Math.floor(Math.random() * 3);
+  const enemyHP = getEnemyHP(s.stage, s.killCount);
+  const wp = s.worldProgress ?? 0;
+  const queue = s.nextEnemyWorldPos ?? 0;
+  const anchor = opts.afterKillWorldPos;
+  const forwardAfterKill = typeof anchor === "number" && Number.isFinite(anchor) ? anchor + (12 + Math.random() * 10) : null;
+  // Lead enemy must start well down the path so the pack walks in from ahead (not popped mid-screen when wp≈queue).
+  const minApproachOnPath = 26 + Math.random() * 22;
+  const base = Math.max(wp + minApproachOnPath, queue, forwardAfterKill ?? 0);
+  // Sequential positions along the path so the next enemy in a pack is never behind the previous stop.
+  const spacing = 5 + Math.random() * 3;
+  const cluster = Array.from({ length: clusterSize }).map((_, i) => {
+    const enemyName = enemies[Math.floor(Math.random() * enemies.length)];
+    return {
+      id: newEnemyId(),
+      name: enemyName,
+      hp: enemyHP,
+      maxHp: enemyHP,
+      worldPos: base + i * spacing + Math.random() * 2,
+    };
+  });
+
+  // Set first enemy as active
+  const activeEnemy = cluster[0];
+
+  let nextBossWarning = s.bossWarning || null;
+  if (shouldEncounterBoss && boss && !warningForCurrentBoss) {
+    nextBossWarning = {
+      bossId: boss.id,
+      warningEndTime: Date.now() + 4000, // 4 second warning gate
+    };
+  }
+
+  const lastWorldPos = cluster[cluster.length - 1].worldPos;
+  const nextSpawnDistance = 15 + Math.random() * 10;
+
+  return {
+    ...s,
+    enemyHP: activeEnemy.hp,
+    enemyMaxHP: activeEnemy.maxHp,
+    currentEnemyName: activeEnemy.name,
+    isBossActive: false,
+    bossHitsReceived: 0,
+    bossFightStartTime: null,
+    bossEnrageResetUsed: false,
+    bossWarning: nextBossWarning,
+    enemyCluster: cluster,
+    currentClusterIndex: 0,
+    nextEnemyWorldPos: lastWorldPos + nextSpawnDistance,
+  };
+}
+
+/** Air coins use heightTier > 0; vertical placement is max-jump apex in WorldCoins. */
+function airCoinHeightTier() {
+  return 1;
+}
+
+/**
+ * Spawns path coins at max-jump height (heightTier marks “air” for save filter / legacy).
+ * Each wave is a sequence of groups: one coin or three, spaced along the path so they never overlap.
+ * Skipped during boss fights.
+ */
+function spawnWorldCoins(s) {
+  if (s.isBossActive) return s;
+  const wp = s.worldProgress ?? 0;
+  const queue = s.nextCoinWorldPos ?? 14;
+  if (wp < queue) return s;
+
+  const baseReward = getEnemyReward(s.stage, s.killCount);
+  const minBase = Math.max(wp + 8 + Math.random() * 10, queue);
+  const newCoins = [];
+
+  const pushCoin = (worldPos, heightTier, amount) => {
+    newCoins.push({
+      id: newEnemyId(),
+      worldPos,
+      amount,
+      heightTier,
+      heightJitterRem: Math.random() * 0.55,
+    });
+  };
+
+  const coinValue = () => Math.max(1, Math.floor(baseReward * 0.05 + Math.random() * 4));
+
+  // Each wave is only singletons or triples. Triples are spaced along the path so coins never
+  // share the same screen X (stacked). ~2.4 path units ≈ 6% screen width between centers.
+  const TRIPLE_PATH_GAP = 2.4;
+  const groupCount = 4 + Math.floor(Math.random() * 5);
+  let pos = minBase;
+
+  for (let g = 0; g < groupCount; g++) {
+    const isTriple = Math.random() < 0.5;
+    if (isTriple) {
+      pushCoin(pos, airCoinHeightTier(), coinValue());
+      pushCoin(pos + TRIPLE_PATH_GAP, airCoinHeightTier(), coinValue());
+      pushCoin(pos + 2 * TRIPLE_PATH_GAP, airCoinHeightTier(), coinValue());
+      pos += 2 * TRIPLE_PATH_GAP + (5 + Math.random() * 8);
+    } else {
+      pushCoin(pos, airCoinHeightTier(), coinValue());
+      pos += 5 + Math.random() * 10;
+    }
+  }
+
+  const lastPos = newCoins[newCoins.length - 1].worldPos;
+  const nextQueue = lastPos + 5 + Math.random() * 12;
+  // Never leave the spawn cursor behind current progress (could re-fire spawns from the same band)
+  const nextCoinWorldPos = Math.max(nextQueue, wp + 1);
+  return {
+    ...s,
+    worldCoins: [...(s.worldCoins || []), ...newCoins],
+    nextCoinWorldPos,
+  };
+}
+
+function stripGroundWorldCoins(worldCoins) {
+  if (!Array.isArray(worldCoins)) return worldCoins;
+  return worldCoins.filter((c) => (c?.heightTier ?? 0) > 0);
+}
+
+function sanitizeClusterIndex(s) {
+  const list = s?.enemyCluster;
+  if (!Array.isArray(list) || list.length === 0) return s;
+  const ci = s.currentClusterIndex;
+  if (typeof ci !== "number" || ci < 0 || ci >= list.length) {
+    return { ...s, currentClusterIndex: 0 };
+  }
+  return s;
+}
+
+/**
+ * Soft-lock fix: `enemyHP` is 0 but the pack row still exists (missed death timeout, refresh mid-FX, bad save).
+ * Advances to the next foe or spawns the next wave — does not re-run kill rewards (those already applied).
+ */
+function resumeClusterAfterDeadEnemy(s) {
+  if (!s || s.isDead || s.isBossActive) return s;
+  if (s.enemyHP > 0) return s;
+  const list = s.enemyCluster;
+  if (!Array.isArray(list) || list.length === 0) return s;
+  const ci = typeof s.currentClusterIndex === "number" ? s.currentClusterIndex : 0;
+  const safeCi = Math.max(0, Math.min(ci, list.length - 1));
+  const nextIndex = safeCi + 1;
+  if (nextIndex < list.length) {
+    const trimmed = list.slice(nextIndex);
+    const nextEnemy = trimmed[0];
+    if (!nextEnemy) return s;
+    return sanitizePathScalars({
+      ...s,
+      enemyCluster: trimmed,
+      currentClusterIndex: 0,
+      enemyHP: nextEnemy.hp,
+      enemyMaxHP: nextEnemy.maxHp,
+      currentEnemyName: nextEnemy.name,
+      playerHP: s.playerMaxHP,
+    });
+  }
+  const slainWorld = list[safeCi]?.worldPos;
+  const afterKill = typeof slainWorld === "number" && Number.isFinite(slainWorld) ? slainWorld : undefined;
+  return sanitizePathScalars(
+    spawnNewEnemy({ ...s, enemyCluster: [], enemyHP: 0 }, { afterKillWorldPos: afterKill })
+  );
+}
+
+function coerceFiniteNumber(v, fallback = 0) {
+  if (typeof v === "number" && Number.isFinite(v)) return v;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+/**
+ * Saves / devtools can leave path scalars as strings. Then `worldProgress + 0.095` string-concats
+ * and the run freezes (parallax + “nobody moves”). Coerce on load and each walk tick.
+ */
+function sanitizePathScalars(s) {
+  if (!s || typeof s !== "object") return s;
+  const worldProgress = coerceFiniteNumber(s.worldProgress, 0);
+  const nextEnemyWorldPos = coerceFiniteNumber(s.nextEnemyWorldPos, 20);
+  const nextCoinWorldPos = coerceFiniteNumber(s.nextCoinWorldPos, 12);
+  let clusterPatched = false;
+  let enemyCluster = s.enemyCluster;
+  if (Array.isArray(enemyCluster) && enemyCluster.length > 0) {
+    const nextCluster = enemyCluster.map((e) => {
+      if (!e || typeof e !== "object") return e;
+      const wp = coerceFiniteNumber(e.worldPos, worldProgress + 30);
+      if (wp === e.worldPos && typeof e.worldPos === "number" && Number.isFinite(e.worldPos)) return e;
+      clusterPatched = true;
+      return { ...e, worldPos: wp };
+    });
+    if (clusterPatched) enemyCluster = nextCluster;
+  }
+  const changed =
+    worldProgress !== s.worldProgress ||
+    nextEnemyWorldPos !== s.nextEnemyWorldPos ||
+    nextCoinWorldPos !== s.nextCoinWorldPos ||
+    clusterPatched;
+  if (!changed) return s;
+  return { ...s, worldProgress, nextEnemyWorldPos, nextCoinWorldPos, enemyCluster };
+}
+
 function loadGame() {
   try {
     const saved = localStorage.getItem(SAVE_KEY);
     if (saved) {
       const data = JSON.parse(saved);
+      let merged = { ...data, worldCoins: stripGroundWorldCoins(data.worldCoins) };
+      merged = sanitizePathScalars(merged);
+      merged = sanitizeClusterIndex(merged);
+      merged = resumeClusterAfterDeadEnemy(merged);
+      if (merged.isBossActive && merged.enemyHP <= 0) {
+        merged = spawnNewEnemy({ ...merged, isBossActive: false, enemyHP: 0, enemyCluster: [] });
+      }
       // Migrate old saves
       if (!data.saveVersion || data.saveVersion < SAVE_VERSION) {
         console.log("Migrating save from v" + (data.saveVersion || 1) + " to v" + SAVE_VERSION);
-        return { ...data, saveVersion: SAVE_VERSION };
+        return { ...merged, saveVersion: SAVE_VERSION };
       }
-      return data;
+      return merged;
     }
   } catch (e) {
     console.error("Failed to load save:", e);
@@ -82,6 +334,8 @@ function defaultState() {
     // World state
     worldProgress: 0, // How far the player has traveled
     nextEnemyWorldPos: 20, // Position in world where next enemy spawns
+    worldCoins: [], // { id, worldPos, amount, heightTier?, heightJitterRem? } — path pickups
+    nextCoinWorldPos: 12, // Spawn when worldProgress reaches this (like nextEnemyWorldPos)
   };
 }
 
@@ -116,6 +370,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   const [offlineEarnings, setOfflineEarnings] = useState(null);
   const [enemyHit, setEnemyHit] = useState(false);
   const [playerHit, setPlayerHit] = useState(false);
+  const [attackTick, setAttackTick] = useState(0);
   const [currentWeapon, setCurrentWeapon] = useState(weaponMode);
   const currentWeaponRef = useRef(weaponMode);
   useEffect(() => {
@@ -124,6 +379,8 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   const [activeBuffs, setActiveBuffs] = useState([]);
   const stateRef = useRef(state);
   stateRef.current = state;
+  /** True while a kill’s post-death timeout is pending — blocks duplicate recover + extra hits. */
+  const enemyKillPendingRef = useRef(false);
   const abilitiesRef = useRef(abilities);
   abilitiesRef.current = abilities;
   const activeBuffsRef = useRef(activeBuffs);
@@ -195,7 +452,9 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     const souls = typeof s.souls === 'number' ? s.souls : 0;
     const soulBonus = 1 + (souls * 0.05);
     const buffMult = getBuffMultiplier(Array.isArray(buffs) ? buffs : [], "tapDamageMultiplier");
-    return Math.floor(damage * soulBonus * damageMultiplier * (skillMults?.damageMultiplier || 1) * (villageMultipliers?.tapDamageMultiplier || 1) * buffMult);
+    const raw = damage * soulBonus * damageMultiplier * (skillMults?.damageMultiplier || 1) * (villageMultipliers?.tapDamageMultiplier || 1) * buffMult;
+    // Base 0.5 must not floor to 0 before upgrades, or taps and melee auto-attack deal no damage.
+    return Math.max(1, Math.floor(raw));
   }, [damageMultiplier, state, currentWeapon, activeBuffs, skillMults, villageMultipliers]);
 
   // Memoize getIdleCPS calculation
@@ -218,6 +477,11 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     return Math.floor(cps * soulBonus * damageMultiplier * (skillMults?.idleMultiplier || 1) * (villageMultipliers?.coinMultiplier || 1));
   }, [damageMultiplier, state, skillMults, villageMultipliers]);
 
+  const getTapDamageRef = useRef(getTapDamage);
+  const getIdleCPSRef = useRef(getIdleCPS);
+  getTapDamageRef.current = getTapDamage;
+  getIdleCPSRef.current = getIdleCPS;
+
   function applyRewardMultipliers(coins, souls, s = state, buffs = activeBuffs) {
     if (!s || typeof s !== 'object') return { coins: 0, souls: 0 };
     const buffCoinMult = getBuffMultiplier(Array.isArray(buffs) ? buffs : [], "coinMultiplier");
@@ -226,6 +490,67 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     const soulsAfterMultiplier = Math.floor(souls * (skillMults?.soulMultiplier || 1) * (villageMultipliers?.soulMultiplier || 1) * buffSoulMult);
     return { coins: coinAfterMultiplier, souls: soulsAfterMultiplier };
   }
+
+  /**
+   * @param {number} worldProgress
+   * @param {string[]} touchingCoinIds - coin ids whose DOM rects overlap the player (see GameCanvas)
+   * @param {() => void} [onPickup]
+   */
+  const tickWorldCoinCollection = useCallback((worldProgress, touchingCoinIds, onPickup) => {
+    if (typeof worldProgress !== "number" || !Number.isFinite(worldProgress)) return;
+
+    const touching = Array.isArray(touchingCoinIds)
+      ? new Set(touchingCoinIds.filter((id) => typeof id === "string" && id.length > 0))
+      : new Set();
+
+    setState((prev) => {
+      if (prev.isDead) return prev;
+      const list = prev.worldCoins || [];
+      if (list.length === 0) return prev;
+
+      const remaining = [];
+      let collectedRaw = 0;
+      let floatGap = null;
+
+      for (const c of list) {
+        if (worldProgress - c.worldPos > 8) continue;
+        if (touching.has(c.id)) {
+          collectedRaw += c.amount;
+          if (floatGap == null) floatGap = pathGap(worldProgress, c.worldPos);
+        } else {
+          remaining.push(c);
+        }
+      }
+
+      if (collectedRaw === 0 && remaining.length === list.length) return prev;
+
+      const { coins: finalCoins } = applyRewardMultipliers(collectedRaw, 0, prev, activeBuffsRef.current);
+
+      if (finalCoins > 0) {
+        const t = Date.now();
+        const x =
+          floatGap != null
+            ? Math.max(8, Math.min(88, 20 + floatGap * 2.5 + (Math.random() * 4 - 2)))
+            : 22 + Math.random() * 8;
+        const y = 32 + Math.random() * 12;
+        queueMicrotask(() => {
+          setFloatingCoins((fc) => [...fc, { id: t + Math.random(), amount: finalCoins, x, y }]);
+          if (typeof onPickup === "function") onPickup();
+        });
+      }
+
+      if (collectedRaw === 0) {
+        return { ...prev, worldCoins: remaining };
+      }
+
+      return {
+        ...prev,
+        worldCoins: remaining,
+        coins: prev.coins + finalCoins,
+        totalCoinsEarned: prev.totalCoinsEarned + finalCoins,
+      };
+    });
+  }, [skillMults, villageMultipliers]);
 
   // Buff proc helper
   const tryProcBuff = useCallback((source, s = state) => {
@@ -267,79 +592,6 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
 
     lastBuffProcRef.current = now;
   }, []);
-
-  function spawnNewEnemy(s) {
-    const boss = getBossForStage(s.stage) || null;
-    const warningActive = s.bossWarning && Date.now() < s.bossWarning.warningEndTime;
-    const warningForCurrentBoss = s.bossWarning && boss && s.bossWarning.bossId === boss?.id;
-    const shouldEncounterBoss = Boolean(boss && isBossEncounter(s.killCount));
-
-    // Boss encounter has a gated warning phase first, then boss spawn.
-    if (shouldEncounterBoss && warningForCurrentBoss && !warningActive) {
-        const hp = getBossHP(s.stage, s.killCount);
-        return {
-          ...s,
-          enemyHP: hp,
-          enemyMaxHP: hp,
-          currentEnemyName: boss.name,
-          isBossActive: true,
-          bossHitsReceived: 0,
-          bossFightStartTime: Date.now(),
-          bossEnrageResetUsed: false,
-          bossWarning: null, // Clear warning once boss spawns
-          enemyCluster: [],
-          currentClusterIndex: 0,
-        };
-    }
-
-    const stageData = getStageDataForZone(s.activeZoneId, s.stage);
-    const packSizeLevel = s.upgradeLevels?.pack_size || 0;
-    const packSize = getPackSize(packSizeLevel);
-    const enemies = stageData.enemies; // Cache enemy list
-    
-    // Generate cluster of 1 or packSize enemies
-    const useCluster = Math.random() < 0.7; // 70% chance for cluster
-    const clusterSize = useCluster ? packSize : 1;
-    const enemyHP = getEnemyHP(s.stage, s.killCount);
-    const cluster = Array.from({ length: clusterSize }).map(() => {
-      const enemyName = enemies[Math.floor(Math.random() * enemies.length)];
-      return {
-        name: enemyName,
-        hp: enemyHP,
-        maxHp: enemyHP,
-        worldPos: s.nextEnemyWorldPos + Math.random() * 20, // Random x position ahead
-      };
-    });
-
-    // Set first enemy as active
-    const activeEnemy = cluster[0];
-
-    let nextBossWarning = s.bossWarning || null;
-    if (shouldEncounterBoss && boss && !warningForCurrentBoss) {
-      nextBossWarning = {
-        bossId: boss.id,
-        warningEndTime: Date.now() + 4000, // 4 second warning gate
-      };
-    }
-    
-    // Queue next enemy to spawn 15-25 units ahead (more frequent spawns)
-    const nextSpawnDistance = 15 + Math.random() * 10;
-    
-    return {
-      ...s,
-      enemyHP: activeEnemy.hp,
-      enemyMaxHP: activeEnemy.maxHp,
-      currentEnemyName: activeEnemy.name,
-      isBossActive: false,
-      bossHitsReceived: 0,
-      bossFightStartTime: null,
-      bossEnrageResetUsed: false,
-      bossWarning: nextBossWarning,
-      enemyCluster: cluster,
-      currentClusterIndex: 0,
-      nextEnemyWorldPos: s.nextEnemyWorldPos + nextSpawnDistance,
-    };
-  }
 
   // Consolidated tick loop - abilities, buffs, and idle proc
   useEffect(() => {
@@ -432,6 +684,26 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   // Removed - now uses soundManager for audio playback
 
   const dealDamage = useCallback((damage, x, y) => {
+    const snap = stateRef.current;
+    if (snap.enemyHP <= 0) {
+      if (snap.isBossActive) {
+        if (enemyKillPendingRef.current) return;
+        setEnemyDying(false);
+        enemyKillPendingRef.current = false;
+        setState((p) =>
+          spawnNewEnemy({ ...p, isBossActive: false, enemyHP: 0, enemyCluster: [] })
+        );
+        return;
+      }
+      if (Array.isArray(snap.enemyCluster) && snap.enemyCluster.length > 0) {
+        if (enemyKillPendingRef.current) return;
+        setEnemyDying(false);
+        enemyKillPendingRef.current = false;
+        setState((prev) => resumeClusterAfterDeadEnemy(prev));
+        return;
+      }
+    }
+
     const now = Date.now();
     setEnemyHit(true);
     setTimeout(() => setEnemyHit(false), 150);
@@ -461,8 +733,15 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         return prev;
       }
 
+      if (
+        prev.enemyHP <= 0 &&
+        (prev.isBossActive || (Array.isArray(prev.enemyCluster) && prev.enemyCluster.length > 0))
+      ) {
+        return prev;
+      }
+
       // Apply boss mechanics during combat
-       let adjustedDamage = finalDamage;
+      let adjustedDamage = finalDamage;
        let newBossHits = prev.bossHitsReceived;
        let bossEnrageResetUsed = prev.bossEnrageResetUsed;
 
@@ -590,27 +869,39 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         }
         setParticles(prev => [...prev, ...coinParticles]);
 
+        enemyKillPendingRef.current = true;
         setEnemyDying(true);
-        setTimeout(() => setEnemyDying(false), 300);
-        
+
         // Check if there are more enemies in cluster
         const nextIndex = prev.currentClusterIndex + 1;
-        if (nextIndex < prev.enemyCluster.length) {
-          // Switch to next enemy in cluster
+        if (!prev.isBossActive && nextIndex < prev.enemyCluster.length) {
           const nextEnemy = prev.enemyCluster[nextIndex];
+          const trimmed = prev.enemyCluster.slice(nextIndex);
+          setTimeout(() => {
+            setState((p) => ({
+              ...p,
+              enemyCluster: trimmed,
+              currentClusterIndex: 0,
+              enemyHP: nextEnemy.hp,
+              enemyMaxHP: nextEnemy.maxHp,
+              currentEnemyName: nextEnemy.name,
+              playerHP: p.playerMaxHP,
+              bossHitsReceived: newBossHits,
+              bossEnrageResetUsed,
+            }));
+            setEnemyDying(false);
+            enemyKillPendingRef.current = false;
+          }, DEATH_ANIM_MS);
           return {
             ...prev,
-            enemyHP: nextEnemy.hp,
-            enemyMaxHP: nextEnemy.maxHp,
-            currentEnemyName: nextEnemy.name,
-            currentClusterIndex: nextIndex,
+            enemyHP: 0,
             playerHP: prev.playerMaxHP,
             bossHitsReceived: newBossHits,
             bossEnrageResetUsed,
           };
         }
-        
-        // Cluster defeated, spawn new one
+
+        // Cluster defeated (or boss defeated), spawn new one after death FX so the next sprite is not the one playing enemy-die
         const newKillCount = prev.killCount + 1;
         let newStage = prev.stage;
         const zoneStages = getZoneStages(prev.activeZoneId);
@@ -652,8 +943,25 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
           bossFightStartTime: null,
           bossEnrageResetUsed: false,
         };
-        
-        return spawnNewEnemy(newState);
+
+        const slainWorld =
+          prev.isBossActive
+            ? (prev.nextEnemyWorldPos ?? prev.worldProgress)
+            : prev.enemyCluster?.[prev.currentClusterIndex]?.worldPos;
+
+        const afterKill =
+          typeof slainWorld === "number" && Number.isFinite(slainWorld) ? slainWorld : undefined;
+
+        setTimeout(() => {
+          setState((p) => spawnNewEnemy(p, { afterKillWorldPos: afterKill }));
+          setEnemyDying(false);
+          enemyKillPendingRef.current = false;
+        }, DEATH_ANIM_MS);
+
+        return {
+          ...newState,
+          enemyHP: 0,
+        };
       }
       
       return {
@@ -666,19 +974,30 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     });
   }, []);
 
-  const handleTap = useCallback((x, y) => {
+  const handleTap = useCallback((x, y, opts = {}) => {
+    const bowFlightMs = typeof opts.bowFlightMs === "number" && opts.bowFlightMs > 0 ? opts.bowFlightMs : 0;
     lastTapTimeRef.current = Date.now();
     tryProcBuff("tap", stateRef.current);
-    
+    setAttackTick((n) => n + 1);
+
     const damage = getTapDamage(stateRef.current, currentWeaponRef.current, activeBuffsRef.current);
     // Note: double damage multiplier is applied inside dealDamage via abilitiesRef
-    
-    setSlashEffects(prev => [...prev, { id: Date.now() + Math.random(), x, y }]);
-    setTimeout(() => {
-      setSlashEffects(prev => prev.slice(1));
-    }, 300);
-    
-    dealDamage(damage, x, y);
+
+    const applyHit = () => {
+      if (!bowFlightMs) {
+        setSlashEffects((prev) => [...prev, { id: Date.now() + Math.random(), x, y }]);
+        setTimeout(() => {
+          setSlashEffects((prev) => prev.slice(1));
+        }, 300);
+      }
+      dealDamage(damage, x, y);
+    };
+
+    if (bowFlightMs) {
+      setTimeout(applyHit, bowFlightMs);
+    } else {
+      applyHit();
+    }
   }, [dealDamage, tryProcBuff]);
 
   // Consolidated attack loop - idle, auto-clicker, auto-walk, and world progress
@@ -690,50 +1009,112 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       // Update world progress every tick (100ms), simulating player moving forward
       setState(prev => {
         if (prev.isDead) return prev;
-        
-        // Check if player has reached enemy (within ~1 world unit - sprite size distance)
-        const enemyWorldPos = prev.enemyCluster?.[prev.currentClusterIndex]?.worldPos || prev.nextEnemyWorldPos;
-        const inCombat = prev.worldProgress >= enemyWorldPos - 1;
-        
-        // Only advance world progress if not in direct combat with enemy
-        let newProgress = inCombat ? prev.worldProgress : prev.worldProgress + 0.095;
-        
-        // Check if next enemy should spawn
-        if (newProgress >= prev.nextEnemyWorldPos && !prev.isBossActive) {
-          return spawnNewEnemy({ ...prev, worldProgress: newProgress });
+
+        // Boss fights only use `nextEnemyWorldPos` as the path anchor (no cluster row). If
+        // worldProgress inches ahead while melee was false for a frame, gap can pass -MAX_PAST_ANCHOR
+        // and combat/taps/auto-attack permanently fail. Keep the anchor glued to progress.
+        let pathState =
+          prev.isBossActive
+            ? { ...prev, nextEnemyWorldPos: prev.worldProgress ?? 0 }
+            : prev;
+
+        pathState = sanitizePathScalars(pathState);
+
+        const list = pathState.enemyCluster;
+        if (Array.isArray(list) && list.length > 0) {
+          const ci = pathState.currentClusterIndex;
+          if (typeof ci !== "number" || ci < 0 || ci >= list.length) {
+            pathState = { ...pathState, currentClusterIndex: 0 };
+          }
         }
-        
-        return { ...prev, worldProgress: newProgress };
+
+        const enemyWorldPos = resolveCombatEnemyWorldPos({
+          isBossActive: pathState.isBossActive,
+          enemyCluster: pathState.enemyCluster,
+          currentClusterIndex: pathState.currentClusterIndex,
+          nextEnemyWorldPos: pathState.nextEnemyWorldPos,
+        });
+        const hasEncounter =
+          Boolean(pathState.isBossActive) || (Array.isArray(pathState.enemyCluster) && pathState.enemyCluster.length > 0);
+        const pathResolved =
+          enemyWorldPos != null && Number.isFinite(enemyWorldPos);
+        const wp = coerceFiniteNumber(pathState.worldProgress, 0);
+        const inMelee =
+          hasEncounter &&
+          pathResolved &&
+          isInCombatAlongPath(wp, enemyWorldPos, Boolean(pathState.isBossActive));
+
+        // Walk whenever not in melee. `inMelee` already requires a resolved anchor, so gating on
+        // pathResolved here froze worldProgress forever when saves/cluster state had a bad index
+        // or missing worldPos (inMelee false but shouldWalk was still false).
+        const shouldWalk = !inMelee;
+        let newProgress = shouldWalk ? wp + 0.095 : wp;
+
+        // Spawn next wave only when no cluster is active (otherwise this stacks spawns mid-fight)
+        const clusterClear = !pathState.enemyCluster || pathState.enemyCluster.length === 0;
+        if (
+          clusterClear &&
+          newProgress >= pathState.nextEnemyWorldPos &&
+          !pathState.isBossActive
+        ) {
+          return spawnWorldCoins(spawnNewEnemy({ ...pathState, worldProgress: newProgress }));
+        }
+
+        const next =
+          pathState.isBossActive
+            ? { ...pathState, worldProgress: newProgress, nextEnemyWorldPos: newProgress }
+            : { ...pathState, worldProgress: newProgress };
+        return spawnWorldCoins(next);
       });
       
       const state = stateRef.current;
-      if (state.isDead || state.bossWarning) return;
+      const bossWarn = state.bossWarning;
+      const bossWarningActive =
+        bossWarn && Date.now() < bossWarn.warningEndTime;
+      if (state.isDead || bossWarningActive) return;
       
       // Idle damage every 10 ticks (1000ms)
       if (tickCounter % 10 === 0) {
-        const cps = getIdleCPS(state);
+        const cps = getIdleCPSRef.current(state);
         if (cps > 0) {
           dealDamage(Math.max(1, Math.floor(cps / 2)), 50 + Math.random() * 20, 50 + Math.random() * 20);
         }
       }
-      
-      // Auto-clicker every 5 ticks (500ms)
-      if (tickCounter % 5 === 0 && abilitiesRef.current?.autoClicker?.active) {
-        const damage = getTapDamage(state, currentWeaponRef.current, activeBuffsRef.current);
-        dealDamage(damage, 65 + Math.random() * 20, 40 + Math.random() * 30);
-      }
-      
-      // Auto-walk/auto-attack only when in combat range (within ~1 world unit)
-      const enemyWorldPos = state.enemyCluster?.[state.currentClusterIndex]?.worldPos || state.nextEnemyWorldPos;
-      const inCombatRange = state.worldProgress >= enemyWorldPos - 1;
-      
-      if (tickCounter % 2 === 0 && inCombatRange) {
-        const damage = getTapDamage(state, currentWeaponRef.current, activeBuffsRef.current);
-        dealDamage(damage, 65 + Math.random() * 10, 50 + Math.random() * 10);
+
+      const enemyWorldPos = resolveCombatEnemyWorldPos({
+        isBossActive: state.isBossActive,
+        enemyCluster: state.enemyCluster,
+        currentClusterIndex: state.currentClusterIndex,
+        nextEnemyWorldPos: state.nextEnemyWorldPos,
+      });
+      const hasEncounter =
+        Boolean(state.isBossActive) || (Array.isArray(state.enemyCluster) && state.enemyCluster.length > 0);
+      const pathResolved =
+        enemyWorldPos != null && Number.isFinite(enemyWorldPos);
+      const inCombatRange =
+        hasEncounter &&
+        pathResolved &&
+        isInCombatAlongPath(state.worldProgress, enemyWorldPos, Boolean(state.isBossActive));
+
+      // Auto-attack at tap strength while in path contact (same thresholds as travel freeze).
+      // Ethereal (autoClicker): faster swing cadence in melee.
+      const ethereal = abilitiesRef.current?.autoClicker?.active;
+      const swingEveryTicks = ethereal ? 1 : 2;
+      if (tickCounter % swingEveryTicks === 0 && inCombatRange) {
+        const damage = getTapDamageRef.current(state, currentWeaponRef.current, activeBuffsRef.current);
+        setAttackTick((n) => n + 1);
+        const anchor = getEnemyScreenAnchorPercent(state);
+        const x = anchor
+          ? anchor.leftPct + (Math.random() * 8 - 4)
+          : 65 + Math.random() * 10;
+        const y = anchor
+          ? anchor.bottomPct + (Math.random() * 6 - 3)
+          : 50 + Math.random() * 10;
+        dealDamage(damage, x, y);
       }
     }, 100);
     return () => clearInterval(interval);
-  }, [dealDamage, spawnNewEnemy]);
+  }, [dealDamage]);
 
   // Consolidated cleanup for all floating elements (single interval)
   useEffect(() => {
@@ -828,13 +1209,17 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     });
   }, []);
 
-  const prestige = useCallback(() => {
+  const prestige = useCallback((opts = {}) => {
+    const fromDeath = opts.fromDeath === true;
     setState(prev => {
       const baseSoulsFromRun = getSoulsOnPrestige(prev.totalCoinsEarned);
-      if (baseSoulsFromRun <= 0) return prev;
+      // Normal prestige requires lifetime coins (see getSoulsOnPrestige); death screen always offers a reset escape.
+      const effectiveBaseSouls =
+        baseSoulsFromRun > 0 ? baseSoulsFromRun : fromDeath ? 1 : 0;
+      if (effectiveBaseSouls <= 0) return prev;
 
       const soulMult = getSkillMultipliers(prev.unlockedSkills).soulMultiplier;
-      const newSouls = Math.max(1, Math.floor(baseSoulsFromRun * soulMult));
+      const newSouls = Math.max(1, Math.floor(effectiveBaseSouls * soulMult));
 
       const newSlayerPoints = getSlayerPointsOnPrestige(prev.souls + newSouls);
       const fresh = defaultState();
@@ -877,6 +1262,8 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         bossHitsReceived: 0,
         bossFightStartTime: null,
         bossEnrageResetUsed: false,
+        worldCoins: [],
+        nextCoinWorldPos: (prev.worldProgress ?? 0) + 12,
       };
       return spawnNewEnemy(switched);
     });
@@ -928,5 +1315,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     activeBuffs,
     upgradeBuilding,
     playerHit,
+    attackTick,
+    tickWorldCoinCollection,
   };
 }

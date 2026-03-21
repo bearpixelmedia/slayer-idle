@@ -127,6 +127,86 @@
   75% { transform: translateY(-5px) scaleX(1.05); }
 }
 
+/* Per-enemy idle motion — same origin as run-cycle; use nested wrapper if combining with facing rotation */
+@keyframes enemy-idle-march {
+  0%, 100% { transform: translateY(0) scaleX(1); }
+  25% { transform: translateY(-8px) scaleX(0.9); }
+  50% { transform: translateY(0) scaleX(1); }
+  75% { transform: translateY(-5px) scaleX(1.05); }
+}
+@keyframes enemy-idle-heavy {
+  0%, 100% { transform: translateY(0) scaleX(1); }
+  33% { transform: translateY(-5px) scaleX(0.94); }
+  66% { transform: translateY(-2px) scaleX(1.04); }
+}
+@keyframes enemy-idle-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes enemy-idle-glide {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-7px) scale(1.02); }
+}
+@keyframes enemy-idle-slither {
+  0%, 100% { transform: translateX(0) translateY(0) scaleY(1); }
+  25% { transform: translateX(4px) translateY(-4px) scaleY(1.04); }
+  50% { transform: translateX(0) translateY(-2px) scaleY(0.98); }
+  75% { transform: translateX(-4px) translateY(-5px) scaleY(1.03); }
+}
+@keyframes enemy-idle-loom {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-9px) rotate(-2deg); }
+}
+@keyframes enemy-idle-shamble {
+  0%, 100% { transform: translateY(0) rotate(0deg) scaleX(1); }
+  25% { transform: translateY(-4px) rotate(-3deg) scaleX(0.92); }
+  50% { transform: translateY(-1px) rotate(2deg) scaleX(1.06); }
+  75% { transform: translateY(-5px) rotate(-1deg) scaleX(0.95); }
+}
+@keyframes enemy-idle-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+@keyframes enemy-idle-skitter {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  20% { transform: translate(2px, -3px) scale(0.97); }
+  40% { transform: translate(-3px, 1px) scale(1.03); }
+  60% { transform: translate(1px, -4px) scale(0.98); }
+  80% { transform: translate(-2px, -1px) scale(1.02); }
+}
+@keyframes enemy-idle-hover {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(-6px) rotate(-2deg); }
+  66% { transform: translateY(-3px) rotate(2deg); }
+}
+@keyframes enemy-idle-flutter {
+  0%, 100% { transform: translateY(0) rotate(0deg) scaleX(1); }
+  25% { transform: translateY(-8px) rotate(-4deg) scaleX(1.04); }
+  50% { transform: translateY(-4px) rotate(3deg) scaleX(0.96); }
+  75% { transform: translateY(-10px) rotate(-2deg) scaleX(1.02); }
+}
+@keyframes enemy-idle-sway {
+  0%, 100% { transform: translateX(0) translateY(0); }
+  25% { transform: translateX(-4px) translateY(-5px); }
+  50% { transform: translateX(0) translateY(-2px); }
+  75% { transform: translateX(4px) translateY(-6px); }
+}
+
+/* Rotation-only sway, same period as run-cycle — parent row supplies the vertical hop */
+@keyframes weapon-gait-tilt-l {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5.5deg); }
+  50% { transform: rotate(0.5deg); }
+  75% { transform: rotate(3.5deg); }
+}
+
+@keyframes weapon-gait-tilt-r {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(4deg); }
+  50% { transform: rotate(-0.5deg); }
+  75% { transform: rotate(-4deg); }
+}
+
 @keyframes enemy-hit {
   0%, 100% { transform: translateX(0) scaleX(1); }
   50% { transform: translateX(-8px) scaleX(0.95); }
@@ -139,6 +219,47 @@
 .animate-enemy-enter { animation: enemy-enter 0.5s ease-out; }
 .animate-enemy-die { animation: enemy-die 0.3s ease-out forwards; }
 .animate-run-cycle { animation: run-cycle 0.4s ease-in-out infinite; }
+/* Whole hero row (body + weapons) shares one vertical hop; duration overridable via --player-run-dur */
+.animate-player-gait-row {
+  animation: run-cycle var(--player-run-dur, 0.4s) ease-in-out infinite;
+  transform-origin: bottom center;
+}
+/* Same gait as the player run — slower / anchored at feet so enemies read as running on the road, not hovering */
+.animate-enemy-walk { animation: run-cycle 0.5s ease-in-out infinite; transform-origin: bottom center; }
+
+.animate-enemy-idle-march { animation: enemy-idle-march 0.5s ease-in-out infinite; transform-origin: bottom center; }
+.animate-enemy-idle-heavy { animation: enemy-idle-heavy 0.75s ease-in-out infinite; transform-origin: bottom center; }
+.animate-enemy-idle-bob { animation: enemy-idle-bob 0.48s ease-in-out infinite; transform-origin: bottom center; }
+.animate-enemy-idle-glide { animation: enemy-idle-glide 0.65s ease-in-out infinite; transform-origin: bottom center; }
+.animate-enemy-idle-slither { animation: enemy-idle-slither 0.55s ease-in-out infinite; transform-origin: bottom center; }
+.animate-enemy-idle-loom { animation: enemy-idle-loom 0.7s ease-in-out infinite; transform-origin: bottom center; }
+.animate-enemy-idle-shamble { animation: enemy-idle-shamble 0.52s ease-in-out infinite; transform-origin: bottom center; }
+.animate-enemy-idle-float { animation: enemy-idle-float 2.4s ease-in-out infinite; transform-origin: bottom center; }
+.animate-enemy-idle-skitter { animation: enemy-idle-skitter 0.38s ease-in-out infinite; transform-origin: bottom center; }
+.animate-enemy-idle-hover { animation: enemy-idle-hover 0.55s ease-in-out infinite; transform-origin: bottom center; }
+.animate-enemy-idle-flutter { animation: enemy-idle-flutter 0.5s ease-in-out infinite; transform-origin: bottom center; }
+.animate-enemy-idle-sway { animation: enemy-idle-sway 0.5s ease-in-out infinite; transform-origin: bottom center; }
+/* Staggered tilt only — vertical motion comes from .animate-player-gait-row parent */
+.animate-weapon-sway-l {
+  animation: weapon-gait-tilt-l var(--player-run-dur, 0.4s) ease-in-out infinite;
+  animation-delay: var(--weapon-sway-delay-l, 0.12s);
+  transform-origin: bottom center;
+}
+.animate-weapon-sway-r {
+  animation: weapon-gait-tilt-r var(--player-run-dur, 0.4s) ease-in-out infinite;
+  animation-delay: var(--weapon-sway-delay-r, 0.22s);
+  transform-origin: bottom center;
+}
+.animate-weapon-sway-enemy-l {
+  animation: run-cycle 0.5s ease-in-out infinite;
+  animation-delay: 0.12s;
+  transform-origin: bottom center;
+}
+.animate-weapon-sway-enemy-r {
+  animation: run-cycle 0.5s ease-in-out infinite;
+  animation-delay: 0.24s;
+  transform-origin: bottom center;
+}
 .animate-enemy-hit { animation: enemy-hit 0.15s ease-out; }
 
 /* Menu and Frame Styles */

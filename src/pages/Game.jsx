@@ -73,6 +73,8 @@ export default function Game() {
     activeBuffs,
     upgradeBuilding,
     playerHit,
+    attackTick,
+    tickWorldCoinCollection,
   } = useGameState(initMultipliers);
 
   const { unlockedIds, newUnlock, damageMultiplier, offlineMultiplier } = useAchievements(state);
@@ -109,9 +111,16 @@ export default function Game() {
     soundManager.play('upgrade');
   };
 
-  const handleTapGame = (e) => {
-    handleTap(e);
-    soundManager.play('tap');
+  const handleJumpFeedback = () => {
+    soundManager.play("tap");
+  };
+
+  const handleWorldCoinPickup = () => {
+    soundManager.play("coin-collect");
+  };
+
+  const handleTapGame = (x, y, opts) => {
+    handleTap(x, y, opts);
   };
 
   return (
@@ -130,6 +139,10 @@ export default function Game() {
               particles={particles}
               slashEffects={slashEffects}
               onTap={handleTapGame}
+              onJump={handleJumpFeedback}
+              tickWorldCoinCollection={tickWorldCoinCollection}
+              onWorldCoinPickup={handleWorldCoinPickup}
+              attackTick={attackTick}
               enemyHit={enemyHit}
               playerHit={playerHit}
               weaponMode={currentWeapon}
@@ -284,6 +297,10 @@ export default function Game() {
                 particles={particles}
                 slashEffects={slashEffects}
                 onTap={handleTapGame}
+                onJump={handleJumpFeedback}
+                tickWorldCoinCollection={tickWorldCoinCollection}
+                onWorldCoinPickup={handleWorldCoinPickup}
+                attackTick={attackTick}
                 enemyHit={enemyHit}
                 playerHit={playerHit}
                 weaponMode={currentWeapon}
@@ -359,7 +376,10 @@ export default function Game() {
         isDead={state.isDead}
         souls={state.souls}
         onRevive={revive}
-        onPrestige={prestige}
+        onPrestige={() => {
+          prestige({ fromDeath: true });
+          soundManager.play("prestige");
+        }}
         canRevive={state.souls >= 10}
       />
     </div>

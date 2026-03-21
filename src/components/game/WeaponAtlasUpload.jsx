@@ -270,8 +270,11 @@ Respond with a JSON object: {"frames": [{"x": 0, "y": 0, "w": 32, "h": 32}, ...]
         model: "claude_sonnet_4_6"
       });
 
-      const detected = (result?.frames || []).map(f => ({ frame: f }));
-      if (!detected.length) { alert("AI couldn't detect any frames. Try Smart Detect instead."); return; }
+      console.log("AI Detect raw result:", JSON.stringify(result));
+      // Handle different response shapes
+      const rawFrames = result?.frames || result?.detections || (Array.isArray(result) ? result : []);
+      const detected = rawFrames.map(f => ({ frame: { x: Math.round(f.x), y: Math.round(f.y), w: Math.round(f.w || f.width), h: Math.round(f.h || f.height) } }));
+      if (!detected.length) { alert(`AI returned no frames. Raw response: ${JSON.stringify(result)}`); return; }
       setFrames(detected);
       setAssignments({});
       WEAPON_SLOTS.forEach(slot => onUpdateSetting(slot.id, null));

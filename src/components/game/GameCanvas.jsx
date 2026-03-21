@@ -9,10 +9,10 @@ import ParallaxBackground from "./ParallaxBackground";
 import { loadGameSettings } from "@/lib/gameSettings";
 import PlayerRenderer from "./PlayerRenderer";
 
-function HealthBar({ current, max }) {
+function HealthBar({ current, max, isBoss }) {
   const pct = Math.max(0, (current / max) * 100);
   return (
-    <div className="w-32 sm:w-48 h-2.5 bg-muted rounded-full overflow-hidden border border-border/50">
+    <div className={`${isBoss ? "w-32 sm:w-48" : "w-20 sm:w-32"} h-2.5 bg-muted rounded-full overflow-hidden border border-border/50`}>
       <motion.div
         className="h-full rounded-full"
         style={{

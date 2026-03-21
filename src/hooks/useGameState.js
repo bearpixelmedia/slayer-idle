@@ -397,27 +397,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     });
   }, []);
 
-  const playSound = useCallback((type) => {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gain = audioContext.createGain();
-    oscillator.connect(gain);
-    gain.connect(audioContext.destination);
-    
-    if (type === "hit") {
-      oscillator.frequency.value = 400;
-      gain.gain.setValueAtTime(0.3, audioContext.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.1);
-    } else if (type === "critical") {
-      oscillator.frequency.value = 600;
-      gain.gain.setValueAtTime(0.2, audioContext.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.15);
-    }
-  }, []);
+  // Removed - now uses soundManager for audio playback
 
   const dealDamage = useCallback((damage, x, y) => {
     setEnemyHit(true);

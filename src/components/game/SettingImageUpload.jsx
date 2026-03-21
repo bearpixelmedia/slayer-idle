@@ -229,11 +229,13 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
           {showLibrary && (
             <div className="absolute top-full left-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-50 w-72">
               <div className="p-2 border-b border-slate-100">
-                <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Sprite Library</p>
+                <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
+                  {isAudioFile ? 'Audio Library' : 'Sprite Library'}
+                </p>
                 {/* URL paste input */}
                 <div className="flex gap-1">
                   <Input
-                    placeholder="Paste image URL..."
+                    placeholder={isAudioFile ? "Paste audio URL..." : "Paste image URL..."}
                     value={urlInput}
                     onChange={e => setUrlInput(e.target.value)}
                     className="h-6 text-[10px]"
@@ -251,23 +253,40 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
               {/* Grid of files */}
               <div className="p-2 max-h-56 overflow-y-auto">
                 {files.length > 0 ? (
-                  <div className="grid grid-cols-4 gap-1.5">
-                    {files.map((file, idx) => (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => handleSelectFile(file.url, file.name)}
-                        className={`relative group rounded-lg border-2 overflow-hidden bg-slate-100 aspect-square hover:border-blue-400 transition-colors ${value === file.url ? 'border-blue-500' : 'border-slate-200'}`}
-                        title={file.name}
-                      >
-                        <img src={file.url} alt={file.name} className="w-full h-full object-contain p-0.5" />
-                        {sessionStorage.getItem(`aseprite_json_${file.url}`) && (
-                          <div className="absolute top-0.5 right-0.5 bg-purple-500 rounded-full w-2 h-2" title="Has animation data" />
-                        )}
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
-                      </button>
-                    ))}
-                  </div>
+                  isAudioFile ? (
+                    <div className="space-y-2">
+                      {files.map((file, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => handleSelectFile(file.url, file.name)}
+                          className={`w-full p-2 text-left text-xs rounded-lg border transition-colors ${value === file.url ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:border-blue-400'}`}
+                          title={file.name}
+                        >
+                          <div className="truncate font-medium text-slate-700">{file.name}</div>
+                          <div className="text-slate-500 text-[10px]">🎵 Audio file</div>
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-4 gap-1.5">
+                      {files.map((file, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => handleSelectFile(file.url, file.name)}
+                          className={`relative group rounded-lg border-2 overflow-hidden bg-slate-100 aspect-square hover:border-blue-400 transition-colors ${value === file.url ? 'border-blue-500' : 'border-slate-200'}`}
+                          title={file.name}
+                        >
+                          <img src={file.url} alt={file.name} className="w-full h-full object-contain p-0.5" />
+                          {sessionStorage.getItem(`aseprite_json_${file.url}`) && (
+                            <div className="absolute top-0.5 right-0.5 bg-purple-500 rounded-full w-2 h-2" title="Has animation data" />
+                          )}
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                        </button>
+                      ))}
+                    </div>
+                  )
                 ) : (
                   <div className="py-6 text-xs text-slate-400 text-center">
                     No uploads yet — use the Upload button or paste a URL above

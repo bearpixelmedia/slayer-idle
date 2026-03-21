@@ -3,17 +3,27 @@ import { formatNumber } from "@/lib/formatNumber";
 import EnemyRenderer from "./EnemyRenderer";
 import HealthBar from "./HealthBar";
 
-function EnemyCluster({ cluster, currentIndex, isBossActive, enemyHP, enemyMaxHP, currentEnemyName, enemyHit, enemyDying, boss, shieldActive }) {
+function EnemyCluster({ cluster, currentIndex, isBossActive, enemyHP, enemyMaxHP, currentEnemyName, enemyHit, enemyDying, boss, shieldActive, playerWorldPos }) {
   return (
     <>
-      {cluster && cluster.map((enemy, idx) => (
+      {cluster && cluster.map((enemy, idx) => {
+        // Calculate screen position based on world position relative to player
+        const relativeDistance = (enemy.worldPos - playerWorldPos) * 10; // Scale factor for screen space
+        const screenX = 80 + relativeDistance; // Start at right side, move right if ahead
+        const isActive = idx === currentIndex;
+        const scale = isActive ? 1 : 0.7 + (0.3 * Math.max(0, 1 - Math.abs(relativeDistance) / 100));
+        const opacity = isActive ? 1 : Math.max(0.2, 1 - Math.abs(relativeDistance) / 150);
+        
+        return (
         <div 
           key={idx}
-          className="absolute flex flex-col items-center gap-2 z-20"
+          className="absolute flex flex-col items-center gap-2 z-20 transition-all duration-100"
           style={{
-            left: "80%",
-            bottom: `calc(14rem + ${idx * 4}rem)`,
-            opacity: idx === currentIndex ? 1 : 0.5,
+            left: `${Math.max(-20, Math.min(120, screenX))}%`,
+            bottom: `calc(14rem + ${idx * 2}rem)`,
+            opacity,
+            transform: `scale(${scale})`,
+            transformOrigin: "bottom center",
           }}
         >
           {idx === currentIndex && (
@@ -38,7 +48,8 @@ function EnemyCluster({ cluster, currentIndex, isBossActive, enemyHP, enemyMaxHP
             <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-24 h-2 bg-black/25 rounded-full blur-md" />
           </div>
         </div>
-      ))}
+      );
+      })}
     </>
   );
 }

@@ -231,6 +231,28 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
     localStorage.setItem("weapon_atlas", JSON.stringify({ url: atlasUrl, framesData: merged, imageSize: rawImageSize }));
   };
 
+  const aiDetect = async () => {
+    if (!atlasUrl || !rawImageSize) return;
+    setAiDetecting(true);
+    try {
+      const res = await base44.functions.invoke("detectWeaponFrames", {
+        imageUrl: atlasUrl,
+        imageWidth: rawImageSize.w,
+        imageHeight: rawImageSize.h,
+      });
+      const detected = (res.data.frames || []).map(f => ({ frame: f }));
+      if (!detected.length) { alert("AI couldn't detect any frames. Try Smart Detect instead."); return; }
+      setFrames(detected);
+      setAssignments({});
+      WEAPON_SLOTS.forEach(slot => onUpdateSetting(slot.id, null));
+      localStorage.setItem("weapon_atlas", JSON.stringify({ url: atlasUrl, framesData: detected, imageSize: rawImageSize }));
+    } catch (err) {
+      alert("AI detection failed: " + err.message);
+    } finally {
+      setAiDetecting(false);
+    }
+  };
+
   const autoAssign = async () => {
     if (!atlasUrl || !frames.length) return;
     const img = new Image();

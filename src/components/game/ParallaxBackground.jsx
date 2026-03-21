@@ -1,6 +1,29 @@
 import React, { useEffect, useRef, useState } from "react";
 import { loadGameSettings } from "@/lib/gameSettings";
 
+// Helper: render a tiled spritesheet row, or fall back to SVG children
+function SpriteTileRow({ spriteUrl, tileWidth, tileHeight, count, fallback }) {
+  if (!spriteUrl) return fallback;
+  return (
+    <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
+      {Array.from({ length: count }).map((_, i) => (
+        <img
+          key={i}
+          src={spriteUrl}
+          alt=""
+          style={{
+            flex: `0 0 ${tileWidth}px`,
+            height: tileHeight || "100%",
+            objectFit: "contain",
+            objectPosition: "bottom",
+            imageRendering: "pixelated",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 export default function ParallaxBackground() {
   const refs = useRef([]);
   const speeds = useRef([]);
@@ -8,6 +31,27 @@ export default function ParallaxBackground() {
   const target = useRef(0);
   const rafId = useRef(null);
   const intId = useRef(null);
+  const [sprites, setSprites] = useState({});
+
+  useEffect(() => {
+    const s = loadGameSettings();
+    setSprites({
+      treeVeryFar: s.parallax_tree_very_far || null,
+      treeFar: s.parallax_tree_far || null,
+      treeMidBack: s.parallax_tree_mid_back || null,
+      treeMid: s.parallax_tree_mid || null,
+      treeMidFront: s.parallax_tree_mid_front || null,
+      treeFront: s.parallax_tree_front || null,
+      shrubBack: s.parallax_shrub_back || null,
+      shrubFront: s.parallax_shrub_front || null,
+      mountainFar: s.parallax_mountain_far || null,
+      mountainMid: s.parallax_mountain_mid || null,
+      ground: s.parallax_ground || null,
+      sky: s.parallax_sky || null,
+      clouds: s.parallax_clouds || null,
+      stars: s.parallax_stars || null,
+    });
+  }, []);
 
   useEffect(() => {
     intId.current = setInterval(() => {

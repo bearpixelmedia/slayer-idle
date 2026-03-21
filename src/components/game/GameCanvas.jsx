@@ -4,6 +4,10 @@ import { formatNumber } from "@/lib/formatNumber";
 import { motion, AnimatePresence } from "framer-motion";
 import { getBossForStage, isBossShieldActive } from "@/lib/bosses";
 import EnemyRenderer from "./EnemyRenderer";
+import ParticleEffect from "./ParticleEffect";
+import ParallaxBackground from "./ParallaxBackground";
+import { loadGameSettings } from "@/lib/gameSettings";
+import PlayerRenderer from "./PlayerRenderer";
 
 function HealthBar({ current, max }) {
   const pct = Math.max(0, (current / max) * 100);
@@ -23,13 +27,6 @@ function HealthBar({ current, max }) {
   );
 }
 
-
-
-import ParticleEffect from "./ParticleEffect";
-import ParallaxBackground from "./ParallaxBackground";
-import { loadGameSettings } from "@/lib/gameSettings";
-import PlayerRenderer from "./PlayerRenderer";
-
 function GameCanvasComponent({
   state,
   enemyDying,
@@ -45,7 +42,6 @@ function GameCanvasComponent({
   const canvasRef = useRef(null);
   const gameSettings = React.useMemo(() => loadGameSettings(), []);
   const stage = STAGES[state?.stage] || STAGES[0];
-  const enemyEmoji = ENEMY_EMOJIS[state?.currentEnemyName] || "👾";
   const boss = state?.isBossActive ? getBossForStage(state?.stage) : null;
   const showBossWarning = state?.bossWarning && Date.now() < state.bossWarning.warningEndTime;
   const shieldActive =
@@ -60,7 +56,7 @@ function GameCanvasComponent({
   React.useEffect(() => {
     const interval = setInterval(() => {
       if (!state.isDead) {
-        runProgress.current += 2; // Fast constant speed
+        runProgress.current += 2;
       }
     }, 50);
     return () => clearInterval(interval);
@@ -113,7 +109,7 @@ function GameCanvasComponent({
         <div className="absolute -bottom-6 w-20 h-1 bg-black/30 rounded-full blur-sm" />
       </div>
 
-      {/* Enemy - static position */}
+      {/* Enemy - moves with world scroll */}
       <div 
         className="absolute bottom-56 right-[15%] flex flex-col items-center gap-2 z-20"
         style={{ transform: `translateX(${runProgress.current * 40}px)` }}

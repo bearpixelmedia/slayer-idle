@@ -39,6 +39,13 @@ export default function HUDOverlay({
   onUpgradeBuilding,
   onRunnerClick,
 }) {
+  // Check if any upgrade is affordable
+  const hasAffordableUpgrade = UPGRADES.some(upgrade => {
+    const level = state?.upgradeLevels?.[upgrade.id] || 0;
+    const cost = getUpgradeCost(upgrade, level);
+    return (state?.coins || 0) >= cost;
+  });
+
   return (
     <div className="fixed inset-0 pointer-events-none">
       {/* Stats Bar - Top Left */}

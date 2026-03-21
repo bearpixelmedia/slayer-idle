@@ -100,7 +100,7 @@ function GameCanvasComponent({
         </div>
         <motion.div 
           className="animate-run-cycle drop-shadow-lg"
-          animate={{ scale: enemyHit ? 1.15 : 1 }}
+          animate={{ scale: enemyHit ? 1.15 : 1, x: enemyProgress.current * 20 }}
           transition={{ duration: 0.1 }}
         >
           <PlayerRenderer
@@ -116,7 +116,7 @@ function GameCanvasComponent({
       {/* Enemy */}
       <motion.div 
         className="absolute bottom-56 flex flex-col items-center gap-2 z-20"
-        style={{ right: `${25 - enemyProgress.current * 30}%` }}
+        style={{ right: `${-20 + enemyProgress.current * 50}%` }}
         transition={{ type: "tween", duration: 0.05 }}
       >
         <div className="text-center mb-1">

@@ -93,7 +93,7 @@ function ParallaxBackgroundComponent() {
       {/* Stars */}
       {layer(0, 0.01, 0, 60, 0.5,
         sprites.stars ? (
-          <SpriteTileRow spriteUrl={sprites.stars} tileWidth={200} count={10} />
+          <SpriteTileRow spriteUrl={sprites.stars} tileWidth={200} count={20} />
         ) : (
           <div style={{ position: "relative", width: "200%", height: "100%" }}>
             {Array.from({ length: 30 }).map((_, i) => (

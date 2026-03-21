@@ -42,6 +42,7 @@ export default function GameCanvas({
   weaponMode,
 }) {
   const canvasRef = useRef(null);
+  const gameSettings = React.useMemo(() => loadGameSettings(), []);
   const stage = STAGES[state?.stage] || STAGES[0];
   const enemyEmoji = ENEMY_EMOJIS[state?.currentEnemyName] || "👾";
   const boss = state?.isBossActive ? getBossForStage(state?.stage) : null;

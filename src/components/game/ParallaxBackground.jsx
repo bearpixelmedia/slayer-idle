@@ -242,6 +242,7 @@ export default function ParallaxBackground() {
 
       {/* Shrubs - back layer */}
       {layer(9, 0.84, 62, 22, 0.82,
+        sprites.shrubBack ? <SpriteTileRow spriteUrl={sprites.shrubBack} tileWidth={40} count={60} /> :
         <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end", gap: "2px" }}>
           {Array.from({ length: 60 }).map((_, i) => {
             const type = i % 4;

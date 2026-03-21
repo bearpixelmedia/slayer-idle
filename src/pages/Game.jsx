@@ -153,7 +153,7 @@ export default function Game() {
             exit={{ opacity: 0 }}
           >
             <motion.div 
-              className="fixed left-0 right-0 max-h-[85vh] flex flex-col pointer-events-auto rounded-t-lg"
+              className="fixed bottom-0 left-0 right-0 max-h-[85vh] flex flex-col pointer-events-auto rounded-t-lg"
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               exit={{ y: "100%" }}

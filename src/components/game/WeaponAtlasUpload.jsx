@@ -35,10 +35,11 @@ function FrameCanvas({ imgSrc, frame, size = 48 }) {
     const img = new Image();
     img.src = imgSrc;
     const draw = () => {
-      const scale = Math.min(size / frame.frame.w, size / frame.frame.h);
-      const sw = frame.frame.w * scale;
-      const sh = frame.frame.h * scale;
-      ctx.drawImage(img, frame.frame.x, frame.frame.y, frame.frame.w, frame.frame.h,
+      const f = frame.frame || frame;
+      const scale = Math.min(size / f.w, size / f.h);
+      const sw = f.w * scale;
+      const sh = f.h * scale;
+      ctx.drawImage(img, f.x, f.y, f.w, f.h,
         (size - sw) / 2, (size - sh) / 2, sw, sh);
     };
     if (img.complete) draw();

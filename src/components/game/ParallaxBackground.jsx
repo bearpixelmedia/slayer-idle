@@ -21,10 +21,12 @@ function ParallaxBackground() {
   const speeds = useRef([]);
   const rafId = useRef(null);
   const [sprites, setSprites] = useState({});
+  const spritesRef = useRef({});
+  const layerMapRef = useRef(new Map());
 
-  const reloadSprites = () => {
+  const reloadSprites = React.useCallback(() => {
     const s = loadGameSettings();
-    setSprites({
+    const newSprites = {
       treeVeryFar: s.parallax_tree_very_far || null,
       treeFar: s.parallax_tree_far || null,
       treeMidBack: s.parallax_tree_mid_back || null,
@@ -39,28 +41,32 @@ function ParallaxBackground() {
       sky: s.parallax_sky || null,
       clouds: s.parallax_clouds || null,
       stars: s.parallax_stars || null,
-    });
-  };
+    };
+    spritesRef.current = newSprites;
+    setSprites(newSprites);
+  }, []);
 
   useEffect(() => {
     reloadSprites();
     // Reload when localStorage changes (e.g. after saving in GameSettings)
     window.addEventListener("storage", reloadSprites);
     return () => window.removeEventListener("storage", reloadSprites);
-  }, []);
+  }, [reloadSprites]);
 
   useEffect(() => {
+    const loopWidth = 3000;
     const tick = () => {
       // Use player's run progress for world scroll
       const playerProgress = window.__gameRunProgress?.current || 0;
       const cx = playerProgress * 40; // Convert progress units to pixels
-      const loopWidth = 3000; // Wrap every 3000px
+      const wrappedCx = ((cx % loopWidth) + loopWidth) % loopWidth; // Cache wrapped value
+      
+      // Use Map for faster layer lookups
       for (let i = 0; i < refs.current.length; i++) {
         const el = refs.current[i];
-        if (el) {
-          // Loop the transform using modulo to create infinite scroll
-          const wrappedCx = ((cx % loopWidth) + loopWidth) % loopWidth;
-          const offset = -wrappedCx * speeds.current[i];
+        if (el && layerMapRef.current.has(i)) {
+          const speed = layerMapRef.current.get(i);
+          const offset = -wrappedCx * speed;
           el.style.transform = `translate3d(${offset}px,0,0)`;
         }
       }
@@ -75,6 +81,7 @@ function ParallaxBackground() {
 
   const layer = (idx, speed, top, height, opacity, children) => {
     speeds.current[idx] = speed;
+    layerMapRef.current.set(idx, speed);
     return (
       <div
         key={`layer-${idx}`}

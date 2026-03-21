@@ -295,16 +295,18 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     const stageData = getStageDataForZone(s.activeZoneId, s.stage);
     const packSizeLevel = s.upgradeLevels?.pack_size || 0;
     const packSize = getPackSize(packSizeLevel);
+    const enemies = stageData.enemies; // Cache enemy list
     
     // Generate cluster of 1 or packSize enemies
     const useCluster = Math.random() < 0.7; // 70% chance for cluster
     const clusterSize = useCluster ? packSize : 1;
+    const enemyHP = getEnemyHP(s.stage, s.killCount);
     const cluster = Array.from({ length: clusterSize }).map(() => {
-      const enemyName = stageData.enemies[Math.floor(Math.random() * stageData.enemies.length)];
+      const enemyName = enemies[Math.floor(Math.random() * enemies.length)];
       return {
         name: enemyName,
-        hp: getEnemyHP(s.stage, s.killCount),
-        maxHp: getEnemyHP(s.stage, s.killCount),
+        hp: enemyHP,
+        maxHp: enemyHP,
         worldPos: s.nextEnemyWorldPos + Math.random() * 20, // Random x position ahead
       };
     });
@@ -348,36 +350,36 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       // Ability tick every 1 second
       if (tickCounter % 10 === 0) {
         setAbilities(prev => {
-          const next = { ...prev };
           let changed = false;
-          Object.keys(next).forEach(id => {
-            const a = { ...next[id] };
+          const updates = {};
+          Object.keys(prev).forEach(id => {
+            const a = prev[id];
             if (a.active && a.durationRemaining > 0) {
-              a.durationRemaining = Math.max(0, a.durationRemaining - 1);
-              if (a.durationRemaining === 0) {
-                a.active = false;
-                a.cooldownRemaining = ABILITY_CONFIGS[id].cooldown;
-              }
+              updates[id] = {
+                ...a,
+                durationRemaining: Math.max(0, a.durationRemaining - 1),
+                active: a.durationRemaining - 1 <= 0 ? false : true,
+                cooldownRemaining: a.durationRemaining - 1 <= 0 ? ABILITY_CONFIGS[id].cooldown : 0,
+              };
               changed = true;
             } else if (!a.active && a.cooldownRemaining > 0) {
-              a.cooldownRemaining = Math.max(0, a.cooldownRemaining - 1);
+              updates[id] = { ...a, cooldownRemaining: Math.max(0, a.cooldownRemaining - 1) };
               changed = true;
+            } else {
+              updates[id] = a;
             }
-            next[id] = a;
           });
-          return changed ? next : prev;
+          return changed ? updates : prev;
         });
       }
       
-      // Buff cleanup every 100ms
+      // Buff cleanup and proc together every 100ms
       if (tickCounter % 1 === 0) {
         const now = Date.now();
         setActiveBuffs(prev => prev.filter(buff => buff.endTime > now));
-      }
-      
-      // Buff proc on idle tick every 1 second
-      if (tickCounter % 10 === 0) {
-        tryProcBuff("idle", stateRef.current);
+        if (tickCounter % 10 === 0) {
+          tryProcBuff("idle", stateRef.current);
+        }
       }
     }, 100);
     return () => clearInterval(interval);
@@ -430,6 +432,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   // Removed - now uses soundManager for audio playback
 
   const dealDamage = useCallback((damage, x, y) => {
+    const now = Date.now();
     setEnemyHit(true);
     setTimeout(() => setEnemyHit(false), 150);
     
@@ -441,7 +444,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     if (isCritical) {
       const particleCount = 8;
       const newParticles = Array.from({ length: particleCount }).map((_, i) => ({
-        id: Date.now() + Math.random() + i,
+        id: now + Math.random() + i,
         x,
         y,
         emoji: "⚡",

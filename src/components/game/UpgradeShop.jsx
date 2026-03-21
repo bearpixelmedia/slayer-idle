@@ -108,7 +108,7 @@ export default function UpgradeShop({ state, onBuy }) {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="overflow-hidden"
+            className="overflow-y-auto max-h-96"
           >
             <div className="px-3 py-2 space-y-1.5">
               {UPGRADES.map((upgrade) => (

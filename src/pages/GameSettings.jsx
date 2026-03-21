@@ -22,12 +22,15 @@ export default function GameSettings() {
   const navigate = useNavigate();
   const [settings, setSettings] = useState({});
   const [hasChanges, setHasChanges] = useState(false);
+  const [version, setVersion] = useState(1);
 
   // Load settings from localStorage
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
-      setSettings(JSON.parse(saved));
+      const data = JSON.parse(saved);
+      setSettings(data);
+      setVersion(data._version || 1);
     }
   }, []);
 
@@ -37,9 +40,11 @@ export default function GameSettings() {
   };
 
   const saveSettings = () => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    const newVersion = version + 1;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...settings, _version: newVersion }));
+    setVersion(newVersion);
     setHasChanges(false);
-    alert("Settings saved!");
+    alert(`Settings saved! (v${newVersion})`);
   };
 
   const resetSettings = () => {

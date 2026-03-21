@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Upload, Check, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { base44 } from "@/api/base44Client";
 
 export default function AsepriteUpload({ label, onUpload }) {
   const [uploading, setUploading] = useState(false);
@@ -35,35 +36,17 @@ export default function AsepriteUpload({ label, onUpload }) {
       const uploadedUrls = {};
 
       // Upload PNG
-      const pngFormData = new FormData();
-      pngFormData.append('file', files.png);
-      const pngRes = await fetch('/_base44/api/upload', {
-        method: 'POST',
-        body: pngFormData,
-      });
-      const pngData = await pngRes.json();
-      uploadedUrls.png = pngData.file_url;
+      const pngRes = await base44.integrations.Core.UploadFile({ file: files.png });
+      uploadedUrls.png = pngRes.file_url;
 
       // Upload JSON
-      const jsonFormData = new FormData();
-      jsonFormData.append('file', files.json);
-      const jsonRes = await fetch('/_base44/api/upload', {
-        method: 'POST',
-        body: jsonFormData,
-      });
-      const jsonData = await jsonRes.json();
-      uploadedUrls.json = jsonData.file_url;
+      const jsonRes = await base44.integrations.Core.UploadFile({ file: files.json });
+      uploadedUrls.json = jsonRes.file_url;
 
       // Upload Aseprite if provided
       if (files.aseprite) {
-        const aseFormData = new FormData();
-        aseFormData.append('file', files.aseprite);
-        const aseRes = await fetch('/_base44/api/upload', {
-          method: 'POST',
-          body: aseFormData,
-        });
-        const aseData = await aseRes.json();
-        uploadedUrls.aseprite = aseData.file_url;
+        const aseRes = await base44.integrations.Core.UploadFile({ file: files.aseprite });
+        uploadedUrls.aseprite = aseRes.file_url;
       }
 
       onUpload(uploadedUrls);

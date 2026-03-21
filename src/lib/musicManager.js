@@ -1,219 +1,69 @@
+// Music Manager - Plays royalty-free background music loops
+
 class MusicManager {
   constructor() {
-    this.audioContext = null;
+    this.currentAudio = null;
     this.isPlaying = false;
-    this.masterGain = null;
-    this.currentMelody = null;
-    this.scheduleTimer = null;
-    this.activeOscillators = [];
+    this.volume = 0.08;
+    this.isMuted = false;
+    
+    // Royalty-free background music URLs (CC0/CC-BY from Freesound)
+    this.melodies = {
+      'main': 'https://cdn.freesound.org/previews/519/519376_10067029-lq.mp3',
+      'boss': 'https://cdn.freesound.org/previews/548/548175_9757543-lq.mp3',
+    };
   }
 
   init() {
-    if (this.audioContext) return;
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    this.audioContext = new AudioContext();
-    this.masterGain = this.audioContext.createGain();
-    this.masterGain.gain.value = 0.08;
-    this.masterGain.connect(this.audioContext.destination);
-  }
-
-  // ADSR Envelope for realistic note attack/decay
-  playNote(frequency, duration, time, options = {}) {
-    if (!this.audioContext) return;
-
-    const {
-      volume = 0.25,
-      waveType = 'sine',
-      attack = 0.005,
-      decay = 0.1,
-      sustain = 0.7,
-      release = 0.1,
-    } = options;
-
-    const osc = this.audioContext.createOscillator();
-    const gain = this.audioContext.createGain();
-    
-    osc.connect(gain);
-    gain.connect(this.masterGain);
-    
-    osc.frequency.value = frequency;
-    osc.type = waveType;
-
-    const totalDuration = duration + release;
-    const sustainStart = attack + decay;
-    const sustainEnd = Math.max(sustainStart, duration - release);
-
-    // ADSR envelope
-    gain.gain.setValueAtTime(0, time);
-    gain.gain.linearRampToValueAtTime(volume, time + attack);
-    gain.gain.linearRampToValueAtTime(volume * sustain, time + attack + decay);
-    gain.gain.setValueAtTime(volume * sustain, time + sustainEnd);
-    gain.gain.linearRampToValueAtTime(0, time + duration + release);
-
-    osc.start(time);
-    osc.stop(time + duration + release);
-  }
-
-  // Play a chord (multiple notes at once)
-  playChord(frequencies, duration, time, volume = 0.2) {
-    frequencies.forEach((freq, idx) => {
-      this.playNote(freq, duration, time, {
-        volume: volume / frequencies.length,
-        waveType: idx === 0 ? 'sine' : 'sine',
-        attack: 0.01,
-        decay: 0.08,
-        sustain: 0.6,
-        release: 0.15,
-      });
-    });
-  }
-
-  // Generate chord from root note
-  getChord(rootFreq, type = 'major') {
-    const chords = {
-      major: [0, 4, 7], // root, major third, perfect fifth (semitones)
-      minor: [0, 3, 7],
-      major7: [0, 4, 7, 11],
-      dom7: [0, 4, 7, 10],
-    };
-    
-    const intervals = chords[type] || chords.major;
-    const semitoneRatio = Math.pow(2, 1/12);
-    
-    return intervals.map(semitones => rootFreq * Math.pow(semitoneRatio, semitones));
-  }
-
-  playMelody(notes, startTime = this.audioContext.currentTime) {
-    let time = startTime;
-    
-    notes.forEach(({ freq, duration, harmony, bass, chord }) => {
-      // Main melody
-      this.playNote(freq, duration, time, {
-        volume: 0.3,
-        waveType: 'sine',
-        attack: 0.008,
-        decay: 0.1,
-        sustain: 0.65,
-        release: 0.12,
-      });
-
-      // Harmony layer
-      if (harmony) {
-        this.playNote(harmony, duration, time, {
-          volume: 0.15,
-          waveType: 'sine',
-          attack: 0.01,
-          decay: 0.12,
-          sustain: 0.6,
-          release: 0.15,
-        });
-      }
-
-      // Bass layer
-      if (bass) {
-        this.playNote(bass, duration, time, {
-          volume: 0.22,
-          waveType: 'sine',
-          attack: 0.012,
-          decay: 0.15,
-          sustain: 0.55,
-          release: 0.18,
-        });
-      }
-
-      // Chord progression (subtly in background)
-      if (chord) {
-        const chordFreqs = this.getChord(chord, 'major');
-        this.playChord(chordFreqs, duration, time, 0.12);
-      }
-
-      time += duration;
-    });
-
-    return time - startTime;
-  }
-
-  getMelody(type = 'main') {
-    const melodies = {
-      main: [
-        // Opening fanfare - heroic rise
-        { freq: 330, duration: 0.3, harmony: 247, bass: 165 },
-        { freq: 392, duration: 0.3, harmony: 294, bass: 196 },
-        { freq: 494, duration: 0.3, harmony: 370, bass: 247 },
-        { freq: 587, duration: 0.6, harmony: 440, bass: 294, chord: 147 },
-        // Main theme - iconic and memorable
-        { freq: 587, duration: 0.3, harmony: 440, bass: 294 },
-        { freq: 523, duration: 0.3, harmony: 392, bass: 262 },
-        { freq: 494, duration: 0.3, harmony: 370, bass: 247 },
-        { freq: 440, duration: 0.6, harmony: 330, bass: 220, chord: 110 },
-        // Adventurous bridge
-        { freq: 659, duration: 0.3, harmony: 494, bass: 330 },
-        { freq: 587, duration: 0.3, harmony: 440, bass: 294 },
-        { freq: 523, duration: 0.3, harmony: 392, bass: 262 },
-        { freq: 494, duration: 0.6, harmony: 370, bass: 247, chord: 131 },
-        // Resolution
-        { freq: 440, duration: 0.3, harmony: 330, bass: 220 },
-        { freq: 392, duration: 0.3, harmony: 294, bass: 196 },
-        { freq: 330, duration: 0.6, harmony: 247, bass: 165, chord: 110 },
-      ],
-      boss: [
-        // Intense percussion-like rhythm
-        { freq: 587, duration: 0.15, harmony: 440, bass: 294, chord: 147 },
-        { freq: 659, duration: 0.15, harmony: 494, bass: 330, chord: 165 },
-        { freq: 587, duration: 0.15, harmony: 440, bass: 294, chord: 147 },
-        { freq: 659, duration: 0.15, harmony: 494, bass: 330, chord: 165 },
-        // Rising tension
-        { freq: 784, duration: 0.3, harmony: 587, bass: 392, chord: 196 },
-        { freq: 880, duration: 0.3, harmony: 659, bass: 440, chord: 220 },
-        // Climax
-        { freq: 987, duration: 0.6, harmony: 740, bass: 494, chord: 247 },
-        // Descending aftermath
-        { freq: 880, duration: 0.2, harmony: 659, bass: 440 },
-        { freq: 784, duration: 0.2, harmony: 587, bass: 392 },
-        { freq: 659, duration: 0.2, harmony: 494, bass: 330 },
-        { freq: 587, duration: 0.4, harmony: 440, bass: 294, chord: 147 },
-      ],
-    };
-    return melodies[type] || melodies.main;
+    // No special initialization needed for HTML Audio
   }
 
   start(melodyType = 'main') {
-    if (!this.audioContext) this.init();
     if (this.isPlaying) return;
     
-    this.isPlaying = true;
-    this.currentMelody = melodyType;
+    const url = this.melodies[melodyType] || this.melodies['main'];
     
-    const playLoop = () => {
-      if (!this.isPlaying) return;
-      const melody = this.getMelody(melodyType);
-      const duration = this.playMelody(melody);
-      this.scheduleTimer = setTimeout(playLoop, duration * 1000 + 200);
-    };
-    
-    playLoop();
+    try {
+      this.currentAudio = new Audio(url);
+      this.currentAudio.loop = true;
+      this.currentAudio.volume = this.volume;
+      this.currentAudio.play().catch(() => {
+        // Silently fail if music can't play
+      });
+      this.isPlaying = true;
+    } catch (e) {
+      console.warn('Music playback error:', e);
+    }
   }
 
   stop() {
-    this.isPlaying = false;
-    if (this.scheduleTimer) {
-      clearTimeout(this.scheduleTimer);
-      this.scheduleTimer = null;
+    if (this.currentAudio) {
+      this.currentAudio.pause();
+      this.currentAudio.currentTime = 0;
     }
+    this.isPlaying = false;
   }
 
   switchMelody(melodyType) {
     if (this.isPlaying) {
       this.stop();
-      this.currentMelody = melodyType;
       this.start(melodyType);
     }
   }
 
   setVolume(value) {
-    if (this.masterGain) {
-      this.masterGain.gain.value = Math.max(0, Math.min(1, value)) * 0.08;
+    this.volume = Math.max(0, Math.min(1, value)) * 0.08;
+    if (this.currentAudio) {
+      this.currentAudio.volume = this.volume;
     }
+  }
+
+  toggleMute() {
+    this.isMuted = !this.isMuted;
+    if (this.currentAudio) {
+      this.currentAudio.muted = this.isMuted;
+    }
+    return this.isMuted;
   }
 }
 

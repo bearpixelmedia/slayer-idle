@@ -98,19 +98,41 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
     const files = Array.from(e.target.files);
     if (!files.length) return;
 
+    const aseFile = files.find(f => /\.(aseprite|ase)$/i.test(f.name));
     const imgFile = files.find(f => /\.(png|jpg|jpeg)$/i.test(f.name));
-    if (!imgFile) { alert("Please include a PNG image file."); return; }
+    
+    if (!aseFile && !imgFile) { alert("Please include a .aseprite file or PNG image."); return; }
 
     setUploading(true);
     try {
-      const imgRes = await base44.integrations.Core.UploadFile({ file: imgFile });
-      const url = imgRes.file_url;
+      let url, imageSize;
 
-      // Get image dimensions
-      const img = new Image();
-      img.src = url;
-      await new Promise(res => { img.onload = res; });
-      const imageSize = { w: img.naturalWidth, h: img.naturalHeight };
+      if (aseFile) {
+        // Parse .aseprite file
+        const formData = new FormData();
+        formData.append('file', aseFile);
+        const response = await base44.functions.invoke('parseAsepriteFile', formData);
+        const { spriteUrl, animationData } = response.data;
+        
+        url = spriteUrl;
+        sessionStorage.setItem(`aseprite_json_${spriteUrl}`, JSON.stringify(animationData));
+        
+        // Get image dimensions
+        const img = new Image();
+        img.src = url;
+        await new Promise(res => { img.onload = res; });
+        imageSize = { w: img.naturalWidth, h: img.naturalHeight };
+      } else {
+        // Legacy: upload PNG only
+        const imgRes = await base44.integrations.Core.UploadFile({ file: imgFile });
+        url = imgRes.file_url;
+
+        const img = new Image();
+        img.src = url;
+        await new Promise(res => { img.onload = res; });
+        imageSize = { w: img.naturalWidth, h: img.naturalHeight };
+      }
+
       setRawImageSize(imageSize);
       setAtlasUrl(url);
 

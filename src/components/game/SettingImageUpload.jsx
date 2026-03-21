@@ -15,6 +15,7 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
   const [showLibrary, setShowLibrary] = useState(false);
   const [files, setFiles] = useState([]);
   const [loadingFiles, setLoadingFiles] = useState(false);
+  const [urlInput, setUrlInput] = useState("");
 
   // Load files from localStorage on mount or when opening library
   useEffect(() => {

@@ -235,12 +235,42 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
     if (!atlasUrl || !rawImageSize) return;
     setAiDetecting(true);
     try {
-      const res = await base44.functions.invoke("detectWeaponFrames", {
-        imageUrl: atlasUrl,
-        imageWidth: rawImageSize.w,
-        imageHeight: rawImageSize.h,
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `You are analyzing a pixel art weapon spritesheet image that is ${rawImageSize.w}x${rawImageSize.h} pixels.
+It contains multiple individual weapon sprites (swords, axes, bows, etc.) arranged on a transparent or solid-color background.
+
+Identify the bounding box of EACH individual weapon sprite.
+Rules:
+- Each separate weapon gets its own entry
+- Skip fully empty/transparent areas
+- Sort results top-to-bottom, then left-to-right within each row
+- Be precise with pixel coordinates
+
+Respond with a JSON object: {"frames": [{"x": 0, "y": 0, "w": 32, "h": 32}, ...]}`,
+        file_urls: [atlasUrl],
+        response_json_schema: {
+          type: "object",
+          properties: {
+            frames: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  x: { type: "number" },
+                  y: { type: "number" },
+                  w: { type: "number" },
+                  h: { type: "number" }
+                },
+                required: ["x", "y", "w", "h"]
+              }
+            }
+          },
+          required: ["frames"]
+        },
+        model: "claude_sonnet_4_6"
       });
-      const detected = (res.data.frames || []).map(f => ({ frame: f }));
+
+      const detected = (result?.frames || []).map(f => ({ frame: f }));
       if (!detected.length) { alert("AI couldn't detect any frames. Try Smart Detect instead."); return; }
       setFrames(detected);
       setAssignments({});

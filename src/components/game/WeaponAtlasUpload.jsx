@@ -156,8 +156,9 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
       if (aespriteMeta?.layers) {
         sliced = extractFramesFromLayers(aespriteMeta.layers, aespriteMeta.frames || []);
       } else {
-        // Fallback to grid
-        sliced = sliceGrid(url, imageSize.w, imageSize.h, cols, rows);
+        // Try smart detect first for auto-detection
+        const detected = await autoDetectFrames(url, imageSize);
+        sliced = detected && detected.length > 0 ? detected : [];
       }
       
       setFrames(sliced);
@@ -203,6 +204,77 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
     });
 
     return extractedFrames.length > 0 ? extractedFrames : [];
+  };
+
+  const autoDetectFrames = async (imgUrl, imageSize) => {
+    try {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = imgUrl;
+      await new Promise(res => { img.onload = res; img.onerror = res; });
+
+      const offscreen = document.createElement("canvas");
+      offscreen.width = img.naturalWidth;
+      offscreen.height = img.naturalHeight;
+      const ctx = offscreen.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+
+      let imageData;
+      try {
+        imageData = ctx.getImageData(0, 0, offscreen.width, offscreen.height);
+      } catch (e) {
+        return null;
+      }
+
+      const { data, width, height } = imageData;
+      const ALPHA = 10;
+
+      // Build row and column opacity counts
+      const rowCount = new Int32Array(height);
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          if (data[(y * width + x) * 4 + 3] > ALPHA) rowCount[y]++;
+        }
+      }
+
+      // Find horizontal bands (groups of non-empty rows)
+      const rowBands = [];
+      let inBand = false, bandStart = 0;
+      for (let y = 0; y <= height; y++) {
+        const empty = y === height || rowCount[y] === 0;
+        if (!inBand && !empty) { inBand = true; bandStart = y; }
+        else if (inBand && empty) { inBand = false; rowBands.push([bandStart, y - 1]); }
+      }
+
+      // For each band, find column groups within that band
+      const detected = [];
+      for (const [y0, y1] of rowBands) {
+        const bandColCount = new Int32Array(width);
+        for (let y = y0; y <= y1; y++) {
+          for (let x = 0; x < width; x++) {
+            if (data[(y * width + x) * 4 + 3] > ALPHA) bandColCount[x]++;
+          }
+        }
+
+        let inCol = false, colStart = 0;
+        for (let x = 0; x <= width; x++) {
+          const empty = x === width || bandColCount[x] === 0;
+          if (!inCol && !empty) { inCol = true; colStart = x; }
+          else if (inCol && empty) {
+            inCol = false;
+            const fw = x - colStart;
+            const fh = y1 - y0 + 1;
+            if (fw > 3 && fh > 3) {
+              detected.push({ frame: { x: colStart, y: y0, w: fw, h: fh } });
+            }
+          }
+        }
+      }
+
+      return detected.length > 0 ? detected : null;
+    } catch (err) {
+      return null;
+    }
   };
 
   // Projection / histogram method — finds empty rows & columns to cut between sprites

@@ -41,6 +41,9 @@ export default function AbilityHUD({ abilities, onActivate }) {
               <span className="font-pixel text-[7px] text-foreground text-center leading-tight mt-1">
                 {config?.name}
               </span>
+              <span className="font-pixel text-[5px] text-muted-foreground text-center leading-tight">
+                {config?.description}
+              </span>
               <span className="font-pixel text-[6px] text-primary mt-0.5">
                 {isReady ? "READY" : `${timeRemaining}s`}
               </span>

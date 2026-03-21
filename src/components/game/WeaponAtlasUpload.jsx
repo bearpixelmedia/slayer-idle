@@ -256,9 +256,14 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
           <input type="number" min={1} max={20} value={rows} onChange={e => setRows(Number(e.target.value))}
             className="w-12 border border-slate-300 rounded px-1 py-0.5 text-xs" />
           {atlasUrl && (
-            <Button type="button" size="sm" variant="outline" onClick={applyGrid} className="text-xs h-6 px-2">
-              Re-slice
-            </Button>
+            <>
+              <Button type="button" size="sm" variant="outline" onClick={applyGrid} className="text-xs h-6 px-2">
+                Re-slice
+              </Button>
+              <Button type="button" size="sm" onClick={smartSlice} className="text-xs h-6 px-2 bg-violet-600 hover:bg-violet-700 text-white border-0">
+                🔍 Smart Detect
+              </Button>
+            </>
           )}
         </div>
 

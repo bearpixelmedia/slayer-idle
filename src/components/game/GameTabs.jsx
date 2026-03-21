@@ -34,11 +34,11 @@ export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestig
         </div>
       </div>
 
-      <TabsContent value="combat" className={`px-2 py-1.5 space-y-1.5 ${HUD_THEME.panel.bg}`}>
-         <UpgradeShop state={state} onBuy={onBuyUpgrade} />
-       </TabsContent>
+      <TabsContent value="combat" className={`px-2 py-1.5 space-y-1.5 ${HUD_THEME.panel.bg} ${HUD_THEME.panel.border} rounded-lg border`}>
+        <UpgradeShop state={state} onBuy={onBuyUpgrade} />
+      </TabsContent>
 
-      <TabsContent value="progression" className={`px-2 py-1.5 space-y-1.5 ${HUD_THEME.panel.bg}`}>
+      <TabsContent value="progression" className={`px-2 py-1.5 space-y-1.5 ${HUD_THEME.panel.bg} ${HUD_THEME.panel.border} rounded-lg border`}>
         <PrestigePanel
           canPrestige={state.totalCoinsEarned > 0}
           soulsOnPrestige={Math.max(1, Math.floor(Math.sqrt(state.totalCoinsEarned / 1000)))}
@@ -58,11 +58,11 @@ export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestig
         />
       </TabsContent>
 
-      <TabsContent value="village" className={`px-2 py-1.5 ${HUD_THEME.panel.bg}`}>
+      <TabsContent value="village" className={`px-2 py-1.5 ${HUD_THEME.panel.bg} ${HUD_THEME.panel.border} rounded-lg border`}>
         <VillagePanel state={state} onUpgradeBuilding={onUpgradeBuilding} />
       </TabsContent>
 
-      <TabsContent value="quests" className={`px-2 py-1.5 ${HUD_THEME.panel.bg}`}>
+      <TabsContent value="quests" className={`px-2 py-1.5 ${HUD_THEME.panel.bg} ${HUD_THEME.panel.border} rounded-lg border`}>
         <QuestLog
           questProgress={questProgress}
           onClaimReward={onClaimQuestReward}
@@ -71,7 +71,7 @@ export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestig
         />
       </TabsContent>
 
-      <TabsContent value="zones" className={`px-2 py-1.5 ${HUD_THEME.panel.bg}`}>
+      <TabsContent value="zones" className={`px-2 py-1.5 ${HUD_THEME.panel.bg} ${HUD_THEME.panel.border} rounded-lg border`}>
         <ZoneSelector
           activeZoneId={state.activeZoneId}
           unlockedZoneIds={state.unlockedZoneIds}

@@ -119,9 +119,20 @@ function GameCanvasComponent({
         <div className="absolute -bottom-6 w-20 h-1 bg-black/30 rounded-full blur-sm" />
       </div>
 
-      {/* Enemy - static position */}
+      {/* Enemy - positioned based on world distance */}
       <div 
-        className="absolute bottom-56 right-[15%] flex flex-col items-center gap-2 z-20"
+        className="absolute bottom-56 flex flex-col items-center gap-2 z-20"
+        style={{
+          left: (() => {
+            // Enemy world pos relative to player world pos, scaled to screen space
+            const enemyWorldPos = state.enemyCluster?.[state.currentClusterIndex]?.worldPos || state.nextEnemyWorldPos;
+            const playerWorldPos = state.worldProgress;
+            const distanceAhead = enemyWorldPos - playerWorldPos;
+            // Map distance to screen: 100+ units ahead = right edge, 0 = center, negative = left
+            const screenPercent = Math.max(0, Math.min(100, 50 + (distanceAhead / 2)));
+            return `${screenPercent}%`;
+          })(),
+        }}
       >
         <div className="text-center mb-1">
           {state.isBossActive && (

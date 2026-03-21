@@ -310,49 +310,49 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
     };
   }
 
-  // Ability tick — runs every second
+  // Consolidated tick loop - abilities, buffs, and idle proc
   useEffect(() => {
+    let tickCounter = 0;
     const interval = setInterval(() => {
-      setAbilities(prev => {
-        const next = { ...prev };
-        let changed = false;
-        Object.keys(next).forEach(id => {
-          const a = { ...next[id] };
-          if (a.active && a.durationRemaining > 0) {
-            a.durationRemaining = Math.max(0, a.durationRemaining - 1);
-            if (a.durationRemaining === 0) {
-              a.active = false;
-              a.cooldownRemaining = ABILITY_CONFIGS[id].cooldown;
+      tickCounter++;
+      
+      // Ability tick every 1 second
+      if (tickCounter % 10 === 0) {
+        setAbilities(prev => {
+          const next = { ...prev };
+          let changed = false;
+          Object.keys(next).forEach(id => {
+            const a = { ...next[id] };
+            if (a.active && a.durationRemaining > 0) {
+              a.durationRemaining = Math.max(0, a.durationRemaining - 1);
+              if (a.durationRemaining === 0) {
+                a.active = false;
+                a.cooldownRemaining = ABILITY_CONFIGS[id].cooldown;
+              }
+              changed = true;
+            } else if (!a.active && a.cooldownRemaining > 0) {
+              a.cooldownRemaining = Math.max(0, a.cooldownRemaining - 1);
+              changed = true;
             }
-            changed = true;
-          } else if (!a.active && a.cooldownRemaining > 0) {
-            a.cooldownRemaining = Math.max(0, a.cooldownRemaining - 1);
-            changed = true;
-          }
-          next[id] = a;
+            next[id] = a;
+          });
+          return changed ? next : prev;
         });
-        return changed ? next : prev;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Buff tick and cleanup
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const now = Date.now();
-      setActiveBuffs(prev => prev.filter(buff => buff.endTime > now));
+      }
+      
+      // Buff cleanup every 100ms
+      if (tickCounter % 1 === 0) {
+        const now = Date.now();
+        setActiveBuffs(prev => prev.filter(buff => buff.endTime > now));
+      }
+      
+      // Buff proc on idle tick every 1 second
+      if (tickCounter % 10 === 0) {
+        tryProcBuff("idle", stateRef.current);
+      }
     }, 100);
     return () => clearInterval(interval);
-  }, []);
-
-  // Buff proc on idle tick (very low rate)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      tryProcBuff("idle", stateRef.current);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+  }, [tryProcBuff]);
 
   // If a warning is active and expires, spawn the pending boss immediately.
   useEffect(() => {

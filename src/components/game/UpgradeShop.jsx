@@ -110,7 +110,7 @@ export default function UpgradeShop({ state, onBuy }) {
             transition={{ duration: 0.2 }}
             className="overflow-y-auto max-h-96"
           >
-            <div className="px-2 py-2 space-y-1.5">
+            <div className="px-3 py-2 space-y-1.5">
               {UPGRADES.map((upgrade) => (
                 <UpgradeCard
                   key={upgrade.id}

@@ -348,15 +348,19 @@ Return only: {"frames": [{...}, {...}, ...]}`,
         return { frame: tight };
       }).filter(d => d.frame.w > 3 && d.frame.h > 3);
 
+      console.log(`AI Detect: Extracted ${rawFrames.length} raw frames, after validation: ${detected.length} frames`);
+
       if (detected.length === 0) {
         alert("No valid frames after processing. Try Smart Detect or Grid Slice instead.");
         return;
       }
 
+      console.log("AI Detect: Setting frames", detected);
       setFrames(detected);
       setAssignments({});
       WEAPON_SLOTS.forEach(slot => onUpdateSetting(slot.id, null));
       localStorage.setItem("weapon_atlas", JSON.stringify({ url: atlasUrl, framesData: detected, imageSize: rawImageSize }));
+      console.log("AI Detect: Complete - frames displayed");
     } catch (err) {
       alert("AI detection failed: " + err.message);
     } finally {

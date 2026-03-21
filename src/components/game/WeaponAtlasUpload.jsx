@@ -53,16 +53,19 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
   const [atlasUrl, setAtlasUrl] = useState(null);
   const [frames, setFrames] = useState([]);
   const [assignments, setAssignments] = useState({});
+  const [cols, setCols] = useState(4);
+  const [rows, setRows] = useState(2);
+  const [rawImageSize, setRawImageSize] = useState(null);
 
   // Load existing atlas from localStorage
   useEffect(() => {
     const saved = localStorage.getItem("weapon_atlas");
     if (saved) {
-      const { url, framesData } = JSON.parse(saved);
+      const { url, framesData, imageSize } = JSON.parse(saved);
       setAtlasUrl(url);
       setFrames(framesData);
+      if (imageSize) setRawImageSize(imageSize);
     }
-    // Load existing assignments from settings
     const initAssignments = {};
     WEAPON_SLOTS.forEach(slot => {
       if (settings[slot.id]) initAssignments[slot.id] = settings[slot.id];
@@ -70,31 +73,49 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
     setAssignments(initAssignments);
   }, []);
 
+  const sliceGrid = (url, imgW, imgH, c, r) => {
+    const fw = Math.floor(imgW / c);
+    const fh = Math.floor(imgH / r);
+    const sliced = [];
+    for (let row = 0; row < r; row++) {
+      for (let col = 0; col < c; col++) {
+        sliced.push({ frame: { x: col * fw, y: row * fh, w: fw, h: fh } });
+      }
+    }
+    return sliced;
+  };
+
+  const applyGrid = () => {
+    if (!rawImageSize) return;
+    const sliced = sliceGrid(atlasUrl, rawImageSize.w, rawImageSize.h, cols, rows);
+    setFrames(sliced);
+    localStorage.setItem("weapon_atlas", JSON.stringify({ url: atlasUrl, framesData: sliced, imageSize: rawImageSize }));
+  };
+
   const handleUpload = async (e) => {
     const files = Array.from(e.target.files);
     if (!files.length) return;
 
     const imgFile = files.find(f => /\.(png|jpg|jpeg)$/i.test(f.name));
-    const jsonFile = files.find(f => f.name.endsWith(".json"));
-
     if (!imgFile) { alert("Please include a PNG image file."); return; }
-    if (!jsonFile) { alert("Please include the Aseprite JSON file."); return; }
 
     setUploading(true);
     try {
-      const [imgRes, jsonRes] = await Promise.all([
-        base44.integrations.Core.UploadFile({ file: imgFile }),
-        base44.integrations.Core.UploadFile({ file: jsonFile }),
-      ]);
+      const imgRes = await base44.integrations.Core.UploadFile({ file: imgFile });
+      const url = imgRes.file_url;
 
-      const jsonData = await fetch(jsonRes.file_url).then(r => r.json());
-      const framesData = Array.isArray(jsonData.frames)
-        ? jsonData.frames
-        : Object.entries(jsonData.frames).map(([filename, data]) => ({ filename, ...data }));
+      // Get image dimensions
+      const img = new Image();
+      img.src = url;
+      await new Promise(res => { img.onload = res; });
+      const imageSize = { w: img.naturalWidth, h: img.naturalHeight };
+      setRawImageSize(imageSize);
+      setAtlasUrl(url);
 
-      setAtlasUrl(imgRes.file_url);
-      setFrames(framesData);
-      localStorage.setItem("weapon_atlas", JSON.stringify({ url: imgRes.file_url, framesData }));
+      // Auto-slice with current grid settings
+      const sliced = sliceGrid(url, imageSize.w, imageSize.h, cols, rows);
+      setFrames(sliced);
+      localStorage.setItem("weapon_atlas", JSON.stringify({ url, framesData: sliced, imageSize }));
     } catch (err) {
       alert("Upload failed: " + err.message);
     } finally {

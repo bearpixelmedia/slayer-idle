@@ -123,8 +123,6 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   useEffect(() => {
     currentWeaponRef.current = currentWeapon;
   }, [currentWeapon]);
-  const [autoWalking, setAutoWalking] = useState(true);
-  const autoWalkingRef = useRef(true);
   const [activeBuffs, setActiveBuffs] = useState([]);
   const stateRef = useRef(state);
   stateRef.current = state;

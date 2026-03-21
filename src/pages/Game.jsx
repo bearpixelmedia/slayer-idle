@@ -145,9 +145,19 @@ export default function Game() {
         </div>
 
         {!showRunner && menuOpen && (
-          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 lg:hidden" onClick={() => setMenuOpen(false)}>
-            <div 
-              className="fixed bottom-0 left-0 right-0 max-h-[85vh] flex flex-col pointer-events-auto rounded-t-lg"
+          <motion.div 
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 lg:hidden" 
+            onClick={() => setMenuOpen(false)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div 
+              className="fixed left-0 right-0 max-h-[85vh] flex flex-col pointer-events-auto rounded-t-lg"
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
               onClick={(e) => e.stopPropagation()}
               style={{
                 background: "linear-gradient(135deg, #8B7355 0%, #A0826D 100%)",

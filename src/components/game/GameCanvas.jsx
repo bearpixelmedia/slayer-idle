@@ -90,7 +90,7 @@ function GameCanvasComponent({
       <ParallaxBackground />
 
       {/* Player character - running across screen */}
-      <div className="absolute bottom-56 flex flex-col items-center gap-2 z-20" style={{ left: `${Math.min(runProgress.current, 85)}%` }}>
+      <div className="absolute bottom-56 left-[20%] flex flex-col items-center gap-2 z-20">
         <div className="w-20 h-1.5 bg-muted rounded-full overflow-hidden border border-border/50">
           <motion.div
             className="h-full bg-green-500"

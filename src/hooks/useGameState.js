@@ -109,6 +109,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
   const [abilities, setAbilities] = useState(defaultAbilities());
   const [offlineEarnings, setOfflineEarnings] = useState(null);
   const [enemyHit, setEnemyHit] = useState(false);
+  const [playerHit, setPlayerHit] = useState(false);
   const [currentWeapon, setCurrentWeapon] = useState(weaponMode);
   const currentWeaponRef = useRef(weaponMode);
   useEffect(() => {

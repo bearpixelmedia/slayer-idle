@@ -22,36 +22,25 @@ class SoundManager {
     if (!this.initialized) this.init();
     if (!this.audioContext || this.isMuted) return;
 
-    try {
-      switch (type) {
-        case 'tap':
-          this.playTap();
-          break;
-        case 'upgrade':
-          this.playUpgrade();
-          break;
-        case 'ui-click':
-          this.playUIClick();
-          break;
-        case 'coin-collect':
-          this.playCoinCollect();
-          break;
-        case 'enemy-hit':
-          this.playEnemyHit();
-          break;
-        case 'boss-appear':
-          this.playBossAppear();
-          break;
-        case 'achievement':
-          this.playAchievement();
-          break;
-        case 'prestige':
-          this.playPrestige();
-          break;
+    // Defer sound playback to prevent blocking
+    requestAnimationFrame(() => {
+      try {
+        const method = {
+          'tap': () => this.playTap(),
+          'upgrade': () => this.playUpgrade(),
+          'ui-click': () => this.playUIClick(),
+          'coin-collect': () => this.playCoinCollect(),
+          'enemy-hit': () => this.playEnemyHit(),
+          'boss-appear': () => this.playBossAppear(),
+          'achievement': () => this.playAchievement(),
+          'prestige': () => this.playPrestige(),
+        }[type];
+        
+        if (method) method();
+      } catch (e) {
+        console.warn('Sound playback error:', e);
       }
-    } catch (e) {
-      console.warn('Sound playback error:', e);
-    }
+    });
   }
 
   // Create a rich, non-chiptune sound with harmonics

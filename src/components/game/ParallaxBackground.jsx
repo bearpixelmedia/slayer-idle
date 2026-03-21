@@ -223,7 +223,7 @@ function ParallaxBackgroundComponent() {
 
       {/* Front trees */}
       {layer(8, 0.65, 27, 48, 0.9,
-        <SpriteTileRow spriteUrl={sprites.treeFront} tileWidth={75} count={45} fallback={
+        <SpriteTileRow spriteUrl={sprites.treeFront} tileWidth={75} count={90} fallback={
           <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
             {Array.from({ length: 45 }).map((_, i) => (
               <svg key={i} viewBox="0 0 50 110" style={{ flex: "0 0 75px", height: "100%" }}>

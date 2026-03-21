@@ -38,15 +38,19 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
     loadFiles();
   }, [showLibrary]);
 
-  const handleSelectFile = (fileUrl, fileName) => {
-    onChange(fileUrl);
-    // Also save to library if not already there
+  const saveToLibrary = (fileUrl, fileName) => {
     const saved = localStorage.getItem(UPLOADED_FILES_KEY);
     const list = saved ? JSON.parse(saved) : [];
     if (!list.find(f => f.url === fileUrl)) {
       const updated = [{ url: fileUrl, name: fileName || fileUrl }, ...list].slice(0, 50);
       localStorage.setItem(UPLOADED_FILES_KEY, JSON.stringify(updated));
+      setFiles(updated);
     }
+  };
+
+  const handleSelectFile = (fileUrl, fileName) => {
+    onChange(fileUrl);
+    saveToLibrary(fileUrl, fileName);
     setShowLibrary(false);
   };
 

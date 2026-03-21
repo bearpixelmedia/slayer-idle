@@ -193,8 +193,8 @@ export default function Game() {
                   </button>
                 </div>
                 <ScrollArea className="flex-1 overflow-hidden min-h-0" style={{ boxSizing: "border-box" }}>
-                  <div className="px-2 py-1 space-y-1 overflow-x-hidden">
-                    <GameTabs
+                   <div className="space-y-1 overflow-x-hidden">
+                     <GameTabs
                        state={state}
                        onBuyUpgrade={handleBuyUpgrade}
                        onUnlockSkill={handleUnlockSkill}

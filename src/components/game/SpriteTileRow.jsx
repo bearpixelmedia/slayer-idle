@@ -108,23 +108,6 @@ export default function SpriteTileRow({ spriteUrl, tileWidth, tileHeight, count,
     return <AnimatedTileRow animationData={animationData} imgRef={imgRef} currentFrame={currentFrame} tileWidth={tileWidth} tileHeight={tileHeight} count={count} />;
   }
 
-  // No JSON — show the image as a single tile repeated (best effort)
-  return (
-    <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
-      {Array.from({ length: count }).map((_, i) => (
-        <img
-          key={i}
-          src={spriteUrl}
-          alt=""
-          style={{
-            flex: `0 0 ${tileWidth}px`,
-            height: tileHeight || "100%",
-            objectFit: "contain",
-            objectPosition: "bottom",
-            imageRendering: "pixelated",
-          }}
-        />
-      ))}
-    </div>
-  );
+  // No JSON — use fallback (don't render raw spritesheet)
+  return fallback || null;
 }

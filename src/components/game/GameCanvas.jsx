@@ -52,16 +52,23 @@ function GameCanvasComponent({
       ? isBossShieldActive(Date.now() - state.bossFightStartTime, boss)
       : false;
   
-  // Player run speed - constant forward motion
+  // Player run speed - constant forward motion, pauses when in combat
   const runProgress = useRef(0);
   React.useEffect(() => {
     const interval = setInterval(() => {
       if (!state.isDead) {
-        runProgress.current += 0.095;
+        const playerProgress = runProgress.current;
+        const enemyWorldPos = state.enemyCluster?.[state.currentClusterIndex]?.worldPos || state.nextEnemyWorldPos;
+        const inCombat = playerProgress >= enemyWorldPos - 5;
+        
+        // Only advance if not in combat with enemy
+        if (!inCombat) {
+          runProgress.current += 0.095;
+        }
       }
     }, 50);
     return () => clearInterval(interval);
-  }, [state.isDead]);
+  }, [state.isDead, state.enemyCluster, state.currentClusterIndex, state.nextEnemyWorldPos]);
   
   // Expose runProgress to window for ParallaxBackground to access
   React.useEffect(() => {

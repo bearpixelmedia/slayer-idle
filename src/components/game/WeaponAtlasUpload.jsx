@@ -128,6 +128,65 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
     }
   };
 
+  const smartSlice = async () => {
+    if (!atlasUrl) return;
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = atlasUrl;
+    await new Promise(res => { img.onload = res; img.onerror = res; });
+
+    const canvas = document.createElement("canvas");
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+    const { data, width, height } = ctx.getImageData(0, 0, img.naturalWidth, img.naturalHeight);
+
+    const hasAlphaInCol = (x) => {
+      for (let y = 0; y < height; y++) {
+        if (data[(y * width + x) * 4 + 3] > 10) return true;
+      }
+      return false;
+    };
+    const hasAlphaInRow = (y) => {
+      for (let x = 0; x < width; x++) {
+        if (data[(y * width + x) * 4 + 3] > 10) return true;
+      }
+      return false;
+    };
+
+    // Find column bands
+    const colBands = [];
+    let inBand = false, bandStart = 0;
+    for (let x = 0; x < width; x++) {
+      if (hasAlphaInCol(x) && !inBand) { inBand = true; bandStart = x; }
+      else if (!hasAlphaInCol(x) && inBand) { inBand = false; colBands.push([bandStart, x - 1]); }
+    }
+    if (inBand) colBands.push([bandStart, width - 1]);
+
+    // Find row bands
+    const rowBands = [];
+    inBand = false;
+    for (let y = 0; y < height; y++) {
+      if (hasAlphaInRow(y) && !inBand) { inBand = true; bandStart = y; }
+      else if (!hasAlphaInRow(y) && inBand) { inBand = false; rowBands.push([bandStart, y - 1]); }
+    }
+    if (inBand) rowBands.push([bandStart, height - 1]);
+
+    // Build frames from col × row bands
+    const detected = [];
+    for (const [ry, ry2] of rowBands) {
+      for (const [rx, rx2] of colBands) {
+        detected.push({ frame: { x: rx, y: ry, w: rx2 - rx + 1, h: ry2 - ry + 1 } });
+      }
+    }
+
+    setFrames(detected);
+    setAssignments({});
+    WEAPON_SLOTS.forEach(slot => onUpdateSetting(slot.id, null));
+    localStorage.setItem("weapon_atlas", JSON.stringify({ url: atlasUrl, framesData: detected, imageSize: rawImageSize }));
+  };
+
   const autoAssign = async () => {
     if (!atlasUrl || !frames.length) return;
     const img = new Image();

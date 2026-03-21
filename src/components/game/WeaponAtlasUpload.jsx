@@ -135,56 +135,98 @@ export default function WeaponAtlasUpload({ settings, onUpdateSetting }) {
     img.src = atlasUrl;
     await new Promise(res => { img.onload = res; img.onerror = res; });
 
-    const canvas = document.createElement("canvas");
-    canvas.width = img.naturalWidth;
-    canvas.height = img.naturalHeight;
-    const ctx = canvas.getContext("2d");
+    const offscreen = document.createElement("canvas");
+    offscreen.width = img.naturalWidth;
+    offscreen.height = img.naturalHeight;
+    const ctx = offscreen.getContext("2d");
     ctx.drawImage(img, 0, 0);
-    const { data, width, height } = ctx.getImageData(0, 0, img.naturalWidth, img.naturalHeight);
 
-    const hasAlphaInCol = (x) => {
-      for (let y = 0; y < height; y++) {
-        if (data[(y * width + x) * 4 + 3] > 10) return true;
-      }
-      return false;
-    };
-    const hasAlphaInRow = (y) => {
-      for (let x = 0; x < width; x++) {
-        if (data[(y * width + x) * 4 + 3] > 10) return true;
-      }
-      return false;
-    };
-
-    // Find column bands
-    const colBands = [];
-    let inBand = false, bandStart = 0;
-    for (let x = 0; x < width; x++) {
-      if (hasAlphaInCol(x) && !inBand) { inBand = true; bandStart = x; }
-      else if (!hasAlphaInCol(x) && inBand) { inBand = false; colBands.push([bandStart, x - 1]); }
-    }
-    if (inBand) colBands.push([bandStart, width - 1]);
-
-    // Find row bands
-    const rowBands = [];
-    inBand = false;
-    for (let y = 0; y < height; y++) {
-      if (hasAlphaInRow(y) && !inBand) { inBand = true; bandStart = y; }
-      else if (!hasAlphaInRow(y) && inBand) { inBand = false; rowBands.push([bandStart, y - 1]); }
-    }
-    if (inBand) rowBands.push([bandStart, height - 1]);
-
-    // Build frames from col × row bands
-    const detected = [];
-    for (const [ry, ry2] of rowBands) {
-      for (const [rx, rx2] of colBands) {
-        detected.push({ frame: { x: rx, y: ry, w: rx2 - rx + 1, h: ry2 - ry + 1 } });
-      }
+    let imageData;
+    try {
+      imageData = ctx.getImageData(0, 0, offscreen.width, offscreen.height);
+    } catch (e) {
+      alert("CORS error — please re-upload the image using the Upload button.");
+      return;
     }
 
-    setFrames(detected);
+    const { data, width, height } = imageData;
+    const ALPHA = 10;
+    const visited = new Uint8Array(width * height);
+    const blobs = [];
+
+    // Connected component labeling (8-connectivity, iterative DFS)
+    for (let sy = 0; sy < height; sy++) {
+      for (let sx = 0; sx < width; sx++) {
+        const si = sy * width + sx;
+        if (visited[si] || data[si * 4 + 3] <= ALPHA) continue;
+
+        const stack = [[sx, sy]];
+        visited[si] = 1;
+        let x0 = sx, x1 = sx, y0 = sy, y1 = sy;
+
+        while (stack.length) {
+          const [cx, cy] = stack.pop();
+          if (cx < x0) x0 = cx; if (cx > x1) x1 = cx;
+          if (cy < y0) y0 = cy; if (cy > y1) y1 = cy;
+
+          for (let dy = -1; dy <= 1; dy++) {
+            for (let dx = -1; dx <= 1; dx++) {
+              if (!dx && !dy) continue;
+              const nx = cx + dx, ny = cy + dy;
+              if (nx < 0 || nx >= width || ny < 0 || ny >= height) continue;
+              const ni = ny * width + nx;
+              if (!visited[ni] && data[ni * 4 + 3] > ALPHA) {
+                visited[ni] = 1;
+                stack.push([nx, ny]);
+              }
+            }
+          }
+        }
+
+        if (x1 - x0 > 3 && y1 - y0 > 3) {
+          blobs.push([x0, y0, x1, y1]);
+        }
+      }
+    }
+
+    // Merge blobs that are close together (same weapon with disconnected parts)
+    const MARGIN = 10;
+    const used = new Array(blobs.length).fill(false);
+    const merged = [];
+
+    for (let i = 0; i < blobs.length; i++) {
+      if (used[i]) continue;
+      let [x0, y0, x1, y1] = blobs[i];
+      used[i] = true;
+      let changed = true;
+      while (changed) {
+        changed = false;
+        for (let j = 0; j < blobs.length; j++) {
+          if (used[j]) continue;
+          const [bx0, by0, bx1, by1] = blobs[j];
+          if (bx0 <= x1 + MARGIN && bx1 >= x0 - MARGIN && by0 <= y1 + MARGIN && by1 >= y0 - MARGIN) {
+            x0 = Math.min(x0, bx0); y0 = Math.min(y0, by0);
+            x1 = Math.max(x1, bx1); y1 = Math.max(y1, by1);
+            used[j] = true;
+            changed = true;
+          }
+        }
+      }
+      merged.push({ frame: { x: x0, y: y0, w: x1 - x0 + 1, h: y1 - y0 + 1 } });
+    }
+
+    // Sort top-to-bottom, left-to-right
+    const avgH = merged.reduce((s, b) => s + b.frame.h, 0) / (merged.length || 1);
+    merged.sort((a, b) => {
+      const ar = Math.round(a.frame.y / avgH);
+      const br = Math.round(b.frame.y / avgH);
+      return ar !== br ? ar - br : a.frame.x - b.frame.x;
+    });
+
+    setFrames(merged);
     setAssignments({});
     WEAPON_SLOTS.forEach(slot => onUpdateSetting(slot.id, null));
-    localStorage.setItem("weapon_atlas", JSON.stringify({ url: atlasUrl, framesData: detected, imageSize: rawImageSize }));
+    localStorage.setItem("weapon_atlas", JSON.stringify({ url: atlasUrl, framesData: merged, imageSize: rawImageSize }));
   };
 
   const autoAssign = async () => {

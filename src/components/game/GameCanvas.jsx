@@ -121,16 +121,17 @@ function GameCanvasComponent({
 
       {/* Enemy - parallax layer that scrolls with world */}
       <div 
-        className="absolute bottom-56 flex flex-col items-center gap-2 z-20 transition-all duration-100"
+        className="absolute bottom-56 flex flex-col items-center gap-2 z-20"
         style={{
           left: (() => {
-            // Use real-time player progress for smooth scrolling like parallax layers
+            // Scroll exactly like foreground parallax layers using player progress
             const playerProgress = window.__gameRunProgress?.current || 0;
             const enemyWorldPos = state.enemyCluster?.[state.currentClusterIndex]?.worldPos || state.nextEnemyWorldPos;
             const distanceAhead = enemyWorldPos - playerProgress;
-            // Convert world distance to screen pixels using same scale as parallax (40px per progress unit)
-            // Apply parallax speed (0.6) to match foreground layers
-            const screenX = Math.max(-100, 20 + ((distanceAhead * 40 * 0.6) / 100));
+            const parallaxSpeed = 0.72; // Match foreground layer speed
+            const loopWidth = 3000;
+            const wrappedProgress = (playerProgress * 40 % loopWidth + loopWidth) % loopWidth;
+            const screenX = Math.max(-100, 80 - (wrappedProgress * parallaxSpeed / 100));
             return `${screenX}%`;
           })(),
         }}

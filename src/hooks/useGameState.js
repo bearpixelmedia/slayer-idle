@@ -322,8 +322,8 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       };
     }
     
-    // Queue next enemy to spawn 50-80 units ahead
-    const nextSpawnDistance = 50 + Math.random() * 30;
+    // Queue next enemy to spawn 15-25 units ahead (more frequent spawns)
+    const nextSpawnDistance = 15 + Math.random() * 10;
     
     return {
       ...s,

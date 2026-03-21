@@ -157,14 +157,9 @@ export default function SettingImageUpload({ label, value, onChange, currentDefa
             </div>
           </button>
           
-          {showLibrary && (
+          {showLibrary && !loadingFiles && (
             <div className="absolute top-full left-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto min-w-[140px]">
-              {loadingFiles ? (
-                <div className="px-3 py-4 flex items-center justify-center text-slate-500">
-                  <Loader className="w-4 h-4 animate-spin mr-2" />
-                  <span className="text-xs">Loading files...</span>
-                </div>
-              ) : files.length > 0 ? (
+              {files.length > 0 ? (
                 files.map((file, idx) => (
                   <button
                     key={idx}

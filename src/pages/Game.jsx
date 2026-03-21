@@ -232,8 +232,9 @@ export default function Game() {
                 </button>
               </div>
             </motion.div>
-          </motion.div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {showRunner && (
           <div className="w-full flex-shrink-0 p-4">

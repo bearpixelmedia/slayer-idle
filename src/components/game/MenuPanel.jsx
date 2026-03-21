@@ -55,6 +55,13 @@ export default function MenuPanel({
         </motion.button>
       </div>
 
+      {/* Upgrades - Outside the scrollable area */}
+      {activeTab === "combat" && (
+        <div className="px-3 py-2 flex-shrink-0 border-b border-border/30">
+          <UpgradeShop state={state} onBuy={onBuyUpgrade} />
+        </div>
+      )}
+
       {/* Tabs content */}
       <ScrollArea className={`${HUD_THEME.menuPanel.content} flex-1`}>
         <div className="px-3 py-2">

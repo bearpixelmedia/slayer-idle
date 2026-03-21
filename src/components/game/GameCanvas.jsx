@@ -22,6 +22,7 @@ function GameCanvasComponent({
   enemyHit,
   playerHit,
   weaponMode,
+  playerWorldPos,
 }) {
   const canvasRef = useRef(null);
   const gameSettings = React.useMemo(() => loadGameSettings(), []);
@@ -114,7 +115,7 @@ function GameCanvasComponent({
         enemyDying={enemyDying}
         boss={boss}
         shieldActive={shieldActive}
-        playerWorldPos={state.worldProgress}
+        playerWorldPos={playerWorldPos}
       />
       <FloatingElements
         floatingCoins={floatingCoins}

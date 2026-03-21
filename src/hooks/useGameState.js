@@ -586,6 +586,24 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         setEnemyDying(true);
         setTimeout(() => setEnemyDying(false), 300);
         
+        // Check if there are more enemies in cluster
+        const nextIndex = prev.currentClusterIndex + 1;
+        if (nextIndex < prev.enemyCluster.length) {
+          // Switch to next enemy in cluster
+          const nextEnemy = prev.enemyCluster[nextIndex];
+          return {
+            ...prev,
+            enemyHP: nextEnemy.hp,
+            enemyMaxHP: nextEnemy.maxHp,
+            currentEnemyName: nextEnemy.name,
+            currentClusterIndex: nextIndex,
+            playerHP: prev.playerMaxHP,
+            bossHitsReceived: newBossHits,
+            bossEnrageResetUsed,
+          };
+        }
+        
+        // Cluster defeated, spawn new one
         const newKillCount = prev.killCount + 1;
         let newStage = prev.stage;
         const zoneStages = getZoneStages(prev.activeZoneId);

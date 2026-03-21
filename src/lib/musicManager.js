@@ -16,7 +16,7 @@ class MusicManager {
     this.masterGain.connect(this.audioContext.destination);
   }
 
-  playNote(frequency, duration, time) {
+  playNote(frequency, duration, time, volume = 0.3, waveType = 'square') {
     if (!this.audioContext) return;
     const osc = this.audioContext.createOscillator();
     const gain = this.audioContext.createGain();
@@ -25,9 +25,9 @@ class MusicManager {
     gain.connect(this.masterGain);
     
     osc.frequency.value = frequency;
-    osc.type = 'square';
+    osc.type = waveType;
     
-    gain.gain.setValueAtTime(0.3, time);
+    gain.gain.setValueAtTime(volume, time);
     gain.gain.exponentialRampToValueAtTime(0.01, time + duration * 0.8);
     
     osc.start(time);
@@ -36,8 +36,20 @@ class MusicManager {
 
   playMelody(notes, startTime = this.audioContext.currentTime) {
     let time = startTime;
-    notes.forEach(({ freq, duration }) => {
-      this.playNote(freq, duration, time);
+    notes.forEach(({ freq, duration, harmony, bass }) => {
+      // Main melody
+      this.playNote(freq, duration, time, 0.25, 'square');
+      
+      // Harmony (third interval)
+      if (harmony) {
+        this.playNote(harmony, duration, time, 0.15, 'sine');
+      }
+      
+      // Bass (one octave lower)
+      if (bass) {
+        this.playNote(bass, duration, time, 0.2, 'triangle');
+      }
+      
       time += duration;
     });
     return time - startTime;

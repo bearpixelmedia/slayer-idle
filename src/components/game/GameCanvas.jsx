@@ -129,8 +129,8 @@ function GameCanvasComponent({
             const enemyWorldPos = state.enemyCluster?.[state.currentClusterIndex]?.worldPos || state.nextEnemyWorldPos;
             const distanceAhead = enemyWorldPos - playerProgress;
             // Scale: player is at 20% (left), enemies at 80% (right) when close
-            // Enemies scroll left off screen when player passes them
-            const screenX = 20 + (distanceAhead * 0.6);
+            // Clamp so enemy scrolls off left edge, never appears behind player
+            const screenX = Math.max(-100, 20 + (distanceAhead * 0.6));
             return `${screenX}%`;
           })(),
         }}

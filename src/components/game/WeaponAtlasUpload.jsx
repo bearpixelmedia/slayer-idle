@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 import { base44 } from "@/api/base44Client";
-import { useState as useStateAlias } from "react";
+
 
 const WEAPON_SLOTS = [
   { id: "weapon_sword", label: "Sword" },

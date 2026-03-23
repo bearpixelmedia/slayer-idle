@@ -138,7 +138,7 @@ const PlayerRenderer = forwardRef(function PlayerRenderer(
             emojiGlyphRef.current = node;
             assignRef(combatGlyphRef, node);
           }}
-          className="inline-block select-none align-bottom [line-height:1]"
+          className="block w-full select-none text-center [line-height:1]"
         >
           {fallbackEmoji}
         </span>

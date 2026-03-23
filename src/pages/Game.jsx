@@ -163,102 +163,6 @@ export default function Game() {
           )}
         </div>
 
-        <AnimatePresence>
-          {!showRunner && menuOpen && (
-            <motion.div 
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 lg:hidden" 
-              onClick={() => setMenuOpen(false)}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <motion.div 
-                className="fixed bottom-0 left-0 right-0 flex flex-col pointer-events-auto lg:hidden max-h-[90vh]"
-                initial={{ y: "100%" }}
-                animate={{ y: 0 }}
-                exit={{ y: "100%" }}
-                transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                onClick={(e) => e.stopPropagation()}
-                style={{
-                  background: "linear-gradient(135deg, #8B7355 0%, #A0826D 100%)",
-                  border: "6px solid #D4AF37",
-                  borderRadius: "12px 12px 0 0",
-                  boxShadow: "inset 0 0 0 2px #6B5344",
-                  margin: 0,
-                  padding: 0,
-                  boxSizing: "border-box",
-                  maxWidth: "100vw",
-                  overflow: "hidden"
-                }}
-              >
-              {/* Inner frame */}
-              <div style={{
-                background: "linear-gradient(135deg, #4A4A4A 0%, #2D2D2D 100%)",
-                border: "2px solid #8B7355",
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-                overflow: "hidden",
-                minHeight: 0,
-                boxSizing: "border-box"
-              }}>
-
-                <ScrollArea className="flex-1 overflow-hidden min-h-0" style={{ boxSizing: "border-box" }}>
-                   <div className="space-y-1 overflow-x-hidden">
-                     <GameTabs
-                       state={state}
-                       onBuyUpgrade={handleBuyUpgrade}
-                       onUnlockSkill={handleUnlockSkill}
-                       onPrestige={handlePrestige}
-                       onRevive={revive}
-                       unlockedIds={unlockedIds}
-                       damageMultiplier={damageMultiplier}
-                       offlineMultiplier={offlineMultiplier}
-                       onSwitchZone={switchZone}
-                       onUnlockZone={unlockZone}
-                       onClaimQuestReward={handleClaimQuestReward}
-                       onRepeatQuest={handleRepeatQuest}
-                       questProgress={questProgress}
-                       onUpgradeBuilding={upgradeBuilding}
-                       abilities={abilities}
-                       onActivateAbility={handleActivateAbility}
-                       weaponMode={currentWeapon}
-                       activeTab={activeTab}
-                       onTabChange={setActiveTab}
-                     />
-                  </div>
-                </ScrollArea>
-              </div>
-              
-              {/* Bottom icon bar */}
-              <div style={{
-                background: "linear-gradient(180deg, #8B4513 0%, #654321 100%)",
-                border: "3px solid #D4AF37",
-                borderTop: "4px solid #D4AF37",
-                display: "flex",
-                justifyContent: "space-around",
-                alignItems: "center",
-                padding: "4px 2px",
-                gap: "2px"
-              }}>
-                <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Combat">⚔️</button>
-                <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Upgrades">⬆️</button>
-                <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Skills">🧑</button>
-                <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Achievements">💎</button>
-                <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="More">⋮</button>
-                <button 
-                  className="p-1.5 hover:opacity-70 text-lg transition-opacity cursor-pointer"
-                  title="Close"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  ✕
-                </button>
-              </div>
-              </motion.div>
-              </motion.div>
-              )}
-              </AnimatePresence>
-
         {showRunner && (
           <div className="w-full flex-shrink-0 p-4">
             <button
@@ -275,7 +179,7 @@ export default function Game() {
             onClick={() => setMenuOpen(!menuOpen)}
             animate={state?.coins > 0 ? { boxShadow: ["0 0 0 0 rgba(45, 212, 191, 0.7)", "0 0 0 12px rgba(45, 212, 191, 0)"] } : {}}
             transition={state?.coins > 0 ? { duration: 1.5, repeat: Infinity } : {}}
-            className="fixed bottom-20 right-4 z-40 w-12 h-12 rounded-full flex items-center justify-center text-2xl transition-all active:scale-95 border-2 border-primary/60 bg-primary/15 hover:brightness-125 lg:hidden"
+            className="fixed bottom-20 right-4 z-[45] w-12 h-12 rounded-full flex items-center justify-center text-2xl transition-all active:scale-95 border-2 border-primary/60 bg-primary/15 hover:brightness-125 lg:hidden"
           >
             📖
           </motion.button>
@@ -362,6 +266,116 @@ export default function Game() {
          onUpgradeBuilding={upgradeBuilding}
          onRunnerClick={() => setShowRunner(true)}
        />
+
+      {/* Mobile menu: rendered after HUD so it stacks above world coins / shrubs / HUD (Framer motion stacking) */}
+      <AnimatePresence>
+        {!showRunner && menuOpen && (
+          <motion.div
+            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm lg:hidden"
+            onClick={() => setMenuOpen(false)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="fixed bottom-0 left-0 right-0 z-50 flex flex-col pointer-events-auto lg:hidden max-h-[90vh]"
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                background: "linear-gradient(135deg, #8B7355 0%, #A0826D 100%)",
+                border: "6px solid #D4AF37",
+                borderRadius: "12px 12px 0 0",
+                boxShadow: "inset 0 0 0 2px #6B5344",
+                margin: 0,
+                padding: 0,
+                boxSizing: "border-box",
+                maxWidth: "100vw",
+                overflow: "hidden",
+              }}
+            >
+              {/* Inner frame */}
+              <div
+                style={{
+                  background: "linear-gradient(135deg, #4A4A4A 0%, #2D2D2D 100%)",
+                  border: "2px solid #8B7355",
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  overflow: "hidden",
+                  minHeight: 0,
+                  boxSizing: "border-box",
+                }}
+              >
+                <ScrollArea className="flex-1 overflow-hidden min-h-0" style={{ boxSizing: "border-box" }}>
+                  <div className="space-y-1 overflow-x-hidden">
+                    <GameTabs
+                      state={state}
+                      onBuyUpgrade={handleBuyUpgrade}
+                      onUnlockSkill={handleUnlockSkill}
+                      onPrestige={handlePrestige}
+                      onRevive={revive}
+                      unlockedIds={unlockedIds}
+                      damageMultiplier={damageMultiplier}
+                      offlineMultiplier={offlineMultiplier}
+                      onSwitchZone={switchZone}
+                      onUnlockZone={unlockZone}
+                      onClaimQuestReward={handleClaimQuestReward}
+                      onRepeatQuest={handleRepeatQuest}
+                      questProgress={questProgress}
+                      onUpgradeBuilding={upgradeBuilding}
+                      abilities={abilities}
+                      onActivateAbility={handleActivateAbility}
+                      weaponMode={currentWeapon}
+                      activeTab={activeTab}
+                      onTabChange={setActiveTab}
+                    />
+                  </div>
+                </ScrollArea>
+              </div>
+
+              {/* Bottom icon bar */}
+              <div
+                style={{
+                  background: "linear-gradient(180deg, #8B4513 0%, #654321 100%)",
+                  border: "3px solid #D4AF37",
+                  borderTop: "4px solid #D4AF37",
+                  display: "flex",
+                  justifyContent: "space-around",
+                  alignItems: "center",
+                  padding: "4px 2px",
+                  gap: "2px",
+                }}
+              >
+                <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Combat">
+                  ⚔️
+                </button>
+                <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Upgrades">
+                  ⬆️
+                </button>
+                <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Skills">
+                  🧑
+                </button>
+                <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Achievements">
+                  💎
+                </button>
+                <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="More">
+                  ⋮
+                </button>
+                <button
+                  className="p-1.5 hover:opacity-70 text-lg transition-opacity cursor-pointer"
+                  title="Close"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  ✕
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Notifications */}
       <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none">

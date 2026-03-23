@@ -122,7 +122,7 @@ function spawnNewEnemy(s, opts = {}) {
   };
 }
 
-/** Air coins use heightTier > 0; vertical placement is max-jump apex in WorldCoins. */
+/** Air coins use heightTier > 0; all share the same path parallax + jump-apex height in WorldCoins. */
 function airCoinHeightTier() {
   return 1;
 }
@@ -148,7 +148,6 @@ function spawnWorldCoins(s) {
       worldPos,
       amount,
       heightTier,
-      heightJitterRem: Math.random() * 0.55,
     });
   };
 
@@ -334,7 +333,7 @@ function defaultState() {
     // World state
     worldProgress: 0, // How far the player has traveled
     nextEnemyWorldPos: 20, // Position in world where next enemy spawns
-    worldCoins: [], // { id, worldPos, amount, heightTier?, heightJitterRem? } — path pickups
+    worldCoins: [], // { id, worldPos, amount, heightTier? } — path pickups
     nextCoinWorldPos: 12, // Spawn when worldProgress reaches this (like nextEnemyWorldPos)
   };
 }

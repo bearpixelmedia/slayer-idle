@@ -47,7 +47,7 @@ export default function HUDOverlay({
   });
 
   return (
-    <div className="fixed inset-0 pointer-events-none">
+    <div className="fixed inset-0 z-30 pointer-events-none">
       {/* Stats Bar - Top Left */}
       <StatsBar
         state={state}

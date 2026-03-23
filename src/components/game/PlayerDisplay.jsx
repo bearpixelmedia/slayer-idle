@@ -89,6 +89,14 @@ function PlayerDisplay({
     return computePlayerWeaponLayout(art, slot, rig);
   }, [characterArtBounds, hitboxSlotBounds, rig]);
 
+  /** HP bar + ground shadow use row center (50%); offset so they align with the character column, not the whole sword–body–shield row. */
+  const characterCenterOffsetPx = useMemo(() => {
+    const { leftColW, slotW, rowMinWidth } = weaponLayout;
+    const rowWidthPx = Math.max(rowMinWidth, slotW + 32);
+    const charCenter = leftColW + slotW / 2;
+    return charCenter - rowWidthPx / 2;
+  }, [weaponLayout]);
+
   const y = useMotionValue(0);
   const squash = useMotionValue(1);
   const lean = useMotionValue(0);
@@ -234,7 +242,10 @@ function PlayerDisplay({
         transform: "translateY(-50%)",
       }}
     >
-      <div className="absolute left-1/2 bottom-full z-10 mb-2 w-20 -translate-x-1/2">
+      <div
+        className="absolute bottom-full z-10 mb-2 w-20 -translate-x-1/2"
+        style={{ left: `calc(50% + ${characterCenterOffsetPx}px)` }}
+      >
         <div className="h-1.5 bg-muted rounded-full overflow-hidden border border-border/50">
           <motion.div
             className="h-full bg-green-500"
@@ -362,7 +373,10 @@ function PlayerDisplay({
           </motion.div>
         </motion.div>
       </motion.div>
-      <div className="absolute -bottom-6 w-20 h-1 bg-black/30 rounded-full blur-sm" />
+      <div
+        className="absolute -bottom-6 w-20 -translate-x-1/2 h-1 bg-black/30 rounded-full blur-sm"
+        style={{ left: `calc(50% + ${characterCenterOffsetPx}px)` }}
+      />
     </div>
   );
 }

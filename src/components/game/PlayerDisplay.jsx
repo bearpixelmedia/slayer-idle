@@ -1,7 +1,15 @@
 import React, { useEffect, useRef, useMemo, useState, useCallback } from "react";
 import { motion, useMotionValue, useAnimation, useTransform, animate } from "framer-motion";
 import PlayerRenderer from "./PlayerRenderer";
-import { ROAD_CENTER_FROM_BOTTOM_PCT, PLAYER_ANCHOR_LEFT_PCT } from "@/lib/combatHitboxes";
+import CombatLaneEntityRoot from "./CombatLaneEntityRoot";
+import { PLAYER_ANCHOR_LEFT_PCT } from "@/lib/combatHitboxes";
+import {
+  COMBAT_GROUND_SHADOW_REGULAR,
+  COMBAT_HITBOX_SLOT_CLASS,
+  PLAYER_FEET_VISUAL_ALIGN_PX,
+  feetAlignInlineStyle,
+} from "@/lib/laneScene";
+import { useCombatSlotNominalPx } from "@/hooks/useCombatSlotNominalPx";
 import {
   JUMP_CUT,
   JUMP_GRAVITY_FALL,
@@ -13,7 +21,11 @@ import {
   JUMP_VY_MAX_UP,
 } from "@/lib/playerJumpPhysics";
 import { getPlayerWeaponRig } from "@/lib/playerWeaponRig";
-import { computePlayerWeaponLayout } from "@/lib/playerWeaponLayout";
+import {
+  combatRowCharacterCenterOffsetPx,
+  combatTriRowMinStyle,
+  computePlayerWeaponLayout,
+} from "@/lib/weaponTriColumnLayout";
 import { CHARACTER_EMOJI_NORMAL, WEAPON_EMOJI_TYPO_NORMAL } from "@/lib/characterEmojiStyles";
 
 function PlayerDisplay({
@@ -35,6 +47,7 @@ function PlayerDisplay({
   const rigRef = useRef(rig);
   rigRef.current = rig;
 
+  const nominalSlotPx = useCombatSlotNominalPx();
   const [characterArtBounds, setCharacterArtBounds] = useState({ w: 0, h: 0 });
   const [hitboxSlotBounds, setHitboxSlotBounds] = useState({ w: 0, h: 0 });
   const slotResizeRef = useRef(null);
@@ -81,21 +94,19 @@ function PlayerDisplay({
     const slot =
       hitboxSlotBounds.w > 8 && hitboxSlotBounds.h > 8
         ? hitboxSlotBounds
-        : { w: 64, h: 64 };
+        : nominalSlotPx;
     const art =
       characterArtBounds.w > 4 && characterArtBounds.h > 4
         ? characterArtBounds
         : { w: slot.w * 0.85, h: slot.h * 0.85 };
     return computePlayerWeaponLayout(art, slot, rig);
-  }, [characterArtBounds, hitboxSlotBounds, rig]);
+  }, [characterArtBounds, hitboxSlotBounds, nominalSlotPx, rig]);
 
-  /** HP bar + ground shadow use row center (50%); offset so they align with the character column, not the whole sword–body–shield row. */
-  const characterCenterOffsetPx = useMemo(() => {
-    const { leftColW, slotW, rowMinWidth } = weaponLayout;
-    const rowWidthPx = Math.max(rowMinWidth, slotW + 32);
-    const charCenter = leftColW + slotW / 2;
-    return charCenter - rowWidthPx / 2;
-  }, [weaponLayout]);
+  /** HP bar + ground shadow: align to body column vs full weapon row. */
+  const characterCenterOffsetPx = useMemo(
+    () => combatRowCharacterCenterOffsetPx(weaponLayout, { gaitPadding: true }),
+    [weaponLayout]
+  );
 
   const y = useMotionValue(0);
   const squash = useMotionValue(1);
@@ -234,14 +245,7 @@ function PlayerDisplay({
   }, [attackTick, isBow, attackControls, weaponLeftControls, weaponRightControls]);
 
   return (
-    <div
-      className="absolute z-[28]"
-      style={{
-        left: `${PLAYER_ANCHOR_LEFT_PCT}%`,
-        top: `calc(100% - ${ROAD_CENTER_FROM_BOTTOM_PCT}%)`,
-        transform: "translateY(-50%)",
-      }}
-    >
+    <CombatLaneEntityRoot anchorLeftPct={PLAYER_ANCHOR_LEFT_PCT}>
       <div
         className="absolute bottom-full z-10 mb-2 w-20 -translate-x-1/2"
         style={{ left: `calc(50% + ${characterCenterOffsetPx}px)` }}
@@ -269,13 +273,14 @@ function PlayerDisplay({
               transition={{ duration: 0.12 }}
             >
               {/*
+                Feet nudge matches enemy pipeline: optical baseline on ROAD_FEET_LINE.
                 Stretch side columns to the hero’s height, then justify-end so weapon bottoms match the emoji feet.
-                🛡️ fonts often pad asymmetrically — nudge toward the body so it reads attached.
               */}
+              <div className="origin-bottom inline-block" style={feetAlignInlineStyle(PLAYER_FEET_VISUAL_ALIGN_PX)}>
               <div
                 className="relative inline-flex animate-player-gait-row items-end justify-center gap-0"
                 style={{
-                  minWidth: Math.max(weaponLayout.rowMinWidth, weaponLayout.slotW + 32),
+                  ...combatTriRowMinStyle(weaponLayout, { gaitPadding: true }),
                   "--player-run-dur": `${rig.runDuration}s`,
                   "--weapon-sway-delay-l": `${rig.swayDelayL}s`,
                   "--weapon-sway-delay-r": `${rig.swayDelayR}s`,
@@ -316,10 +321,7 @@ function PlayerDisplay({
                   Fixed-size hitbox wrapper matches the character slot (canvas / emoji) so RAF
                   combat width isn’t shrunk by flex or intrinsic sprite metrics.
                 */}
-                <div
-                  ref={setPlayerHitboxNode}
-                  className="relative z-0 box-border flex h-16 w-16 shrink-0 flex-col justify-end items-center sm:h-20 sm:w-20 md:h-24 md:w-24"
-                >
+                <div ref={setPlayerHitboxNode} className={COMBAT_HITBOX_SLOT_CLASS}>
                   <PlayerRenderer
                     spriteUrl={isBow ? gameSettings.player_bow : gameSettings.player_sword}
                     fallbackEmoji={isBow ? "🧝" : "🤴"}
@@ -369,15 +371,16 @@ function PlayerDisplay({
                   </div>
                 </motion.div>
               </div>
+              </div>
             </motion.div>
           </motion.div>
         </motion.div>
       </motion.div>
       <div
-        className="absolute -bottom-6 w-20 -translate-x-1/2 h-1 bg-black/30 rounded-full blur-sm"
+        className={COMBAT_GROUND_SHADOW_REGULAR}
         style={{ left: `calc(50% + ${characterCenterOffsetPx}px)` }}
       />
-    </div>
+    </CombatLaneEntityRoot>
   );
 }
 

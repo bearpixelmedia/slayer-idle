@@ -165,14 +165,7 @@
 }
 @keyframes enemy-idle-float {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
-}
-@keyframes enemy-idle-skitter {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  20% { transform: translate(2px, -3px) scale(0.97); }
-  40% { transform: translate(-3px, 1px) scale(1.03); }
-  60% { transform: translate(1px, -4px) scale(0.98); }
-  80% { transform: translate(-2px, -1px) scale(1.02); }
+  50% { transform: translateY(-6px); }
 }
 @keyframes enemy-idle-hover {
   0%, 100% { transform: translateY(0) rotate(0deg); }
@@ -181,9 +174,9 @@
 }
 @keyframes enemy-idle-flutter {
   0%, 100% { transform: translateY(0) rotate(0deg) scaleX(1); }
-  25% { transform: translateY(-8px) rotate(-4deg) scaleX(1.04); }
-  50% { transform: translateY(-4px) rotate(3deg) scaleX(0.96); }
-  75% { transform: translateY(-10px) rotate(-2deg) scaleX(1.02); }
+  25% { transform: translateY(-5px) rotate(-4deg) scaleX(1.04); }
+  50% { transform: translateY(-2px) rotate(3deg) scaleX(0.96); }
+  75% { transform: translateY(-6px) rotate(-2deg) scaleX(1.02); }
 }
 @keyframes enemy-idle-sway {
   0%, 100% { transform: translateX(0) translateY(0); }
@@ -235,7 +228,6 @@
 .animate-enemy-idle-loom { animation: enemy-idle-loom 0.7s ease-in-out infinite; transform-origin: bottom center; }
 .animate-enemy-idle-shamble { animation: enemy-idle-shamble 0.52s ease-in-out infinite; transform-origin: bottom center; }
 .animate-enemy-idle-float { animation: enemy-idle-float 2.4s ease-in-out infinite; transform-origin: bottom center; }
-.animate-enemy-idle-skitter { animation: enemy-idle-skitter 0.38s ease-in-out infinite; transform-origin: bottom center; }
 .animate-enemy-idle-hover { animation: enemy-idle-hover 0.55s ease-in-out infinite; transform-origin: bottom center; }
 .animate-enemy-idle-flutter { animation: enemy-idle-flutter 0.5s ease-in-out infinite; transform-origin: bottom center; }
 .animate-enemy-idle-sway { animation: enemy-idle-sway 0.5s ease-in-out infinite; transform-origin: bottom center; }

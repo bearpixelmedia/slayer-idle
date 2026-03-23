@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { getAsepriteJsonUrlForSprite } from "@/lib/gameSettings";
 
 // Single animated tile canvas
 function AnimatedTile({ animationData, imgRef, currentFrame, tileWidth, tileHeight }) {
@@ -48,21 +49,31 @@ function AnimatedTileRow({ animationData, imgRef, currentFrame, tileWidth, tileH
   );
 }
 
-const UPLOADED_FILES_KEY = "setting_uploaded_files";
-
-function getJsonUrl(spriteUrl) {
-  let url = sessionStorage.getItem(`aseprite_json_${spriteUrl}`);
-  if (!url) {
-    try {
-      const list = JSON.parse(localStorage.getItem(UPLOADED_FILES_KEY) || "[]");
-      const entry = list.find(f => f.url === spriteUrl);
-      if (entry?.jsonUrl) {
-        url = entry.jsonUrl;
-        sessionStorage.setItem(`aseprite_json_${spriteUrl}`, url);
-      }
-    } catch {}
-  }
-  return url;
+/** Full sheet per tile until Aseprite JSON loads — avoids empty parallax / ground / shrubs. */
+function StaticSpriteTileRow({ spriteUrl, tileWidth, tileHeight, count }) {
+  const th = tileHeight || tileWidth;
+  return (
+    <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
+      {Array.from({ length: count }).map((_, i) => (
+        <img
+          key={i}
+          src={spriteUrl}
+          alt=""
+          decoding="async"
+          fetchPriority="low"
+          style={{
+            width: `${tileWidth}px`,
+            height: "100%",
+            minHeight: `${th}px`,
+            objectFit: "contain",
+            objectPosition: "bottom",
+            flexShrink: 0,
+            imageRendering: "pixelated",
+          }}
+        />
+      ))}
+    </div>
+  );
 }
 
 // Renders a row of tiles, each showing a single animated frame from a spritesheet
@@ -78,7 +89,7 @@ export default function SpriteTileRow({ spriteUrl, tileWidth, tileHeight, count,
     img.src = spriteUrl;
     imgRef.current = img;
 
-    const jsonUrl = getJsonUrl(spriteUrl);
+    const jsonUrl = getAsepriteJsonUrlForSprite(spriteUrl);
     if (jsonUrl) {
       fetch(jsonUrl)
         .then(r => r.ok ? r.json() : null)
@@ -108,6 +119,7 @@ export default function SpriteTileRow({ spriteUrl, tileWidth, tileHeight, count,
     return <AnimatedTileRow animationData={animationData} imgRef={imgRef} currentFrame={currentFrame} tileWidth={tileWidth} tileHeight={tileHeight} count={count} />;
   }
 
-  // No JSON — use fallback (don't render raw spritesheet)
-  return fallback || null;
+  if (fallback != null) return fallback;
+
+  return <StaticSpriteTileRow spriteUrl={spriteUrl} tileWidth={tileWidth} tileHeight={tileHeight} count={count} />;
 }

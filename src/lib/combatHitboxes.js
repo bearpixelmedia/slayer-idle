@@ -1,36 +1,58 @@
 /**
  * 1D combat along the world path: `worldProgress` vs `enemy.worldPos`.
  * Each side has a half-width toward the other; when the gap between anchors is at most
- * playerHalf + enemyHalf, combat / mutual auto-attack engages.
+ * playerHalf + enemyHalf + MELEE_ENGAGE_MARGIN_WORLD, combat / mutual auto-attack engages.
  *
  * `PATH_GAP_TO_SCREEN_PCT`: path gap units → horizontal % between anchors (see EnemyCluster).
  * GameCanvas measures the visible character face (`window.__combat*HalfWorldGlyph` from emoji /
  * canvas nodes) when available; otherwise slot hitboxes (`__combat*HalfWorld`) with
  * `MEASURED_HITBOX_SCALE`. Fallback: HITBOX.
  * Coin pickup uses 2D overlap of player vs coin DOM rects (`data-world-coin`), not this 1D model.
+ *
+ * Lane placement (road line, z-order, feet nudges) lives in `laneScene.js` and is re-exported here.
  */
+import {
+  ROAD_FEET_LINE_FROM_BOTTOM_PCT,
+  ROAD_CENTER_FROM_BOTTOM_PCT,
+  CHARACTER_BASELINE_BOTTOM_PCT,
+  Z_SHRUB_OVERLAY,
+  Z_WORLD_COINS,
+  Z_COMBAT_ROW,
+  PLAYER_FEET_VISUAL_ALIGN_PX,
+} from "./laneScene";
+
+export {
+  ROAD_FEET_LINE_FROM_BOTTOM_PCT,
+  ROAD_CENTER_FROM_BOTTOM_PCT,
+  CHARACTER_BASELINE_BOTTOM_PCT,
+  Z_SHRUB_OVERLAY,
+  Z_WORLD_COINS,
+  Z_COMBAT_ROW,
+  PLAYER_FEET_VISUAL_ALIGN_PX,
+};
+
 export const PATH_GAP_TO_SCREEN_PCT = 2.5;
 /** Horizontal anchor for player / path-origin (% from left). Nudged left so the lane sits in the bush-heavy side of the frame. */
 export const PLAYER_ANCHOR_LEFT_PCT = 14;
 
-/**
- * Vertical center of the walkable road band (% of canvas height, measured from bottom).
- * Parallax: ground strip bottom 18%; front tree bases ~25% from bottom; shrub band from ~72% top.
- * Player / enemy stacks are centered on this line (see PlayerDisplay / EnemyCluster).
- */
-export const ROAD_CENTER_FROM_BOTTOM_PCT = 28;
+/** Bow / tap aim: approximate torso height above the feet line (screen % from bottom). */
+export const COMBAT_AIM_TORSO_OFFSET_FROM_FEET_PCT = 9;
 
-/** @deprecated Use ROAD_CENTER_FROM_BOTTOM_PCT — kept for any external references. */
-export const CHARACTER_BASELINE_BOTTOM_PCT = ROAD_CENTER_FROM_BOTTOM_PCT;
-
-/** Bow streak start height (% from bottom): slightly above body center so the arc reads from hands. */
+/** Bow streak start height (% from bottom): hands above the feet baseline. */
 export const BOW_ORIGIN_LEFT_PCT = PLAYER_ANCHOR_LEFT_PCT + 2.5;
-export const BOW_ORIGIN_BOTTOM_PCT = ROAD_CENTER_FROM_BOTTOM_PCT + 6;
+export const BOW_ORIGIN_BOTTOM_PCT = ROAD_FEET_LINE_FROM_BOTTOM_PCT + 12;
 
 export const HITBOX = {
   playerHalfWidth: 0.48,
   enemyHalfWidth: 0.52,
 };
+
+/**
+ * Extra path distance (world units) so melee starts before anchors feel glued (small enemies
+ * like spiders otherwise reach the sword before `inCombat` / walk-freeze).
+ * Roughly ~2.5% screen width per 1.0 unit (see PATH_GAP_TO_SCREEN_PCT).
+ */
+export const MELEE_ENGAGE_MARGIN_WORLD = 1.05;
 
 /**
  * `getBoundingClientRect()` on the character wrappers is wider than the art (padding, flex,
@@ -111,8 +133,9 @@ export function resolveCombatEnemyWorldPos({
 }
 
 /**
- * Active enemy anchor on the playfield (% left, % bottom), matching EnemyCluster / PlayerDisplay.
- * Used for bow shots and UI. Returns null if no resolved enemy position.
+ * Active enemy aim point on the playfield (% left, % bottom from viewport bottom).
+ * Horizontal matches EnemyCluster; vertical is torso height (feet line + offset) for bow/taps.
+ * Returns null if no resolved enemy position.
  */
 export function getEnemyScreenAnchorPercent(state) {
   if (!state) return null;
@@ -131,14 +154,14 @@ export function getEnemyScreenAnchorPercent(state) {
   const leftPct = PLAYER_ANCHOR_LEFT_PCT + gap * PATH_GAP_TO_SCREEN_PCT;
   return {
     leftPct: Math.max(-15, Math.min(115, leftPct)),
-    bottomPct: ROAD_CENTER_FROM_BOTTOM_PCT,
+    bottomPct: ROAD_FEET_LINE_FROM_BOTTOM_PCT + COMBAT_AIM_TORSO_OFFSET_FROM_FEET_PCT,
   };
 }
 
 export function isInCombatAlongPath(worldProgress, enemyWorldPos, isBoss) {
   if (enemyWorldPos == null || !Number.isFinite(enemyWorldPos)) return false;
   const gap = pathGap(worldProgress, enemyWorldPos);
-  const contact = contactDistanceAlongPath();
+  const contact = contactDistanceAlongPath() + MELEE_ENGAGE_MARGIN_WORLD;
 
   if (isBoss) {
     const bossContact = Math.max(contact, 1);

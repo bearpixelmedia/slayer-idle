@@ -50,6 +50,11 @@ function spawnNewEnemy(s, opts = {}) {
   // Boss encounter has a gated warning phase first, then boss spawn.
   if (shouldEncounterBoss && warningForCurrentBoss && !warningActive) {
     const hp = getBossHP(s.stage, s.killCount);
+    const wp = s.worldProgress ?? 0;
+    const queue = s.nextEnemyWorldPos ?? 0;
+    // Same idea as pack spawns: boss sits down the path so the player walks the road to engage.
+    const minBossApproachOnPath = 28 + Math.random() * 20;
+    const bossWorldPos = Math.max(wp + minBossApproachOnPath, queue);
     return {
       ...s,
       enemyHP: hp,
@@ -62,8 +67,7 @@ function spawnNewEnemy(s, opts = {}) {
       bossWarning: null, // Clear warning once boss spawns
       enemyCluster: [],
       currentClusterIndex: 0,
-      // Anchor boss to current progress so combat range checks stay true while isBossActive
-      nextEnemyWorldPos: s.worldProgress ?? 0,
+      nextEnemyWorldPos: bossWorldPos,
     };
   }
 
@@ -122,7 +126,7 @@ function spawnNewEnemy(s, opts = {}) {
   };
 }
 
-/** Air coins use heightTier > 0; all share the same path parallax + jump-apex height in WorldCoins. */
+/** Air coins use heightTier > 0; WorldCoins places them at jump-apex height; horizontal screen X follows display scroll like enemies. */
 function airCoinHeightTier() {
   return 1;
 }
@@ -330,8 +334,8 @@ function defaultState() {
     // Enemy cluster state
     enemyCluster: [], // Array of enemy objects in current cluster
     currentClusterIndex: 0, // Which enemy in cluster is active
-    // World state
-    worldProgress: 0, // How far the player has traveled
+    // World state — `worldProgress` is cumulative along the path (prestige keeps it so the lane never rewinds).
+    worldProgress: 0,
     nextEnemyWorldPos: 20, // Position in world where next enemy spawns
     worldCoins: [], // { id, worldPos, amount, heightTier? } — path pickups
     nextCoinWorldPos: 12, // Spawn when worldProgress reaches this (like nextEnemyWorldPos)
@@ -1009,15 +1013,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
       setState(prev => {
         if (prev.isDead) return prev;
 
-        // Boss fights only use `nextEnemyWorldPos` as the path anchor (no cluster row). If
-        // worldProgress inches ahead while melee was false for a frame, gap can pass -MAX_PAST_ANCHOR
-        // and combat/taps/auto-attack permanently fail. Keep the anchor glued to progress.
-        let pathState =
-          prev.isBossActive
-            ? { ...prev, nextEnemyWorldPos: prev.worldProgress ?? 0 }
-            : prev;
-
-        pathState = sanitizePathScalars(pathState);
+        let pathState = sanitizePathScalars(prev);
 
         const list = pathState.enemyCluster;
         if (Array.isArray(list) && list.length > 0) {
@@ -1059,11 +1055,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
           return spawnWorldCoins(spawnNewEnemy({ ...pathState, worldProgress: newProgress }));
         }
 
-        const next =
-          pathState.isBossActive
-            ? { ...pathState, worldProgress: newProgress, nextEnemyWorldPos: newProgress }
-            : { ...pathState, worldProgress: newProgress };
-        return spawnWorldCoins(next);
+        return spawnWorldCoins({ ...pathState, worldProgress: newProgress });
       });
       
       const state = stateRef.current;
@@ -1222,8 +1214,11 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
 
       const newSlayerPoints = getSlayerPointsOnPrestige(prev.souls + newSouls);
       const fresh = defaultState();
-      return {
+      const wp = coerceFiniteNumber(prev.worldProgress, 0);
+      const merged = {
         ...fresh,
+        worldProgress: wp,
+        nextCoinWorldPos: wp + 12,
         souls: prev.souls + newSouls,
         slayerPoints: prev.slayerPoints + newSlayerPoints,
         unlockedSkills: prev.unlockedSkills, // PERSIST skill unlocks
@@ -1233,6 +1228,7 @@ export default function useGameState({ damageMultiplier = 1, offlineMultiplier =
         villageBuildings: prev.villageBuildings || {},
         saveVersion: SAVE_VERSION,
       };
+      return sanitizePathScalars(spawnNewEnemy(merged));
     });
   }, []);
 

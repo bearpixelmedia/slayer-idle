@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Z_SHRUB_OVERLAY } from "@/lib/laneScene";
 import { loadGameSettings } from "@/lib/gameSettings";
 import SpriteTileRow from "./SpriteTileRow";
 
 /**
- * Same parallax scroll as ParallaxBackground layers 9–10, but rendered above
- * player/enemy so shrubs read as foreground along the road.
+ * Same parallax scroll as the mid/foreground tree band, but kept as a separate layer.
+ * Stays below the combat row (z-index) so the path reads clearly; shrubs frame the bottom edge.
  */
 function ParallaxShrubOverlay() {
   const backRef = useRef(null);
@@ -67,7 +68,8 @@ function ParallaxShrubOverlay() {
 
   return (
     <div
-      className="absolute inset-0 overflow-hidden pointer-events-none z-[29]"
+      className="absolute inset-0 overflow-hidden pointer-events-none"
+      style={{ zIndex: Z_SHRUB_OVERLAY }}
       aria-hidden
     >
       {/* Shrubs - back layer */}

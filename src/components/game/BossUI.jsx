@@ -35,7 +35,7 @@ function BossUI({ showBossWarning, isBossActive, boss, shieldActive, bossHitsRec
       {/* Boss mechanic indicator */}
       {isBossActive && bossMechanic && (
         <motion.div
-          className="absolute top-12 left-1/2 -translate-x-1/2 px-3 py-2 rounded-lg bg-red-900/60 border border-red-500/40 backdrop-blur-sm z-30 pointer-events-none"
+          className="absolute top-24 left-1/2 -translate-x-1/2 px-3 py-2 rounded-lg bg-red-900/60 border border-red-500/40 backdrop-blur-sm z-30 pointer-events-none sm:top-28"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}

@@ -1,3 +1,36 @@
+const UPLOADED_FILES_KEY = "setting_uploaded_files";
+
+/**
+ * Resolve Aseprite JSON URL for a spritesheet (sessionStorage, then uploaded-files list).
+ * Used so sprites can show immediately while JSON is still fetching.
+ */
+export function getAsepriteJsonUrlForSprite(spriteUrl) {
+  if (!spriteUrl || typeof sessionStorage === "undefined") return null;
+  let jsonUrl = sessionStorage.getItem(`aseprite_json_${spriteUrl}`);
+  if (!jsonUrl) {
+    try {
+      const saved = localStorage.getItem(UPLOADED_FILES_KEY);
+      const list = saved ? JSON.parse(saved) : [];
+      const entry = list.find((f) => f.url === spriteUrl);
+      if (entry?.jsonUrl) {
+        jsonUrl = entry.jsonUrl;
+        sessionStorage.setItem(`aseprite_json_${spriteUrl}`, jsonUrl);
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+  return jsonUrl;
+}
+
+/** Fired after settings are saved in this tab (storage event only fires in other tabs). */
+export const GAME_SETTINGS_UPDATED_EVENT = "game-settings-updated";
+
+export function notifyGameSettingsUpdated() {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent(GAME_SETTINGS_UPDATED_EVENT));
+}
+
 // Load game settings from localStorage
 export function loadGameSettings() {
   try {
@@ -21,9 +54,8 @@ export async function getEnemySprite(enemyType) {
   const spriteUrl = settings[`enemy_${enemyType}`];
   
   if (!spriteUrl) return null;
-  
-  // Get the JSON metadata URL from sessionStorage
-  const jsonUrl = sessionStorage.getItem(`aseprite_json_${spriteUrl}`);
+
+  const jsonUrl = getAsepriteJsonUrlForSprite(spriteUrl);
   if (!jsonUrl) return null;
   
   try {
@@ -47,18 +79,18 @@ export async function getBossSprite(bossId) {
   const spriteUrl = settings[`boss_${bossId}_icon`];
   
   if (!spriteUrl) return null;
-  
-  const jsonUrl = sessionStorage.getItem(`aseprite_json_${spriteUrl}`);
+
+  const jsonUrl = getAsepriteJsonUrlForSprite(spriteUrl);
   if (!jsonUrl) return null;
-  
+
   try {
     const response = await fetch(jsonUrl);
     if (!response.ok) return null;
-    
+
     const data = await response.json();
     return {
       spriteUrl,
-      animationData: data
+      animationData: data,
     };
   } catch (error) {
     console.error(`Failed to load animation data for boss ${bossId}:`, error);

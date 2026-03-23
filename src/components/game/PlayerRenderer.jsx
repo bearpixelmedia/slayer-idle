@@ -1,27 +1,10 @@
 import React, { useRef, useEffect, useLayoutEffect, useState, useCallback, forwardRef } from "react";
+import { getAsepriteJsonUrlForSprite } from "@/lib/gameSettings";
 
 function assignRef(ref, node) {
   if (ref == null) return;
   if (typeof ref === "function") ref(node);
   else ref.current = node;
-}
-
-const UPLOADED_FILES_KEY = "setting_uploaded_files";
-
-function getJsonUrlForSprite(spriteUrl) {
-  let jsonUrl = sessionStorage.getItem(`aseprite_json_${spriteUrl}`);
-  if (!jsonUrl) {
-    try {
-      const saved = localStorage.getItem(UPLOADED_FILES_KEY);
-      const list = saved ? JSON.parse(saved) : [];
-      const entry = list.find(f => f.url === spriteUrl);
-      if (entry?.jsonUrl) {
-        jsonUrl = entry.jsonUrl;
-        sessionStorage.setItem(`aseprite_json_${spriteUrl}`, jsonUrl);
-      }
-    } catch {}
-  }
-  return jsonUrl;
 }
 
 const PlayerRenderer = forwardRef(function PlayerRenderer(
@@ -50,7 +33,7 @@ const PlayerRenderer = forwardRef(function PlayerRenderer(
     imgRef.current = new Image();
     imgRef.current.src = spriteUrl;
 
-    const jsonUrl = getJsonUrlForSprite(spriteUrl);
+    const jsonUrl = getAsepriteJsonUrlForSprite(spriteUrl);
     if (jsonUrl) {
       fetch(jsonUrl)
         .then(r => r.ok ? r.json() : null)

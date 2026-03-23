@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, RotateCcw, Download, Upload } from "lucide-react";
+import { ArrowLeft, RotateCcw, Download, Upload, MapPin } from "lucide-react";
 import { ACHIEVEMENTS } from "@/lib/achievements";
 import { BOSSES } from "@/lib/bosses";
 import { BUFF_TYPES } from "@/lib/buffs";
@@ -16,6 +16,7 @@ import { VILLAGE_BUILDINGS } from "@/lib/village";
 import SettingImageUpload from "@/components/game/SettingImageUpload";
 import WeaponAtlasUpload from "@/components/game/WeaponAtlasUpload";
 import AsepriteUpload from "@/components/game/AsepriteUpload";
+import { notifyGameSettingsUpdated } from "@/lib/gameSettings";
 
 const STORAGE_KEY = "game_settings_config";
 
@@ -24,6 +25,7 @@ export default function GameSettings() {
   const [settings, setSettings] = useState({});
   const [hasChanges, setHasChanges] = useState(false);
   const [version, setVersion] = useState(1);
+  const [skyGeoStatus, setSkyGeoStatus] = useState("");
 
   // Load settings from localStorage
   useEffect(() => {
@@ -54,7 +56,29 @@ export default function GameSettings() {
       setSettings({});
       setVersion(1);
       setHasChanges(false);
+      notifyGameSettingsUpdated();
     }
+  };
+
+  const useSkyLocation = () => {
+    if (!navigator.geolocation) {
+      setSkyGeoStatus("Geolocation is not supported in this browser.");
+      return;
+    }
+    setSkyGeoStatus("Locating…");
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        updateSetting("sky_latitude", String(pos.coords.latitude));
+        updateSetting("sky_longitude", String(pos.coords.longitude));
+        setSkyGeoStatus(
+          `Filled ${pos.coords.latitude.toFixed(4)}°, ${pos.coords.longitude.toFixed(4)}° — click Save to apply.`
+        );
+      },
+      (err) => {
+        setSkyGeoStatus(err.message || "Could not read location.");
+      },
+      { enableHighAccuracy: false, timeout: 15000, maximumAge: 60_000 }
+    );
   };
 
   const exportSettings = () => {
@@ -511,6 +535,41 @@ export default function GameSettings() {
                     { id: "parallax_stars", label: "Stars / Night Sky" },
                   ]}
                 />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Sky (sun and moon)</CardTitle>
+                <CardDescription>
+                  Optional latitude and longitude use real sunrise, sunset, and twilight (via SunCalc, offline). Leave empty for the built-in clock-based sky.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex flex-wrap items-end gap-3">
+                  <div className="space-y-1 flex-1 min-w-[140px]">
+                    <label className="text-xs font-medium text-slate-600">Latitude (°)</label>
+                    <Input
+                      value={settings.sky_latitude ?? ""}
+                      onChange={(e) => updateSetting("sky_latitude", e.target.value)}
+                      placeholder="e.g. 51.5074"
+                      className="h-8 text-sm"
+                    />
+                  </div>
+                  <div className="space-y-1 flex-1 min-w-[140px]">
+                    <label className="text-xs font-medium text-slate-600">Longitude (°)</label>
+                    <Input
+                      value={settings.sky_longitude ?? ""}
+                      onChange={(e) => updateSetting("sky_longitude", e.target.value)}
+                      placeholder="e.g. -0.1278"
+                      className="h-8 text-sm"
+                    />
+                  </div>
+                  <Button type="button" variant="outline" size="sm" className="gap-2 shrink-0" onClick={useSkyLocation}>
+                    <MapPin className="w-4 h-4" />
+                    Use my location
+                  </Button>
+                </div>
+                {skyGeoStatus ? <p className="text-xs text-slate-600">{skyGeoStatus}</p> : null}
               </CardContent>
             </Card>
             <Card>

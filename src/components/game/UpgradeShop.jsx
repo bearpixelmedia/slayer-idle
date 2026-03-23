@@ -42,8 +42,10 @@ function UpgradeCard({ upgrade, level, coins, onBuy }) {
         <motion.button
           onClick={() => canAfford1 && onBuy(upgrade.id, 1)}
           disabled={!canAfford1}
-          className={`px-2 py-1.5 rounded font-pixel text-[8px] transition-all min-h-[32px] flex items-center justify-center ${
-            canAfford1 ? "bg-primary text-primary-foreground hover:brightness-110" : "bg-muted/30 text-muted-foreground/50"
+          className={`min-w-[2.25rem] px-2.5 py-1.5 rounded-md font-pixel text-[9px] font-bold transition-all min-h-[36px] flex items-center justify-center ${
+            canAfford1
+              ? "bg-primary text-primary-foreground shadow-md shadow-amber-900/40 ring-2 ring-amber-400/70 hover:brightness-110 hover:ring-amber-300/90"
+              : "bg-muted/30 text-muted-foreground/50"
           }`}
           whileTap={canAfford1 ? { scale: 0.95 } : {}}
         >
@@ -52,8 +54,10 @@ function UpgradeCard({ upgrade, level, coins, onBuy }) {
         <motion.button
           onClick={() => canAfford10 && onBuy(upgrade.id, 10)}
           disabled={!canAfford10}
-          className={`px-2 py-1.5 rounded font-pixel text-[8px] transition-all min-h-[32px] flex items-center justify-center ${
-            canAfford10 ? "bg-primary text-primary-foreground hover:brightness-110" : "bg-muted/30 text-muted-foreground/50"
+          className={`min-w-[2.25rem] px-2.5 py-1.5 rounded-md font-pixel text-[9px] font-bold transition-all min-h-[36px] flex items-center justify-center ${
+            canAfford10
+              ? "bg-primary text-primary-foreground shadow-md shadow-amber-900/40 ring-2 ring-amber-400/70 hover:brightness-110 hover:ring-amber-300/90"
+              : "bg-muted/30 text-muted-foreground/50"
           }`}
           whileTap={canAfford10 ? { scale: 0.95 } : {}}
         >
@@ -62,8 +66,10 @@ function UpgradeCard({ upgrade, level, coins, onBuy }) {
         <motion.button
           onClick={() => canAfford50 && onBuy(upgrade.id, 50)}
           disabled={!canAfford50}
-          className={`px-2 py-1.5 rounded font-pixel text-[8px] transition-all min-h-[32px] flex items-center justify-center ${
-            canAfford50 ? "bg-primary text-primary-foreground hover:brightness-110" : "bg-muted/30 text-muted-foreground/50"
+          className={`min-w-[2.25rem] px-2.5 py-1.5 rounded-md font-pixel text-[9px] font-bold transition-all min-h-[36px] flex items-center justify-center ${
+            canAfford50
+              ? "bg-primary text-primary-foreground shadow-md shadow-amber-900/40 ring-2 ring-amber-400/70 hover:brightness-110 hover:ring-amber-300/90"
+              : "bg-muted/30 text-muted-foreground/50"
           }`}
           whileTap={canAfford50 ? { scale: 0.95 } : {}}
         >
@@ -72,8 +78,10 @@ function UpgradeCard({ upgrade, level, coins, onBuy }) {
         <motion.button
           onClick={handleBuyMax}
           disabled={!canAfford1}
-          className={`px-2 py-1.5 rounded font-pixel text-[8px] transition-all min-h-[32px] flex items-center justify-center ${
-            canAfford1 ? "bg-accent text-accent-foreground hover:brightness-110" : "bg-muted/30 text-muted-foreground/50"
+          className={`min-w-[2.5rem] px-2.5 py-1.5 rounded-md font-pixel text-[9px] font-bold transition-all min-h-[36px] flex items-center justify-center ${
+            canAfford1
+              ? "bg-accent text-accent-foreground shadow-md shadow-amber-900/40 ring-2 ring-amber-300/80 hover:brightness-110 hover:ring-amber-200/90"
+              : "bg-muted/30 text-muted-foreground/50"
           }`}
           whileTap={canAfford1 ? { scale: 0.95 } : {}}
         >
@@ -90,14 +98,23 @@ export default function UpgradeShop({ state, onBuy }) {
   return (
     <div className={`rounded-md ${HUD_THEME.panel.border} overflow-hidden`}>
       <button
-        className={`w-full flex items-center justify-between px-2 py-1 ${HUD_THEME.panel.bg} hover:bg-card/80 transition-colors animate-pulse border-l-4 border-accent text-[9px]`}
+        type="button"
+        className={`w-full flex items-center justify-between gap-2 px-3 py-2.5 bg-gradient-to-r from-amber-600/35 via-primary/25 to-amber-700/30 hover:from-amber-500/45 hover:via-primary/35 border-2 border-amber-500/70 shadow-lg shadow-amber-950/40 ring-1 ring-amber-400/30 transition-all text-left`}
         onClick={() => setOpen((o) => !o)}
       >
-        <div className="flex items-center gap-1">
-          <span>⬆️</span>
-          <span className={`${HUD_THEME.text.label} text-accent font-bold`}>UPGRADE NOW!</span>
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-xl shrink-0 drop-shadow-sm" aria-hidden>
+            ⬆️
+          </span>
+          <span className="font-pixel text-[10px] sm:text-[11px] text-amber-100 font-bold tracking-wide uppercase drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+            Upgrades
+          </span>
         </div>
-        {open ? <ChevronUp className="w-3 h-3 text-accent" /> : <ChevronDown className="w-3 h-3 text-accent" />}
+        {open ? (
+          <ChevronUp className="w-4 h-4 text-amber-200 shrink-0" strokeWidth={2.5} aria-hidden />
+        ) : (
+          <ChevronDown className="w-4 h-4 text-amber-200 shrink-0" strokeWidth={2.5} aria-hidden />
+        )}
       </button>
 
       <AnimatePresence>

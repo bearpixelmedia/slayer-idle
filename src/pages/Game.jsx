@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import useGameState from "@/hooks/useGameState";
 import useAchievements from "@/hooks/useAchievements";
@@ -15,6 +15,7 @@ import DeathModal from "@/components/game/DeathModal";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import GameTabs from "@/components/game/GameTabs";
 import HUDOverlay from "@/components/game/HUDOverlay";
+import { UPGRADES, getUpgradeCost } from "@/lib/gameData";
 
 function loadSavedMultipliers() {
   try {
@@ -80,6 +81,15 @@ export default function Game() {
   const { unlockedIds, newUnlock, damageMultiplier, offlineMultiplier } = useAchievements(state);
 
   const { questProgress, claimReward, resetQuestForRepeat } = useQuests(state, state?.unlockedZoneIds || []);
+
+  const hasAffordableUpgrade = useMemo(() => {
+    if (!state) return false;
+    return UPGRADES.some((upgrade) => {
+      const level = state.upgradeLevels?.[upgrade.id] || 0;
+      const cost = getUpgradeCost(upgrade, level);
+      return (state.coins || 0) >= cost;
+    });
+  }, [state]);
 
   const handleClaimQuestReward = (questId) => {
     claimReward(questId);
@@ -176,10 +186,26 @@ export default function Game() {
 
         {!showRunner && (
           <motion.button
+            type="button"
+            title={hasAffordableUpgrade ? "Menu — you can buy an upgrade!" : "Open menu"}
             onClick={() => setMenuOpen(!menuOpen)}
-            animate={state?.coins > 0 ? { boxShadow: ["0 0 0 0 rgba(45, 212, 191, 0.7)", "0 0 0 12px rgba(45, 212, 191, 0)"] } : {}}
-            transition={state?.coins > 0 ? { duration: 1.5, repeat: Infinity } : {}}
-            className="fixed bottom-20 right-4 z-[45] w-12 h-12 rounded-full flex items-center justify-center text-2xl transition-all active:scale-95 border-2 border-primary/60 bg-primary/15 hover:brightness-125 lg:hidden"
+            animate={
+              hasAffordableUpgrade
+                ? {
+                    boxShadow: [
+                      "0 0 0 0 rgba(251, 191, 36, 0.95)",
+                      "0 0 0 18px rgba(251, 191, 36, 0)",
+                    ],
+                    scale: [1, 1.06, 1],
+                  }
+                : {}
+            }
+            transition={hasAffordableUpgrade ? { duration: 1.1, repeat: Infinity } : {}}
+            className={`fixed bottom-20 right-4 z-[45] flex h-14 w-14 items-center justify-center rounded-full text-2xl shadow-lg transition-all active:scale-95 sm:h-16 sm:w-16 sm:text-3xl lg:hidden border-[3px] ${
+              hasAffordableUpgrade
+                ? "border-amber-400 bg-gradient-to-br from-amber-500/50 to-primary/45 ring-2 ring-amber-300/50 hover:brightness-110"
+                : "border-amber-600/80 bg-gradient-to-br from-amber-900/50 to-card/90 ring-1 ring-amber-500/30 hover:brightness-125"
+            }`}
           >
             📖
           </motion.button>
@@ -352,7 +378,18 @@ export default function Game() {
                 <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Combat">
                   ⚔️
                 </button>
-                <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Upgrades">
+                <button
+                  type="button"
+                  className={`rounded-md p-1.5 text-xl transition-all sm:text-2xl ${
+                    hasAffordableUpgrade
+                      ? "bg-amber-500/40 ring-2 ring-amber-300 shadow-md shadow-amber-950/50 hover:bg-amber-500/55"
+                      : "hover:opacity-80"
+                  }`}
+                  title={hasAffordableUpgrade ? "Upgrades — affordable now" : "Upgrades"}
+                  onClick={() => {
+                    setActiveTab("combat");
+                  }}
+                >
                   ⬆️
                 </button>
                 <button className="p-1.5 hover:opacity-70 text-lg transition-opacity" title="Skills">

@@ -114,7 +114,6 @@ export const ENEMY_IDLE_ANIM_CLASS = {
   Lich: "animate-enemy-idle-loom",
   Zombie: "animate-enemy-idle-shamble",
   Ghost: "animate-enemy-idle-float",
-  Spider: "animate-enemy-idle-skitter",
   Genie: "animate-enemy-idle-hover",
   Princess: "animate-enemy-idle-march",
   Prince: "animate-enemy-idle-march",
@@ -140,31 +139,7 @@ export function getEnemyIdleAnimClass(enemyName) {
   return ENEMY_IDLE_ANIM_CLASS[enemyName] ?? DEFAULT_IDLE_CLASS;
 }
 
-/**
- * Emoji art that reads as “top” toward +Y should rotate so it faces the player on the path.
- * Extra degrees are added after left/right toward-player (±90° from vertical).
- */
-export const ENEMY_FACE_PLAYER_EXTRA_DEG = {
-  Spider: 0,
-};
-
-export function getEnemyFacePlayerRotationDeg(enemyName, enemyScreenLeftPct, playerScreenLeftPct) {
-  if (enemyName == null || !Object.prototype.hasOwnProperty.call(ENEMY_FACE_PLAYER_EXTRA_DEG, enemyName)) {
-    return null;
-  }
-  if (
-    typeof enemyScreenLeftPct !== "number" ||
-    !Number.isFinite(enemyScreenLeftPct) ||
-    typeof playerScreenLeftPct !== "number" ||
-    !Number.isFinite(playerScreenLeftPct)
-  ) {
-    return null;
-  }
-  const extra = ENEMY_FACE_PLAYER_EXTRA_DEG[enemyName] ?? 0;
-  const playerToTheLeft = playerScreenLeftPct < enemyScreenLeftPct;
-  const base = playerToTheLeft ? -90 : 90;
-  return base + extra;
-}
+export { getEnemyFeetVisualAlignPx, getLaneEnemyBodyScale } from "./laneScene";
 
 // Upgrade definitions
 export const UPGRADES = [

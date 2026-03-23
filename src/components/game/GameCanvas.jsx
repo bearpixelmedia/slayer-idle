@@ -328,6 +328,23 @@ function GameCanvasComponent({
       document.body
     );
 
+  /** Above HUD overlay (z-30) so boss warning / mechanic text is not covered by the stats bar. */
+  const bossUiPortal =
+    typeof document !== "undefined" &&
+    createPortal(
+      <div className="pointer-events-none fixed inset-0 z-[38]" aria-live="polite">
+        <BossUI
+          showBossWarning={showBossWarning}
+          isBossActive={state?.isBossActive}
+          boss={boss}
+          shieldActive={shieldActive}
+          bossHitsReceived={state?.bossHitsReceived}
+          bossMechanic={boss?.mechanic}
+        />
+      </div>,
+      document.body
+    );
+
   return (
     <div
       ref={canvasRef}
@@ -337,7 +354,9 @@ function GameCanvasComponent({
       onPointerCancel={handlePointerCancel}
     >
       <ParallaxBackground />
-      <PlayerDisplay 
+      <ParallaxShrubOverlay />
+      <WorldCoins worldCoins={state?.worldCoins} playerWorldPos={state?.worldProgress} />
+      <PlayerDisplay
         playerHP={state.playerHP}
         playerMaxHP={state.playerMaxHP}
         enemyHit={enemyHit}
@@ -351,7 +370,6 @@ function GameCanvasComponent({
         playerHitboxRef={playerHitboxRef}
         combatGlyphRef={playerCombatGlyphRef}
       />
-      <WorldCoins worldCoins={state?.worldCoins} playerWorldPos={state?.worldProgress} />
       <EnemyCluster
         cluster={state.enemyCluster ?? []}
         currentIndex={state.currentClusterIndex}
@@ -369,7 +387,6 @@ function GameCanvasComponent({
         enemyCombatGlyphRef={enemyCombatGlyphRef}
         playerHit={playerHit}
       />
-      <ParallaxShrubOverlay />
       {bowPortal}
       <div className="absolute inset-0 pointer-events-none z-30">
         <FloatingElements
@@ -380,14 +397,7 @@ function GameCanvasComponent({
         />
         <ParticleEffect particles={particles} />
       </div>
-      <BossUI
-        showBossWarning={showBossWarning}
-        isBossActive={state?.isBossActive}
-        boss={boss}
-        shieldActive={shieldActive}
-        bossHitsReceived={state?.bossHitsReceived}
-        bossMechanic={boss?.mechanic}
-      />
+      {bossUiPortal}
 
       {/* Stage indicator mobile */}
       <div className="sm:hidden absolute top-2 left-2 z-30 flex items-center gap-1.5 px-2 py-1 rounded-full bg-black/40 backdrop-blur-sm border border-white/10">

@@ -12,7 +12,7 @@ const DEFAULT_RIG = {
   jumpTiltL: 1,
   jumpTiltR: -0.92,
   swordEmojiRotateDeg: 120,
-  /** Scaled via playerWeaponLayout.shieldX → translateX(out − pull); higher = more left on screen */
+  /** Scaled via weaponTriColumnLayout shield pull → translateX(out − pull); higher = more left on screen */
   shieldTranslateRem: 0.3,
   shieldTranslateRemSm: 0.34,
   shieldTranslateRemMd: 0.4,

@@ -1,6 +1,9 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { loadGameSettings } from "@/lib/gameSettings";
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { loadGameSettings, GAME_SETTINGS_UPDATED_EVENT } from "@/lib/gameSettings";
+import { getObservedSkyEnvironment } from "@/lib/skyCelestial";
+import { arcTopFromProgress, clampCelestialTopPct } from "@/lib/skyArc";
 import SpriteTileRow from "./SpriteTileRow";
+import { ParallaxMountainFarFallback, ParallaxMountainMidFallback } from "./ParallaxMountainSilhouettes";
 
 /** Local clock: moon phases at night, crescent at twilight, sun in daytime. */
 const SKY_TIME_EMOJIS = ["🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘", "🌙", "☀️"];
@@ -23,6 +26,92 @@ function getSkyTimePhaseIndexFromHour(t) {
   return Math.min(7, Math.floor(night * 8));
 }
 
+/** Sky gradients aligned with celestial phase (sun = daytime sky, not dark night blue). */
+const SKY_GRAD_NIGHT =
+  "linear-gradient(to bottom, #0a1628 0%, #1e4080 40%, #2d6e3a 100%)";
+const SKY_GRAD_DAY =
+  "linear-gradient(to bottom, #7ec4ea 0%, #9bd6f2 35%, #c8e8f0 65%, #5cb870 100%)";
+const SKY_GRAD_TWILIGHT =
+  "linear-gradient(to bottom, #1e3a5c 0%, #4a7eb8 38%, #6aab78 100%)";
+
+function getSkyGradientForHour(t) {
+  if (t >= 7 && t < 17) return SKY_GRAD_DAY;
+  if ((t >= 6 && t < 7) || (t >= 17 && t < 18)) return SKY_GRAD_TWILIGHT;
+  return SKY_GRAD_NIGHT;
+}
+
+function inferSkyKindFromHour(t) {
+  if (t >= 7 && t < 17) return "day";
+  if ((t >= 6 && t < 7) || (t >= 17 && t < 18)) return "twilight";
+  return "night";
+}
+
+/** Star layer opacity: hidden in daytime, full at night, muted at twilight. */
+function getStarsLayerOpacityForHour(t) {
+  if (t >= 7 && t < 17) return 0.04;
+  if (t >= 6 && t < 7) return 0.15 + (t - 6) * 0.35;
+  if (t >= 17 && t < 18) return 0.5 - (t - 17) * 0.35;
+  return 0.5;
+}
+
+function getSkyGradientForSkyKind(kind) {
+  if (kind === "day") return SKY_GRAD_DAY;
+  if (kind === "twilight") return SKY_GRAD_TWILIGHT;
+  return SKY_GRAD_NIGHT;
+}
+
+/** Sun / twilight / night glyph index when using observed sun altitude. */
+function getSkyTimePhaseFromObserved(altDeg, tHour) {
+  if (altDeg > 2) return 9;
+  if (altDeg > -8) return 8;
+  const night = tHour >= 18 ? (tHour - 18) / 12 : (tHour + 6) / 12;
+  return Math.min(7, Math.floor(night * 8));
+}
+
+function skyCoordsFromSettings(s) {
+  const la = Number(s?.sky_latitude);
+  const lo = Number(s?.sky_longitude);
+  if (Number.isFinite(la) && Number.isFinite(lo)) return { lat: la, lng: lo };
+  return { lat: null, lng: null };
+}
+
+function getParallaxSkyBootstrap() {
+  const tHour = getLocalFractionalHour();
+  if (typeof window === "undefined") {
+    return {
+      skyInitial: getSkyGradientForHour(tHour),
+      celestialTop0: getCelestialTopPercent(tHour, 0),
+      celestialLeft0: getCelestialLeftPercent(0),
+      initialPhase: getSkyTimePhaseIndexFromHour(tHour),
+    };
+  }
+  const w = typeof window.__gameDisplayWorldProgress === "number" ? window.__gameDisplayWorldProgress : 0;
+  const coords = skyCoordsFromSettings(loadGameSettings());
+  if (coords.lat == null) {
+    return {
+      skyInitial: getSkyGradientForHour(tHour),
+      celestialTop0: getCelestialTopPercent(tHour, w),
+      celestialLeft0: getCelestialLeftPercent(w),
+      initialPhase: getSkyTimePhaseIndexFromHour(tHour),
+    };
+  }
+  const env = getObservedSkyEnvironment(coords.lat, coords.lng, new Date(), w);
+  if (!env) {
+    return {
+      skyInitial: getSkyGradientForHour(tHour),
+      celestialTop0: getCelestialTopPercent(tHour, w),
+      celestialLeft0: getCelestialLeftPercent(w),
+      initialPhase: getSkyTimePhaseIndexFromHour(tHour),
+    };
+  }
+  return {
+    skyInitial: getSkyGradientForSkyKind(env.skyKind),
+    celestialTop0: env.topPercent,
+    celestialLeft0: env.leftPercent,
+    initialPhase: getSkyTimePhaseFromObserved(env.sunAltDegrees, tHour),
+  };
+}
+
 /** 0–1 through local calendar day (midnight → midnight), for sun/moon arc across the sky. */
 function getLocalDayFraction() {
   const d = new Date();
@@ -40,6 +129,90 @@ function getCelestialLeftPercent(smoothWorldProgress) {
   // Smooth drift with run — avoid (w * k) % 1 which snapped the moon/sun in a tight loop every ~0.9 path units
   const runWiggle = Math.sin(w * 0.09) * 3.2;
   return ((base + runWiggle) % 100 + 100) % 100;
+}
+
+function solarArcTopPercent(t) {
+  const p = Math.min(1, Math.max(0, (t - 6) / 12));
+  return arcTopFromProgress(p);
+}
+
+/** Hours since 18:00 going through midnight to 06:00 → 0..12 for one night arc. */
+function lunarArcTopPercent(t) {
+  const fromDusk = t >= 18 ? t - 18 : t + 6;
+  const p = Math.min(1, Math.max(0, fromDusk / 12));
+  return arcTopFromProgress(p);
+}
+
+/**
+ * Vertical position from local time only (phase-independent) so rise/set arcs stay smooth while
+ * glyphs crossfade; twilight ramps day vs night altitude over 6–7 and 17–18.
+ */
+function getCelestialTopPercent(tHour, smoothWorldProgress) {
+  const ySun = solarArcTopPercent(tHour);
+  const yMoon = lunarArcTopPercent(tHour);
+  let dayWeight;
+  if (tHour < 6) dayWeight = 0;
+  else if (tHour < 7) dayWeight = tHour - 6;
+  else if (tHour < 17) dayWeight = 1;
+  else if (tHour < 18) dayWeight = 1 - (tHour - 17);
+  else dayWeight = 0;
+  let y = ySun * dayWeight + yMoon * (1 - dayWeight);
+  const w = typeof smoothWorldProgress === "number" && Number.isFinite(smoothWorldProgress) ? smoothWorldProgress : 0;
+  y += Math.sin(w * 0.07) * 0.4;
+  return clampCelestialTopPct(y);
+}
+
+const SKY_BAND_HEIGHT_PCT = 75;
+
+/** Blend mode: screen + blue sky ⇒ cyan fringe; sun uses normal compositing with warm-only stops. */
+function celestialLightMixBlendModeForPhase(phase) {
+  if (phase === 9) return "normal";
+  if (phase === 8) return "soft-light";
+  return "screen";
+}
+
+/** Transparent core so the emoji stays visible when this layer is painted on top (corona in front). */
+function celestialLightRadialGradient(phase) {
+  if (phase === 9) {
+    return "radial-gradient(circle, transparent 0%, transparent 5%, rgba(255,248,220,0.88) 12%, rgba(255,220,130,0.5) 26%, rgba(255,175,70,0.28) 42%, rgba(255,155,55,0.08) 58%, transparent 72%)";
+  }
+  if (phase === 8) {
+    return "radial-gradient(circle, transparent 0%, transparent 5%, rgba(255,245,225,0.58) 13%, rgba(200,215,255,0.36) 30%, rgba(130,150,210,0.12) 50%, transparent 70%)";
+  }
+  return "radial-gradient(circle, transparent 0%, transparent 6%, rgba(232,238,255,0.72) 14%, rgba(185,200,238,0.34) 32%, rgba(110,130,190,0.12) 48%, transparent 64%)";
+}
+
+function celestialLightDiameterForPhase(phase) {
+  if (phase === 9) return "min(125vw, 880px)";
+  if (phase === 8) return "min(102vw, 680px)";
+  return "min(88vw, 540px)";
+}
+
+function celestialLightOpacityForPhase(phase, skyKind) {
+  if (phase === 9) return skyKind === "day" ? 0.62 : 0.48;
+  if (phase === 8) return 0.52;
+  return skyKind === "night" ? 0.44 : 0.28;
+}
+
+function skyWashRadialAt(phase, skyKind, leftPct, topPctViewport) {
+  const gy = Math.min(100, Math.max(0, (topPctViewport / SKY_BAND_HEIGHT_PCT) * 100));
+  if (phase === 9) {
+    const core = skyKind === "day" ? "rgba(255,246,210,0.42)" : "rgba(255,225,170,0.32)";
+    return {
+      background: `radial-gradient(ellipse 70% 55% at ${leftPct}% ${gy}%, ${core} 0%, rgba(255,205,130,0.16) 40%, rgba(255,190,110,0) 72%)`,
+      opacity: skyKind === "day" ? 0.42 : 0.34,
+    };
+  }
+  if (phase === 8) {
+    return {
+      background: `radial-gradient(ellipse 65% 50% at ${leftPct}% ${gy}%, rgba(255,235,210,0.28) 0%, rgba(160,185,230,0.2) 42%, transparent 70%)`,
+      opacity: 0.42,
+    };
+  }
+  return {
+    background: `radial-gradient(ellipse 55% 48% at ${leftPct}% ${gy}%, rgba(210,220,255,0.32) 0%, rgba(90,110,170,0.12) 45%, transparent 68%)`,
+    opacity: skyKind === "night" ? 0.22 : 0.14,
+  };
 }
 
 const CELESTIAL_CROSSFADE_MS = 520;
@@ -64,14 +237,22 @@ const PARALLAX_LAYERS = [
 ];
 
 function ParallaxBackground() {
+  const skyBoot = useMemo(() => getParallaxSkyBootstrap(), []);
+  const skyCoordsRef = useRef(
+    typeof window !== "undefined" ? skyCoordsFromSettings(loadGameSettings()) : { lat: null, lng: null }
+  );
   const refs = useRef([]);
   const speeds = useRef([]);
   const rafId = useRef(null);
   const celestialRef = useRef(null);
+  const celestialLightRef = useRef(null);
+  const skyWashRef = useRef(null);
   const celARef = useRef(null);
   const celBRef = useRef(null);
+  const skyRootRef = useRef(null);
+  const skyBandRef = useRef(null);
   const celBlendRef = useRef({
-    stablePhase: getSkyTimePhaseIndexFromHour(getLocalFractionalHour()),
+    stablePhase: skyBoot.initialPhase,
     blending: false,
     fromPhase: 0,
     toPhase: 0,
@@ -101,12 +282,28 @@ function ParallaxBackground() {
     setSprites(newSprites);
   }, []);
 
+  const reloadSkyCoords = React.useCallback(() => {
+    skyCoordsRef.current = skyCoordsFromSettings(loadGameSettings());
+  }, []);
+
   useEffect(() => {
     reloadSprites();
-    // Reload when localStorage changes (e.g. after saving in GameSettings)
-    window.addEventListener("storage", reloadSprites);
-    return () => window.removeEventListener("storage", reloadSprites);
-  }, [reloadSprites]);
+    reloadSkyCoords();
+    const onStorage = (e) => {
+      if (e.key === "game_settings_config" || e.key === null) {
+        reloadSprites();
+        reloadSkyCoords();
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    window.addEventListener(GAME_SETTINGS_UPDATED_EVENT, reloadSprites);
+    window.addEventListener(GAME_SETTINGS_UPDATED_EVENT, reloadSkyCoords);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener(GAME_SETTINGS_UPDATED_EVENT, reloadSprites);
+      window.removeEventListener(GAME_SETTINGS_UPDATED_EVENT, reloadSkyCoords);
+    };
+  }, [reloadSprites, reloadSkyCoords]);
 
   useLayoutEffect(() => {
     const a = celARef.current;
@@ -129,14 +326,52 @@ function ParallaxBackground() {
       // Same value as parallax scroll — EnemyCluster / bow aim read this so sprites aren’t stepped while layers glide at 60fps.
       if (typeof window !== "undefined") window.__gameDisplayWorldProgress = smooth;
 
+      const coordsNow = skyCoordsRef.current;
+      const observedEnv =
+        coordsNow.lat != null && coordsNow.lng != null
+          ? getObservedSkyEnvironment(coordsNow.lat, coordsNow.lng, new Date(), smooth)
+          : null;
+
+      const tHour = getLocalFractionalHour();
+      const skyKind = observedEnv?.skyKind ?? inferSkyKindFromHour(tHour);
+      const phase = observedEnv
+        ? getSkyTimePhaseFromObserved(observedEnv.sunAltDegrees, tHour)
+        : getSkyTimePhaseIndexFromHour(tHour);
+
+      let celLeft;
+      let celTop;
+      if (observedEnv) {
+        celLeft = observedEnv.leftPercent;
+        celTop = observedEnv.topPercent;
+      } else {
+        celLeft = getCelestialLeftPercent(smooth);
+        celTop = getCelestialTopPercent(tHour, smooth);
+      }
+
       const outer = celestialRef.current;
+      const lightEl = celestialLightRef.current;
+      const washEl = skyWashRef.current;
+      if (outer) {
+        outer.style.left = `${celLeft}%`;
+        outer.style.top = `${celTop}%`;
+      }
+      if (lightEl) {
+        const d = celestialLightDiameterForPhase(phase);
+        lightEl.style.width = d;
+        lightEl.style.height = d;
+        lightEl.style.background = celestialLightRadialGradient(phase);
+        lightEl.style.opacity = String(celestialLightOpacityForPhase(phase, skyKind));
+        lightEl.style.mixBlendMode = celestialLightMixBlendModeForPhase(phase);
+      }
+      if (washEl) {
+        const w = skyWashRadialAt(phase, skyKind, celLeft, celTop);
+        washEl.style.background = w.background;
+        washEl.style.opacity = String(w.opacity);
+      }
+
       const spanA = celARef.current;
       const spanB = celBRef.current;
       if (outer && spanA && spanB) {
-        const tHour = getLocalFractionalHour();
-        const phase = getSkyTimePhaseIndexFromHour(tHour);
-        outer.style.left = `${getCelestialLeftPercent(smooth)}%`;
-
         const cs = celBlendRef.current;
         const now = performance.now();
         const em = (i) => SKY_TIME_EMOJIS[i];
@@ -193,6 +428,18 @@ function ParallaxBackground() {
           el.style.transform = `translate3d(${offset}px,0,0)`;
         }
       }
+
+      const skyGrad = observedEnv ? getSkyGradientForSkyKind(observedEnv.skyKind) : getSkyGradientForHour(tHour);
+      const starsOpacity = observedEnv ? observedEnv.starsOpacity : getStarsLayerOpacityForHour(tHour);
+      const rootEl = skyRootRef.current;
+      const bandEl = skyBandRef.current;
+      if (rootEl) rootEl.style.background = skyGrad;
+      if (bandEl) bandEl.style.background = skyGrad;
+      const starsEl = refs.current[0];
+      if (starsEl && layerMapRef.current.has(0)) {
+        starsEl.style.opacity = String(starsOpacity);
+      }
+
       rafId.current = requestAnimationFrame(tick);
     };
     rafId.current = requestAnimationFrame(tick);
@@ -216,53 +463,31 @@ function ParallaxBackground() {
     );
   };
 
-  return (
-    <div style={{ position: "absolute", inset: 0, overflow: "hidden", background: "linear-gradient(to bottom, #0a1628 0%, #1e4080 40%, #2d6e3a 100%)", willChange: "transform" }}>
-      {/* Sky */}
-      <div style={{ position: "absolute", inset: 0, height: "75%", background: "linear-gradient(to bottom, #0a1628, #1e4080, #2d6e3a)", pointerEvents: "none" }} />
+  const skyInitial = skyBoot.skyInitial;
+  const celestialTop0 = skyBoot.celestialTop0;
 
-      {/* Time-of-day: two stacked glyphs crossfade in RAF (smoothstep ~520ms) */}
+  return (
+    <div
+      ref={skyRootRef}
+      style={{ position: "absolute", inset: 0, overflow: "hidden", background: skyInitial, willChange: "transform" }}
+    >
+      {/* Sky */}
       <div
-        ref={celestialRef}
-        className="select-none pointer-events-none"
-        style={{
-          position: "absolute",
-          top: "6%",
-          left: `${getCelestialLeftPercent(
-            typeof window !== "undefined" ? window.__gameDisplayWorldProgress : 0
-          )}%`,
-          right: "auto",
-          transform: "translateX(-50%)",
-          zIndex: 5,
-          fontSize: "clamp(1.75rem, 6vw, 3.25rem)",
-          lineHeight: 1,
-          filter: "drop-shadow(0 0 12px rgba(255, 255, 230, 0.35))",
-          fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif',
-        }}
-        aria-hidden
+        ref={skyBandRef}
+        style={{ position: "absolute", inset: 0, height: `${SKY_BAND_HEIGHT_PCT}%`, background: skyInitial, pointerEvents: "none" }}
       >
-        <div style={{ position: "relative", display: "inline-block", minWidth: "2.5rem", minHeight: "1.25em" }}>
-          <span
-            ref={celARef}
-            style={{
-              position: "absolute",
-              left: "50%",
-              transform: "translateX(-50%)",
-              whiteSpace: "nowrap",
-              opacity: 1,
-            }}
-          />
-          <span
-            ref={celBRef}
-            style={{
-              position: "absolute",
-              left: "50%",
-              transform: "translateX(-50%)",
-              whiteSpace: "nowrap",
-              opacity: 0,
-            }}
-          />
-        </div>
+        <div
+          ref={skyWashRef}
+          style={{
+            position: "absolute",
+            inset: 0,
+            pointerEvents: "none",
+            mixBlendMode: "soft-light",
+            opacity: 0,
+            willChange: "opacity, background",
+          }}
+          aria-hidden
+        />
       </div>
 
       {/* Stars */}
@@ -284,33 +509,85 @@ function ParallaxBackground() {
         )
       )}
 
-      {/* Far mountains */}
-      {layer(1, 0.06, 10, 30, 0.45,
-        <SpriteTileRow spriteUrl={sprites.mountainFar} tileWidth={150} count={16} fallback={
-          <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
-            {Array.from({ length: 8 }).map((_, i) => (
-              <svg key={i} viewBox="0 0 150 200" style={{ flex: "0 0 150px", height: "100%" }}>
-                <polygon points={`75,${15 + (i * 11) % 30} 0,200 150,200`} fill="rgba(30,65,110,0.5)" />
-                <polygon points={`40,${35 + (i * 17) % 30} 0,200 80,200`} fill="rgba(20,55,100,0.4)" />
-              </svg>
-            ))}
-          </div>
-        } />
+      {/* Far mountains — slow scroll vs mid (~5×) so depth reads like real parallax */}
+      {layer(1, 0.03, 10, 30, 0.45,
+        <SpriteTileRow spriteUrl={sprites.mountainFar} tileWidth={150} count={16} fallback={<ParallaxMountainFarFallback />} />
       )}
 
-      {/* Mid mountains / hills */}
-      {layer(2, 0.12, 20, 35, 0.65,
-        <SpriteTileRow spriteUrl={sprites.mountainMid} tileWidth={150} count={20} fallback={
-          <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
-            {Array.from({ length: 10 }).map((_, i) => (
-              <svg key={i} viewBox="0 0 150 200" style={{ flex: "0 0 150px", height: "100%" }}>
-                <polygon points={`75,${10 + (i * 13) % 28} 0,200 150,200`} fill="rgba(40,100,60,0.7)" />
-                <polygon points={`40,${30 + (i * 19) % 35} 0,200 80,200`} fill="rgba(30,85,50,0.6)" />
-              </svg>
-            ))}
-          </div>
-        } />
+      {/* Mid mountains / hills — faster; jagged silhouette differs from far massifs */}
+      {layer(2, 0.15, 20, 35, 0.65,
+        <SpriteTileRow spriteUrl={sprites.mountainMid} tileWidth={150} count={20} fallback={<ParallaxMountainMidFallback />} />
       )}
+
+      {/* Sun / moon: drawn above mountain silhouettes; radial glow + sky wash updated in RAF */}
+      <div
+        ref={celestialRef}
+        className="select-none pointer-events-none"
+        style={{
+          position: "absolute",
+          top: `${celestialTop0}%`,
+          left: `${skyBoot.celestialLeft0}%`,
+          right: "auto",
+          transform: "translateX(-50%)",
+          zIndex: 22,
+          fontSize: "clamp(1.75rem, 6vw, 3.25rem)",
+          lineHeight: 1,
+          fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif',
+          willChange: "left, top",
+        }}
+        aria-hidden
+      >
+        <div
+          style={{
+            position: "relative",
+            zIndex: 1,
+            display: "inline-block",
+            minWidth: "2.5rem",
+            minHeight: "1.25em",
+            filter: "drop-shadow(0 0 10px rgba(255, 255, 255, 0.35))",
+          }}
+        >
+          <span
+            ref={celARef}
+            style={{
+              position: "absolute",
+              left: "50%",
+              transform: "translateX(-50%)",
+              whiteSpace: "nowrap",
+              opacity: 1,
+            }}
+          />
+          <span
+            ref={celBRef}
+            style={{
+              position: "absolute",
+              left: "50%",
+              transform: "translateX(-50%)",
+              whiteSpace: "nowrap",
+              opacity: 0,
+            }}
+          />
+        </div>
+        <div
+          ref={celestialLightRef}
+          style={{
+            position: "absolute",
+            left: "50%",
+            top: "clamp(0.75rem, 3.2vw, 1.2rem)",
+            transform: "translate(-50%, -50%)",
+            zIndex: 2,
+            pointerEvents: "none",
+            borderRadius: "50%",
+            filter: "blur(5px)",
+            mixBlendMode: "normal",
+            width: "min(125vw, 880px)",
+            height: "min(125vw, 880px)",
+            opacity: 0.7,
+            willChange: "opacity, width, height, background",
+          }}
+          aria-hidden
+        />
+      </div>
 
       {/* Very far trees */}
       {layer(3, 0.22, 35, 26, 0.5,
@@ -413,7 +690,7 @@ function ParallaxBackground() {
         } />
       )}
 
-      {/* Shrubs render in ParallaxShrubOverlay (above player/enemy) */}
+      {/* Shrubs: ParallaxShrubOverlay (below combat z-index, frames bottom of path) */}
 
       {/* Static ground */}
       {sprites.ground ? (

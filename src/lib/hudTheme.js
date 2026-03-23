@@ -17,13 +17,11 @@ export const HUD_THEME = {
     rounded: "rounded-lg",
   },
 
-  // Stats bar styles
+  // Stats bar styles (outer = viewport positioning; inner = glass panel)
   statsBar: {
-    container: "fixed top-2 left-2 right-2 z-10 flex flex-wrap items-center justify-between gap-2 px-3 py-2",
-    bg: "bg-card/80 backdrop-blur-md",
-    border: "border border-border",
-    rounded: "rounded-lg",
-    pointerEvents: "pointer-events-none",
+    outer: "fixed top-2.5 left-1/2 z-10 w-[min(100%-1rem,40rem)] -translate-x-1/2 pointer-events-none",
+    inner:
+      "flex w-full flex-wrap items-center justify-between gap-x-2 gap-y-2 rounded-2xl border border-white/10 bg-card/80 px-2.5 py-2 shadow-[0_12px_48px_-8px_rgba(0,0,0,0.65)] backdrop-blur-xl ring-1 ring-inset ring-white/[0.04] sm:gap-x-3 sm:px-3 sm:py-2.5",
   },
 
   // Ability HUD styles
@@ -48,7 +46,8 @@ export const HUD_THEME = {
 
   // Active buffs styles
   buffs: {
-    container: "fixed top-20 left-2 right-2 z-20 flex flex-wrap items-center gap-2",
+    container:
+      "fixed top-[6.75rem] left-2 right-2 z-20 flex flex-wrap items-center gap-2 sm:top-28",
     item: "px-2 py-1 rounded-lg border border-border/50 bg-card/60 flex items-center gap-2 text-[10px]",
   },
 

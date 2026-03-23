@@ -53,7 +53,6 @@ export default function HUDOverlay({
         state={state}
         tapDamage={getTapDamage()}
         idleCPS={getIdleCPS()}
-        className={`${HUD_THEME.statsBar.container} ${HUD_THEME.statsBar.bg} ${HUD_THEME.statsBar.border} ${HUD_THEME.statsBar.rounded} ${HUD_THEME.statsBar.pointerEvents}`}
       />
 
       {/* Active Buffs - Below Stats Bar */}
@@ -106,10 +105,26 @@ export default function HUDOverlay({
       {/* Menu Toggle Button */}
       {!hudMenuOpen && (
         <motion.button
+          type="button"
+          title={hasAffordableUpgrade ? "Menu — you can buy an upgrade!" : "Open menu"}
           onClick={() => onMenuToggle(true)}
-          animate={hasAffordableUpgrade ? { boxShadow: ["0 0 0 0 rgba(217, 119, 6, 0.9)", "0 0 0 20px rgba(217, 119, 6, 0)"], scale: [1, 1.1, 1] } : {}}
-          transition={hasAffordableUpgrade ? { duration: 1, repeat: Infinity } : {}}
-          className={`hidden lg:flex fixed right-4 bottom-4 z-50 w-12 h-12 rounded-full pointer-events-auto items-center justify-center text-2xl transition-all active:scale-95 border-2 border-primary/60 hover:brightness-125 ${hasAffordableUpgrade ? 'bg-primary/40 border-primary' : 'bg-primary/15'}`}
+          animate={
+            hasAffordableUpgrade
+              ? {
+                  boxShadow: [
+                    "0 0 0 0 rgba(251, 191, 36, 0.95)",
+                    "0 0 0 22px rgba(251, 191, 36, 0)",
+                  ],
+                  scale: [1, 1.06, 1],
+                }
+              : {}
+          }
+          transition={hasAffordableUpgrade ? { duration: 1.1, repeat: Infinity } : {}}
+          className={`hidden lg:flex fixed right-4 bottom-4 z-50 h-14 w-14 pointer-events-auto items-center justify-center rounded-full text-2xl shadow-lg transition-all active:scale-95 border-[3px] hover:brightness-110 ${
+            hasAffordableUpgrade
+              ? "border-amber-400 bg-gradient-to-br from-amber-500/50 to-primary/45 ring-2 ring-amber-300/50"
+              : "border-amber-600/80 bg-gradient-to-br from-amber-900/50 to-card/90 ring-1 ring-amber-500/30"
+          }`}
         >
           📖
         </motion.button>

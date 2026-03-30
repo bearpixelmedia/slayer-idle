@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload, CheckCircle, AlertCircle, Loader2, FileArchive } from "lucide-react";
 import { base44 } from "@/api/base44Client";
@@ -10,6 +10,7 @@ export default function ZipAssetUpload() {
   const [details, setDetails] = useState(null);
   const [progress, setProgress] = useState(0);
   const [steps, setSteps] = useState([]);
+  const stepsEndRef = useRef(null);
 
   const handleUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -28,7 +29,7 @@ export default function ZipAssetUpload() {
 
     try {
       // Step 1: Convert file to base64
-      setSteps(s => [...s, { name: "Reading ZIP file", status: "in-progress" }]);
+      setSteps([{ name: "Reading ZIP file", status: "in-progress" }]);
       setProgress(20);
       
       const reader = new FileReader();
@@ -79,6 +80,13 @@ export default function ZipAssetUpload() {
       setMessage("Failed: " + err.message);
     }
   };
+
+  // Auto-scroll to latest step
+  useEffect(() => {
+    if (stepsEndRef.current) {
+      stepsEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [steps]);
 
   return (
     <div className="space-y-3 p-4 border-2 border-dashed border-violet-300 rounded-lg bg-violet-50">
@@ -145,14 +153,17 @@ export default function ZipAssetUpload() {
                 {steps.length === 0 ? (
                   <p className="text-[10px] text-slate-400">Processing files...</p>
                 ) : (
-                  steps.map((step, i) => (
-                    <div key={i} className="flex items-center gap-1.5 text-[10px]">
-                      {step.status === "done" && <CheckCircle className="w-3 h-3 text-green-600 flex-shrink-0" />}
-                      {step.status === "in-progress" && <Loader2 className="w-3 h-3 animate-spin text-violet-500 flex-shrink-0" />}
-                      {step.status === "error" && <AlertCircle className="w-3 h-3 text-red-600 flex-shrink-0" />}
-                      <span className="text-slate-700 truncate">{step.name}</span>
-                    </div>
-                  ))
+                  <>
+                    {steps.map((step, i) => (
+                      <div key={i} className="flex items-center gap-1.5 text-[10px]">
+                        {step.status === "done" && <CheckCircle className="w-3 h-3 text-green-600 flex-shrink-0" />}
+                        {step.status === "in-progress" && <Loader2 className="w-3 h-3 animate-spin text-violet-500 flex-shrink-0" />}
+                        {step.status === "error" && <AlertCircle className="w-3 h-3 text-red-600 flex-shrink-0" />}
+                        <span className="text-slate-700 truncate">{step.name}</span>
+                      </div>
+                    ))}
+                    <div ref={stepsEndRef} />
+                  </>
                 )}
               </div>
             </div>

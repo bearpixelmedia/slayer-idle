@@ -78,59 +78,56 @@ Deno.serve(async (req) => {
       return created.id;
     }
 
-    // Batch uploads 3 at a time to avoid timeouts
-    const batchSize = 3;
-    for (let i = 0; i < entries.length; i += batchSize) {
-      const batch = entries.slice(i, i + batchSize).filter(e => !e.directory && !e.filename.includes('__MACOSX') && !e.filename.includes('.DS_Store'));
+    // Process uploads sequentially to avoid folder creation race conditions
+    for (const entry of entries) {
+      if (entry.directory || entry.filename.includes('__MACOSX') || entry.filename.includes('.DS_Store')) continue;
       
-      await Promise.all(batch.map(async (entry) => {
-        try {
-          const blob = await entry.getData(new BlobWriter());
-          const parts = entry.filename.split('/').filter(Boolean);
-          const filename = parts[parts.length - 1];
+      try {
+        const blob = await entry.getData(new BlobWriter());
+        const parts = entry.filename.split('/').filter(Boolean);
+        const filename = parts[parts.length - 1];
 
-          // Create nested folder hierarchy
-          let targetFolderId = folderId;
-          if (parts.length > 1) {
-            let currentParentId = folderId;
-            for (let j = 0; j < parts.length - 1; j++) {
-              currentParentId = await getOrCreateSubfolder(parts[j], currentParentId);
-            }
-            targetFolderId = currentParentId;
+        // Create nested folder hierarchy
+        let targetFolderId = folderId;
+        if (parts.length > 1) {
+          let currentParentId = folderId;
+          for (let j = 0; j < parts.length - 1; j++) {
+            currentParentId = await getOrCreateSubfolder(parts[j], currentParentId);
           }
-
-          const ext = filename.split('.').pop().toLowerCase();
-          const mimeMap = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', mp3: 'audio/mpeg', wav: 'audio/wav', ogg: 'audio/ogg', json: 'application/json' };
-          const mimeType = mimeMap[ext] || 'application/octet-stream';
-
-          const boundary = 'drive_upload_boundary';
-          const meta = JSON.stringify({ name: filename, parents: [targetFolderId] });
-          const metaPart = `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${meta}\r\n`;
-          const filePart = `--${boundary}\r\nContent-Type: ${mimeType}\r\n\r\n`;
-          const endPart = `\r\n--${boundary}--`;
-
-          const encoder = new TextEncoder();
-          const fileBytes = new Uint8Array(await blob.arrayBuffer());
-          const p1 = encoder.encode(metaPart);
-          const p2 = encoder.encode(filePart);
-          const p3 = encoder.encode(endPart);
-          const uploadBody = new Uint8Array(p1.length + p2.length + fileBytes.length + p3.length);
-          uploadBody.set(p1, 0);
-          uploadBody.set(p2, p1.length);
-          uploadBody.set(fileBytes, p1.length + p2.length);
-          uploadBody.set(p3, p1.length + p2.length + fileBytes.length);
-
-          const uploadRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink', {
-            method: 'POST',
-            headers: { ...authHeader, 'Content-Type': `multipart/related; boundary=${boundary}` },
-            body: uploadBody,
-          });
-          const uploaded_file = await uploadRes.json();
-          uploaded.push({ name: filename, id: uploaded_file.id, path: entry.filename });
-        } catch (e) {
-          errors.push({ file: entry.filename, error: e.message });
+          targetFolderId = currentParentId;
         }
-      }));
+
+        const ext = filename.split('.').pop().toLowerCase();
+        const mimeMap = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', mp3: 'audio/mpeg', wav: 'audio/wav', ogg: 'audio/ogg', json: 'application/json' };
+        const mimeType = mimeMap[ext] || 'application/octet-stream';
+
+        const boundary = 'drive_upload_boundary';
+        const meta = JSON.stringify({ name: filename, parents: [targetFolderId] });
+        const metaPart = `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${meta}\r\n`;
+        const filePart = `--${boundary}\r\nContent-Type: ${mimeType}\r\n\r\n`;
+        const endPart = `\r\n--${boundary}--`;
+
+        const encoder = new TextEncoder();
+        const fileBytes = new Uint8Array(await blob.arrayBuffer());
+        const p1 = encoder.encode(metaPart);
+        const p2 = encoder.encode(filePart);
+        const p3 = encoder.encode(endPart);
+        const uploadBody = new Uint8Array(p1.length + p2.length + fileBytes.length + p3.length);
+        uploadBody.set(p1, 0);
+        uploadBody.set(p2, p1.length);
+        uploadBody.set(fileBytes, p1.length + p2.length);
+        uploadBody.set(p3, p1.length + p2.length + fileBytes.length);
+
+        const uploadRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink', {
+          method: 'POST',
+          headers: { ...authHeader, 'Content-Type': `multipart/related; boundary=${boundary}` },
+          body: uploadBody,
+        });
+        const uploaded_file = await uploadRes.json();
+        uploaded.push({ name: filename, id: uploaded_file.id, path: entry.filename });
+      } catch (e) {
+        errors.push({ file: entry.filename, error: e.message });
+      }
     }
 
     return Response.json({

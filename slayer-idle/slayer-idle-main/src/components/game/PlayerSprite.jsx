@@ -1,24 +1,25 @@
 import React, { useEffect, useState, useRef } from "react";
 import AnimatedSprite from "./AnimatedSprite";
-import { PLAYER_SPRITES, resolveAnim } from "@/lib/sprites";
+import { PLAYER_SPRITES, PLAYER_BODY_A, resolveAnim } from "@/lib/sprites";
 
 /**
  * PlayerSprite
  *
  * State-driven player animation controller.
- * Picks the correct sheet+animation based on game state.
+ * Uses PLAYER_BODY_A for hit/death (clean pack sheets),
+ * and PLAYER_SPRITES for idle/run/walk/attack (existing customised sheets).
  *
  * Priority (highest → lowest):
  *   death > hit > attack > run/walk > idle
  *
  * Props:
  *   isDead       {boolean}
- *   isAttacking  {boolean}  — set true for one swing, auto-clears
- *   isHit        {boolean}  — flash when player takes damage
- *   isRunning    {boolean}  — moving forward
- *   weaponMode   {string}   — "sword" | "bow"
- *   scale        {number}   — display scale (default: 3)
- *   flipX        {boolean}  — face left
+ *   isAttacking  {boolean}
+ *   isHit        {boolean}
+ *   isRunning    {boolean}
+ *   weaponMode   {string}   "sword" | "bow"
+ *   scale        {number}   default 3
+ *   flipX        {boolean}
  *   style        {object}
  *   className    {string}
  */
@@ -37,12 +38,8 @@ export default function PlayerSprite({
   const attackPendingRef = useRef(false);
   const hitPendingRef = useRef(false);
 
-  // Determine current animation priority
   useEffect(() => {
-    if (isDead) {
-      setAnimState("death");
-      return;
-    }
+    if (isDead) { setAnimState("death"); return; }
     if (isHit && !hitPendingRef.current) {
       hitPendingRef.current = true;
       setAnimState("hit");
@@ -67,20 +64,28 @@ export default function PlayerSprite({
       hitPendingRef.current = false;
       setAnimState(isRunning ? "run" : "idle");
     }
-    // death holds last frame — do nothing
+    // death holds last frame
   };
 
-  // Resolve which sheet to use
-  let sheetKey;
+  // Resolve sheet — prefer Body_A for hit/death, PLAYER_SPRITES for everything else
+  let anim = null;
   switch (animState) {
-    case "death":  sheetKey = "death"; break;
-    case "hit":    sheetKey = "hit"; break;
-    case "attack": sheetKey = weaponMode === "bow" ? "attack_bow" : "attack_sword"; break;
-    case "run":    sheetKey = "run"; break;
-    default:       sheetKey = "idle";
+    case "death":
+      anim = resolveAnim(PLAYER_BODY_A, "death") ?? resolveAnim(PLAYER_SPRITES, "death");
+      break;
+    case "hit":
+      anim = resolveAnim(PLAYER_BODY_A, "hit") ?? resolveAnim(PLAYER_SPRITES, "hit");
+      break;
+    case "attack":
+      anim = resolveAnim(PLAYER_SPRITES, weaponMode === "bow" ? "attack_bow" : "attack_sword");
+      break;
+    case "run":
+      anim = resolveAnim(PLAYER_SPRITES, "run");
+      break;
+    default:
+      anim = resolveAnim(PLAYER_SPRITES, "idle");
   }
 
-  const anim = resolveAnim(PLAYER_SPRITES, sheetKey);
   if (!anim) return null;
 
   return (

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useMemo, useState, useCallback } from "react";
 import { motion, useMotionValue, useAnimation, useTransform, animate } from "framer-motion";
 import PlayerRenderer from "./PlayerRenderer";
+import PlayerWeaponSprite from "./PlayerWeaponSprite";
 import CombatLaneEntityRoot from "./CombatLaneEntityRoot";
 import { PLAYER_ANCHOR_LEFT_PCT } from "@/lib/combatHitboxes";
 import {
@@ -298,23 +299,18 @@ function PlayerDisplay({
                     style={{ width: weaponLayout.leftColW }}
                     aria-hidden
                   >
-                  <motion.span
-                    className={`block origin-bottom-right ${WEAPON_EMOJI_TYPO_NORMAL}`}
+                  <motion.div
+                    className="origin-bottom-right"
                     animate={weaponLeftControls}
                     initial={{ rotate: 0, x: 0, y: 0, scale: 1 }}
                   >
-                    {isBow ? (
-                      "🏹"
-                    ) : (
-                      <span
-                        className="inline-block origin-bottom-right [line-height:1]"
-                        style={{ transform: `rotate(${rig.swordEmojiRotateDeg}deg)` }}
-                        aria-hidden
-                      >
-                        🗡️
-                      </span>
-                    )}
-                  </motion.span>
+                    <PlayerWeaponSprite
+                      weaponMode={weaponMode}
+                      attackTick={attackTick}
+                      scale={3}
+                      skinRow={0}
+                    />
+                  </motion.div>
                   </div>
                 </motion.div>
 
@@ -346,30 +342,19 @@ function PlayerDisplay({
                     }}
                     aria-hidden
                   >
-                  <motion.span
-                    className={`block origin-bottom-left ${WEAPON_EMOJI_TYPO_NORMAL}`}
+                  <motion.div
+                    className="origin-bottom-left"
                     animate={weaponRightControls}
                     initial={{ rotate: 0, x: 0, y: 0, scale: 1 }}
                   >
-                    {isBow ? (
-                      "🎯"
-                    ) : (
-                      <span
-                        className="inline-block [transform:translateX(calc(var(--sh-out)-var(--sh-x)))] sm:[transform:translateX(calc(var(--sh-out-sm)-var(--sh-x-sm)))] md:[transform:translateX(calc(var(--sh-out-md)-var(--sh-x-md)))]"
-                        style={{
-                          "--sh-out": weaponLayout.shieldOutwardRem,
-                          "--sh-out-sm": weaponLayout.shieldOutwardRemSm,
-                          "--sh-out-md": weaponLayout.shieldOutwardRemMd,
-                          "--sh-x": weaponLayout.shieldTranslateRem,
-                          "--sh-x-sm": weaponLayout.shieldTranslateRemSm,
-                          "--sh-x-md": weaponLayout.shieldTranslateRemMd,
-                        }}
-                        aria-hidden
-                      >
-                        🛡️
-                      </span>
-                    )}
-                  </motion.span>
+                    {/* Right column: shield/aim indicator — keep as emoji fallback for now */}
+                    <span
+                      className={`block origin-bottom-left ${WEAPON_EMOJI_TYPO_NORMAL}`}
+                      aria-hidden
+                    >
+                      {isBow ? "🎯" : "🛡️"}
+                    </span>
+                  </motion.div>
                   </div>
                 </motion.div>
               </div>

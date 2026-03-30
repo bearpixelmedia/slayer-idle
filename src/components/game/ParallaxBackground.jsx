@@ -591,8 +591,8 @@ function ParallaxBackground() {
         />
       </div>
 
-      {/* Very far trees */}
-      {layer(3, 0.22, 35, 26, 0.5,
+      {/* Very far trees — bottoms align to ground horizon (~85%) */}
+      {layer(3, 0.22, 55, 30, 0.5,
         <SpriteTileRow spriteUrl={sprites.treeVeryFar} tileWidth={35} count={100} fallback={
           <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
             {Array.from({ length: 50 }).map((_, i) => (
@@ -608,7 +608,7 @@ function ParallaxBackground() {
       )}
 
       {/* Far trees */}
-      {layer(4, 0.28, 33, 30, 0.65,
+      {layer(4, 0.28, 52, 33, 0.65,
         <SpriteTileRow spriteUrl={sprites.treeFar} tileWidth={42} count={90} fallback={
           <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
             {Array.from({ length: 45 }).map((_, i) => (
@@ -625,7 +625,7 @@ function ParallaxBackground() {
       )}
 
       {/* Mid-back trees */}
-      {layer(5, 0.43, 34, 34, 0.8,
+      {layer(5, 0.43, 50, 35, 0.8,
         <SpriteTileRow spriteUrl={sprites.treeMidBack} tileWidth={58} count={76} fallback={
           <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
             {Array.from({ length: 38 }).map((_, i) => (
@@ -642,7 +642,7 @@ function ParallaxBackground() {
       )}
 
       {/* Mid trees */}
-      {layer(6, 0.50, 31, 38, 0.85,
+      {layer(6, 0.50, 47, 38, 0.85,
         <SpriteTileRow spriteUrl={sprites.treeMid} tileWidth={65} count={70} fallback={
           <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
             {Array.from({ length: 35 }).map((_, i) => (
@@ -659,7 +659,7 @@ function ParallaxBackground() {
       )}
 
       {/* Mid-front trees */}
-      {layer(7, 0.57, 29, 43, 0.88,
+      {layer(7, 0.57, 44, 41, 0.88,
         <SpriteTileRow spriteUrl={sprites.treeMidFront} tileWidth={70} count={64} fallback={
           <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
             {Array.from({ length: 32 }).map((_, i) => (
@@ -676,7 +676,7 @@ function ParallaxBackground() {
       )}
 
       {/* Front trees */}
-      {layer(8, 0.65, 27, 48, 0.9,
+      {layer(8, 0.65, 40, 45, 0.9,
         <SpriteTileRow spriteUrl={sprites.treeFront} tileWidth={75} count={90} fallback={
           <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
             {Array.from({ length: 45 }).map((_, i) => (
@@ -709,7 +709,7 @@ function ParallaxBackground() {
       )}
 
       {/* Ground — scrolls with the parallax at near-foreground speed */}
-      {layer(11, 0.95, 78, 22, 1.0,
+      {layer(11, 0.95, 82, 18, 1.0,
         sprites.ground ? (
           <SpriteTileRow spriteUrl={sprites.ground} tileWidth={200} count={20} />
         ) : (

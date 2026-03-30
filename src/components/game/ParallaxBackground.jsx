@@ -479,34 +479,63 @@ function ParallaxBackground() {
         />
       </div>
 
-      {/* Stars */}
-      {layer(0, 0.01, 0, 60, 0.5,
+      {/* LAYER 1 — Stars / sky drift */}
+      {layer(0, 0.01, 0, 65, 0.5,
         sprites.stars ? (
           <SpriteTileRow spriteUrl={sprites.stars} tileWidth={200} count={20} />
         ) : (
           <div style={{ position: "relative", width: "200%", height: "100%" }}>
-            {Array.from({ length: 30 }).map((_, i) => (
-              <div key={i} style={{
+            {/* Stars */}
+            {Array.from({ length: 48 }).map((_, i) => (
+              <div key={`star-${i}`} style={{
                 position: "absolute",
                 width: `${1 + i % 3}px`, height: `${1 + i % 3}px`,
                 borderRadius: "50%", background: "white",
-                top: `${5 + (i * 13) % 40}%`, left: `${(i * 6.7) % 100}%`,
-                opacity: 0.2 + (i % 4) * 0.1,
+                top: `${3 + (i * 11) % 45}%`, left: `${(i * 4.17) % 100}%`,
+                opacity: 0.15 + (i % 5) * 0.08,
               }} />
             ))}
+            {/* Clouds — puff shapes drifting in the upper sky */}
+            {Array.from({ length: 8 }).map((_, i) => {
+              const cx = (i * 12.5) % 100;
+              const cy = 15 + (i * 7) % 30;
+              const w = 80 + (i * 23) % 100;
+              return (
+                <svg key={`cloud-${i}`} style={{ position: "absolute", left: `${cx}%`, top: `${cy}%`, opacity: 0.12 + (i % 3) * 0.06, width: w, height: w * 0.4 }} viewBox="0 0 120 50">
+                  <ellipse cx="60" cy="34" rx="55" ry="16" fill="white" />
+                  <ellipse cx="40" cy="26" rx="28" ry="20" fill="white" />
+                  <ellipse cx="75" cy="22" rx="24" ry="18" fill="white" />
+                  <ellipse cx="55" cy="18" rx="20" ry="16" fill="white" />
+                </svg>
+              );
+            })}
           </div>
         )
       )}
 
-      {/* Far mountains — slow scroll vs mid (~5×) so depth reads like real parallax */}
-      {layer(1, 0.03, 10, 30, 0.45,
-        <SpriteTileRow spriteUrl={sprites.mountainFar} tileWidth={150} count={16} fallback={<ParallaxMountainFarFallback />} />
+      {/* LAYER 2 — Mountains (far + mid stacked in same scrolling div) */}
+      {layer(1, 0.03, 8, 45, 0.5,
+        sprites.mountainFar ? (
+          <SpriteTileRow spriteUrl={sprites.mountainFar} tileWidth={200} count={16} />
+        ) : (
+          <div style={{ position: "relative", width: "200%", height: "100%" }}>
+            {/* Far mountain range — smooth distant silhouette */}
+            <svg style={{ position: "absolute", bottom: "45%", left: 0, width: "100%", height: "60%" }} viewBox="0 0 2000 200" preserveAspectRatio="none">
+              <polygon points="0,200 0,130 60,90 130,110 200,60 280,85 360,40 440,70 520,30 600,55 680,20 760,50 840,15 920,45 1000,10 1080,40 1160,20 1240,50 1320,30 1400,60 1480,35 1560,65 1640,45 1720,80 1800,55 1880,75 1940,95 2000,120 2000,200" fill="rgba(40,55,80,0.55)" />
+            </svg>
+            {/* Mid hill range — slightly in front, more green tones */}
+            <svg style={{ position: "absolute", bottom: "20%", left: 0, width: "100%", height: "55%" }} viewBox="0 0 2000 200" preserveAspectRatio="none">
+              <polygon points="0,200 0,160 80,120 160,140 240,100 340,115 420,80 500,95 580,65 680,85 760,55 860,75 940,45 1040,68 1120,38 1220,60 1300,35 1400,55 1480,40 1580,62 1660,48 1760,70 1840,90 1920,110 2000,140 2000,200" fill="rgba(25,65,35,0.65)" />
+            </svg>
+            {/* Near hill base */}
+            <svg style={{ position: "absolute", bottom: 0, left: 0, width: "100%", height: "35%" }} viewBox="0 0 2000 100" preserveAspectRatio="none">
+              <polygon points="0,100 0,60 100,45 200,55 320,30 440,48 560,25 680,40 800,20 920,38 1040,18 1160,35 1280,15 1400,32 1520,12 1640,30 1760,48 1880,35 2000,50 2000,100" fill="rgba(18,55,25,0.75)" />
+            </svg>
+          </div>
+        )
       )}
 
-      {/* Mid mountains / hills — faster; jagged silhouette differs from far massifs */}
-      {layer(2, 0.15, 20, 35, 0.65,
-        <SpriteTileRow spriteUrl={sprites.mountainMid} tileWidth={150} count={20} fallback={<ParallaxMountainMidFallback />} />
-      )}
+      {/* (mountain mid handled by far layer above — layer 2 index used for celestial z ordering) */}
 
       {/* Sun / moon: drawn above mountain silhouettes; radial glow + sky wash updated in RAF */}
       <div
@@ -578,68 +607,179 @@ function ParallaxBackground() {
         />
       </div>
 
-      {/* LAYER 3 — Far background trees (very far + far, slow) */}
-      {layer(3, 0.08, 48, 37, 0.55,
+      {/* LAYER 3 — Far background trees */}
+      {layer(3, 0.08, 45, 40, 0.6,
         sprites.treeVeryFar ? (
           <SpriteTileRow spriteUrl={sprites.treeVeryFar} tileWidth={42} count={90} />
         ) : (
-          <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
-            {Array.from({ length: 60 }).map((_, i) => (
-              <svg key={i} viewBox="0 0 50 110" style={{ flex: "0 0 42px", height: "100%" }}>
-                <circle cx="25" cy="18" r="10" fill="rgba(8,55,16,0.7)" />
-                <circle cx="16" cy="28" r="8" fill="rgba(10,65,20,0.68)" />
-                <circle cx="34" cy="28" r="8" fill="rgba(10,65,20,0.68)" />
-                <rect x="22" y="36" width="5" height="74" fill="rgba(50,30,12,0.65)" />
-              </svg>
-            ))}
+          <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end", gap: "2px" }}>
+            {Array.from({ length: 72 }).map((_, i) => {
+              const h = 60 + (i * 17) % 40;
+              const w = 28 + (i * 7) % 18;
+              const dark = `rgba(${8 + (i%3)*4},${50 + (i%4)*8},${14 + (i%3)*4},0.72)`;
+              const mid  = `rgba(${10+(i%3)*5},${62+(i%4)*9},${18+(i%3)*5},0.68)`;
+              return (
+                <svg key={i} viewBox={`0 0 50 110`} style={{ flex: `0 0 ${w}px`, height: `${h}%` }}>
+                  {/* Pine shape */}
+                  <polygon points="25,2 38,38 12,38" fill={dark} />
+                  <polygon points="25,16 40,55 10,55" fill={mid} />
+                  <polygon points="25,32 42,72 8,72" fill={dark} />
+                  <rect x="22" y="72" width="6" height="38" fill="rgba(40,22,8,0.7)" />
+                </svg>
+              );
+            })}
           </div>
         )
       )}
 
       {/* LAYER 4 — Mid trees (main tree band) */}
-      {layer(4, 0.35, 42, 43, 0.88,
+      {layer(4, 0.35, 40, 45, 0.9,
         sprites.treeMid ? (
           <SpriteTileRow spriteUrl={sprites.treeMid} tileWidth={65} count={60} />
         ) : (
-          <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
-            {Array.from({ length: 40 }).map((_, i) => (
-              <svg key={i} viewBox="0 0 50 110" style={{ flex: "0 0 65px", height: "100%" }}>
-                <circle cx="25" cy="16" r="14" fill="rgba(18,90,28,0.93)" />
-                <circle cx="14" cy="30" r="12" fill="rgba(25,110,35,0.91)" />
-                <circle cx="36" cy="30" r="12" fill="rgba(25,110,35,0.91)" />
-                <circle cx="25" cy="44" r="10" fill="rgba(32,130,42,0.89)" />
-                <rect x="22" y="52" width="6" height="58" fill="rgba(100,60,28,0.97)" />
-              </svg>
-            ))}
+          <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end", gap: "1px" }}>
+            {Array.from({ length: 50 }).map((_, i) => {
+              const kind = i % 3;
+              const w = 52 + (i * 11) % 28;
+              const h = 70 + (i * 13) % 30;
+              const g1 = `rgba(${18+(i%4)*5},${85+(i%5)*10},${26+(i%4)*4},0.94)`;
+              const g2 = `rgba(${28+(i%4)*5},${110+(i%5)*8},${36+(i%4)*4},0.91)`;
+              const g3 = `rgba(${14+(i%4)*4},${68+(i%5)*9},${20+(i%4)*3},0.88)`;
+              const trunk = `rgba(${80+(i%3)*12},${48+(i%4)*8},${20+(i%3)*6},1)`;
+              if (kind === 0) return (
+                // Round canopy deciduous
+                <svg key={i} viewBox="0 0 60 120" style={{ flex: `0 0 ${w}px`, height: `${h}%` }}>
+                  <rect x="27" y="72" width="6" height="48" fill={trunk} />
+                  <circle cx="30" cy="55" r="22" fill={g3} />
+                  <circle cx="18" cy="45" r="17" fill={g1} />
+                  <circle cx="42" cy="45" r="17" fill={g1} />
+                  <circle cx="30" cy="32" r="16" fill={g2} />
+                  <circle cx="20" cy="38" r="10" fill={g2} />
+                  <circle cx="40" cy="38" r="10" fill={g2} />
+                </svg>
+              );
+              if (kind === 1) return (
+                // Tall pine
+                <svg key={i} viewBox="0 0 50 120" style={{ flex: `0 0 ${w * 0.75}px`, height: `${h}%` }}>
+                  <rect x="22" y="80" width="6" height="40" fill={trunk} />
+                  <polygon points="25,4 38,40 12,40" fill={g1} />
+                  <polygon points="25,22 40,58 10,58" fill={g2} />
+                  <polygon points="25,42 42,80 8,80" fill={g3} />
+                </svg>
+              );
+              // Bushy oak
+              return (
+                <svg key={i} viewBox="0 0 70 120" style={{ flex: `0 0 ${w * 1.1}px`, height: `${h}%` }}>
+                  <rect x="32" y="70" width="7" height="50" fill={trunk} />
+                  <ellipse cx="35" cy="52" rx="28" ry="24" fill={g3} />
+                  <circle cx="20" cy="42" r="18" fill={g1} />
+                  <circle cx="50" cy="42" r="18" fill={g1} />
+                  <circle cx="35" cy="28" r="18" fill={g2} />
+                  <circle cx="25" cy="36" r="12" fill={g2} />
+                  <circle cx="45" cy="36" r="12" fill={g2} />
+                </svg>
+              );
+            })}
           </div>
         )
       )}
 
-      {/* LAYER 5 — Near trees / shrubs (foreground foliage framing the path) */}
-      {layer(5, 0.65, 55, 40, 0.95,
+      {/* LAYER 5 — Near trees + shrubs framing the path */}
+      {layer(5, 0.65, 52, 44, 1.0,
         sprites.treeFront ? (
           <SpriteTileRow spriteUrl={sprites.treeFront} tileWidth={75} count={60} />
         ) : (
-          <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
-            {Array.from({ length: 40 }).map((_, i) => (
-              <svg key={i} viewBox="0 0 50 110" style={{ flex: "0 0 75px", height: "100%" }}>
-                <circle cx="25" cy="14" r="16" fill="rgba(22,100,32,0.95)" />
-                <circle cx="12" cy="28" r="14" fill="rgba(30,120,39,0.93)" />
-                <circle cx="38" cy="28" r="14" fill="rgba(30,120,39,0.93)" />
-                <circle cx="25" cy="44" r="12" fill="rgba(38,140,47,0.91)" />
-                <rect x="22" y="54" width="6" height="56" fill="rgba(120,70,32,1)" />
-              </svg>
-            ))}
+          <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end", gap: "0px" }}>
+            {Array.from({ length: 44 }).map((_, i) => {
+              const kind = i % 4;
+              const w = 60 + (i * 13) % 35;
+              const g1 = `rgba(${22+(i%4)*6},${100+(i%5)*10},${30+(i%4)*5},0.97)`;
+              const g2 = `rgba(${32+(i%4)*6},${125+(i%5)*8},${42+(i%4)*5},0.94)`;
+              const g3 = `rgba(${16+(i%4)*5},${80+(i%5)*9},${22+(i%4)*4},0.92)`;
+              const trunk = `rgba(${90+(i%3)*14},${52+(i%4)*9},${18+(i%3)*7},1)`;
+              if (kind === 0) return (
+                // Large round front tree
+                <svg key={i} viewBox="0 0 70 130" style={{ flex: `0 0 ${w}px`, height: "100%" }}>
+                  <rect x="31" y="75" width="8" height="55" fill={trunk} />
+                  <circle cx="35" cy="58" rx="27" r="27" fill={g3} />
+                  <circle cx="20" cy="46" r="22" fill={g1} />
+                  <circle cx="50" cy="46" r="22" fill={g1} />
+                  <circle cx="35" cy="30" r="20" fill={g2} />
+                  <circle cx="22" cy="40" r="14" fill={g2} />
+                  <circle cx="48" cy="40" r="14" fill={g2} />
+                </svg>
+              );
+              if (kind === 1) return (
+                // Shrub cluster
+                <svg key={i} viewBox="0 0 80 60" style={{ flex: `0 0 ${w * 1.1}px`, height: "45%" }}>
+                  <ellipse cx="40" cy="42" rx="36" ry="18" fill={g3} />
+                  <circle cx="20" cy="32" r="16" fill={g1} />
+                  <circle cx="40" cy="26" r="18" fill={g2} />
+                  <circle cx="60" cy="32" r="16" fill={g1} />
+                  <circle cx="12" cy="38" r="11" fill={g2} />
+                  <circle cx="68" cy="38" r="11" fill={g2} />
+                  {/* Little flowers */}
+                  <circle cx="22" cy="28" r="3" fill="rgba(255,200,80,0.9)" />
+                  <circle cx="55" cy="24" r="3" fill="rgba(255,120,120,0.9)" />
+                  <circle cx="40" cy="18" r="3" fill="rgba(200,120,255,0.85)" />
+                </svg>
+              );
+              if (kind === 2) return (
+                // Tall pine
+                <svg key={i} viewBox="0 0 55 130" style={{ flex: `0 0 ${w * 0.8}px`, height: "100%" }}>
+                  <rect x="24" y="88" width="7" height="42" fill={trunk} />
+                  <polygon points="27,5 42,44 12,44" fill={g1} />
+                  <polygon points="27,26 44,66 10,66" fill={g2} />
+                  <polygon points="27,48 46,88 8,88" fill={g3} />
+                </svg>
+              );
+              // Wide oak + grass tuft
+              return (
+                <svg key={i} viewBox="0 0 90 130" style={{ flex: `0 0 ${w * 1.2}px`, height: "100%" }}>
+                  <rect x="41" y="72" width="8" height="58" fill={trunk} />
+                  <ellipse cx="45" cy="55" rx="36" ry="28" fill={g3} />
+                  <circle cx="26" cy="43" r="24" fill={g1} />
+                  <circle cx="64" cy="43" r="24" fill={g1} />
+                  <circle cx="45" cy="26" r="22" fill={g2} />
+                  {/* Grass tufts at base */}
+                  <ellipse cx="20" cy="125" rx="14" ry="6" fill={g2} />
+                  <ellipse cx="70" cy="125" rx="14" ry="6" fill={g1} />
+                </svg>
+              );
+            })}
           </div>
         )
       )}
 
       {/* LAYER 6 — Ground strip: players, enemies, shrubs, coins, powerups live here */}
-      {layer(6, 0.95, 80, 20, 1.0,
+      {layer(6, 0.95, 79, 21, 1.0,
         sprites.ground ? (
           <SpriteTileRow spriteUrl={sprites.ground} tileWidth={200} count={20} />
         ) : (
-          <div style={{ width: "200%", height: "100%", background: "linear-gradient(to bottom, #3a9620 0%, #2a7a18 40%, #0f2e08 100%)" }} />
+          <svg style={{ width: "200%", height: "100%", display: "block" }} viewBox="0 0 2000 120" preserveAspectRatio="none">
+            {/* Base ground gradient */}
+            <defs>
+              <linearGradient id="groundGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#4ab528" />
+                <stop offset="30%" stopColor="#2e8010" />
+                <stop offset="100%" stopColor="#0f2e08" />
+              </linearGradient>
+            </defs>
+            <rect x="0" y="0" width="2000" height="120" fill="url(#groundGrad)" />
+            {/* Dirt path strip down the middle */}
+            <rect x="0" y="0" width="2000" height="18" fill="rgba(180,130,60,0.55)" />
+            {/* Grass tufts along the path edge */}
+            {Array.from({ length: 40 }).map((_, i) => (
+              <g key={i} transform={`translate(${i * 52 + (i%3)*8}, 0)`}>
+                <ellipse cx="0" cy="16" rx="10" ry="7" fill={`rgba(${58+(i%4)*8},${170+(i%5)*10},${38+(i%4)*6},0.9)`} />
+                <ellipse cx="18" cy="14" rx="8" ry="6" fill={`rgba(${44+(i%4)*7},${145+(i%5)*9},${28+(i%4)*5},0.85)`} />
+              </g>
+            ))}
+            {/* Scattered rocks */}
+            {Array.from({ length: 18 }).map((_, i) => (
+              <ellipse key={`rock-${i}`} cx={80 + i * 108 + (i%5)*12} cy={10 + (i%3)*4} rx={4+(i%3)*2} ry={3+(i%2)*1} fill={`rgba(${110+(i%4)*15},${100+(i%3)*12},${85+(i%4)*10},0.7)`} />
+            ))}
+          </svg>
         )
       )}
 

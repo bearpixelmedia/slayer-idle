@@ -28,11 +28,11 @@ function getSkyTimePhaseIndexFromHour(t) {
 
 /** Sky gradients aligned with celestial phase (sun = daytime sky, not dark night blue). */
 const SKY_GRAD_NIGHT =
-  "linear-gradient(to bottom, #0a1628 0%, #1e4080 40%, #2d6e3a 100%)";
+  "linear-gradient(to bottom, #060d1f 0%, #0d2252 30%, #1a3a6e 55%, #1e5c3a 80%, #163020 100%)";
 const SKY_GRAD_DAY =
-  "linear-gradient(to bottom, #7ec4ea 0%, #9bd6f2 35%, #c8e8f0 65%, #5cb870 100%)";
+  "linear-gradient(to bottom, #4aa8e0 0%, #72c3f5 28%, #a8d8f0 55%, #c5e8c8 75%, #5cbd3a 100%)";
 const SKY_GRAD_TWILIGHT =
-  "linear-gradient(to bottom, #1e3a5c 0%, #4a7eb8 38%, #6aab78 100%)";
+  "linear-gradient(to bottom, #1a1040 0%, #6b2d6e 18%, #c45a28 36%, #e88838 48%, #7aac58 70%, #3a7828 100%)";
 
 function getSkyGradientForHour(t) {
   if (t >= 7 && t < 17) return SKY_GRAD_DAY;
@@ -535,7 +535,20 @@ function ParallaxBackground() {
         )
       )}
 
-      {/* (mountain mid handled by far layer above — layer 2 index used for celestial z ordering) */}
+      {/* Atmospheric haze / horizon fog — sits just above the treeline */}
+      <div
+        style={{
+          position: "absolute",
+          left: 0, right: 0,
+          top: "52%",
+          height: "14%",
+          pointerEvents: "none",
+          zIndex: 18,
+          background: "linear-gradient(to bottom, transparent 0%, rgba(180,210,240,0.18) 40%, rgba(200,230,210,0.28) 70%, transparent 100%)",
+          mixBlendMode: "screen",
+        }}
+        aria-hidden
+      />
 
       {/* Sun / moon: drawn above mountain silhouettes; radial glow + sky wash updated in RAF */}
       <div
@@ -612,19 +625,42 @@ function ParallaxBackground() {
         sprites.treeVeryFar ? (
           <SpriteTileRow spriteUrl={sprites.treeVeryFar} tileWidth={42} count={90} />
         ) : (
-          <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end", gap: "2px" }}>
+          <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end", gap: "3px" }}>
             {Array.from({ length: 72 }).map((_, i) => {
-              const h = 60 + (i * 17) % 40;
-              const w = 28 + (i * 7) % 18;
-              const dark = `rgba(${8 + (i%3)*4},${50 + (i%4)*8},${14 + (i%3)*4},0.72)`;
-              const mid  = `rgba(${10+(i%3)*5},${62+(i%4)*9},${18+(i%3)*5},0.68)`;
+              const h = 55 + (i * 17) % 45;
+              const w = 26 + (i * 7) % 20;
+              const kind = i % 5; // 0-2 = pine, 3-4 = distant round tree
+              const dark = `rgba(${8 + (i%3)*4},${48 + (i%4)*7},${14 + (i%3)*4},0.65)`;
+              const mid  = `rgba(${12+(i%3)*5},${60+(i%4)*8},${18+(i%3)*5},0.60)`;
+              const light= `rgba(${16+(i%3)*5},${72+(i%4)*7},${22+(i%3)*4},0.55)`;
+              const trunkCol = "rgba(30,16,6,0.6)";
+              if (kind <= 2) return (
+                // Pine — 3-tier
+                <svg key={i} viewBox="0 0 50 110" style={{ flex: `0 0 ${w}px`, height: `${h}%` }}>
+                  <polygon points="25,2 36,34 14,34" fill={dark} />
+                  <polygon points="25,18 38,52 12,52" fill={mid} />
+                  <polygon points="25,36 40,72 10,72" fill={light} />
+                  <rect x="22" y="72" width="6" height="38" fill={trunkCol} />
+                </svg>
+              );
+              if (kind === 3) return (
+                // Distant round deciduous
+                <svg key={i} viewBox="0 0 50 100" style={{ flex: `0 0 ${w * 1.2}px`, height: `${h * 0.75}%` }}>
+                  <rect x="22" y="62" width="5" height="38" fill={trunkCol} />
+                  <circle cx="25" cy="48" r="18" fill={dark} />
+                  <circle cx="16" cy="40" r="13" fill={mid} />
+                  <circle cx="34" cy="40" r="13" fill={mid} />
+                  <circle cx="25" cy="28" r="12" fill={light} />
+                </svg>
+              );
+              // Tall thin spire
               return (
-                <svg key={i} viewBox={`0 0 50 110`} style={{ flex: `0 0 ${w}px`, height: `${h}%` }}>
-                  {/* Pine shape */}
-                  <polygon points="25,2 38,38 12,38" fill={dark} />
-                  <polygon points="25,16 40,55 10,55" fill={mid} />
-                  <polygon points="25,32 42,72 8,72" fill={dark} />
-                  <rect x="22" y="72" width="6" height="38" fill="rgba(40,22,8,0.7)" />
+                <svg key={i} viewBox="0 0 30 120" style={{ flex: `0 0 ${w * 0.65}px`, height: `${h}%` }}>
+                  <rect x="13" y="90" width="4" height="30" fill={trunkCol} />
+                  <polygon points="15,2 22,30 8,30" fill={dark} />
+                  <polygon points="15,18 23,48 7,48" fill={mid} />
+                  <polygon points="15,36 24,68 6,68" fill={light} />
+                  <polygon points="15,56 25,90 5,90" fill={dark} />
                 </svg>
               );
             })}
@@ -757,34 +793,60 @@ function ParallaxBackground() {
           <SpriteTileRow spriteUrl={sprites.ground} tileWidth={200} count={20} />
         ) : (
           <svg style={{ width: "200%", height: "100%", display: "block" }} viewBox="0 0 2000 120" preserveAspectRatio="none">
-            {/* Base ground gradient */}
             <defs>
               <linearGradient id="groundGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#4ab528" />
-                <stop offset="30%" stopColor="#2e8010" />
-                <stop offset="100%" stopColor="#0f2e08" />
+                <stop offset="0%" stopColor="#5ecf30" />
+                <stop offset="12%" stopColor="#44b820" />
+                <stop offset="38%" stopColor="#2d8810" />
+                <stop offset="100%" stopColor="#0d2808" />
+              </linearGradient>
+              <linearGradient id="pathGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#c8a050" />
+                <stop offset="100%" stopColor="#8a6030" />
               </linearGradient>
             </defs>
+            {/* Base fill */}
             <rect x="0" y="0" width="2000" height="120" fill="url(#groundGrad)" />
-            {/* Dirt path strip down the middle */}
-            <rect x="0" y="0" width="2000" height="18" fill="rgba(180,130,60,0.55)" />
-            {/* Grass tufts along the path edge */}
-            {Array.from({ length: 40 }).map((_, i) => (
-              <g key={i} transform={`translate(${i * 52 + (i%3)*8}, 0)`}>
-                <ellipse cx="0" cy="16" rx="10" ry="7" fill={`rgba(${58+(i%4)*8},${170+(i%5)*10},${38+(i%4)*6},0.9)`} />
-                <ellipse cx="18" cy="14" rx="8" ry="6" fill={`rgba(${44+(i%4)*7},${145+(i%5)*9},${28+(i%4)*5},0.85)`} />
+            {/* Bright grass highlight at the very top edge */}
+            <rect x="0" y="0" width="2000" height="5" fill="rgba(120,220,60,0.35)" />
+            {/* Dirt path */}
+            <rect x="0" y="0" width="2000" height="16" fill="url(#pathGrad)" opacity="0.55" />
+            {/* Path edge shadow */}
+            <rect x="0" y="15" width="2000" height="3" fill="rgba(0,0,0,0.2)" />
+            {/* Grass tufts */}
+            {Array.from({ length: 48 }).map((_, i) => (
+              <g key={i} transform={`translate(${i * 43 + (i%5)*7}, 0)`}>
+                <ellipse cx="4" cy="14" rx="9" ry="6" fill={`rgba(${62+(i%4)*8},${178+(i%5)*9},${40+(i%4)*6},0.92)`} />
+                <ellipse cx="20" cy="12" rx="7" ry="5" fill={`rgba(${50+(i%4)*7},${155+(i%5)*9},${30+(i%4)*5},0.88)`} />
+                <ellipse cx="12" cy="9" rx="5" ry="4" fill={`rgba(${78+(i%4)*6},${195+(i%5)*6},${50+(i%4)*4},0.78)`} />
               </g>
             ))}
             {/* Scattered rocks */}
-            {Array.from({ length: 18 }).map((_, i) => (
-              <ellipse key={`rock-${i}`} cx={80 + i * 108 + (i%5)*12} cy={10 + (i%3)*4} rx={4+(i%3)*2} ry={3+(i%2)*1} fill={`rgba(${110+(i%4)*15},${100+(i%3)*12},${85+(i%4)*10},0.7)`} />
+            {Array.from({ length: 22 }).map((_, i) => (
+              <g key={`rock-${i}`} transform={`translate(${60 + i * 88 + (i%5)*14}, ${8 + (i%3)*5})`}>
+                <ellipse cx="0" cy="0" rx={5+(i%3)*2} ry={3+(i%2)*2} fill={`rgba(${105+(i%4)*18},${95+(i%3)*14},${78+(i%4)*12},0.75)`} />
+                <ellipse cx="0" cy="-1" rx={3+(i%3)*1} ry={1+(i%2)*1} fill={`rgba(${150+(i%4)*15},${140+(i%3)*12},${120+(i%4)*10},0.4)`} />
+              </g>
+            ))}
+            {/* Small wildflowers scattered in the grass */}
+            {Array.from({ length: 16 }).map((_, i) => (
+              <circle key={`flower-${i}`} cx={35 + i * 125 + (i%4)*18} cy={22 + (i%3)*12} r="3"
+                fill={["rgba(255,220,60,0.9)","rgba(255,100,140,0.85)","rgba(180,120,255,0.8)","rgba(255,180,50,0.9)"][i%4]} />
             ))}
           </svg>
         )
       )}
 
-      {/* Vignette */}
-      <div style={{ position: "absolute", inset: 0, pointerEvents: "none", boxShadow: "inset 0 0 120px rgba(0,0,0,0.55)" }} />
+      {/* Vignette — elliptical so it's softer at top/bottom, darker at sides */}
+      <div style={{
+        position: "absolute", inset: 0, pointerEvents: "none",
+        background: "radial-gradient(ellipse 110% 100% at 50% 50%, transparent 40%, rgba(0,0,0,0.22) 70%, rgba(0,0,0,0.58) 100%)",
+      }} />
+      {/* Top atmospheric darkening */}
+      <div style={{
+        position: "absolute", left: 0, right: 0, top: 0, height: "18%", pointerEvents: "none",
+        background: "linear-gradient(to bottom, rgba(0,0,0,0.28) 0%, transparent 100%)",
+      }} />
     </div>
   );
 }

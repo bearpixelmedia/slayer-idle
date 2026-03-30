@@ -39,8 +39,12 @@ Deno.serve(async (req) => {
     const body = await req.json();
     if (!body.fileData || !body.filename) return Response.json({ error: 'No file provided' }, { status: 400 });
 
-    // Unzip
-    const fileBytes = new Uint8Array(body.fileData);
+    // Decode base64
+    const binaryString = atob(body.fileData);
+    const fileBytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      fileBytes[i] = binaryString.charCodeAt(i);
+    }
     const zipBlob = new Blob([fileBytes], { type: 'application/zip' });
     const zipReader = new ZipReader(new BlobReader(zipBlob));
     const entries = await zipReader.getEntries();

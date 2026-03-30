@@ -28,12 +28,15 @@ export default function ZipAssetUpload() {
       const fileData = await new Promise((resolve, reject) => {
         reader.onload = () => resolve(reader.result);
         reader.onerror = reject;
-        reader.readAsArrayBuffer(file);
+        reader.readAsDataURL(file);
       });
+
+      // Extract base64 from data URL
+      const base64Data = fileData.split(',')[1];
 
       const res = await base44.functions.invoke("processAssetZip", {
         filename: file.name,
-        fileData: Array.from(new Uint8Array(fileData))
+        fileData: base64Data
       });
       const data = res.data;
 

@@ -4,101 +4,101 @@ import { loadGameSettings } from "@/lib/gameSettings";
 /**
  * PlayerOffhandSprite
  *
- * Renders a static weapon/off-hand icon in the right weapon column,
- * replacing the 🛡️/🎯 emoji.
+ * Renders the off-hand / right-column sprite, replacing the 🛡️/🎯 emoji.
  *
- * The icon is picked based on the equipped weapon:
- *   - "none"        → second hand (skin-toned fist from Hands.png row)
- *   - bone weapons  → a complementary bone cell (parry / off-hand)
- *   - wood weapons  → a complementary wood cell
+ * Shield cells in the pack:
+ *   bone r0c4  — large bone shield  (bone_r0_c4 / shield_bone_large)
+ *   bone r1c4  — small bone shield  (bone_r1_c4 / shield_bone_small)
+ *   wood r1c4  — wood round shield  (wood_r1_c4 / shield_wood)
  *
- * For bow mode, the right column shows an arrow indicator cell
- * instead of the usual off-hand weapon.
+ * Off-hand resolution order:
+ *   1. If player_shield_id is set (not "auto") → use that specific shield
+ *   2. Auto: bow → small bone shield; sword + bone weapon → large bone shield;
+ *            sword + wood weapon → wood shield; no weapon → second fist
  *
  * Props:
- *   weaponMode  {string}  "sword" | "bow"
- *   scale       {number}  pixel scale (default 3)
- *   skinRow     {number}  0/1/2 — only used for "none" (fist icon)
+ *   weaponMode  "sword" | "bow"
+ *   scale       pixel scale (default 3)
+ *   skinRow     0/1/2 (only used for fists fallback)
  */
 
-// ── Off-hand cell definitions ─────────────────────────────────────────────────
-// Each weapon option from the settings picker maps to a secondary cell from
-// the same sheet, used as the off-hand icon.
-//
-// Bone sheet (224×144, 7×4 cells @ 32px):
-//   r0c0=dagger  r0c1=bone-sword  r0c2=club  r0c3=axe  r0c4=big-axe
-//   r1c0=double  r1c1=spear       r1c2=shard r1c3=tip  r1c4=fragment
-//
-// Wood sheet (192×112, 6×3 cells @ 32px):
-//   r0c0=club    r0c1=sword       r0c2=dagger r0c3=staff r0c4=big-staff
-//   r1c0=round   r1c1=spear       r1c2=small
-//
-// Off-hand picks the "other" cell: e.g. if main is r0c0 (dagger), off-hand is r0c1 (bone-sword)
-const OFFHAND_MAP = {
-  // Fists — use second hand from Hands.png (rendered separately, see below)
-  none: null,
+const BONE_SHEET = { sheet: "/sprites/weapons/bone.png", sheetW: 224, sheetH: 144, cellSize: 32 };
+const WOOD_SHEET = { sheet: "/sprites/weapons/wood.png", sheetW: 192, sheetH: 112, cellSize: 32 };
 
-  // ── Bone family ──────────────────────────────────────────────────────────
-  bone_r0_c0: { sheet: "/sprites/weapons/bone.png", sheetW: 224, sheetH: 144, cellX: 1, cellY: 0, cellSize: 32 }, // bone-sword
-  bone_r0_c4: { sheet: "/sprites/weapons/bone.png", sheetW: 224, sheetH: 144, cellX: 3, cellY: 0, cellSize: 32 }, // axe off-hand
-  bone_r1_c0: { sheet: "/sprites/weapons/bone.png", sheetW: 224, sheetH: 144, cellX: 0, cellY: 0, cellSize: 32 }, // dagger
-  // ── Wood family ──────────────────────────────────────────────────────────
-  wood_r0_c0: { sheet: "/sprites/weapons/wood.png", sheetW: 192, sheetH: 112, cellX: 1, cellY: 0, cellSize: 32 }, // wood-sword
-  wood_r0_c4: { sheet: "/sprites/weapons/wood.png", sheetW: 192, sheetH: 112, cellX: 3, cellY: 0, cellSize: 32 }, // staff off
-  wood_r1_c0: { sheet: "/sprites/weapons/wood.png", sheetW: 192, sheetH: 112, cellX: 0, cellY: 0, cellSize: 32 }, // club
+const SHIELD_BONE_LARGE = { ...BONE_SHEET, cellX: 4, cellY: 0 }; // bone r0c4
+const SHIELD_BONE_SMALL = { ...BONE_SHEET, cellX: 4, cellY: 1 }; // bone r1c4
+const SHIELD_WOOD       = { ...WOOD_SHEET, cellX: 4, cellY: 1 }; // wood r1c4
+
+// Manual shield picker IDs → shield def
+const SHIELD_BY_ID = {
+  shield_bone_large: SHIELD_BONE_LARGE,
+  shield_bone_small: SHIELD_BONE_SMALL,
+  shield_wood:       SHIELD_WOOD,
 };
 
-// For bow mode right-column: show an arrow shard (bone_r1_c4) as quiver hint
-const BOW_OFFHAND = {
-  sheet: "/sprites/weapons/bone.png",
-  sheetW: 224,
-  sheetH: 144,
-  cellX: 4,
-  cellY: 1,
-  cellSize: 32,
+// Auto mapping: equipped weapon → shield
+const AUTO_SHIELD = {
+  none:       null,              // fists → Hands.png
+  bone_r0_c0: SHIELD_BONE_LARGE,
+  bone_r0_c4: SHIELD_BONE_LARGE,
+  bone_r1_c0: SHIELD_BONE_SMALL,
+  wood_r0_c0: SHIELD_WOOD,
+  wood_r0_c4: SHIELD_WOOD,
+  wood_r1_c0: SHIELD_WOOD,
 };
+
+function SheetIcon({ ws, size }) {
+  const scale = size / ws.cellSize;
+  return (
+    <div
+      aria-hidden
+      style={{
+        width: size,
+        height: size,
+        backgroundImage: `url(${ws.sheet})`,
+        backgroundRepeat: "no-repeat",
+        backgroundSize: `${ws.sheetW * scale}px ${ws.sheetH * scale}px`,
+        backgroundPosition: `-${ws.cellX * size}px -${ws.cellY * size}px`,
+        imageRendering: "pixelated",
+        opacity: 0.9,
+      }}
+    />
+  );
+}
 
 export default function PlayerOffhandSprite({ weaponMode = "sword", scale = 3, skinRow = 0 }) {
   const settings = useMemo(() => loadGameSettings(), []);
-  const weaponId = settings?.player_weapon_id ?? "none";
+  const weaponId  = settings?.player_weapon_id ?? "none";
+  const shieldId  = settings?.player_shield_id ?? "auto";
 
-  const CELL = 32;
-  const handPx = CELL * scale;
+  const size = 32 * scale;
 
-  // ── Bow mode: always show arrow shard ─────────────────────────────────────
-  if (weaponMode === "bow") {
-    const ws = BOW_OFFHAND;
-    const sheetW = ws.sheetW * scale;
-    const sheetH = ws.sheetH * scale;
-    return (
-      <div
-        aria-hidden
-        style={{
-          width: handPx,
-          height: handPx,
-          backgroundImage: `url(${ws.sheet})`,
-          backgroundRepeat: "no-repeat",
-          backgroundSize: `${sheetW}px ${sheetH}px`,
-          backgroundPosition: `-${ws.cellX * handPx}px -${ws.cellY * handPx}px`,
-          imageRendering: "pixelated",
-          opacity: 0.85,
-        }}
-      />
-    );
+  // ── Resolve shield definition ─────────────────────────────────────────────
+  let shield = null;
+
+  if (shieldId !== "auto") {
+    // Manual pick
+    shield = SHIELD_BY_ID[shieldId] ?? null;
+  } else if (weaponMode === "bow") {
+    // Bow auto → small bone shield as a parry/guard
+    shield = SHIELD_BONE_SMALL;
+  } else {
+    // Sword auto → match weapon family
+    shield = AUTO_SHIELD[weaponId] ?? SHIELD_BONE_LARGE;
   }
 
-  // ── Sword mode: no weapon (fists) → second hand from Hands.png ────────────
-  if (weaponId === "none") {
+  // ── No weapon + auto → show second fist ──────────────────────────────────
+  if (!shield && weaponId === "none" && shieldId === "auto") {
     return (
       <div
         aria-hidden
         style={{
-          width: handPx,
-          height: handPx,
+          width: size,
+          height: size,
           backgroundImage: `url(/sprites/weapons/hands.png)`,
           backgroundRepeat: "no-repeat",
-          backgroundSize: `${handPx}px ${handPx * 3}px`,
-          backgroundPosition: `0px -${skinRow * handPx}px`,
+          backgroundSize: `${size}px ${size * 3}px`,
+          backgroundPosition: `0px -${skinRow * size}px`,
           imageRendering: "pixelated",
           opacity: 0.8,
         }}
@@ -106,26 +106,7 @@ export default function PlayerOffhandSprite({ weaponMode = "sword", scale = 3, s
     );
   }
 
-  // ── Sword mode: weapon equipped → off-hand cell ───────────────────────────
-  const ws = OFFHAND_MAP[weaponId];
-  if (!ws) return null;
+  if (!shield) return null;
 
-  const sheetW = ws.sheetW * scale;
-  const sheetH = ws.sheetH * scale;
-
-  return (
-    <div
-      aria-hidden
-      style={{
-        width: handPx,
-        height: handPx,
-        backgroundImage: `url(${ws.sheet})`,
-        backgroundRepeat: "no-repeat",
-        backgroundSize: `${sheetW}px ${sheetH}px`,
-        backgroundPosition: `-${ws.cellX * handPx}px -${ws.cellY * handPx}px`,
-        imageRendering: "pixelated",
-        opacity: 0.9,
-      }}
-    />
-  );
+  return <SheetIcon ws={shield} size={size} />;
 }

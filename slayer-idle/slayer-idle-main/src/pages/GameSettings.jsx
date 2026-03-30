@@ -90,6 +90,51 @@ const WEAPONS = [
   },
 ];
 
+// ── Shield / off-hand options ─────────────────────────────────────────────────
+// Three shields identified in the pack:
+//   bone r0c4 = large bone shield
+//   bone r1c4 = small bone shield
+//   wood r1c4 = wood round shield
+const SHIELDS = [
+  {
+    id: "auto",
+    label: "Auto",
+    emoji: "🔄",
+    sheet: null,
+    description: "Matches your weapon",
+  },
+  {
+    id: "shield_bone_large",
+    label: "Bone Shield",
+    sheet: "/sprites/weapons/bone.png",
+    sheetW: 224,
+    sheetH: 144,
+    cellX: 4,
+    cellY: 0,
+    cellSize: 32,
+  },
+  {
+    id: "shield_bone_small",
+    label: "Bone Guard",
+    sheet: "/sprites/weapons/bone.png",
+    sheetW: 224,
+    sheetH: 144,
+    cellX: 4,
+    cellY: 1,
+    cellSize: 32,
+  },
+  {
+    id: "shield_wood",
+    label: "Wood Shield",
+    sheet: "/sprites/weapons/wood.png",
+    sheetW: 192,
+    sheetH: 112,
+    cellX: 4,
+    cellY: 1,
+    cellSize: 32,
+  },
+];
+
 // ── WeaponIcon ─────────────────────────────────────────────────────────────────
 function WeaponIcon({ weapon, size = 48 }) {
   if (!weapon.sheet) {
@@ -145,6 +190,7 @@ export default function GameSettings() {
   const [confirmReset, setConfirmReset] = useState(false);
   const [skinRow, setSkinRow] = useState(0);
   const [weaponId, setWeaponId] = useState("none");
+  const [shieldId, setShieldId] = useState("auto");
 
   useEffect(() => {
     const saved = localStorage.getItem(SETTINGS_KEY);
@@ -154,6 +200,7 @@ export default function GameSettings() {
       setSfxEnabled(data.sfxEnabled !== false);
       if (data.player_skin_row !== undefined) setSkinRow(data.player_skin_row);
       if (data.player_weapon_id) setWeaponId(data.player_weapon_id);
+      if (data.player_shield_id) setShieldId(data.player_shield_id);
     }
   }, []);
 
@@ -191,6 +238,18 @@ export default function GameSettings() {
       player_weapon_cell_x: weapon?.cellX ?? 0,
       player_weapon_cell_y: weapon?.cellY ?? 0,
       player_weapon_cell_size: weapon?.cellSize ?? 32,
+    });
+  };
+
+  const pickShield = (id) => {
+    setShieldId(id);
+    const shield = SHIELDS.find(s => s.id === id);
+    saveSettings({
+      player_shield_id: id,
+      player_shield_sheet: shield?.sheet ?? null,
+      player_shield_cell_x: shield?.cellX ?? 0,
+      player_shield_cell_y: shield?.cellY ?? 0,
+      player_shield_cell_size: shield?.cellSize ?? 32,
     });
   };
 
@@ -315,6 +374,40 @@ export default function GameSettings() {
                     </span>
                     {weaponId === w.id && (
                       <div className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-indigo-400 rounded-full flex items-center justify-center">
+                        <Check className="w-2.5 h-2.5 text-white" />
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Shield / Off-hand */}
+            <div>
+              <p className="text-sm font-medium text-slate-200 mb-3">Off-hand / Shield</p>
+              <div className="grid grid-cols-4 gap-2">
+                {SHIELDS.map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => pickShield(s.id)}
+                    className={`relative flex flex-col items-center gap-1.5 p-2 rounded-xl border-2 transition-all ${
+                      shieldId === s.id
+                        ? "border-amber-400 bg-amber-900/30"
+                        : "border-slate-600 hover:border-slate-400 bg-slate-700/30"
+                    }`}
+                  >
+                    {s.sheet ? (
+                      <WeaponIcon weapon={s} size={40} />
+                    ) : (
+                      <div className="flex items-center justify-center text-2xl" style={{ width: 40, height: 40 }}>
+                        {s.emoji}
+                      </div>
+                    )}
+                    <span className="text-[10px] text-slate-300 text-center leading-tight">
+                      {s.label}
+                    </span>
+                    {shieldId === s.id && (
+                      <div className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-amber-400 rounded-full flex items-center justify-center">
                         <Check className="w-2.5 h-2.5 text-white" />
                       </div>
                     )}

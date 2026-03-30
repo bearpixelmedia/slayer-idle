@@ -17,6 +17,7 @@ import {
   ZONES, UPGRADES, TAP_UPGRADES, IDLE_UPGRADES, BOW_UPGRADES,
   getUpgradeCost, getSoulsOnPrestige, getSlayerPointsOnPrestige, getBowSoulMultiplier,
   getZoneStages, canUnlockZone,
+  computeTapDamage, computeIdleCPS,
 } from "@/lib/gameData";
 import { SKILLS, getSkillMultipliers } from "@/lib/skillTree";
 import { VILLAGE_BUILDINGS, computeVillageMultipliers, getBuildingUpgradeCost, canAffordUpgrade } from "@/lib/village";
@@ -69,13 +70,13 @@ export default function useGameState({
   // ─── Damage/DPS calculations ──────────────────────────────────────────────
   const getTapDamage = useCallback(
     (s = stateRef.current, weapon = currentWeaponRef.current, buffs = []) => {
-      return _computeTapDamage(s, weapon, buffs, skillMults, villageMultipliers, damageMultiplier);
+      return computeTapDamage(s, weapon, buffs, skillMults, villageMultipliers, damageMultiplier);
     },
     [skillMults, villageMultipliers, damageMultiplier]
   );
 
   const getIdleCPS = useCallback(
-    (s = stateRef.current) => _computeIdleCPS(s, skillMults, villageMultipliers),
+    (s = stateRef.current) => computeIdleCPS(s, skillMults, villageMultipliers),
     [skillMults, villageMultipliers]
   );
 
@@ -328,36 +329,3 @@ export default function useGameState({
   };
 }
 
-// ─── Private computation helpers ─────────────────────────────────────────────
-// Kept here to avoid circular deps with sub-hooks. They receive pre-computed
-// multipliers as arguments — no hooks, no closures over hook state.
-
-
-function _computeTapDamage(s, weapon, buffs, skillMults, villageMultipliers, damageMultiplier) {
-  const upgradeLevels = s.upgradeLevels || {};
-  const upgradeList = weapon === "bow" ? BOW_UPGRADES : TAP_UPGRADES;
-
-  let damage = 1;
-  upgradeList.forEach((u) => {
-    const level = upgradeLevels[u.id] || 0;
-    if (level > 0 && u.effect?.tapDamage) damage += u.effect.tapDamage * level;
-  });
-
-  const souls = typeof s.souls === "number" ? s.souls : 0;
-  const soulBonus = 1 + souls * 0.05;
-  const buffMult = getBuffMultiplier(Array.isArray(buffs) ? buffs : [], "tapDamageMultiplier");
-  const raw = damage * soulBonus * damageMultiplier * (skillMults?.damageMultiplier || 1) * buffMult;
-  return Math.max(0.5, raw);
-}
-
-function _computeIdleCPS(s, skillMults, villageMultipliers) {
-  const upgradeLevels = s.upgradeLevels || {};
-  let cps = 0;
-  IDLE_UPGRADES.forEach((u) => {
-    const level = upgradeLevels[u.id] || 0;
-    if (level > 0 && u.effect?.idleDPS) cps += u.effect.idleDPS * level;
-  });
-  const souls = typeof s.souls === "number" ? s.souls : 0;
-  const soulBonus = 1 + souls * 0.05;
-  return cps * soulBonus * (skillMults?.idleMultiplier || 1) * (villageMultipliers?.idleMultiplier || 1);
-}

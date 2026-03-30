@@ -222,19 +222,7 @@ function smoothstep01(t) {
   return x * x * (3 - 2 * x);
 }
 
-const PARALLAX_LAYERS = [
-  { id: 0, speed: 0.01, top: 0, height: 60, opacity: 0.3 },
-  { id: 1, speed: 0.04, top: 5, height: 30, opacity: 0.35 },
-  { id: 2, speed: 0.08, top: 15, height: 35, opacity: 0.5 },
-  { id: 3, speed: 0.12, top: 25, height: 26, opacity: 0.4 },
-  { id: 4, speed: 0.18, top: 30, height: 30, opacity: 0.55 },
-  { id: 5, speed: 0.28, top: 35, height: 34, opacity: 0.7 },
-  { id: 6, speed: 0.40, top: 38, height: 38, opacity: 0.8 },
-  { id: 7, speed: 0.55, top: 40, height: 43, opacity: 0.85 },
-  { id: 8, speed: 0.72, top: 42, height: 48, opacity: 0.92 },
-  { id: 9, speed: 0.88, top: 60, height: 22, opacity: 0.88 },
-  { id: 10, speed: 1.05, top: 63, height: 24, opacity: 0.95 },
-];
+// 5 parallax layers (indices 0–6, indices 1–2 are mountains, 3–6 are trees+ground)
 
 function ParallaxBackground() {
   const skyBoot = useMemo(() => getParallaxSkyBootstrap(), []);
@@ -265,20 +253,19 @@ function ParallaxBackground() {
   const reloadSprites = React.useCallback(() => {
     const s = loadGameSettings();
     const newSprites = {
-      treeVeryFar: s.parallax_tree_very_far || null,
-      treeFar: s.parallax_tree_far || null,
-      treeMidBack: s.parallax_tree_mid_back || null,
-      treeMid: s.parallax_tree_mid || null,
-      treeMidFront: s.parallax_tree_mid_front || null,
-      treeFront: s.parallax_tree_front || null,
+      // Layer 1: sky
+      stars: s.parallax_stars || null,
+      // Layer 2: far mountains
       mountainFar: s.parallax_mountain_far || null,
       mountainMid: s.parallax_mountain_mid || null,
-      shrubBack: s.parallax_shrub_back || null,
-      shrubFront: s.parallax_shrub_front || null,
+      // Layer 3: far trees
+      treeVeryFar: s.parallax_tree_very_far || null,
+      // Layer 4: mid trees
+      treeMid: s.parallax_tree_mid || null,
+      // Layer 5: near trees / shrubs
+      treeFront: s.parallax_tree_front || null,
+      // Layer 6: ground
       ground: s.parallax_ground || null,
-      sky: s.parallax_sky || null,
-      clouds: s.parallax_clouds || null,
-      stars: s.parallax_stars || null,
     };
     spritesRef.current = newSprites;
     setSprites(newSprites);
@@ -591,61 +578,31 @@ function ParallaxBackground() {
         />
       </div>
 
-      {/* Very far trees — bottoms align to ground horizon (~85%) */}
-      {layer(3, 0.22, 55, 30, 0.5,
-        <SpriteTileRow spriteUrl={sprites.treeVeryFar} tileWidth={35} count={100} fallback={
+      {/* LAYER 3 — Far background trees (very far + far, slow) */}
+      {layer(3, 0.08, 48, 37, 0.55,
+        sprites.treeVeryFar ? (
+          <SpriteTileRow spriteUrl={sprites.treeVeryFar} tileWidth={42} count={90} />
+        ) : (
           <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
-            {Array.from({ length: 50 }).map((_, i) => (
-              <svg key={i} viewBox="0 0 50 110" style={{ flex: "0 0 35px", height: "100%" }}>
-                <circle cx="25" cy="20" r="8" fill="rgba(8,60,15,0.85)" />
-                <circle cx="18" cy="28" r="6" fill="rgba(10,70,18,0.8)" />
-                <circle cx="32" cy="28" r="6" fill="rgba(10,70,18,0.8)" />
-                <rect x="23" y="36" width="4" height="74" fill="rgba(60,35,15,0.8)" />
-              </svg>
-            ))}
-          </div>
-        } />
-      )}
-
-      {/* Far trees */}
-      {layer(4, 0.28, 52, 33, 0.65,
-        <SpriteTileRow spriteUrl={sprites.treeFar} tileWidth={42} count={90} fallback={
-          <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
-            {Array.from({ length: 45 }).map((_, i) => (
+            {Array.from({ length: 60 }).map((_, i) => (
               <svg key={i} viewBox="0 0 50 110" style={{ flex: "0 0 42px", height: "100%" }}>
-                <circle cx="25" cy="18" r="10" fill="rgba(12,65,20,0.88)" />
-                <circle cx="16" cy="28" r="8" fill="rgba(15,75,25,0.85)" />
-                <circle cx="34" cy="28" r="8" fill="rgba(15,75,25,0.85)" />
-                <circle cx="25" cy="38" r="7" fill="rgba(18,80,28,0.9)" />
-                <rect x="22" y="44" width="5" height="66" fill="rgba(70,40,18,0.85)" />
+                <circle cx="25" cy="18" r="10" fill="rgba(8,55,16,0.7)" />
+                <circle cx="16" cy="28" r="8" fill="rgba(10,65,20,0.68)" />
+                <circle cx="34" cy="28" r="8" fill="rgba(10,65,20,0.68)" />
+                <rect x="22" y="36" width="5" height="74" fill="rgba(50,30,12,0.65)" />
               </svg>
             ))}
           </div>
-        } />
+        )
       )}
 
-      {/* Mid-back trees */}
-      {layer(5, 0.43, 50, 35, 0.8,
-        <SpriteTileRow spriteUrl={sprites.treeMidBack} tileWidth={58} count={76} fallback={
+      {/* LAYER 4 — Mid trees (main tree band) */}
+      {layer(4, 0.35, 42, 43, 0.88,
+        sprites.treeMid ? (
+          <SpriteTileRow spriteUrl={sprites.treeMid} tileWidth={65} count={60} />
+        ) : (
           <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
-            {Array.from({ length: 38 }).map((_, i) => (
-              <svg key={i} viewBox="0 0 50 110" style={{ flex: "0 0 58px", height: "100%" }}>
-                <circle cx="25" cy="18" r="12" fill="rgba(15,80,25,0.92)" />
-                <circle cx="15" cy="30" r="10" fill="rgba(22,100,32,0.9)" />
-                <circle cx="35" cy="30" r="10" fill="rgba(22,100,32,0.9)" />
-                <circle cx="25" cy="42" r="9" fill="rgba(28,120,40,0.88)" />
-                <rect x="22" y="50" width="6" height="60" fill="rgba(90,55,25,0.96)" />
-              </svg>
-            ))}
-          </div>
-        } />
-      )}
-
-      {/* Mid trees */}
-      {layer(6, 0.50, 47, 38, 0.85,
-        <SpriteTileRow spriteUrl={sprites.treeMid} tileWidth={65} count={70} fallback={
-          <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
-            {Array.from({ length: 35 }).map((_, i) => (
+            {Array.from({ length: 40 }).map((_, i) => (
               <svg key={i} viewBox="0 0 50 110" style={{ flex: "0 0 65px", height: "100%" }}>
                 <circle cx="25" cy="16" r="14" fill="rgba(18,90,28,0.93)" />
                 <circle cx="14" cy="30" r="12" fill="rgba(25,110,35,0.91)" />
@@ -655,31 +612,16 @@ function ParallaxBackground() {
               </svg>
             ))}
           </div>
-        } />
+        )
       )}
 
-      {/* Mid-front trees */}
-      {layer(7, 0.57, 44, 41, 0.88,
-        <SpriteTileRow spriteUrl={sprites.treeMidFront} tileWidth={70} count={64} fallback={
+      {/* LAYER 5 — Near trees / shrubs (foreground foliage framing the path) */}
+      {layer(5, 0.65, 55, 40, 0.95,
+        sprites.treeFront ? (
+          <SpriteTileRow spriteUrl={sprites.treeFront} tileWidth={75} count={60} />
+        ) : (
           <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
-            {Array.from({ length: 32 }).map((_, i) => (
-              <svg key={i} viewBox="0 0 50 110" style={{ flex: "0 0 70px", height: "100%" }}>
-                <circle cx="25" cy="15" r="15" fill="rgba(20,95,30,0.94)" />
-                <circle cx="13" cy="29" r="13" fill="rgba(28,115,37,0.92)" />
-                <circle cx="37" cy="29" r="13" fill="rgba(28,115,37,0.92)" />
-                <circle cx="25" cy="44" r="11" fill="rgba(35,135,44,0.9)" />
-                <rect x="22" y="53" width="6" height="57" fill="rgba(110,65,30,0.98)" />
-              </svg>
-            ))}
-          </div>
-        } />
-      )}
-
-      {/* Front trees */}
-      {layer(8, 0.65, 40, 45, 0.9,
-        <SpriteTileRow spriteUrl={sprites.treeFront} tileWidth={75} count={90} fallback={
-          <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
-            {Array.from({ length: 45 }).map((_, i) => (
+            {Array.from({ length: 40 }).map((_, i) => (
               <svg key={i} viewBox="0 0 50 110" style={{ flex: "0 0 75px", height: "100%" }}>
                 <circle cx="25" cy="14" r="16" fill="rgba(22,100,32,0.95)" />
                 <circle cx="12" cy="28" r="14" fill="rgba(30,120,39,0.93)" />
@@ -689,31 +631,15 @@ function ParallaxBackground() {
               </svg>
             ))}
           </div>
-        } />
+        )
       )}
 
-      {/* Shrubs: ParallaxShrubOverlay (below combat z-index, frames bottom of path) */}
-
-      {/* Back shrubs — between trees and ground */}
-      {layer(9, 0.84, 72, 16, 0.88,
-        sprites.shrubBack ? (
-          <SpriteTileRow spriteUrl={sprites.shrubBack} tileWidth={40} count={120} />
-        ) : null
-      )}
-
-      {/* Front shrubs — in front of back shrubs, behind ground */}
-      {layer(10, 0.90, 74, 18, 0.94,
-        sprites.shrubFront ? (
-          <SpriteTileRow spriteUrl={sprites.shrubFront} tileWidth={50} count={160} />
-        ) : null
-      )}
-
-      {/* Ground — scrolls with the parallax at near-foreground speed */}
-      {layer(11, 0.95, 82, 18, 1.0,
+      {/* LAYER 6 — Ground strip: players, enemies, shrubs, coins, powerups live here */}
+      {layer(6, 0.95, 80, 20, 1.0,
         sprites.ground ? (
           <SpriteTileRow spriteUrl={sprites.ground} tileWidth={200} count={20} />
         ) : (
-          <div style={{ width: "200%", height: "100%", background: "linear-gradient(to bottom, #2a7a18, #0f2e08)" }} />
+          <div style={{ width: "200%", height: "100%", background: "linear-gradient(to bottom, #3a9620 0%, #2a7a18 40%, #0f2e08 100%)" }} />
         )
       )}
 

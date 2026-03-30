@@ -1,181 +1,134 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.2,
-    },
-  },
-};
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
-};
+const ENEMIES = ["👺", "🧌", "👹", "💀", "🧛", "🐉", "☠️", "🧟", "👻"];
+const FEATURES = [
+  { icon: "⚔️", title: "Strategic\nCombat", desc: "Tap & idle fighting" },
+  { icon: "✨", title: "Prestige\nSystem", desc: "Reset for eternal power" },
+  { icon: "🗺️", title: "Multiple\nZones", desc: "Explore new realms" },
+];
 
 export default function TitleScreen() {
   const navigate = useNavigate();
   const reduceMotion = useReducedMotion();
 
   return (
-    <div
-      className="fixed inset-0 min-h-dvh bg-gradient-to-b from-slate-950 via-purple-950 to-slate-900 flex flex-col items-center justify-center overflow-x-hidden overflow-y-auto overscroll-y-contain pl-[max(0.5rem,env(safe-area-inset-left))] pr-[max(0.5rem,env(safe-area-inset-right))] pt-[max(0.75rem,env(safe-area-inset-top))] pb-[max(0.75rem,env(safe-area-inset-bottom))]"
-    >
-      {/* Background orbs: static on mobile (avoids layout shift / jank); animated md+ */}
-      <div className="absolute inset-0 opacity-40">
-        <div className="absolute inset-0 md:hidden pointer-events-none">
-          <div className="absolute top-20 left-4 w-48 h-48 bg-purple-600 rounded-full mix-blend-screen filter blur-3xl" />
-          <div className="absolute bottom-20 right-4 w-48 h-48 bg-blue-500 rounded-full mix-blend-screen filter blur-3xl" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-500 rounded-full mix-blend-screen filter blur-3xl opacity-20" />
-        </div>
-        <div className="hidden md:contents">
-          <motion.div
-            className="absolute top-20 left-10 w-80 h-80 bg-purple-600 rounded-full mix-blend-screen filter blur-3xl"
-            animate={{ y: [0, 30, 0], x: [0, 20, 0] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <motion.div
-            className="absolute bottom-20 right-10 w-80 h-80 bg-blue-500 rounded-full mix-blend-screen filter blur-3xl"
-            animate={{ y: [0, -30, 0], x: [0, -20, 0] }}
-            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          />
-          <motion.div
-            className="absolute top-1/2 left-1/2 w-96 h-96 bg-cyan-500 rounded-full mix-blend-screen filter blur-3xl opacity-20"
-            animate={{ scale: [0.8, 1.2, 0.8] }}
-            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-          />
-        </div>
+    <div className="fixed inset-0 bg-background flex flex-col overflow-hidden">
+      {/* Sky gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[hsl(260,30%,6%)] via-[hsl(270,35%,10%)] to-[hsl(260,20%,8%)]" />
+
+      {/* Glow orbs */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[10%] left-[15%] w-48 h-48 sm:w-72 sm:h-72 bg-accent rounded-full mix-blend-screen filter blur-3xl opacity-20" />
+        <div className="absolute top-[5%] right-[10%] w-40 h-40 sm:w-64 sm:h-64 bg-primary rounded-full mix-blend-screen filter blur-3xl opacity-15" />
+        <div className="absolute bottom-[20%] left-[5%] w-32 h-32 sm:w-56 sm:h-56 bg-secondary rounded-full mix-blend-screen filter blur-3xl opacity-25" />
       </div>
 
-      {/* Content */}
-      <motion.div
-        className="relative z-10 text-center space-y-5 sm:space-y-8 px-2 sm:px-4 max-w-3xl w-full min-w-0 my-auto py-4 sm:py-6"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {/* Title */}
-        <motion.div variants={itemVariants} className="space-y-2">
-          <motion.h1
-            className="font-pixel text-3xl sm:text-5xl md:text-8xl text-primary drop-shadow-2xl break-words px-1 leading-[1.08] sm:leading-tight tracking-tight"
-            whileHover={
-              reduceMotion
-                ? undefined
-                : { scale: 1.05, textShadow: "0 0 20px rgba(45, 212, 191, 0.8)" }
-            }
-            transition={{ type: "spring", stiffness: 100 }}
-          >
-            CLICKER QUEST
-          </motion.h1>
-          <motion.div
-            className="h-1 w-24 sm:w-32 max-w-[min(100%,8rem)] sm:max-w-none bg-gradient-to-r from-primary via-accent to-primary mx-auto rounded-full"
-            animate={
-              reduceMotion
-                ? false
-                : {
-                    boxShadow: [
-                      "0 0 10px rgba(45, 212, 191, 0.5)",
-                      "0 0 30px rgba(45, 212, 191, 0.9)",
-                      "0 0 10px rgba(45, 212, 191, 0.5)",
-                    ],
-                  }
-            }
-            transition={{ duration: 3, repeat: Infinity }}
-          />
-        </motion.div>
-
-        {/* Subtitle */}
-        <motion.p
-          variants={itemVariants}
-          className="text-base sm:text-lg md:text-2xl text-foreground/80 font-inter leading-snug sm:leading-relaxed px-1 max-w-[min(100%,22rem)] sm:max-w-none mx-auto"
-        >
-          Defeat endless enemies, grow stronger, and prestige to eternal power
-        </motion.p>
-
-        {/* Features */}
+      {/* Scrolling enemy row */}
+      <div className="absolute top-[12%] sm:top-[15%] w-full overflow-hidden pointer-events-none">
         <motion.div
-          variants={itemVariants}
-          className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 py-3 sm:py-6 max-w-md mx-auto sm:max-w-none w-full"
+          className="flex gap-6 sm:gap-10 whitespace-nowrap"
+          animate={reduceMotion ? {} : { x: ["0%", "-50%"] }}
+          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
         >
-          {[
-            { icon: "⚔️", title: "Strategic Combat", color: "from-primary" },
-            { icon: "✨", title: "Prestige System", color: "from-accent" },
-            { icon: "🗺️", title: "Multiple Zones", color: "from-secondary" },
-          ].map((feature, i) => (
-            <motion.div
+          {[...ENEMIES, ...ENEMIES, ...ENEMIES, ...ENEMIES].map((e, i) => (
+            <span key={i} className="text-2xl sm:text-4xl opacity-30 select-none">{e}</span>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* Main content */}
+      <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-3 sm:px-6 py-4 gap-4 sm:gap-6 min-h-0">
+
+        {/* Title */}
+        <motion.div
+          className="text-center"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <h1 className="font-pixel text-2xl xs:text-3xl sm:text-5xl md:text-6xl text-primary leading-tight drop-shadow-[0_0_20px_hsl(var(--primary)/0.6)]">
+            CLICKER
+          </h1>
+          <h1 className="font-pixel text-2xl xs:text-3xl sm:text-5xl md:text-6xl text-primary leading-tight drop-shadow-[0_0_20px_hsl(var(--primary)/0.6)]">
+            QUEST
+          </h1>
+          <div className="mt-2 h-0.5 w-20 sm:w-32 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto" />
+        </motion.div>
+
+        {/* Player + enemies scene */}
+        <motion.div
+          className="flex items-end justify-center gap-2 sm:gap-4 py-1"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.6 }}
+        >
+          <span className="text-3xl sm:text-5xl animate-enemy-idle-float select-none">👺</span>
+          <span className="text-3xl sm:text-5xl animate-enemy-idle-march select-none">🧌</span>
+          <span className="text-4xl sm:text-6xl select-none drop-shadow-lg">🧙‍♂️</span>
+          <span className="text-3xl sm:text-5xl animate-enemy-idle-bob select-none">💀</span>
+          <span className="text-3xl sm:text-5xl animate-enemy-idle-loom select-none">🐉</span>
+        </motion.div>
+
+        {/* Feature cards */}
+        <motion.div
+          className="grid grid-cols-3 gap-2 sm:gap-4 w-full max-w-sm sm:max-w-lg"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.45, duration: 0.6 }}
+        >
+          {FEATURES.map((f, i) => (
+            <div
               key={i}
-              className={`p-4 sm:p-5 rounded-xl bg-gradient-to-br ${feature.color} to-transparent border border-white/10 backdrop-blur-sm hover:border-white/30 transition-all`}
-              whileHover={reduceMotion ? undefined : { y: -5, boxShadow: "0 10px 30px rgba(0,0,0,0.3)" }}
+              className="flex flex-col items-center gap-1 p-2 sm:p-4 rounded-xl border border-border/50 bg-card/40 backdrop-blur-sm text-center"
             >
-              <p className="text-2xl sm:text-3xl mb-2 sm:mb-3">{feature.icon}</p>
-              <p className="text-xs sm:text-sm font-pixel text-foreground/80 leading-tight">{feature.title}</p>
-            </motion.div>
+              <span className="text-xl sm:text-3xl">{f.icon}</span>
+              <p className="font-pixel text-[7px] sm:text-[9px] text-foreground leading-tight whitespace-pre-line">{f.title}</p>
+              <p className="text-[8px] sm:text-xs text-muted-foreground leading-tight hidden sm:block">{f.desc}</p>
+            </div>
           ))}
         </motion.div>
 
-        {/* CTA Button */}
-        <motion.div variants={itemVariants} className="pt-2 sm:pt-4 flex justify-center">
-          <motion.button
-            type="button"
-            onClick={() => navigate("/Game")}
-            className="relative inline-flex items-center justify-center min-h-[44px] min-w-[44px] px-6 py-3 sm:px-12 sm:py-4 text-base sm:text-lg font-pixel text-primary-foreground bg-gradient-to-r from-primary to-accent rounded-lg overflow-hidden group touch-manipulation max-w-[min(100vw-2rem,20rem)] sm:max-w-none"
-            whileHover={reduceMotion ? undefined : { scale: 1.08 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            <motion.div
-              className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20"
-              initial={false}
-            />
-            <span className="relative flex items-center gap-2 sm:gap-3 justify-center">
-              START GAME
-              <motion.span
-                animate={reduceMotion ? false : { x: [0, 8, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-              >
-                →
-              </motion.span>
-            </span>
-          </motion.button>
-        </motion.div>
-
-        {/* Bottom text */}
-        <motion.p
-          variants={itemVariants}
-          className="text-xs sm:text-sm text-foreground/50 font-inter"
+        {/* START button */}
+        <motion.button
+          type="button"
+          onClick={() => navigate("/Game")}
+          className="relative font-pixel text-sm sm:text-base text-primary-foreground bg-gradient-to-r from-primary to-accent px-8 py-3 sm:px-14 sm:py-4 rounded-lg shadow-lg shadow-primary/30 active:scale-95 touch-manipulation w-full max-w-[16rem] sm:max-w-xs"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.6, duration: 0.4 }}
+          whileHover={reduceMotion ? undefined : { scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
-          Click, upgrade, and become legendary
-        </motion.p>
-      </motion.div>
+          <motion.span
+            className="flex items-center justify-center gap-2"
+            animate={reduceMotion ? {} : { x: [0, 3, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          >
+            START GAME →
+          </motion.span>
+          {/* shimmer */}
+          <motion.div
+            className="absolute inset-0 rounded-lg bg-white opacity-0"
+            animate={reduceMotion ? {} : { opacity: [0, 0.12, 0] }}
+            transition={{ duration: 2.5, repeat: Infinity, delay: 1 }}
+          />
+        </motion.button>
 
-      {/* Floating particles — md+ only; off when prefers-reduced-motion */}
-      {!reduceMotion ? (
-        <div className="absolute inset-0 pointer-events-none hidden md:block">
-          {[...Array(5)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-1 h-1 bg-primary rounded-full opacity-50"
-              animate={{
-                y: [0, -300],
-                opacity: [0, 1, 0],
-                x: Math.sin(i) * 100,
-              }}
-              transition={{
-                duration: 5 + i,
-                repeat: Infinity,
-                delay: i * 0.5,
-              }}
-              style={{
-                left: `${20 + i * 15}%`,
-                bottom: 0,
-              }}
-            />
-          ))}
-        </div>
-      ) : null}
+        {/* Tagline */}
+        <motion.p
+          className="font-pixel text-[8px] sm:text-[10px] text-muted-foreground tracking-widest uppercase"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+        >
+          Click · Upgrade · Prestige
+        </motion.p>
+      </div>
+
+      {/* Ground strip */}
+      <div className="relative z-10 h-6 sm:h-8 bg-gradient-to-t from-[hsl(260,20%,5%)] to-transparent flex-shrink-0" />
     </div>
   );
 }

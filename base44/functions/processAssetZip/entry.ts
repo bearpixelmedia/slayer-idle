@@ -10,6 +10,10 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
+    // Stream progress updates to frontend
+    const progressQueue = [];
+    const sendProgress = (item) => progressQueue.push(item);
+
     const { accessToken } = await base44.asServiceRole.connectors.getConnection('googledrive');
     const authHeader = { Authorization: `Bearer ${accessToken}` };
 
@@ -56,6 +60,10 @@ Deno.serve(async (req) => {
     progress.push({ type: 'unzip', message: `Found ${entries.length} total entries (filtering non-files)...` });
     await zipReader.close();
 
+    // Calculate total files to process
+    const totalFiles = entries.filter(e => !e.directory && !e.filename.includes('__MACOSX') && !e.filename.includes('.DS_Store')).length;
+    progress.push({ type: 'unzip', message: `Total files to upload: ${totalFiles}` });
+
     // Cache subfolder IDs we create/find to avoid duplicates
     const subfolderCache = {};
     const createdFolders = new Set();
@@ -81,13 +89,12 @@ Deno.serve(async (req) => {
       subfolderCache[cacheKey] = created.id;
       if (!createdFolders.has(name)) {
         createdFolders.add(name);
-        progress.push({ type: 'folder', name });
+        progress.push({ type: 'folder', name, message: `Created folder: ${name}` });
       }
       return created.id;
     }
 
     // Process uploads sequentially to avoid folder creation race conditions
-    const totalEntries = entries.filter(e => !e.directory && !e.filename.includes('__MACOSX') && !e.filename.includes('.DS_Store')).length;
     let processedCount = 0;
     
     for (let idx = 0; idx < entries.length; idx++) {
@@ -95,7 +102,7 @@ Deno.serve(async (req) => {
       if (entry.directory || entry.filename.includes('__MACOSX') || entry.filename.includes('.DS_Store')) continue;
       
       processedCount++;
-      progress.push({ type: 'processing', file: entry.filename, current: processedCount, total: totalEntries });
+      progress.push({ type: 'processing', file: entry.filename, current: processedCount, total: totalFiles });
       
       try {
         const blob = await entry.getData(new BlobWriter());
@@ -140,7 +147,7 @@ Deno.serve(async (req) => {
         });
         const uploaded_file = await uploadRes.json();
         uploaded.push({ name: filename, id: uploaded_file.id, path: entry.filename });
-        progress.push({ type: 'uploaded', file: filename });
+        progress.push({ type: 'uploaded', file: filename, current: processedCount, total: totalFiles });
       } catch (e) {
         errors.push({ file: entry.filename, error: e.message });
         progress.push({ type: 'error', file: entry.filename, error: e.message });

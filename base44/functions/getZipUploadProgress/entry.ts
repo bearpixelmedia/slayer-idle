@@ -16,10 +16,16 @@ Deno.serve(async (req) => {
     }
 
     // Fetch progress record by session ID
-    const records = await base44.entities.ZipUploadProgress.filter({ session_id: sessionId });
+    let records = [];
+    try {
+      records = await base44.asServiceRole.entities.ZipUploadProgress.filter({ session_id: sessionId });
+    } catch (e) {
+      // If filter fails (rate limit), return empty to let client retry
+      return Response.json({ progress: [], status: 'pending' });
+    }
     
     if (records.length === 0) {
-      return Response.json({ progress: [], status: 'not_found' });
+      return Response.json({ progress: [], status: 'pending' });
     }
 
     const record = records[0];

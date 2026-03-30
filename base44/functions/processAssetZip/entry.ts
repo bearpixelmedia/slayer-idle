@@ -89,7 +89,6 @@ Deno.serve(async (req) => {
       subfolderCache[cacheKey] = created.id;
       if (!createdFolders.has(name)) {
         createdFolders.add(name);
-        progress.push({ type: 'folder', name, message: `Created folder: ${name}` });
       }
       return created.id;
     }

@@ -1,15 +1,16 @@
 import React, { useEffect, useState, useRef } from "react";
 import AnimatedSprite from "./AnimatedSprite";
-import { getEnemySprites, resolveAnim } from "@/lib/sprites";
+import { getEnemySprites, resolveAnim, getEnemyFilter } from "@/lib/sprites";
 
 /**
  * EnemySprite
  *
  * State-driven enemy animation controller.
  * Resolves sprite set from enemy name, then picks the right animation.
+ * Applies a CSS filter from ENEMY_FILTER_MAP to visually differentiate
+ * enemies that share the same base sprite sheet.
  *
  * Priority: death > run > idle
- * (enemies don't have a hit flash in this pack — we handle that with a CSS filter instead)
  *
  * Props:
  *   enemyName  {string}   — matches ENEMY_SPRITE_MAP keys (e.g. "Orc", "Skeleton")
@@ -63,9 +64,11 @@ export default function EnemySprite({
   const fallbackAnim = anim ?? resolveAnim(spriteSet, "idle");
   if (!fallbackAnim) return null;
 
-  const hitFlashStyle = hitFlash
-    ? { filter: "brightness(0) invert(1)", transition: "filter 0.05s" }
-    : { filter: "none", transition: "filter 0.15s" };
+  // Build filter: enemy identity filter + hit flash override
+  const enemyFilter = getEnemyFilter(enemyName);
+  const filterStyle = hitFlash
+    ? { filter: "brightness(10) saturate(0)", transition: "filter 0.05s" }
+    : { filter: enemyFilter || "none", transition: "filter 0.15s" };
 
   return (
     <AnimatedSprite
@@ -79,7 +82,7 @@ export default function EnemySprite({
       scale={scale}
       flipX={flipX}
       onComplete={handleComplete}
-      style={{ ...hitFlashStyle, ...style }}
+      style={{ ...filterStyle, ...style }}
       className={className}
     />
   );

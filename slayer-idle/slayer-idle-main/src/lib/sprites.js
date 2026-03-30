@@ -212,3 +212,65 @@ export function resolveAnim(spriteSet, action) {
     frames: animDef.frames,
   };
 }
+
+// ─── ENEMY CSS FILTER MAP ────────────────────────────────────────────────────
+// CSS filter strings applied on top of the base sprite to visually differentiate
+// enemies that share the same sprite sheet.
+//
+// Filters reference:
+//   hue-rotate(Xdeg)  — shift the hue wheel
+//   saturate(X)       — 0=greyscale, 1=normal, 2=vivid
+//   brightness(X)     — 0=black, 1=normal, 2=white
+//   sepia(X)          — 0=normal, 1=full sepia (warm brown)
+//   invert(X)         — 0=normal, 1=full invert
+//   contrast(X)       — 1=normal, higher=more contrast
+//
+export const ENEMY_FILTER_MAP = {
+  // ── Orcs ──────────────────────────────────────────────────────────────────
+  "Orc":      "",                                                   // base green orc — no filter
+  "Ogre":     "hue-rotate(20deg) saturate(1.4) brightness(0.85)",  // darker, more aggressive red-brown
+  "Goblin":   "hue-rotate(60deg) saturate(1.6) brightness(1.1)",   // yellow-green goblin tint
+
+  // ── Skeletons & undead ────────────────────────────────────────────────────
+  "Skeleton": "",                                                   // base white-bone — no filter
+  "Zombie":   "hue-rotate(90deg) saturate(0.9) brightness(0.8)",   // grey-green rotting tint
+  "Ghost":    "hue-rotate(200deg) saturate(0.6) brightness(1.4)",  // pale blue ethereal glow
+  "Lich":     "hue-rotate(260deg) saturate(1.4) brightness(0.7)",  // dark purple death lord
+  "Vampire":  "hue-rotate(320deg) saturate(0.8) brightness(0.75)", // dark crimson undead
+
+  // ── Mages / casters ───────────────────────────────────────────────────────
+  "Sorcerer":  "hue-rotate(240deg) saturate(1.5) brightness(0.9)", // deep blue arcane
+  "Sorceress": "hue-rotate(300deg) saturate(1.6) brightness(0.95)",// magenta-purple
+  "Mage":      "hue-rotate(180deg) saturate(1.3) brightness(1.0)", // cyan mage
+  "Genie":     "hue-rotate(170deg) saturate(1.8) brightness(1.2)", // vivid teal genie
+
+  // ── Elves / rogues ────────────────────────────────────────────────────────
+  "Elf":          "hue-rotate(100deg) saturate(1.4) brightness(1.1)", // forest green elf
+  "Elf Archer":   "hue-rotate(110deg) saturate(1.3) brightness(1.0)", // slightly darker green
+  "Elf Ranger":   "hue-rotate(130deg) saturate(1.2) brightness(0.9)", // deep forest
+  "Princess":     "hue-rotate(330deg) saturate(1.5) brightness(1.2)", // pink/rose royalty
+  "Prince":       "hue-rotate(200deg) saturate(1.2) brightness(1.0)", // royal blue
+  "Merchant":     "sepia(0.6) saturate(1.2) brightness(0.95)",         // warm earthy tones
+
+  // ── Nature / beasts ───────────────────────────────────────────────────────
+  "Spider":  "brightness(0.4) contrast(1.4)",                      // near-black dark spider
+  "Dragon":  "hue-rotate(0deg) saturate(1.8) brightness(1.1)",     // vivid red dragon pop
+
+  // ── Sea creatures ─────────────────────────────────────────────────────────
+  "Mermaid":  "hue-rotate(160deg) saturate(1.6) brightness(1.1)",  // aqua/teal mermaid
+  "Merman":   "hue-rotate(185deg) saturate(1.4) brightness(0.95)", // deeper sea blue
+  "Merfolk":  "hue-rotate(175deg) saturate(1.5) brightness(1.0)",  // mid ocean teal
+
+  // ── Fae ───────────────────────────────────────────────────────────────────
+  "Pixie":  "hue-rotate(280deg) saturate(1.8) brightness(1.3)",    // bright violet fairy
+  "Sprite": "hue-rotate(140deg) saturate(2.0) brightness(1.3)",    // vivid lime sprite
+  "Fairy":  "hue-rotate(310deg) saturate(1.7) brightness(1.25)",   // pink-purple fairy
+};
+
+/**
+ * Returns the CSS filter string for a given enemy name.
+ * Safe to use directly in style={{ filter: getEnemyFilter(name) }}
+ */
+export function getEnemyFilter(enemyName) {
+  return ENEMY_FILTER_MAP[enemyName] ?? "";
+}

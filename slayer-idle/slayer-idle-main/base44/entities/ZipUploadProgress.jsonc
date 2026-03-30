@@ -1,0 +1,27 @@
+{
+  "name": "ZipUploadProgress",
+  "type": "object",
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "description": "Unique session ID for this upload"
+    },
+    "progress_data": {
+      "type": "string",
+      "description": "JSON string of progress updates array"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "processing",
+        "completed",
+        "failed"
+      ],
+      "default": "processing",
+      "description": "Current upload status"
+    }
+  },
+  "required": [
+    "session_id"
+  ]
+}

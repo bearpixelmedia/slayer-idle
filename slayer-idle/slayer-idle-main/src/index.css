@@ -1,0 +1,330 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 260 20% 8%;
+    --foreground: 45 100% 95%;
+    --card: 260 18% 12%;
+    --card-foreground: 45 100% 95%;
+    --popover: 260 18% 12%;
+    --popover-foreground: 45 100% 95%;
+    --primary: 45 100% 55%;
+    --primary-foreground: 260 20% 8%;
+    --secondary: 270 40% 25%;
+    --secondary-foreground: 45 100% 95%;
+    --muted: 260 15% 18%;
+    --muted-foreground: 260 10% 55%;
+    --accent: 280 80% 60%;
+    --accent-foreground: 45 100% 95%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 260 15% 20%;
+    --input: 260 15% 20%;
+    --ring: 45 100% 55%;
+    --chart-1: 45 100% 55%;
+    --chart-2: 280 80% 60%;
+    --chart-3: 160 60% 45%;
+    --chart-4: 200 70% 50%;
+    --chart-5: 340 75% 55%;
+    --radius: 0.75rem;
+    --font-pixel: 'Press Start 2P', monospace;
+    --font-inter: 'Inter', sans-serif;
+    --font-manrope: 'Manrope', sans-serif;
+    --sidebar-background: 260 18% 10%;
+    --sidebar-foreground: 45 100% 95%;
+    --sidebar-primary: 45 100% 55%;
+    --sidebar-primary-foreground: 260 20% 8%;
+    --sidebar-accent: 270 40% 25%;
+    --sidebar-accent-foreground: 45 100% 95%;
+    --sidebar-border: 260 15% 20%;
+    --sidebar-ring: 45 100% 55%;
+  }
+
+  .dark {
+    --background: 260 20% 8%;
+    --foreground: 45 100% 95%;
+    --card: 260 18% 12%;
+    --card-foreground: 45 100% 95%;
+    --popover: 260 18% 12%;
+    --popover-foreground: 45 100% 95%;
+    --primary: 45 100% 55%;
+    --primary-foreground: 260 20% 8%;
+    --secondary: 270 40% 25%;
+    --secondary-foreground: 45 100% 95%;
+    --muted: 260 15% 18%;
+    --muted-foreground: 260 10% 55%;
+    --accent: 280 80% 60%;
+    --accent-foreground: 45 100% 95%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 260 15% 20%;
+    --input: 260 15% 20%;
+    --ring: 45 100% 55%;
+    --chart-1: 45 100% 55%;
+    --chart-2: 280 80% 60%;
+    --chart-3: 160 60% 45%;
+    --chart-4: 200 70% 50%;
+    --chart-5: 340 75% 55%;
+    --sidebar-background: 260 18% 10%;
+    --sidebar-foreground: 45 100% 95%;
+    --sidebar-primary: 45 100% 55%;
+    --sidebar-primary-foreground: 260 20% 8%;
+    --sidebar-accent: 270 40% 25%;
+    --sidebar-accent-foreground: 45 100% 95%;
+    --sidebar-border: 260 15% 20%;
+    --sidebar-ring: 45 100% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-manrope;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes slash {
+  0% { transform: rotate(-45deg) scale(0); opacity: 1; }
+  50% { transform: rotate(-45deg) scale(1.2); opacity: 0.8; }
+  100% { transform: rotate(-45deg) scale(1.5); opacity: 0; }
+}
+
+@keyframes coin-pop {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-40px) scale(0.5); opacity: 0; }
+}
+
+@keyframes ground-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes enemy-enter {
+  0% { transform: translateX(100px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes enemy-die {
+  0% { transform: scale(1); opacity: 1; filter: brightness(3); }
+  100% { transform: scale(0); opacity: 0; filter: brightness(3); }
+}
+
+@keyframes run-cycle {
+  0%, 100% { transform: translateY(0) scaleX(1); }
+  25% { transform: translateY(-8px) scaleX(0.9); }
+  50% { transform: translateY(0) scaleX(1); }
+  75% { transform: translateY(-5px) scaleX(1.05); }
+}
+
+/* Per-enemy idle motion — same origin as run-cycle; use nested wrapper if combining with facing rotation */
+@keyframes enemy-idle-march {
+  0%, 100% { transform: translateY(0) scaleX(1); }
+  25% { transform: translateY(-8px) scaleX(0.9); }
+  50% { transform: translateY(0) scaleX(1); }
+  75% { transform: translateY(-5px) scaleX(1.05); }
+}
+@keyframes enemy-idle-heavy {
+  0%, 100% { transform: translateY(0) scaleX(1); }
+  33% { transform: translateY(-5px) scaleX(0.94); }
+  66% { transform: translateY(-2px) scaleX(1.04); }
+}
+@keyframes enemy-idle-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes enemy-idle-glide {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-7px) scale(1.02); }
+}
+@keyframes enemy-idle-slither {
+  0%, 100% { transform: translateX(0) translateY(0) scaleY(1); }
+  25% { transform: translateX(4px) translateY(-4px) scaleY(1.04); }
+  50% { transform: translateX(0) translateY(-2px) scaleY(0.98); }
+  75% { transform: translateX(-4px) translateY(-5px) scaleY(1.03); }
+}
+@keyframes enemy-idle-loom {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-9px) rotate(-2deg); }
+}
+@keyframes enemy-idle-shamble {
+  0%, 100% { transform: translateY(0) rotate(0deg) scaleX(1); }
+  25% { transform: translateY(-4px) rotate(-3deg) scaleX(0.92); }
+  50% { transform: translateY(-1px) rotate(2deg) scaleX(1.06); }
+  75% { transform: translateY(-5px) rotate(-1deg) scaleX(0.95); }
+}
+@keyframes enemy-idle-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes enemy-idle-hover {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(-6px) rotate(-2deg); }
+  66% { transform: translateY(-3px) rotate(2deg); }
+}
+@keyframes enemy-idle-flutter {
+  0%, 100% { transform: translateY(0) rotate(0deg) scaleX(1); }
+  25% { transform: translateY(-5px) rotate(-4deg) scaleX(1.04); }
+  50% { transform: translateY(-2px) rotate(3deg) scaleX(0.96); }
+  75% { transform: translateY(-6px) rotate(-2deg) scaleX(1.02); }
+}
+@keyframes enemy-idle-sway {
+  0%, 100% { transform: translateX(0) translateY(0); }
+  25% { transform: translateX(-4px) translateY(-5px); }
+  50% { transform: translateX(0) translateY(-2px); }
+  75% { transform: translateX(4px) translateY(-6px); }
+}
+
+/* Rotation-only sway, same period as run-cycle — parent row supplies the vertical hop */
+@keyframes weapon-gait-tilt-l {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5.5deg); }
+  50% { transform: rotate(0.5deg); }
+  75% { transform: rotate(3.5deg); }
+}
+
+@keyframes weapon-gait-tilt-r {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(4deg); }
+  50% { transform: rotate(-0.5deg); }
+  75% { transform: rotate(-4deg); }
+}
+
+@keyframes enemy-hit {
+  0%, 100% { transform: translateX(0) scaleX(1); }
+  50% { transform: translateX(-8px) scaleX(0.95); }
+}
+
+.animate-float { animation: float 3s ease-in-out infinite; }
+.animate-slash { animation: slash 0.3s ease-out forwards; }
+.animate-coin-pop { animation: coin-pop 0.8s ease-out forwards; }
+.animate-ground-scroll { animation: ground-scroll 4s linear infinite; }
+.animate-enemy-enter { animation: enemy-enter 0.5s ease-out; }
+.animate-enemy-die { animation: enemy-die 0.3s ease-out forwards; }
+.animate-run-cycle { animation: run-cycle 0.4s ease-in-out infinite; }
+/* Whole hero row (body + weapons) shares one vertical hop; duration overridable via --player-run-dur */
+.animate-player-gait-row {
+  animation: run-cycle var(--player-run-dur, 0.4s) ease-in-out infinite;
+  transform-origin: bottom center;
+}
+/* Same gait as the player run — slower / anchored at feet so enemies read as running on the road, not hovering */
+.animate-enemy-walk { animation: run-cycle 0.5s ease-in-out infinite; transform-origin: bottom center; }
+
+.animate-enemy-idle-march { animation: enemy-idle-march 0.5s ease-in-out infinite; transform-origin: bottom center; }
+.animate-enemy-idle-heavy { animation: enemy-idle-heavy 0.75s ease-in-out infinite; transform-origin: bottom center; }
+.animate-enemy-idle-bob { animation: enemy-idle-bob 0.48s ease-in-out infinite; transform-origin: bottom center; }
+.animate-enemy-idle-glide { animation: enemy-idle-glide 0.65s ease-in-out infinite; transform-origin: bottom center; }
+.animate-enemy-idle-slither { animation: enemy-idle-slither 0.55s ease-in-out infinite; transform-origin: bottom center; }
+.animate-enemy-idle-loom { animation: enemy-idle-loom 0.7s ease-in-out infinite; transform-origin: bottom center; }
+.animate-enemy-idle-shamble { animation: enemy-idle-shamble 0.52s ease-in-out infinite; transform-origin: bottom center; }
+.animate-enemy-idle-float { animation: enemy-idle-float 2.4s ease-in-out infinite; transform-origin: bottom center; }
+.animate-enemy-idle-hover { animation: enemy-idle-hover 0.55s ease-in-out infinite; transform-origin: bottom center; }
+.animate-enemy-idle-flutter { animation: enemy-idle-flutter 0.5s ease-in-out infinite; transform-origin: bottom center; }
+.animate-enemy-idle-sway { animation: enemy-idle-sway 0.5s ease-in-out infinite; transform-origin: bottom center; }
+/* Staggered tilt only — vertical motion comes from .animate-player-gait-row parent */
+.animate-weapon-sway-l {
+  animation: weapon-gait-tilt-l var(--player-run-dur, 0.4s) ease-in-out infinite;
+  animation-delay: var(--weapon-sway-delay-l, 0.12s);
+  transform-origin: bottom center;
+}
+.animate-weapon-sway-r {
+  animation: weapon-gait-tilt-r var(--player-run-dur, 0.4s) ease-in-out infinite;
+  animation-delay: var(--weapon-sway-delay-r, 0.22s);
+  transform-origin: bottom center;
+}
+.animate-weapon-sway-enemy-l {
+  animation: run-cycle 0.5s ease-in-out infinite;
+  animation-delay: 0.12s;
+  transform-origin: bottom center;
+}
+.animate-weapon-sway-enemy-r {
+  animation: run-cycle 0.5s ease-in-out infinite;
+  animation-delay: 0.24s;
+  transform-origin: bottom center;
+}
+.animate-enemy-hit { animation: enemy-hit 0.15s ease-out; }
+
+/* Menu and Frame Styles */
+.menu-outer-frame {
+  background: linear-gradient(135deg, #8B7355 0%, #A0826D 100%);
+  border: 6px solid #D4AF37;
+  border-radius: 12px 12px 0 0;
+  box-shadow: inset 0 0 0 2px #6B5344;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  max-width: 100vw;
+  overflow: hidden;
+}
+
+.menu-inner-frame {
+  background: linear-gradient(135deg, #4A4A4A 0%, #2D2D2D 100%);
+  border: 2px solid #8B7355;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.menu-icon-bar {
+  background: linear-gradient(180deg, #8B4513 0%, #654321 100%);
+  border: 3px solid #D4AF37;
+  border-top: 4px solid #D4AF37;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 4px 2px;
+  gap: 2px;
+}
+
+.frame-outer-wrapper {
+  background: linear-gradient(135deg, #8B7355 0%, #A0826D 100%);
+  border: 6px solid #D4AF37;
+  border-radius: 12px 12px 0 0;
+  box-shadow: inset 0 0 0 2px #6B5344;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  max-width: 100vw;
+  overflow: hidden;
+}
+
+.frame-inner-wrapper {
+  background: linear-gradient(135deg, #4A4A4A 0%, #2D2D2D 100%);
+  border: 2px solid #8B7355;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.frame-icon-bar {
+  background: linear-gradient(180deg, #8B4513 0%, #654321 100%);
+  border: 3px solid #D4AF37;
+  border-top: 4px solid #D4AF37;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 4px 2px;
+  gap: 2px;
+}
+
+/* Canvas and Image Rendering */
+.pixel-canvas {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}

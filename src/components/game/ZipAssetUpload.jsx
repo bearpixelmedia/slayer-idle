@@ -53,24 +53,22 @@ export default function ZipAssetUpload() {
       // Poll for progress while backend is processing
       const pollInterval = setInterval(async () => {
         try {
-          const progressStr = sessionStorage.getItem(`${sessionId}_progress`);
-          if (progressStr) {
-            const progressData = JSON.parse(progressStr);
-            if (progressData && Array.isArray(progressData)) {
-              const newSteps = progressData.map(p => {
-                if (p.type === 'unzip') return { name: `🔍 ${p.message}`, status: "done" };
-                if (p.type === 'processing') return { name: `⚙️ Processing: ${p.file} (${p.current}/${p.total})`, status: "in-progress" };
-                if (p.type === 'uploaded') return { name: `✓ Uploaded: ${p.file} (${p.current}/${p.total})`, status: "done" };
-                if (p.type === 'error') return { name: `✗ Error: ${p.file}`, status: "error" };
-                return { name: p.name, status: "done" };
-              });
-              setSteps(newSteps);
-              
-              const uploadedCount = newSteps.filter(s => s.status === 'done' || s.status === 'in-progress').length;
-              const totalCount = newSteps.length;
-              const uploadProgress = 50 + (totalCount > 0 ? (uploadedCount / totalCount) * 50 : 0);
-              setProgress(Math.min(uploadProgress, 95));
-            }
+          const res = await base44.functions.invoke("getZipUploadProgress", { sessionId });
+          const { progress: progressData } = res.data;
+          if (progressData && Array.isArray(progressData)) {
+            const newSteps = progressData.map(p => {
+              if (p.type === 'unzip') return { name: `🔍 ${p.message}`, status: "done" };
+              if (p.type === 'processing') return { name: `⚙️ Processing: ${p.file} (${p.current}/${p.total})`, status: "in-progress" };
+              if (p.type === 'uploaded') return { name: `✓ Uploaded: ${p.file} (${p.current}/${p.total})`, status: "done" };
+              if (p.type === 'error') return { name: `✗ Error: ${p.file}`, status: "error" };
+              return { name: p.name, status: "done" };
+            });
+            setSteps(newSteps);
+            
+            const uploadedCount = newSteps.filter(s => s.status === 'done' || s.status === 'in-progress').length;
+            const totalCount = newSteps.length;
+            const uploadProgress = 50 + (totalCount > 0 ? (uploadedCount / totalCount) * 50 : 0);
+            setProgress(Math.min(uploadProgress, 95));
           }
         } catch (err) {
           // Polling error - ignore and continue
@@ -106,8 +104,7 @@ export default function ZipAssetUpload() {
       setDetails({ uploaded: data.uploaded, errors: data.errors });
 
       // Cleanup
-      sessionStorage.removeItem(`${sessionId}_progress`);
-      sessionStorage.removeItem(`${sessionId}_start`);
+      // Progress record stays in DB for history
       if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (err) {
       setSteps(s => s.map((step, i) => i === s.length - 1 ? { ...step, status: "error" } : step));

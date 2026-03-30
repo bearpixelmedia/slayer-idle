@@ -13,6 +13,26 @@ Deno.serve(async (req) => {
     const sessionId = body.sessionId || `zip_${Date.now()}`;
     const progressUpdates = [];
 
+    // Create or get progress tracking record
+    const existingProgress = await base44.asServiceRole.entities.ZipUploadProgress.filter({ session_id: sessionId });
+    const progressRecordId = existingProgress.length > 0 ? existingProgress[0].id : null;
+
+    const updateProgress = async () => {
+      const progressStr = JSON.stringify(progressUpdates);
+      if (progressRecordId) {
+        await base44.asServiceRole.entities.ZipUploadProgress.update(progressRecordId, {
+          progress_data: progressStr,
+          status: 'processing'
+        });
+      } else {
+        const record = await base44.asServiceRole.entities.ZipUploadProgress.create({
+          session_id: sessionId,
+          progress_data: progressStr,
+          status: 'processing'
+        });
+      }
+    };
+
     const { accessToken } = await base44.asServiceRole.connectors.getConnection('googledrive');
     const authHeader = { Authorization: `Bearer ${accessToken}` };
 
@@ -54,6 +74,7 @@ Deno.serve(async (req) => {
     const zipBlob = new Blob([fileBytes], { type: 'application/zip' });
     const zipReader = new ZipReader(new BlobReader(zipBlob));
     progressUpdates.push({ type: 'unzip', message: 'Reading ZIP entries...' });
+    await updateProgress();
     const entries = await zipReader.getEntries();
     progressUpdates.push({ type: 'unzip', message: `Found ${entries.length} total entries (filtering non-files)...` });
     await zipReader.close();
@@ -61,6 +82,7 @@ Deno.serve(async (req) => {
     // Calculate total files to process
     const totalFiles = entries.filter(e => !e.directory && !e.filename.includes('__MACOSX') && !e.filename.includes('.DS_Store')).length;
     progressUpdates.push({ type: 'unzip', message: `Total files to upload: ${totalFiles}` });
+    await updateProgress();
 
     // Cache subfolder IDs we create/find to avoid duplicates
     const subfolderCache = {};
@@ -100,6 +122,7 @@ Deno.serve(async (req) => {
       
       processedCount++;
       progressUpdates.push({ type: 'processing', file: entry.filename, current: processedCount, total: totalFiles });
+      await updateProgress();
       
       try {
         const blob = await entry.getData(new BlobWriter());
@@ -145,10 +168,17 @@ Deno.serve(async (req) => {
         const uploaded_file = await uploadRes.json();
         uploaded.push({ name: filename, id: uploaded_file.id, path: entry.filename });
         progressUpdates.push({ type: 'uploaded', file: filename, current: processedCount, total: totalFiles });
+        await updateProgress();
       } catch (e) {
         errors.push({ file: entry.filename, error: e.message });
         progressUpdates.push({ type: 'error', file: entry.filename, error: e.message });
+        await updateProgress();
       }
+    }
+
+    // Mark as completed
+    if (progressRecordId) {
+      await base44.asServiceRole.entities.ZipUploadProgress.update(progressRecordId, { status: 'completed' });
     }
 
     return Response.json({

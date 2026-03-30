@@ -113,6 +113,33 @@ export const WIZARD_SPRITES = {
   death: sheet("/sprites/npcs/wizard/death.png", F32, { death: anim(8, false, 12) }),
 };
 
+
+// ─── NEW GENERATED ENEMIES ────────────────────────────────────────────────────
+
+export const DRAGON_SPRITES = {
+  idle:  sheet("/sprites/enemies/dragon/idle.png",  F32, { idle:  anim(6, true,  4) }),
+  run:   sheet("/sprites/enemies/dragon/run.png",   F64, { run:   anim(10, true,  6) }),
+  death: sheet("/sprites/enemies/dragon/death.png", F64, { death: anim(8, false, 6) }),
+};
+
+export const GHOST_SPRITES = {
+  idle:  sheet("/sprites/enemies/ghost/idle.png",  F32, { idle:  anim(5, true,  4) }),
+  run:   sheet("/sprites/enemies/ghost/run.png",   F64, { run:   anim(8,  true,  6) }),
+  death: sheet("/sprites/enemies/ghost/death.png", F64, { death: anim(8, false, 6) }),
+};
+
+export const SPIDER_SPRITES = {
+  idle:  sheet("/sprites/enemies/spider/idle.png",  F32, { idle:  anim(6, true,  4) }),
+  run:   sheet("/sprites/enemies/spider/run.png",   F64, { run:   anim(12, true,  6) }),
+  death: sheet("/sprites/enemies/spider/death.png", F64, { death: anim(8, false, 6) }),
+};
+
+export const ZOMBIE_SPRITES = {
+  idle:  sheet("/sprites/enemies/zombie/idle.png",  F32, { idle:  anim(4, true,  4) }),
+  run:   sheet("/sprites/enemies/zombie/run.png",   F64, { run:   anim(6,  true,  6) }),
+  death: sheet("/sprites/enemies/zombie/death.png", F64, { death: anim(8, false, 6) }),
+};
+
 // ─── ENEMY ROSTER MAP ────────────────────────────────────────────────────────
 // Maps game enemy names (from gameData.js) to their sprite sets.
 // Enemies without a direct sprite fall back to the closest visual match.
@@ -124,16 +151,16 @@ export const ENEMY_SPRITE_MAP = {
 
   // Skeletons & undead
   "Skeleton": SKELETON_SPRITES,
-  "Zombie":   SKELETON_SPRITES,     // Zombie → skeleton (undead)
-  "Ghost":    SKELETON_MAGE_SPRITES, // Ghost → skeleton mage (caster)
-  "Lich":     SKELETON_MAGE_SPRITES,
+  "Zombie":   ZOMBIE_SPRITES,
+  "Ghost":    GHOST_SPRITES,
+  "Lich":     SKELETON_ROGUE_SPRITES,
   "Vampire":  SKELETON_WARRIOR_SPRITES,
 
   // Mages / casters
   "Sorcerer":  SKELETON_MAGE_SPRITES,
   "Sorceress": SKELETON_MAGE_SPRITES,
   "Mage":      SKELETON_MAGE_SPRITES,
-  "Genie":     SKELETON_MAGE_SPRITES,
+  "Genie":     ORC_SHAMAN_SPRITES,
 
   // Elves / rogues
   "Elf":          ROGUE_SPRITES,
@@ -144,8 +171,8 @@ export const ENEMY_SPRITE_MAP = {
   "Merchant":     KNIGHT_SPRITES,
 
   // Nature / beasts — no direct sprite, use orc rogue as placeholder
-  "Spider":  ORC_ROGUE_SPRITES,
-  "Dragon":  ORC_WARRIOR_SPRITES,
+  "Spider":  SPIDER_SPRITES,
+  "Dragon":  DRAGON_SPRITES,
 
   // Sea creatures — wizard as placeholder
   "Mermaid":  WIZARD_SPRITES,

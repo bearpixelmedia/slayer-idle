@@ -55,16 +55,23 @@ export default function ZipAssetUpload() {
 
       if (!data.success) throw new Error(data.error || "Processing failed");
 
-      // Convert progress items to display steps
+      // Convert progress items to display steps in real-time
       if (data.progress && Array.isArray(data.progress)) {
+        const currentSteps = steps.slice(0, -1); // Keep initial steps, remove "uploading" placeholder
         const newSteps = data.progress.map(p => {
           if (p.type === 'folder') return { name: `📁 Created folder: ${p.name}`, status: "done" };
-          if (p.type === 'processing') return { name: `⚙️ Processing: ${p.file} (${p.current}/${p.total})`, status: "done" };
+          if (p.type === 'processing') return { name: `⚙️ Processing: ${p.file} (${p.current}/${p.total})`, status: "in-progress" };
           if (p.type === 'uploaded') return { name: `✓ Uploaded: ${p.file}`, status: "done" };
           if (p.type === 'error') return { name: `✗ Error: ${p.file}`, status: "error" };
           return { name: p.name, status: "done" };
         });
-        setSteps(newSteps);
+        setSteps([...currentSteps, ...newSteps]);
+        
+        // Update progress bar based on uploaded files
+        const uploadedCount = newSteps.filter(s => s.status === 'done').length;
+        const totalCount = newSteps.length;
+        const uploadProgress = 50 + (totalCount > 0 ? (uploadedCount / totalCount) * 50 : 0);
+        setProgress(uploadProgress);
       }
 
       setProgress(100);

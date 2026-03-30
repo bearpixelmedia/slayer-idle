@@ -1,9 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 import { ZipReader, BlobReader, BlobWriter } from 'npm:@zip.js/zip.js@2.7.52';
 
-// In-memory storage for progress (simple map)
-const progressStore = new Map();
-
 Deno.serve(async (req) => {
   try {
     const body = await req.json();
@@ -16,8 +13,18 @@ Deno.serve(async (req) => {
     const sessionId = body.sessionId || `zip_${Date.now()}`;
     const progressUpdates = [];
 
-    const updateProgress = () => {
-      progressStore.set(sessionId, { progress: progressUpdates, status: 'processing', timestamp: Date.now() });
+    const updateProgress = async () => {
+      try {
+        const progress_data = JSON.stringify(progressUpdates);
+        const existing = await base44.asServiceRole.entities.ZipUploadProgress.filter({ session_id: sessionId });
+        if (existing.length > 0) {
+          await base44.asServiceRole.entities.ZipUploadProgress.update(existing[0].id, { progress_data, status: 'processing' });
+        } else {
+          await base44.asServiceRole.entities.ZipUploadProgress.create({ session_id: sessionId, progress_data, status: 'processing' });
+        }
+      } catch (err) {
+        console.warn('Progress update failed:', err.message);
+      }
     };
 
     const { accessToken } = await base44.asServiceRole.connectors.getConnection('googledrive');
@@ -61,7 +68,7 @@ Deno.serve(async (req) => {
     const zipBlob = new Blob([fileBytes], { type: 'application/zip' });
     const zipReader = new ZipReader(new BlobReader(zipBlob));
     progressUpdates.push({ type: 'unzip', message: 'Reading ZIP entries...' });
-    updateProgress();
+    await updateProgress();
     const entries = await zipReader.getEntries();
     progressUpdates.push({ type: 'unzip', message: `Found ${entries.length} total entries (filtering non-files)...` });
     await zipReader.close();
@@ -69,7 +76,7 @@ Deno.serve(async (req) => {
     // Calculate total files to process
     const totalFiles = entries.filter(e => !e.directory && !e.filename.includes('__MACOSX') && !e.filename.includes('.DS_Store')).length;
     progressUpdates.push({ type: 'unzip', message: `Total files to upload: ${totalFiles}` });
-    updateProgress();
+    await updateProgress();
 
     // Cache subfolder IDs we create/find to avoid duplicates
     const subfolderCache = {};
@@ -109,7 +116,7 @@ Deno.serve(async (req) => {
       
       processedCount++;
       progressUpdates.push({ type: 'processing', file: entry.filename, current: processedCount, total: totalFiles });
-      updateProgress();
+      await updateProgress();
       
       try {
         const blob = await entry.getData(new BlobWriter());
@@ -155,16 +162,22 @@ Deno.serve(async (req) => {
         const uploaded_file = await uploadRes.json();
         uploaded.push({ name: filename, id: uploaded_file.id, path: entry.filename });
         progressUpdates.push({ type: 'uploaded', file: filename, current: processedCount, total: totalFiles });
-        updateProgress();
+        await updateProgress();
       } catch (e) {
         errors.push({ file: entry.filename, error: e.message });
         progressUpdates.push({ type: 'error', file: entry.filename, error: e.message });
-        updateProgress();
+        await updateProgress();
       }
     }
 
     // Mark as completed
-    progressStore.set(sessionId, { progress: progressUpdates, status: 'completed', timestamp: Date.now() });
+    const progress_data = JSON.stringify(progressUpdates);
+    const existing = await base44.asServiceRole.entities.ZipUploadProgress.filter({ session_id: sessionId });
+    if (existing.length > 0) {
+      await base44.asServiceRole.entities.ZipUploadProgress.update(existing[0].id, { progress_data, status: 'completed' });
+    } else {
+      await base44.asServiceRole.entities.ZipUploadProgress.create({ session_id: sessionId, progress_data, status: 'completed' });
+    }
 
     return Response.json({
       success: true,

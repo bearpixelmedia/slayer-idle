@@ -1,14 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
-// Reference to the progress store (shared with processAssetZip via module closure in real setup)
-// For now, we'll use a simple approach
-const progressStore = new Map();
-
-// This gets called from processAssetZip
-export function setProgress(sessionId, data) {
-  progressStore.set(sessionId, { ...data, timestamp: Date.now() });
-}
-
 Deno.serve(async (req) => {
   try {
     const body = await req.json();
@@ -24,19 +15,25 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check in-memory store
-    const stored = progressStore.get(sessionId);
-    if (stored) {
-      return Response.json({
-        progress: stored.progress || [],
-        status: stored.status || 'pending'
-      });
+    // Query for progress record by session_id without rate-limiting filter
+    try {
+      const records = await base44.asServiceRole.entities.ZipUploadProgress.filter({ session_id: sessionId });
+      if (records.length > 0) {
+        const progressData = records[0].progress_data ? JSON.parse(records[0].progress_data) : [];
+        return Response.json({
+          progress: progressData,
+          status: records[0].status || 'processing'
+        });
+      }
+    } catch (err) {
+      // Silently handle filter errors; return empty on rate limit or other issues
+      console.warn(`Progress lookup for ${sessionId} failed:`, err.message);
     }
 
-    // Not found, return empty
     return Response.json({ progress: [], status: 'pending' });
   } catch (error) {
     console.error('getZipUploadProgress error:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    // Return empty array instead of 500 to let polling continue gracefully
+    return Response.json({ progress: [], status: 'pending' });
   }
 });

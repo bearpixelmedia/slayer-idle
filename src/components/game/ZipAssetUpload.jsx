@@ -23,10 +23,18 @@ export default function ZipAssetUpload() {
     setDetails(null);
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
+      // Convert file to base64
+      const reader = new FileReader();
+      const fileData = await new Promise((resolve, reject) => {
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(file);
+      });
 
-      const res = await base44.functions.invoke("processAssetZip", formData);
+      const res = await base44.functions.invoke("processAssetZip", {
+        filename: file.name,
+        fileData: Array.from(new Uint8Array(fileData))
+      });
       const data = res.data;
 
       if (!data.success) throw new Error(data.error || "Processing failed");

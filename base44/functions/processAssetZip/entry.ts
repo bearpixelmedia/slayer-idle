@@ -36,12 +36,12 @@ Deno.serve(async (req) => {
       }
     }
 
-    const formData = await req.formData();
-    const zipFile = formData.get('file');
-    if (!zipFile) return Response.json({ error: 'No file provided' }, { status: 400 });
+    const body = await req.json();
+    if (!body.fileData || !body.filename) return Response.json({ error: 'No file provided' }, { status: 400 });
 
     // Unzip
-    const zipBlob = new Blob([await zipFile.arrayBuffer()], { type: 'application/zip' });
+    const fileBytes = new Uint8Array(body.fileData);
+    const zipBlob = new Blob([fileBytes], { type: 'application/zip' });
     const zipReader = new ZipReader(new BlobReader(zipBlob));
     const entries = await zipReader.getEntries();
     await zipReader.close();

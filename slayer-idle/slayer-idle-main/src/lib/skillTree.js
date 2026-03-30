@@ -54,9 +54,9 @@ export const SKILLS = [
     tier: 2,
     path: "damage",
     cost: 6,
-    description: "Unlock crit damage (5% of taps crit for 3x)",
-    type: "critMultiplier",
-    value: 0.05,
+    description: "+20% tap damage",
+    type: "damageMultiplier",
+    value: 0.2,
     requires: ["sharpened_blades"],
   },
   {
@@ -80,8 +80,8 @@ export const SKILLS = [
     tier: 2,
     path: "idle",
     cost: 6,
-    description: "Idle earnings work 20% faster per tier",
-    type: "idleSpeedMultiplier",
+    description: "+20% idle earnings",
+    type: "idleMultiplier",
     value: 0.2,
     requires: ["steady_income"],
   },
@@ -118,10 +118,10 @@ export const SKILLS = [
     icon: "🏹",
     tier: 2,
     path: "damage",
-    cost: 15,
-    description: "Unlock Bow weapon mode (WeaponMode UI)",
-    type: "specialMechanic",
-    value: 0,
+    cost: 8,
+    description: "+15% soul drops",
+    type: "soulMultiplier",
+    value: 0.15,
     requires: ["sharpened_blades"],
   },
 
@@ -133,9 +133,9 @@ export const SKILLS = [
     tier: 3,
     path: "damage",
     cost: 15,
-    description: "+50% crit damage (5% crits now deal 5x)",
-    type: "critDamageMultiplier",
-    value: 5,
+    description: "+60% tap damage",
+    type: "damageMultiplier",
+    value: 0.6,
     requires: ["critical_strike"],
   },
 
@@ -161,9 +161,9 @@ export const SKILLS = [
     tier: 4,
     path: "damage",
     cost: 25,
-    description: "Consecutive crits build combo (3x → 4x → 5x)",
-    type: "specialMechanic",
-    value: 1,
+    description: "+25% coin drops",
+    type: "coinDropMultiplier",
+    value: 0.25,
     requires: ["executioner"],
   },
   {
@@ -173,9 +173,9 @@ export const SKILLS = [
     tier: 4,
     path: "idle",
     cost: 25,
-    description: "Every 10 coins earned → auto-buy cheapest upgrade",
-    type: "specialMechanic",
-    value: 1,
+    description: "+30% coin drops & +30% idle earnings",
+    type: "allIdleAndCoins",
+    value: 0.3,
     requires: ["economic_powerhouse"],
   },
 
@@ -186,7 +186,7 @@ export const SKILLS = [
     icon: "✨",
     tier: 3,
     path: "neutral",
-    cost: 18,
+    cost: 22,
     description: "+50% all earnings (caps all paths)",
     type: "allMultiplier",
     value: 0.5,
@@ -220,6 +220,11 @@ export function getSkillMultipliers(unlockedSkillIds) {
         break;
       case "allMultiplier":
         allMultiplier += skill.value;
+        break;
+      case "allIdleAndCoins":
+        // golden_touch: boosts both idle earnings and coin drops
+        idleMultiplier += skill.value;
+        coinDropMultiplier += skill.value;
         break;
     }
   });

@@ -36,7 +36,7 @@ function AnimatedTile({ animationData, imgRef, currentFrame, tileWidth, tileHeig
     else imgRef.current.onload = draw;
   }, [animationData, currentFrame, tileWidth, tileHeight]);
 
-  return <canvas ref={canvasRef} style={{ width: `${tileWidth}px`, height: "100%", imageRendering: "pixelated", flexShrink: 0 }} />;
+  return <canvas ref={canvasRef} style={{ width: `${tileWidth}px`, height: "auto", imageRendering: "pixelated", flexShrink: 0, display: "block" }} />;
 }
 
 function AnimatedTileRow({ animationData, imgRef, currentFrame, tileWidth, tileHeight, count }) {

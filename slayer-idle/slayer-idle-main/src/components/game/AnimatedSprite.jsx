@@ -8,7 +8,9 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
  *
  * Props:
  *   url        {string}   — path to the spritesheet PNG
- *   frameSize  {number}   — width AND height of a single frame in px (always square)
+ *   frameSize  {number}   — square frame size shorthand (sets both frameW and frameH)
+ *   frameW     {number}   — frame width in px (overrides frameSize.width)
+ *   frameH     {number}   — frame height in px (overrides frameSize.height)
  *   frames     {number}   — total number of frames on the sheet
  *   fps        {number}   — playback speed
  *   loop       {boolean}  — loop or play once and hold last frame
@@ -23,6 +25,8 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 export default function AnimatedSprite({
   url,
   frameSize,
+  frameW: frameWProp,
+  frameH: frameHProp,
   frames,
   fps = 8,
   loop = true,
@@ -34,6 +38,10 @@ export default function AnimatedSprite({
   onComplete,
   pixelated = true,
 }) {
+  // Support both square shorthand and explicit w/h
+  const frameW = frameWProp ?? frameSize;
+  const frameH = frameHProp ?? frameSize;
+
   const [currentFrame, setCurrentFrame] = useState(0);
   const frameRef = useRef(0);
   const completedRef = useRef(false);
@@ -81,17 +89,18 @@ export default function AnimatedSprite({
     };
   }, [playing, url, fps, tick]);
 
-  if (!url) return null;
+  if (!url || !frameW || !frameH) return null;
 
-  const displaySize = frameSize * scale;
-  const bgX = -(currentFrame * frameSize * scale);
+  const displayW = frameW * scale;
+  const displayH = frameH * scale;
+  const bgX = -(currentFrame * frameW * scale);
 
   return (
     <div
       className={className}
       style={{
-        width: displaySize,
-        height: displaySize,
+        width: displayW,
+        height: displayH,
         overflow: "hidden",
         flexShrink: 0,
         transform: flipX ? "scaleX(-1)" : undefined,
@@ -100,11 +109,11 @@ export default function AnimatedSprite({
     >
       <div
         style={{
-          width: frameSize * scale,
-          height: frameSize * scale,
+          width: frameW * scale,
+          height: frameH * scale,
           backgroundImage: `url(${url})`,
           backgroundRepeat: "no-repeat",
-          backgroundSize: `${frames * frameSize * scale}px ${frameSize * scale}px`,
+          backgroundSize: `${frames * frameW * scale}px ${frameH * scale}px`,
           backgroundPosition: `${bgX}px 0px`,
           imageRendering: pixelated ? "pixelated" : "auto",
         }}

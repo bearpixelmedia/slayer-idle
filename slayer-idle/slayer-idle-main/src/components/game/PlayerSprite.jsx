@@ -86,7 +86,8 @@ export default function PlayerSprite({
   return (
     <AnimatedSprite
       url={anim.url}
-      frameSize={anim.frameSize}
+      frameW={anim.frameW}
+      frameH={anim.frameH}
       frames={anim.frames}
       fps={anim.fps}
       loop={anim.loop}

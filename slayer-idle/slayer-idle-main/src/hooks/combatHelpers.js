@@ -7,9 +7,9 @@
 
 import {
   STAGES, getEnemyHP, getEnemyReward,
-  getZoneStages, isBossEncounter,
+  getZoneStages,
 } from "@/lib/gameData";
-import { getBossForStage, getBossHP, isBossEncounter as _isBossEncounter } from "@/lib/bosses";
+import { getBossForStage, getBossHP, isBossEncounter } from "@/lib/bosses";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 

@@ -70,7 +70,8 @@ export default function EnemySprite({
   return (
     <AnimatedSprite
       url={fallbackAnim.url}
-      frameSize={fallbackAnim.frameSize}
+      frameW={fallbackAnim.frameW}
+      frameH={fallbackAnim.frameH}
       frames={fallbackAnim.frames}
       fps={fallbackAnim.fps}
       loop={fallbackAnim.loop}

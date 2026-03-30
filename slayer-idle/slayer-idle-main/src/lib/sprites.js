@@ -15,8 +15,16 @@ const F64 = 64; // most player & mob run/death sheets
 const F32 = 32; // all idle sheets + some NPC death sheets
 
 // ─── Helper ──────────────────────────────────────────────────────────────────
+/**
+ * sheet() — standard square frames
+ * sheetNS() — non-square frames (different width and height)
+ */
 function sheet(url, frameSize, animations) {
-  return { url, frameSize, animations };
+  return { url, frameW: frameSize, frameH: frameSize, frameSize, animations };
+}
+
+function sheetNS(url, frameW, frameH, animations) {
+  return { url, frameW, frameH, frameSize: frameW, animations };
 }
 
 function anim(fps, loop, frames) {
@@ -46,7 +54,7 @@ export const ORC_SPRITES = {
 export const ORC_WARRIOR_SPRITES = {
   idle:  sheet("/sprites/enemies/orc_warrior/idle.png",  F32, { idle:  anim(6, true,  4) }),
   run:   sheet("/sprites/enemies/orc_warrior/run.png",   F64, { run:   anim(10, true,  6) }),
-  death: sheet("/sprites/enemies/orc_warrior/death.png", F64, { death: anim(8, false, 7) }),
+  death: sheetNS("/sprites/enemies/orc_warrior/death.png", 72, 80, { death: anim(8, false, 8) }),
 };
 
 export const ORC_ROGUE_SPRITES = {
@@ -71,7 +79,7 @@ export const SKELETON_SPRITES = {
 export const SKELETON_WARRIOR_SPRITES = {
   idle:  sheet("/sprites/enemies/skeleton_warrior/idle.png",  F32, { idle:  anim(6, true,  4) }),
   run:   sheet("/sprites/enemies/skeleton_warrior/run.png",   F64, { run:   anim(10, true,  6) }),
-  death: sheet("/sprites/enemies/skeleton_warrior/death.png", F64, { death: anim(8, false, 8) }),
+  death: sheetNS("/sprites/enemies/skeleton_warrior/death.png", 48, 48, { death: anim(8, false, 8) }),
 };
 
 export const SKELETON_MAGE_SPRITES = {
@@ -163,13 +171,15 @@ export function getEnemySprites(enemyName) {
  * Returns { url, frameSize, fps, loop, frames } or null if not found.
  */
 export function resolveAnim(spriteSet, action) {
-  const sheet = spriteSet?.[action];
-  if (!sheet) return null;
-  const animKey = Object.keys(sheet.animations)[0]; // each sheet has one anim key
-  const animDef = sheet.animations[animKey];
+  const s = spriteSet?.[action];
+  if (!s) return null;
+  const animKey = Object.keys(s.animations)[0];
+  const animDef = s.animations[animKey];
   return {
-    url: sheet.url,
-    frameSize: sheet.frameSize,
+    url: s.url,
+    frameSize: s.frameSize,   // kept for compat
+    frameW: s.frameW,
+    frameH: s.frameH,
     fps: animDef.fps,
     loop: animDef.loop,
     frames: animDef.frames,

@@ -6,7 +6,6 @@ import { notifyGameSettingsUpdated } from "@/lib/gameSettings";
 
 const STORAGE_KEY = "game_settings_config";
 const GOOGLE_PICKER_API = "https://apis.google.com/js/api.js";
-const GOOGLE_GSI = "https://accounts.google.com/gsi/client";
 
 export default function DriveAssetSync() {
   const [syncState, setSyncState] = useState(null);
@@ -75,38 +74,51 @@ export default function DriveAssetSync() {
     }
   }, [pendingUpdates, applyPendingUpdates]);
 
-  // Load Google Picker scripts
-  useEffect(() => {
-    if (window.google?.picker) { setPickerReady(true); return; }
+  // Ensure Google Picker is loaded — returns a promise that resolves when ready
+  const ensurePickerLoaded = useCallback(() => {
+    return new Promise((resolve, reject) => {
+      if (window.google?.picker) { resolve(); return; }
 
-    const loadPicker = () => {
-      if (window.gapi) {
-        window.gapi.load("picker", () => setPickerReady(true));
+      const loadPicker = () => {
+        window.gapi.load("picker", () => {
+          setPickerReady(true);
+          resolve();
+        });
+      };
+
+      if (window.gapi) { loadPicker(); return; }
+
+      if (!document.querySelector(`script[src="${GOOGLE_PICKER_API}"]`)) {
+        const script = document.createElement("script");
+        script.src = GOOGLE_PICKER_API;
+        script.async = true;
+        script.onload = () => { if (window.gapi) loadPicker(); else reject(new Error("gapi failed to load")); };
+        script.onerror = () => reject(new Error("Failed to load Google API script"));
+        document.body.appendChild(script);
+      } else {
+        // Script tag exists, poll for gapi
+        let tries = 0;
+        const poll = setInterval(() => {
+          if (window.gapi) { clearInterval(poll); loadPicker(); }
+          else if (++tries > 40) { clearInterval(poll); reject(new Error("Timed out waiting for gapi")); }
+        }, 100);
       }
-    };
-
-    if (document.querySelector(`script[src="${GOOGLE_PICKER_API}"]`)) {
-      // Script already added, wait for gapi
-      const interval = setInterval(() => {
-        if (window.gapi) { clearInterval(interval); loadPicker(); }
-      }, 100);
-      return () => clearInterval(interval);
-    }
-
-    const script = document.createElement("script");
-    script.src = GOOGLE_PICKER_API;
-    script.async = true;
-    script.onload = loadPicker;
-    document.body.appendChild(script);
+    });
   }, []);
 
   const openPicker = async () => {
     setStatus("loading");
-    setMessage("Getting access token…");
+    setMessage("Loading picker…");
     try {
-      const res = await base44.functions.invoke("getDriveAccessToken", {});
+      const [res] = await Promise.all([
+        base44.functions.invoke("getDriveAccessToken", {}),
+        ensurePickerLoaded(),
+      ]);
       const accessToken = res.data?.accessToken;
       if (!accessToken) throw new Error("Could not retrieve access token");
+
+      setStatus("");
+      setMessage("");
 
       const picker = new window.google.picker.PickerBuilder()
         .addView(new window.google.picker.DocsView(window.google.picker.ViewId.FOLDERS)
@@ -195,7 +207,7 @@ export default function DriveAssetSync() {
             size="sm"
             variant="outline"
             onClick={openPicker}
-            disabled={status === "loading" || !pickerReady}
+            disabled={status === "loading"}
             className="gap-2 text-xs"
           >
             <FolderOpen className="w-3.5 h-3.5" />

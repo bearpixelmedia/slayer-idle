@@ -88,10 +88,14 @@ Deno.serve(async (req) => {
           const parts = entry.filename.split('/').filter(Boolean);
           const filename = parts[parts.length - 1];
 
+          // Create nested folder hierarchy
           let targetFolderId = folderId;
           if (parts.length > 1) {
-            const subfolder = parts[0];
-            targetFolderId = await getOrCreateSubfolder(subfolder, folderId);
+            let currentParentId = folderId;
+            for (let j = 0; j < parts.length - 1; j++) {
+              currentParentId = await getOrCreateSubfolder(parts[j], currentParentId);
+            }
+            targetFolderId = currentParentId;
           }
 
           const ext = filename.split('.').pop().toLowerCase();

@@ -1,0 +1,23 @@
+{
+  "name": "SyncState",
+  "type": "object",
+  "properties": {
+    "page_token": {
+      "type": "string",
+      "description": "Google Drive changes API page token for incremental sync"
+    },
+    "folder_id": {
+      "type": "string",
+      "description": "The Google Drive folder ID being watched"
+    },
+    "folder_name": {
+      "type": "string",
+      "description": "Display name of the watched folder"
+    },
+    "pending_updates": {
+      "type": "string",
+      "description": "JSON string of setting key -> URL updates pending application"
+    }
+  },
+  "required": []
+}

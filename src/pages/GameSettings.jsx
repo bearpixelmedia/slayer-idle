@@ -16,6 +16,7 @@ import { VILLAGE_BUILDINGS } from "@/lib/village";
 import SettingImageUpload from "@/components/game/SettingImageUpload";
 import WeaponAtlasUpload from "@/components/game/WeaponAtlasUpload";
 import AsepriteUpload from "@/components/game/AsepriteUpload";
+import DriveAssetSync from "@/components/game/DriveAssetSync";
 import { notifyGameSettingsUpdated } from "@/lib/gameSettings";
 
 const STORAGE_KEY = "game_settings_config";
@@ -500,6 +501,15 @@ export default function GameSettings() {
 
           {/* Parallax Tab */}
           <TabsContent value="parallax" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Google Drive Sync</CardTitle>
+                <CardDescription>Select a Drive folder — any image file you change there will auto-update the matching parallax setting. File names must match setting keys (e.g. <code>parallax_ground.png</code>).</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <DriveAssetSync />
+              </CardContent>
+            </Card>
             <Card>
               <CardHeader>
                 <CardTitle>Parallax Spritesheets</CardTitle>

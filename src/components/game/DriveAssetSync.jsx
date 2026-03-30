@@ -78,14 +78,8 @@ export default function DriveAssetSync() {
         }
       }
     } catch (e) {
-      console.warn("Failed to load sync state", e.message);
+      // Silently ignore errors
     }
-  }, []);
-
-  useEffect(() => {
-    loadSyncState();
-    const interval = setInterval(loadSyncState, 60000); // Poll every 60 seconds instead of 10
-    return () => clearInterval(interval);
   }, []);
 
   const applyPendingUpdates = useCallback(async () => {

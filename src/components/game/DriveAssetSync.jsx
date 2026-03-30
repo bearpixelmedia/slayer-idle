@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { base44 } from "@/api/base44Client";
 import { FolderOpen, RefreshCw, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
@@ -66,18 +66,37 @@ export default function DriveAssetSync() {
     }
   }, [pendingUpdates, syncState]);
 
+  // Only auto-apply when pendingUpdates becomes non-null from a poll
+  const prevPendingRef = useRef(null);
   useEffect(() => {
-    if (pendingUpdates) applyPendingUpdates();
-  }, [pendingUpdates]);
+    if (pendingUpdates && pendingUpdates !== prevPendingRef.current) {
+      prevPendingRef.current = pendingUpdates;
+      applyPendingUpdates();
+    }
+  }, [pendingUpdates, applyPendingUpdates]);
 
   // Load Google Picker scripts
   useEffect(() => {
     if (window.google?.picker) { setPickerReady(true); return; }
+
+    const loadPicker = () => {
+      if (window.gapi) {
+        window.gapi.load("picker", () => setPickerReady(true));
+      }
+    };
+
+    if (document.querySelector(`script[src="${GOOGLE_PICKER_API}"]`)) {
+      // Script already added, wait for gapi
+      const interval = setInterval(() => {
+        if (window.gapi) { clearInterval(interval); loadPicker(); }
+      }, 100);
+      return () => clearInterval(interval);
+    }
+
     const script = document.createElement("script");
     script.src = GOOGLE_PICKER_API;
-    script.onload = () => {
-      window.gapi.load("picker", () => setPickerReady(true));
-    };
+    script.async = true;
+    script.onload = loadPicker;
     document.body.appendChild(script);
   }, []);
 

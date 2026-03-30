@@ -113,10 +113,10 @@ export default function ZipAssetUpload() {
     }
   };
 
-  // Auto-scroll to latest step
+  // Auto-scroll to latest step (only if needed, don't scroll whole page)
   useEffect(() => {
     if (stepsEndRef.current) {
-      stepsEndRef.current.scrollIntoView({ behavior: "smooth" });
+      stepsEndRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
   }, [steps]);
 

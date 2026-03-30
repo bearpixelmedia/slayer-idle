@@ -16,8 +16,8 @@ export const ROAD_CENTER_FROM_BOTTOM_PCT = ROAD_FEET_LINE_FROM_BOTTOM_PCT;
 /** @deprecated Use ROAD_FEET_LINE_FROM_BOTTOM_PCT */
 export const CHARACTER_BASELINE_BOTTOM_PCT = ROAD_FEET_LINE_FROM_BOTTOM_PCT;
 
-/** Back-to-front: shrubs, then lane stack (combat row z — coins + player + enemies ordered in DOM). */
-export const Z_SHRUB_OVERLAY = 22;
+/** Back-to-front: shrubs (behind trees in parallax bg), then lane stack. */
+export const Z_SHRUB_OVERLAY = 5;
 export const Z_COMBAT_ROW = 30;
 /** Air path coins: same z as combat so they sit in the lane layer (below player/enemy by paint order). */
 export const Z_WORLD_COINS = Z_COMBAT_ROW;

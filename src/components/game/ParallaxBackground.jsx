@@ -273,6 +273,8 @@ function ParallaxBackground() {
       treeFront: s.parallax_tree_front || null,
       mountainFar: s.parallax_mountain_far || null,
       mountainMid: s.parallax_mountain_mid || null,
+      shrubBack: s.parallax_shrub_back || null,
+      shrubFront: s.parallax_shrub_front || null,
       ground: s.parallax_ground || null,
       sky: s.parallax_sky || null,
       clouds: s.parallax_clouds || null,
@@ -692,13 +694,27 @@ function ParallaxBackground() {
 
       {/* Shrubs: ParallaxShrubOverlay (below combat z-index, frames bottom of path) */}
 
-      {/* Static ground */}
-      {sprites.ground ? (
-        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "18%", pointerEvents: "none", display: "flex", alignItems: "flex-end" }}>
-          <SpriteTileRow spriteUrl={sprites.ground} tileWidth={200} count={12} />
-        </div>
-      ) : (
-        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "18%", background: "linear-gradient(to bottom, #1e5c14, #0f2e08)", pointerEvents: "none" }} />
+      {/* Back shrubs — between trees and ground */}
+      {layer(9, 0.84, 72, 16, 0.88,
+        sprites.shrubBack ? (
+          <SpriteTileRow spriteUrl={sprites.shrubBack} tileWidth={40} count={120} />
+        ) : null
+      )}
+
+      {/* Front shrubs — in front of back shrubs, behind ground */}
+      {layer(10, 0.90, 74, 18, 0.94,
+        sprites.shrubFront ? (
+          <SpriteTileRow spriteUrl={sprites.shrubFront} tileWidth={50} count={160} />
+        ) : null
+      )}
+
+      {/* Ground — scrolls with the parallax at near-foreground speed */}
+      {layer(11, 0.95, 78, 22, 1.0,
+        sprites.ground ? (
+          <SpriteTileRow spriteUrl={sprites.ground} tileWidth={200} count={20} />
+        ) : (
+          <div style={{ width: "200%", height: "100%", background: "linear-gradient(to bottom, #2a7a18, #0f2e08)" }} />
+        )
       )}
 
       {/* Vignette */}

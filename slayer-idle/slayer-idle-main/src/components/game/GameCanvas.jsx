@@ -367,6 +367,7 @@ function GameCanvasComponent({
         jumpActiveRef={jumpActiveRef}
         jumpStartRef={jumpStartRef}
         attackTick={attackTick ?? 0}
+        isDead={state?.isDead ?? false}
         playerHitboxRef={playerHitboxRef}
         combatGlyphRef={playerCombatGlyphRef}
       />

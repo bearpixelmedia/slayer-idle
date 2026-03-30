@@ -39,6 +39,7 @@ function PlayerDisplay({
   jumpActiveRef,
   jumpStartRef,
   attackTick = 0,
+  isDead = false,
   playerHitboxRef,
   combatGlyphRef,
 }) {
@@ -323,10 +324,11 @@ function PlayerDisplay({
                 */}
                 <div ref={setPlayerHitboxNode} className={COMBAT_HITBOX_SLOT_CLASS}>
                   <PlayerRenderer
-                    spriteUrl={isBow ? gameSettings.player_bow : gameSettings.player_sword}
-                    fallbackEmoji={isBow ? "🧝" : "🤴"}
+                    weaponMode={weaponMode}
+                    isAttacking={attackTick > 0}
+                    isHit={playerHit}
+                    isDead={isDead}
                     className="h-full w-full max-h-full max-w-full object-contain"
-                    emojiClassName={CHARACTER_EMOJI_NORMAL}
                     onCharacterBoundsChange={onCharacterBoundsChange}
                     combatGlyphRef={combatGlyphRef}
                   />

@@ -57,13 +57,14 @@ Deno.serve(async (req) => {
     const subfolderCache = {};
 
     async function getOrCreateSubfolder(name, parentId) {
-      if (subfolderCache[name]) return subfolderCache[name];
+      const cacheKey = `${parentId}/${name}`;
+      if (subfolderCache[cacheKey]) return subfolderCache[cacheKey];
       // Check if it already exists
       const q = encodeURIComponent(`'${parentId}' in parents and name='${name}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
       const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`, { headers: authHeader });
       const data = await res.json();
       if (data.files?.length > 0) {
-        subfolderCache[name] = data.files[0].id;
+        subfolderCache[cacheKey] = data.files[0].id;
         return data.files[0].id;
       }
       // Create it
@@ -73,7 +74,7 @@ Deno.serve(async (req) => {
         body: JSON.stringify({ name, mimeType: 'application/vnd.google-apps.folder', parents: [parentId] }),
       });
       const created = await createRes.json();
-      subfolderCache[name] = created.id;
+      subfolderCache[cacheKey] = created.id;
       return created.id;
     }
 

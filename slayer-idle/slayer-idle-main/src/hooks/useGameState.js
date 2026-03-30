@@ -112,14 +112,15 @@ export default function useGameState({
     if (!saved) return;
     const result = computeOfflineEarnings(saved, getIdleCPS, offlineMultiplier);
     if (!result) return;
-    const { offlineCoins, soulsEarned } = result;
+    const { offlineCoins, soulsEarned, seconds } = result;
     setState((prev) => ({
       ...prev,
       coins: prev.coins + offlineCoins,
       totalCoinsEarned: prev.totalCoinsEarned + offlineCoins,
       souls: prev.souls + soulsEarned,
     }));
-    setOfflineEarnings({ coins: offlineCoins, souls: soulsEarned });
+    // Pass seconds so the modal can display "you were gone Xh Ym"
+    setOfflineEarnings({ coins: offlineCoins, souls: soulsEarned, seconds });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

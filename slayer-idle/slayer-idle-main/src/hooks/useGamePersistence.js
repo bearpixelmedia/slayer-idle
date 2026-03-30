@@ -106,23 +106,36 @@ export function saveGame(state) {
 
 /**
  * Compute offline earnings for a loaded save.
- * Returns { offlineCoins, soulsEarned } or null if nothing to apply.
+ * Returns { offlineCoins, soulsEarned, seconds } or null if nothing to apply.
+ *
+ * - Coins: idleCPS × offlineSeconds × 0.5 × offlineMultiplier
+ * - Souls: delta of the same log10^2.8 curve used by prestige
+ *   (offlineMultiplier also applies to soul gain)
+ * - seconds: exposed so the modal can display "you were gone Xh Ym"
  */
 export function computeOfflineEarnings(savedState, getIdleCPS, offlineMultiplier = 1) {
   if (!savedState?.lastSave) return null;
-  const offlineSeconds = Math.min((Date.now() - savedState.lastSave) / 1000, 3600 * 8);
-  if (offlineSeconds < 10) return null;
+  const seconds = Math.min((Date.now() - savedState.lastSave) / 1000, 3600 * 8);
+  if (seconds < 10) return null;
 
   const idleCPS = getIdleCPS(savedState);
-  const offlineCoins = Math.floor(idleCPS * offlineSeconds * 0.5 * offlineMultiplier);
-  const totalCoinsAfterOffline = savedState.totalCoinsEarned + offlineCoins;
-  const soulsEarned = Math.max(
+  const offlineCoins = Math.floor(idleCPS * seconds * 0.5 * offlineMultiplier);
+
+  // Soul delta: uses the same log10^2.8 formula as getSoulsOnPrestige
+  // so offline rewards stay consistent with prestige math
+  const soulsFromCoins = (coins) => {
+    if (coins < 100) return 0;
+    return Math.floor(Math.pow(Math.log10(coins + 1), 2.8));
+  };
+  const totalCoinsAfter = savedState.totalCoinsEarned + offlineCoins;
+  const rawSoulDelta = Math.max(
     0,
-    Math.floor(Math.sqrt(totalCoinsAfterOffline / 1000)) - Math.floor(Math.sqrt(savedState.totalCoinsEarned / 1000))
+    soulsFromCoins(totalCoinsAfter) - soulsFromCoins(savedState.totalCoinsEarned)
   );
+  const soulsEarned = Math.floor(rawSoulDelta * offlineMultiplier);
 
   if (offlineCoins <= 0 && soulsEarned <= 0) return null;
-  return { offlineCoins, soulsEarned, offlineSeconds };
+  return { offlineCoins, soulsEarned, seconds };
 }
 
 /**

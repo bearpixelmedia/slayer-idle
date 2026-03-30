@@ -28,9 +28,18 @@ export const UPGRADES = [
   { id: "ancient_rune",  name: "Ancient Rune",  icon: "🔮",  type: "all",  description: "+6 to all damage per level",    basePower: 6,   baseCost: 800,  effect: { tapDamage: 6, idleDPS: 6 } },
   { id: "chaos_gem",     name: "Chaos Gem",     icon: "💎",  type: "all",  description: "+15 to all damage per level",   basePower: 15,  baseCost: 6000, effect: { tapDamage: 15, idleDPS: 15 } },
   // Bow
-  { id: "bow",           name: "Elven Bow",     icon: "🏹",  type: "bow",  description: "Unlocks bow mode (+25% souls)", basePower: 0,   baseCost: 500,  effect: { tapDamage: 0 } },
+  { id: "bow",              name: "Elven Bow",        icon: "🏹",  type: "bow",  description: "Unlocks bow mode (+25% souls)",   basePower: 0,   baseCost: 500,    effect: { tapDamage: 0 } },
   // Cluster
-  { id: "pack_size",     name: "Pack Size",     icon: "👥",  type: "misc", description: "+1 max enemy cluster size",     basePower: 1,   baseCost: 800,  effect: {} },
+  { id: "pack_size",        name: "Pack Size",        icon: "👥",  type: "misc", description: "+1 max enemy cluster size",       basePower: 1,   baseCost: 800,    effect: {} },
+  // ── Tier 4 — Stage 3 gate (~25k to unlock) ───────────────────────────────
+  { id: "void_dagger",      name: "Void Dagger",      icon: "🌑",  type: "tap",  description: "+90 tap damage per level",        basePower: 90,  baseCost: 25000,  effect: { tapDamage: 90  } },
+  { id: "mana_wisp",        name: "Mana Wisp",        icon: "🔵",  type: "idle", description: "+60 idle DPS per level",          basePower: 60,  baseCost: 25000,  effect: { idleDPS: 60 } },
+  // ── Tier 5 — Stage 4 gate (~100k to unlock) ──────────────────────────────
+  { id: "storm_lance",      name: "Storm Lance",      icon: "⚡",  type: "tap",  description: "+200 tap damage per level",       basePower: 200, baseCost: 100000, effect: { tapDamage: 200 } },
+  { id: "nightmare_hound",  name: "Nightmare Hound",  icon: "🐾",  type: "idle", description: "+140 idle DPS per level",         basePower: 140, baseCost: 100000, effect: { idleDPS: 140 } },
+  // ── Tier 6 — Stage 5 gate (~400k to unlock) ──────────────────────────────
+  { id: "abyssal_edge",     name: "Abyssal Edge",     icon: "🌀",  type: "tap",  description: "+450 tap damage per level",       basePower: 450, baseCost: 400000, effect: { tapDamage: 450 } },
+  { id: "lich_servant",     name: "Lich Servant",     icon: "💀",  type: "idle", description: "+320 idle DPS per level",         basePower: 320, baseCost: 400000, effect: { idleDPS: 320 } },
 ];
 
 // ─── Category helpers ─────────────────────────────────────────────────────────

@@ -41,6 +41,7 @@ function PlayerDisplay({
   jumpStartRef,
   attackTick = 0,
   isDead = false,
+  skinRow = 0,
   playerHitboxRef,
   combatGlyphRef,
 }) {
@@ -308,7 +309,7 @@ function PlayerDisplay({
                       weaponMode={weaponMode}
                       attackTick={attackTick}
                       scale={3}
-                      skinRow={0}
+                      skinRow={skinRow}
                     />
                   </motion.div>
                   </div>

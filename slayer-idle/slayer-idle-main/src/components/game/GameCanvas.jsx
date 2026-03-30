@@ -59,6 +59,7 @@ function GameCanvasComponent({
   /** Canvas bounds in viewport coords for portaling arrows above the HUD overlay. */
   const [bowPortalRect, setBowPortalRect] = useState(null);
   const gameSettings = React.useMemo(() => loadGameSettings(), []);
+  const skinRow = React.useMemo(() => gameSettings?.player_skin_row ?? 0, [gameSettings]);
   const stage = STAGES[state?.stage] || STAGES[0];
   const boss = state?.isBossActive ? getBossForStage(state?.stage) : null;
   const showBossWarning = state?.bossWarning && Date.now() < state.bossWarning.warningEndTime;
@@ -367,6 +368,7 @@ function GameCanvasComponent({
         jumpActiveRef={jumpActiveRef}
         jumpStartRef={jumpStartRef}
         attackTick={attackTick ?? 0}
+        skinRow={skinRow}
         isDead={state?.isDead ?? false}
         playerHitboxRef={playerHitboxRef}
         combatGlyphRef={playerCombatGlyphRef}

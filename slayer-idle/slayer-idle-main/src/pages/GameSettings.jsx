@@ -3,17 +3,148 @@ import { useNavigate } from "react-router-dom";
 import { APP_VERSION } from "@/lib/appVersion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, RotateCcw, Download, Upload, Volume2, VolumeX } from "lucide-react";
+import { ArrowLeft, RotateCcw, Download, Upload, Check } from "lucide-react";
 import { notifyGameSettingsUpdated } from "@/lib/gameSettings";
 
 const SAVE_KEY = "idle_slayer_save";
 const SETTINGS_KEY = "game_settings_config";
+
+// ── Skin tone options ──────────────────────────────────────────────────────────
+// Hands.png is 32×96: 3 rows of 32×32 stacked vertically
+// Row 0 = light, Row 1 = medium, Row 2 = dark
+const SKIN_TONES = [
+  { row: 0, label: "Light",  color: "#f5cba7" },
+  { row: 1, label: "Medium", color: "#c68642" },
+  { row: 2, label: "Dark",   color: "#7b4f2e" },
+];
+
+// ── Weapon options ─────────────────────────────────────────────────────────────
+// Each weapon maps to a 32×32 cell in its respective sheet.
+// The cell is rendered via background-position CSS on the sheet image.
+const WEAPONS = [
+  {
+    id: "none",
+    label: "Fists",
+    emoji: "👊",
+    sheet: null,
+  },
+  {
+    id: "bone_r0_c0",
+    label: "Bone",
+    sheet: "/sprites/weapons/bone.png",
+    sheetW: 224,
+    sheetH: 144,
+    cellX: 0,
+    cellY: 0,
+    cellSize: 32,
+  },
+  {
+    id: "bone_r0_c4",
+    label: "Bone Axe",
+    sheet: "/sprites/weapons/bone.png",
+    sheetW: 224,
+    sheetH: 144,
+    cellX: 4,
+    cellY: 0,
+    cellSize: 32,
+  },
+  {
+    id: "bone_r1_c0",
+    label: "Bone Sword",
+    sheet: "/sprites/weapons/bone.png",
+    sheetW: 224,
+    sheetH: 144,
+    cellX: 0,
+    cellY: 1,
+    cellSize: 32,
+  },
+  {
+    id: "wood_r0_c0",
+    label: "Wood Club",
+    sheet: "/sprites/weapons/wood.png",
+    sheetW: 192,
+    sheetH: 112,
+    cellX: 0,
+    cellY: 0,
+    cellSize: 32,
+  },
+  {
+    id: "wood_r0_c4",
+    label: "Wood Staff",
+    sheet: "/sprites/weapons/wood.png",
+    sheetW: 192,
+    sheetH: 112,
+    cellX: 4,
+    cellY: 0,
+    cellSize: 32,
+  },
+  {
+    id: "wood_r1_c0",
+    label: "Wood Sword",
+    sheet: "/sprites/weapons/wood.png",
+    sheetW: 192,
+    sheetH: 112,
+    cellX: 0,
+    cellY: 1,
+    cellSize: 32,
+  },
+];
+
+// ── WeaponIcon ─────────────────────────────────────────────────────────────────
+function WeaponIcon({ weapon, size = 48 }) {
+  if (!weapon.sheet) {
+    return (
+      <div
+        className="flex items-center justify-center text-2xl"
+        style={{ width: size, height: size }}
+      >
+        {weapon.emoji}
+      </div>
+    );
+  }
+  const DISPLAY_SCALE = size / weapon.cellSize;
+  return (
+    <div
+      style={{
+        width: size,
+        height: size,
+        backgroundImage: `url(${weapon.sheet})`,
+        backgroundRepeat: "no-repeat",
+        backgroundSize: `${weapon.sheetW * DISPLAY_SCALE}px ${weapon.sheetH * DISPLAY_SCALE}px`,
+        backgroundPosition: `-${weapon.cellX * weapon.cellSize * DISPLAY_SCALE}px -${weapon.cellY * weapon.cellSize * DISPLAY_SCALE}px`,
+        imageRendering: "pixelated",
+      }}
+    />
+  );
+}
+
+// ── HandsPreview ───────────────────────────────────────────────────────────────
+// Shows the Hands.png row for the selected skin tone
+function HandsPreview({ skinRow, size = 64 }) {
+  const CELL = 32;
+  const SCALE = size / CELL;
+  return (
+    <div
+      style={{
+        width: size,
+        height: size,
+        backgroundImage: `url(/sprites/weapons/hands.png)`,
+        backgroundRepeat: "no-repeat",
+        backgroundSize: `${CELL * SCALE}px ${CELL * 3 * SCALE}px`,
+        backgroundPosition: `0px -${skinRow * size}px`,
+        imageRendering: "pixelated",
+      }}
+    />
+  );
+}
 
 export default function GameSettings() {
   const navigate = useNavigate();
   const [musicEnabled, setMusicEnabled] = useState(true);
   const [sfxEnabled, setSfxEnabled] = useState(true);
   const [confirmReset, setConfirmReset] = useState(false);
+  const [skinRow, setSkinRow] = useState(0);
+  const [weaponId, setWeaponId] = useState("none");
 
   useEffect(() => {
     const saved = localStorage.getItem(SETTINGS_KEY);
@@ -21,6 +152,8 @@ export default function GameSettings() {
       const data = JSON.parse(saved);
       setMusicEnabled(data.musicEnabled !== false);
       setSfxEnabled(data.sfxEnabled !== false);
+      if (data.player_skin_row !== undefined) setSkinRow(data.player_skin_row);
+      if (data.player_weapon_id) setWeaponId(data.player_weapon_id);
     }
   }, []);
 
@@ -42,6 +175,23 @@ export default function GameSettings() {
     const next = !sfxEnabled;
     setSfxEnabled(next);
     saveSettings({ sfxEnabled: next });
+  };
+
+  const pickSkin = (row) => {
+    setSkinRow(row);
+    saveSettings({ player_skin_row: row });
+  };
+
+  const pickWeapon = (id) => {
+    setWeaponId(id);
+    const weapon = WEAPONS.find(w => w.id === id);
+    saveSettings({
+      player_weapon_id: id,
+      player_weapon_sheet: weapon?.sheet ?? null,
+      player_weapon_cell_x: weapon?.cellX ?? 0,
+      player_weapon_cell_y: weapon?.cellY ?? 0,
+      player_weapon_cell_size: weapon?.cellSize ?? 32,
+    });
   };
 
   const exportSave = () => {
@@ -109,7 +259,74 @@ export default function GameSettings() {
 
       <div className="max-w-lg mx-auto px-4 py-6 space-y-4">
 
-        {/* Audio */}
+        {/* ── Character Appearance ─────────────────────────────────── */}
+        <Card className="bg-slate-800 border-slate-700">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-white text-base">🧑 Character Appearance</CardTitle>
+            <CardDescription className="text-slate-400">
+              Skin tone and weapon style shown during attacks
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-5">
+
+            {/* Skin Tone */}
+            <div>
+              <p className="text-sm font-medium text-slate-200 mb-3">Skin Tone</p>
+              <div className="flex gap-3">
+                {SKIN_TONES.map((s) => (
+                  <button
+                    key={s.row}
+                    onClick={() => pickSkin(s.row)}
+                    className={`relative flex flex-col items-center gap-2 p-2 rounded-xl border-2 transition-all ${
+                      skinRow === s.row
+                        ? "border-indigo-400 bg-indigo-900/30"
+                        : "border-slate-600 hover:border-slate-400 bg-slate-700/30"
+                    }`}
+                  >
+                    <HandsPreview skinRow={s.row} size={48} />
+                    <span className="text-xs text-slate-300">{s.label}</span>
+                    {skinRow === s.row && (
+                      <div className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-indigo-400 rounded-full flex items-center justify-center">
+                        <Check className="w-2.5 h-2.5 text-white" />
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Weapon */}
+            <div>
+              <p className="text-sm font-medium text-slate-200 mb-3">Weapon (attack animation)</p>
+              <div className="grid grid-cols-4 gap-2">
+                {WEAPONS.map((w) => (
+                  <button
+                    key={w.id}
+                    onClick={() => pickWeapon(w.id)}
+                    className={`relative flex flex-col items-center gap-1.5 p-2 rounded-xl border-2 transition-all ${
+                      weaponId === w.id
+                        ? "border-indigo-400 bg-indigo-900/30"
+                        : "border-slate-600 hover:border-slate-400 bg-slate-700/30"
+                    }`}
+                  >
+                    <WeaponIcon weapon={w} size={40} />
+                    <span className="text-[10px] text-slate-300 text-center leading-tight">
+                      {w.label}
+                    </span>
+                    {weaponId === w.id && (
+                      <div className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-indigo-400 rounded-full flex items-center justify-center">
+                        <Check className="w-2.5 h-2.5 text-white" />
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+          </CardContent>
+        </Card>
+
+        {/* ── Audio ────────────────────────────────────────────────── */}
         <Card className="bg-slate-800 border-slate-700">
           <CardHeader className="pb-3">
             <CardTitle className="text-white text-base">🔊 Audio</CardTitle>
@@ -150,7 +367,7 @@ export default function GameSettings() {
           </CardContent>
         </Card>
 
-        {/* Save Data */}
+        {/* ── Save Data ─────────────────────────────────────────────── */}
         <Card className="bg-slate-800 border-slate-700">
           <CardHeader className="pb-3">
             <CardTitle className="text-white text-base">💾 Save Data</CardTitle>
@@ -177,7 +394,7 @@ export default function GameSettings() {
           </CardContent>
         </Card>
 
-        {/* Danger Zone */}
+        {/* ── Danger Zone ───────────────────────────────────────────── */}
         <Card className="bg-slate-800 border-red-900">
           <CardHeader className="pb-3">
             <CardTitle className="text-red-400 text-base">⚠️ Danger Zone</CardTitle>

@@ -17,6 +17,7 @@ import SettingImageUpload from "@/components/game/SettingImageUpload";
 import WeaponAtlasUpload from "@/components/game/WeaponAtlasUpload";
 import AsepriteUpload from "@/components/game/AsepriteUpload";
 import DriveAssetSync from "@/components/game/DriveAssetSync";
+import DriveAssetGallery from "@/components/game/DriveAssetGallery";
 import { notifyGameSettingsUpdated } from "@/lib/gameSettings";
 
 const STORAGE_KEY = "game_settings_config";
@@ -210,8 +211,9 @@ export default function GameSettings() {
 
       {/* Content */}
       <div className="max-w-6xl mx-auto px-4 py-8">
-        <Tabs defaultValue="enemies" className="w-full">
-          <TabsList className="grid w-full grid-cols-6 lg:grid-cols-12">
+        <Tabs defaultValue="assets" className="w-full">
+          <TabsList className="grid w-full grid-cols-6 lg:grid-cols-13">
+            <TabsTrigger value="assets">Assets</TabsTrigger>
             <TabsTrigger value="enemies">Enemies</TabsTrigger>
             <TabsTrigger value="bosses">Bosses</TabsTrigger>
             <TabsTrigger value="achievements">Achievements</TabsTrigger>
@@ -225,6 +227,32 @@ export default function GameSettings() {
             <TabsTrigger value="parallax">Parallax</TabsTrigger>
             <TabsTrigger value="other">Other</TabsTrigger>
           </TabsList>
+
+          {/* Assets Tab — all game assets in one place, previews from Drive */}
+          <TabsContent value="assets" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Google Drive Sync</CardTitle>
+                <CardDescription>
+                  Auto-create the folder structure in Drive, then replace any placeholder file with your real asset — it syncs automatically.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <DriveAssetSync />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Asset Gallery</CardTitle>
+                <CardDescription>
+                  Previews are pulled live from Google Drive. A green dot means the asset has been synced. Replace the file in Drive to update.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <DriveAssetGallery />
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           {/* Enemies Tab */}
           <TabsContent value="enemies" className="space-y-6">
@@ -501,15 +529,6 @@ export default function GameSettings() {
 
           {/* Parallax Tab */}
           <TabsContent value="parallax" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Google Drive Sync</CardTitle>
-                <CardDescription>Select a Drive folder — any image file you change there will auto-update the matching parallax setting. File names must match setting keys (e.g. <code>parallax_ground.png</code>).</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <DriveAssetSync />
-              </CardContent>
-            </Card>
             <Card>
               <CardHeader>
                 <CardTitle>Parallax Spritesheets</CardTitle>

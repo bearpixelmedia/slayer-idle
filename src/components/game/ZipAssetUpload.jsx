@@ -2,13 +2,10 @@ import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload, CheckCircle, AlertCircle, Loader2, FileArchive } from "lucide-react";
 import { base44 } from "@/api/base44Client";
-import { notifyGameSettingsUpdated } from "@/lib/gameSettings";
 
-const STORAGE_KEY = "game_settings_config";
-
-export default function ZipAssetUpload({ onUpdate }) {
+export default function ZipAssetUpload() {
   const fileInputRef = useRef(null);
-  const [status, setStatus] = useState("idle"); // idle | loading | success | error
+  const [status, setStatus] = useState("idle");
   const [message, setMessage] = useState("");
   const [details, setDetails] = useState(null);
 
@@ -34,32 +31,9 @@ export default function ZipAssetUpload({ onUpdate }) {
 
       if (!data.success) throw new Error(data.error || "Processing failed");
 
-      const mapped = data.mapped || {};
-      const mappedCount = Object.keys(mapped).length;
-
-      if (mappedCount === 0) {
-        setStatus("error");
-        setMessage("No recognizable asset files found in the ZIP.");
-        setDetails({ skipped: data.skipped });
-        return;
-      }
-
-      // Save to localStorage
-      const saved = localStorage.getItem(STORAGE_KEY);
-      const current = saved ? JSON.parse(saved) : {};
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...current, ...mapped }));
-      notifyGameSettingsUpdated();
-
-      // Notify parent
-      Object.entries(mapped).forEach(([key, url]) => onUpdate(key, url));
-
       setStatus("success");
-      setMessage(`✅ Imported ${mappedCount} asset(s) from ZIP!`);
-      setDetails({
-        mapped: Object.keys(mapped),
-        skipped: data.skipped,
-        errors: data.errors,
-      });
+      setMessage(`Uploaded ${data.uploaded_count} file(s) to Drive folder "${data.folder}"`);
+      setDetails({ uploaded: data.uploaded, errors: data.errors });
 
       if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (err) {
@@ -73,9 +47,9 @@ export default function ZipAssetUpload({ onUpdate }) {
       <div className="flex items-center gap-3">
         <FileArchive className="w-5 h-5 text-violet-500 flex-shrink-0" />
         <div className="flex-1">
-          <p className="text-sm font-semibold text-slate-800">Upload Asset ZIP</p>
+          <p className="text-sm font-semibold text-slate-800">Upload Asset ZIP → Google Drive</p>
           <p className="text-xs text-slate-500">
-            ZIP your assets with filenames matching the game keys (e.g. <code className="bg-white px-1 rounded">enemy_goblin.png</code>, <code className="bg-white px-1 rounded">parallax_stars.png</code>). Subfolders are ignored — only filenames matter.
+            ZIP is extracted and all files are uploaded directly into your watched Drive folder, preserving subfolder structure.
           </p>
         </div>
         <label>
@@ -115,11 +89,10 @@ export default function ZipAssetUpload({ onUpdate }) {
           {status === "loading" && <Loader2 className="w-3.5 h-3.5 mt-0.5 animate-spin flex-shrink-0" />}
           <div className="space-y-1">
             <p>{message}</p>
-            {details?.mapped?.length > 0 && (
-              <p className="text-green-600 font-mono">{details.mapped.join(", ")}</p>
-            )}
-            {details?.skipped?.length > 0 && (
-              <p className="text-slate-400">Skipped (unrecognized): {details.skipped.join(", ")}</p>
+            {details?.uploaded?.length > 0 && (
+              <p className="text-green-600 font-mono text-[10px]">
+                {details.uploaded.map(f => f.name).join(", ")}
+              </p>
             )}
             {details?.errors?.length > 0 && (
               <p className="text-red-500">Errors: {details.errors.map(e => e.file).join(", ")}</p>

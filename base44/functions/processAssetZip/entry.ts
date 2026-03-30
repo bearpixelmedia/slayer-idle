@@ -1,94 +1,105 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 import { ZipReader, BlobReader, BlobWriter } from 'npm:@zip.js/zip.js@2.7.52';
 
-// Maps filename (without extension) to game setting key
-// Also supports path-based matching: folder/filename
-const FILENAME_TO_KEY = {
-  // Parallax
-  'parallax_stars': 'parallax_stars',
-  'parallax_mountain_far': 'parallax_mountain_far',
-  'parallax_mountain_mid': 'parallax_mountain_mid',
-  'parallax_tree_very_far': 'parallax_tree_very_far',
-  'parallax_tree_mid': 'parallax_tree_mid',
-  'parallax_tree_front': 'parallax_tree_front',
-  'parallax_ground': 'parallax_ground',
-  'parallax_shrub_back': 'parallax_shrub_back',
-  'parallax_shrub_front': 'parallax_shrub_front',
-  'parallax_clouds': 'parallax_clouds',
-  'parallax_sky': 'parallax_sky',
-  // Enemies
-  'enemy_goblin': 'enemy_goblin',
-  'enemy_orc': 'enemy_orc',
-  'enemy_ogre': 'enemy_ogre',
-  'enemy_skeleton': 'enemy_skeleton',
-  'enemy_vampire': 'enemy_vampire',
-  'enemy_dragon': 'enemy_dragon',
-  'enemy_lich': 'enemy_lich',
-  'enemy_zombie': 'enemy_zombie',
-  'enemy_ghost': 'enemy_ghost',
-  'enemy_spider': 'enemy_spider',
-  // Player
-  'player_sword': 'player_sword',
-  'player_bow': 'player_bow',
-  // Bosses
-  'boss_shadow_king_icon': 'boss_shadow_king_icon',
-  'boss_storm_giant_icon': 'boss_storm_giant_icon',
-  'boss_void_dragon_icon': 'boss_void_dragon_icon',
-  // Music
-  'music_main': 'music_main',
-  'music_boss': 'music_boss',
-  'music_title': 'music_title',
-  // Weapon atlas
-  'weapon_atlas': 'weapon_atlas',
-};
-
-function getSettingKey(filePath) {
-  // Strip leading path components and get filename without extension
-  const parts = filePath.split('/');
-  const filename = parts[parts.length - 1];
-  const nameNoExt = filename.replace(/\.[^.]+$/, '');
-  return FILENAME_TO_KEY[nameNoExt] || null;
-}
-
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
+    const { accessToken } = await base44.asServiceRole.connectors.getConnection('googledrive');
+    const authHeader = { Authorization: `Bearer ${accessToken}` };
+
+    // Get the watched folder ID from SyncState
+    const records = await base44.asServiceRole.entities.SyncState.list();
+    if (!records.length) return Response.json({ error: 'No watched folder configured. Please set up Google Drive Sync first.' }, { status: 400 });
+    const folderId = records[0].folder_id;
+    const folderName = records[0].folder_name;
+
     const formData = await req.formData();
     const zipFile = formData.get('file');
     if (!zipFile) return Response.json({ error: 'No file provided' }, { status: 400 });
 
+    // Unzip
     const zipBlob = new Blob([await zipFile.arrayBuffer()], { type: 'application/zip' });
     const zipReader = new ZipReader(new BlobReader(zipBlob));
     const entries = await zipReader.getEntries();
     await zipReader.close();
 
-    const results = {};
-    const skipped = [];
+    const uploaded = [];
     const errors = [];
+
+    // Cache subfolder IDs we create/find to avoid duplicates
+    const subfolderCache = {};
+
+    async function getOrCreateSubfolder(name, parentId) {
+      if (subfolderCache[name]) return subfolderCache[name];
+      // Check if it already exists
+      const q = encodeURIComponent(`'${parentId}' in parents and name='${name}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+      const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`, { headers: authHeader });
+      const data = await res.json();
+      if (data.files?.length > 0) {
+        subfolderCache[name] = data.files[0].id;
+        return data.files[0].id;
+      }
+      // Create it
+      const createRes = await fetch('https://www.googleapis.com/drive/v3/files', {
+        method: 'POST',
+        headers: { ...authHeader, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, mimeType: 'application/vnd.google-apps.folder', parents: [parentId] }),
+      });
+      const created = await createRes.json();
+      subfolderCache[name] = created.id;
+      return created.id;
+    }
 
     for (const entry of entries) {
       if (entry.directory) continue;
-      // Skip hidden/system files
       if (entry.filename.includes('__MACOSX') || entry.filename.includes('.DS_Store')) continue;
-
-      const key = getSettingKey(entry.filename);
-      if (!key) {
-        skipped.push(entry.filename);
-        continue;
-      }
 
       try {
         const blob = await entry.getData(new BlobWriter());
-        const mimeType = entry.filename.match(/\.(mp3|wav|ogg|m4a)$/i)
-          ? 'audio/mpeg'
-          : 'image/png';
-        const file = new File([blob], entry.filename.split('/').pop(), { type: mimeType });
+        const parts = entry.filename.split('/').filter(Boolean);
+        const filename = parts[parts.length - 1];
 
-        const uploadRes = await base44.asServiceRole.integrations.Core.UploadFile({ file });
-        results[key] = uploadRes.file_url;
+        // Determine parent folder: if file is in a subfolder, create/find it inside the watched folder
+        let targetFolderId = folderId;
+        if (parts.length > 1) {
+          // Use only the immediate parent subfolder (first path component after root)
+          const subfolder = parts[0];
+          targetFolderId = await getOrCreateSubfolder(subfolder, folderId);
+        }
+
+        // Detect MIME type
+        const ext = filename.split('.').pop().toLowerCase();
+        const mimeMap = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', mp3: 'audio/mpeg', wav: 'audio/wav', ogg: 'audio/ogg', json: 'application/json' };
+        const mimeType = mimeMap[ext] || 'application/octet-stream';
+
+        // Upload to Drive using multipart upload
+        const boundary = 'drive_upload_boundary';
+        const meta = JSON.stringify({ name: filename, parents: [targetFolderId] });
+        const metaPart = `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${meta}\r\n`;
+        const filePart = `--${boundary}\r\nContent-Type: ${mimeType}\r\n\r\n`;
+        const endPart = `\r\n--${boundary}--`;
+
+        const encoder = new TextEncoder();
+        const fileBytes = new Uint8Array(await blob.arrayBuffer());
+        const p1 = encoder.encode(metaPart);
+        const p2 = encoder.encode(filePart);
+        const p3 = encoder.encode(endPart);
+        const body = new Uint8Array(p1.length + p2.length + fileBytes.length + p3.length);
+        body.set(p1, 0);
+        body.set(p2, p1.length);
+        body.set(fileBytes, p1.length + p2.length);
+        body.set(p3, p1.length + p2.length + fileBytes.length);
+
+        const uploadRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink', {
+          method: 'POST',
+          headers: { ...authHeader, 'Content-Type': `multipart/related; boundary=${boundary}` },
+          body,
+        });
+        const uploaded_file = await uploadRes.json();
+        uploaded.push({ name: filename, id: uploaded_file.id, path: entry.filename });
       } catch (e) {
         errors.push({ file: entry.filename, error: e.message });
       }
@@ -96,10 +107,10 @@ Deno.serve(async (req) => {
 
     return Response.json({
       success: true,
-      mapped: results,
-      skipped,
+      folder: folderName,
+      uploaded_count: uploaded.length,
+      uploaded,
       errors,
-      total_entries: entries.filter(e => !e.directory).length,
     });
   } catch (error) {
     console.error('processAssetZip error:', error);

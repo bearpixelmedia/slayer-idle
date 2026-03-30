@@ -192,7 +192,7 @@ export default function GameSettings() {
                 <CardDescription>Upload a ZIP of your assets — files are matched by filename to game slots automatically.</CardDescription>
               </CardHeader>
               <CardContent>
-                <ZipAssetUpload onUpdate={updateSetting} />
+                <ZipAssetUpload />
               </CardContent>
             </Card>
             <Card>

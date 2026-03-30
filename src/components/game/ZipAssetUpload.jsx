@@ -73,7 +73,7 @@ export default function ZipAssetUpload() {
         } catch (err) {
           // Polling error - ignore and continue
         }
-      }, 200);
+      }, 1000);
 
       const res = await base44.functions.invoke("processAssetZip", {
         filename: file.name,

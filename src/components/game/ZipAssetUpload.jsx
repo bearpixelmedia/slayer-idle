@@ -59,6 +59,7 @@ export default function ZipAssetUpload() {
       if (data.progress && Array.isArray(data.progress)) {
         const currentSteps = steps.slice(0, -1); // Keep initial steps, remove "uploading" placeholder
         const newSteps = data.progress.map(p => {
+          if (p.type === 'unzip') return { name: `🔍 ${p.message}`, status: "done" };
           if (p.type === 'folder') return { name: `📁 Created folder: ${p.name}`, status: "done" };
           if (p.type === 'processing') return { name: `⚙️ Processing: ${p.file} (${p.current}/${p.total})`, status: "in-progress" };
           if (p.type === 'uploaded') return { name: `✓ Uploaded: ${p.file}`, status: "done" };

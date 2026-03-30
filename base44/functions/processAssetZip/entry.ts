@@ -47,7 +47,9 @@ Deno.serve(async (req) => {
     }
     const zipBlob = new Blob([fileBytes], { type: 'application/zip' });
     const zipReader = new ZipReader(new BlobReader(zipBlob));
+    progress.push({ type: 'unzip', message: 'Reading ZIP entries...' });
     const entries = await zipReader.getEntries();
+    progress.push({ type: 'unzip', message: `Found ${entries.length} total entries (filtering non-files)...` });
     await zipReader.close();
 
     const uploaded = [];
@@ -85,11 +87,15 @@ Deno.serve(async (req) => {
     }
 
     // Process uploads sequentially to avoid folder creation race conditions
+    const totalEntries = entries.filter(e => !e.directory && !e.filename.includes('__MACOSX') && !e.filename.includes('.DS_Store')).length;
+    let processedCount = 0;
+    
     for (let idx = 0; idx < entries.length; idx++) {
       const entry = entries[idx];
       if (entry.directory || entry.filename.includes('__MACOSX') || entry.filename.includes('.DS_Store')) continue;
       
-      progress.push({ type: 'processing', file: entry.filename, current: idx + 1, total: entries.length });
+      processedCount++;
+      progress.push({ type: 'processing', file: entry.filename, current: processedCount, total: totalEntries });
       
       try {
         const blob = await entry.getData(new BlobWriter());

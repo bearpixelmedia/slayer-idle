@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useMemo, useState, useCallback } from "react"
 import { motion, useMotionValue, useAnimation, useTransform, animate } from "framer-motion";
 import PlayerRenderer from "./PlayerRenderer";
 import PlayerWeaponSprite from "./PlayerWeaponSprite";
+import PlayerOffhandSprite from "./PlayerOffhandSprite";
 import CombatLaneEntityRoot from "./CombatLaneEntityRoot";
 import { PLAYER_ANCHOR_LEFT_PCT } from "@/lib/combatHitboxes";
 import {
@@ -27,7 +28,6 @@ import {
   combatTriRowMinStyle,
   computePlayerWeaponLayout,
 } from "@/lib/weaponTriColumnLayout";
-import { CHARACTER_EMOJI_NORMAL, WEAPON_EMOJI_TYPO_NORMAL } from "@/lib/characterEmojiStyles";
 
 function PlayerDisplay({
   playerHP,
@@ -348,13 +348,11 @@ function PlayerDisplay({
                     animate={weaponRightControls}
                     initial={{ rotate: 0, x: 0, y: 0, scale: 1 }}
                   >
-                    {/* Right column: shield/aim indicator — keep as emoji fallback for now */}
-                    <span
-                      className={`block origin-bottom-left ${WEAPON_EMOJI_TYPO_NORMAL}`}
-                      aria-hidden
-                    >
-                      {isBow ? "🎯" : "🛡️"}
-                    </span>
+                    <PlayerOffhandSprite
+                      weaponMode={weaponMode}
+                      scale={3}
+                      skinRow={skinRow}
+                    />
                   </motion.div>
                   </div>
                 </motion.div>

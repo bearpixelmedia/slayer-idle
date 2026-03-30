@@ -133,6 +133,19 @@ Deno.serve(async (req) => {
           targetFolderId = currentParentId;
         }
 
+        // Check if file already exists in target folder
+        const q = encodeURIComponent(`'${targetFolderId}' in parents and name='${filename}' and trashed=false`);
+        const existsRes = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`, { headers: authHeader });
+        const existsData = await existsRes.json();
+        
+        if (existsData.files && existsData.files.length > 0) {
+          // File already exists, skip it
+          uploaded.push({ name: filename, id: existsData.files[0].id, path: entry.filename, skipped: true });
+          progressUpdates.push({ type: 'skipped', file: filename, current: processedCount, total: totalFiles });
+          await updateProgress();
+          continue;
+        }
+
         const ext = filename.split('.').pop().toLowerCase();
         const mimeMap = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', mp3: 'audio/mpeg', wav: 'audio/wav', ogg: 'audio/ogg', json: 'application/json' };
         const mimeType = mimeMap[ext] || 'application/octet-stream';

@@ -39,6 +39,10 @@ Deno.serve(async (req) => {
       }
     }
 
+    const uploaded = [];
+    const errors = [];
+    const progress = [];
+
     // Decode base64
     const binaryString = atob(body.fileData);
     const fileBytes = new Uint8Array(binaryString.length);
@@ -51,10 +55,6 @@ Deno.serve(async (req) => {
     const entries = await zipReader.getEntries();
     progress.push({ type: 'unzip', message: `Found ${entries.length} total entries (filtering non-files)...` });
     await zipReader.close();
-
-    const uploaded = [];
-    const errors = [];
-    const progress = [];
 
     // Cache subfolder IDs we create/find to avoid duplicates
     const subfolderCache = {};

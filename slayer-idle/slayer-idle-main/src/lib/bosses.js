@@ -5,8 +5,8 @@ export const BOSSES = [
     name: "Slime King",
     icon: "👑",
     stage: 0,
-    hpMultiplier: 25,
-    rewardMultiplier: 100,
+    hpMultiplier: 15,
+    rewardMultiplier: 150,
     mechanic: {
       type: "shield_window",
       name: "Shield Window",
@@ -21,8 +21,8 @@ export const BOSSES = [
     name: "Forest Guardian",
     icon: "🌲",
     stage: 1,
-    hpMultiplier: 30,
-    rewardMultiplier: 150,
+    hpMultiplier: 18,
+    rewardMultiplier: 200,
     mechanic: {
       type: "thorns",
       name: "Thorns",
@@ -35,8 +35,8 @@ export const BOSSES = [
     name: "Spectral King",
     icon: "👻",
     stage: 2,
-    hpMultiplier: 35,
-    rewardMultiplier: 200,
+    hpMultiplier: 22,
+    rewardMultiplier: 275,
     mechanic: {
       type: "enrage",
       name: "Enrage Stack",
@@ -51,8 +51,8 @@ export const BOSSES = [
     name: "Infernal Lord",
     icon: "🔥",
     stage: 3,
-    hpMultiplier: 40,
-    rewardMultiplier: 250,
+    hpMultiplier: 28,
+    rewardMultiplier: 375,
     mechanic: {
       type: "shield_window",
       name: "Shield Window",
@@ -67,8 +67,8 @@ export const BOSSES = [
     name: "Frost Sovereign",
     icon: "❄️",
     stage: 4,
-    hpMultiplier: 45,
-    rewardMultiplier: 300,
+    hpMultiplier: 35,
+    rewardMultiplier: 500,
     mechanic: {
       type: "thorns",
       name: "Thorns",
@@ -81,8 +81,8 @@ export const BOSSES = [
     name: "Shadow Overlord",
     icon: "🖤",
     stage: 5,
-    hpMultiplier: 50,
-    rewardMultiplier: 350,
+    hpMultiplier: 45,
+    rewardMultiplier: 700,
     mechanic: {
       type: "enrage",
       name: "Enrage Stack",
@@ -120,19 +120,22 @@ export function getBossForStage(stage) {
   return BOSSES.find(b => b.stage === stage) || null;
 }
 
-export function getBossHP(stage, kills) {
+export function getBossHP(stage, kills = 0) {
   const boss = getBossForStage(stage);
   if (!boss) return 100;
-  const baseEnemyHP = 3 + stage * 10;
-  return Math.floor(baseEnemyHP * boss.hpMultiplier);
+  // Uses same exponential base as getEnemyHP so boss scales consistently
+  const baseEnemyHP = Math.ceil(15 * Math.pow(2.2, stage));
+  const killMult = 1 + (kills || 0) * 0.003;
+  return Math.floor(baseEnemyHP * killMult * boss.hpMultiplier);
 }
 
-export function getBossReward(stage) {
+export function getBossReward(stage, kills = 0) {
   const boss = getBossForStage(stage);
-  if (!boss) return 100;
-  const baseCoinReward = 1 + stage * 3;
-  const baseMultiplier = boss.rewardMultiplier;
-  const coins = Math.floor(baseCoinReward * baseMultiplier);
+  if (!boss) return { coins: 100, souls: 1 };
+  // Uses same exponential base as getEnemyReward for consistent economy
+  const baseReward = Math.ceil(12 * Math.pow(2.2, stage));
+  const killMult = 1 + (kills || 0) * 0.004;
+  const coins = Math.floor(baseReward * killMult * boss.rewardMultiplier);
   const souls = Math.floor(boss.rewardMultiplier / 50);
   return { coins, souls };
 }

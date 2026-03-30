@@ -13,20 +13,20 @@ import { getBuffMultiplier } from "./buffs";
 // ─── Upgrade definitions ──────────────────────────────────────────────────────
 
 export const UPGRADES = [
-  // Tap damage
-  { id: "sharp_blade",   name: "Sharp Blade",   icon: "⚔️",  type: "tap",  description: "+5 tap damage per level",       basePower: 5,   baseCost: 50,   effect: { tapDamage: 5   } },
-  { id: "iron_gauntlet", name: "Iron Gauntlet", icon: "🥊",  type: "tap",  description: "+10 tap damage per level",      basePower: 10,  baseCost: 150,  effect: { tapDamage: 10  } },
-  { id: "war_axe",       name: "War Axe",       icon: "🪓",  type: "tap",  description: "+20 tap damage per level",      basePower: 20,  baseCost: 400,  effect: { tapDamage: 20  } },
-  { id: "soul_blade",    name: "Soul Blade",    icon: "🗡️",  type: "tap",  description: "+50 tap damage per level",      basePower: 50,  baseCost: 1200, effect: { tapDamage: 50  } },
-  { id: "fire_sword",    name: "Fire Sword",    icon: "🔥",  type: "tap",  description: "+100 tap damage per level",     basePower: 100, baseCost: 4000, effect: { tapDamage: 100 } },
+  // Tap damage — powers cut ~60% so early upgrades don't immediately trivialise stage 0
+  { id: "sharp_blade",   name: "Sharp Blade",   icon: "⚔️",  type: "tap",  description: "+2 tap damage per level",       basePower: 2,   baseCost: 50,   effect: { tapDamage: 2   } },
+  { id: "iron_gauntlet", name: "Iron Gauntlet", icon: "🥊",  type: "tap",  description: "+4 tap damage per level",       basePower: 4,   baseCost: 150,  effect: { tapDamage: 4   } },
+  { id: "war_axe",       name: "War Axe",       icon: "🪓",  type: "tap",  description: "+8 tap damage per level",       basePower: 8,   baseCost: 500,  effect: { tapDamage: 8   } },
+  { id: "soul_blade",    name: "Soul Blade",    icon: "🗡️",  type: "tap",  description: "+18 tap damage per level",      basePower: 18,  baseCost: 2000, effect: { tapDamage: 18  } },
+  { id: "fire_sword",    name: "Fire Sword",    icon: "🔥",  type: "tap",  description: "+45 tap damage per level",      basePower: 45,  baseCost: 8000, effect: { tapDamage: 45  } },
   // Idle DPS
-  { id: "imp_familiar",  name: "Imp Familiar",  icon: "👿",  type: "idle", description: "+3 idle DPS per level",         basePower: 3,   baseCost: 100,  effect: { idleDPS: 3  } },
-  { id: "shadow_wolf",   name: "Shadow Wolf",   icon: "🐺",  type: "idle", description: "+8 idle DPS per level",         basePower: 8,   baseCost: 300,  effect: { idleDPS: 8  } },
-  { id: "golem_guard",   name: "Golem Guard",   icon: "🪨",  type: "idle", description: "+18 idle DPS per level",        basePower: 18,  baseCost: 800,  effect: { idleDPS: 18 } },
-  { id: "dragon_pet",    name: "Dragon Pet",    icon: "🐲",  type: "idle", description: "+40 idle DPS per level",        basePower: 40,  baseCost: 2500, effect: { idleDPS: 40 } },
+  { id: "imp_familiar",  name: "Imp Familiar",  icon: "👿",  type: "idle", description: "+2 idle DPS per level",         basePower: 2,   baseCost: 120,  effect: { idleDPS: 2  } },
+  { id: "shadow_wolf",   name: "Shadow Wolf",   icon: "🐺",  type: "idle", description: "+5 idle DPS per level",         basePower: 5,   baseCost: 500,  effect: { idleDPS: 5  } },
+  { id: "golem_guard",   name: "Golem Guard",   icon: "🪨",  type: "idle", description: "+12 idle DPS per level",        basePower: 12,  baseCost: 1500, effect: { idleDPS: 12 } },
+  { id: "dragon_pet",    name: "Dragon Pet",    icon: "🐲",  type: "idle", description: "+30 idle DPS per level",        basePower: 30,  baseCost: 8000, effect: { idleDPS: 30 } },
   // Universal
-  { id: "ancient_rune",  name: "Ancient Rune",  icon: "🔮",  type: "all",  description: "+15 to all damage per level",   basePower: 15,  baseCost: 600,  effect: { tapDamage: 15, idleDPS: 15 } },
-  { id: "chaos_gem",     name: "Chaos Gem",     icon: "💎",  type: "all",  description: "+35 to all damage per level",   basePower: 35,  baseCost: 2000, effect: { tapDamage: 35, idleDPS: 35 } },
+  { id: "ancient_rune",  name: "Ancient Rune",  icon: "🔮",  type: "all",  description: "+6 to all damage per level",    basePower: 6,   baseCost: 800,  effect: { tapDamage: 6, idleDPS: 6 } },
+  { id: "chaos_gem",     name: "Chaos Gem",     icon: "💎",  type: "all",  description: "+15 to all damage per level",   basePower: 15,  baseCost: 6000, effect: { tapDamage: 15, idleDPS: 15 } },
   // Bow
   { id: "bow",           name: "Elven Bow",     icon: "🏹",  type: "bow",  description: "Unlocks bow mode (+25% souls)", basePower: 0,   baseCost: 500,  effect: { tapDamage: 0 } },
   // Cluster
@@ -85,7 +85,7 @@ export function computeTapDamage(s, weapon, buffs, skillMults, villageMultiplier
   const upgradeLevels = s.upgradeLevels || {};
   const upgradeList = weapon === "bow" ? BOW_UPGRADE_OBJECTS : TAP_UPGRADE_OBJECTS;
 
-  let damage = 1;
+  let damage = 10; // Base tap — new player should feel capable from the start
   upgradeList.forEach((u) => {
     const level = upgradeLevels[u.id] || 0;
     if (level > 0 && u.effect?.tapDamage) damage += u.effect.tapDamage * level;

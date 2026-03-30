@@ -121,7 +121,7 @@ export default function ZipAssetUpload() {
           status === "success" ? "bg-green-50 text-green-700" :
           status === "error" ? "bg-red-50 text-red-700" :
           "bg-slate-50 text-slate-600"
-        }`}>
+        } ${status === "loading" ? "max-h-96" : ""}`}>
           <div className="flex items-start gap-2 text-xs">
             {status === "success" && <CheckCircle className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />}
             {status === "error" && <AlertCircle className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />}
@@ -133,23 +133,27 @@ export default function ZipAssetUpload() {
 
           {/* Progress bar */}
           {status === "loading" && (
-            <div className="space-y-2">
+            <div className="space-y-2 overflow-hidden flex flex-col">
               <div className="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
                 <div
                   className="bg-violet-500 h-full transition-all duration-300"
                   style={{ width: `${progress}%` }}
                 />
               </div>
-              {/* Steps */}
-              <div className="space-y-1 max-h-40 overflow-y-auto">
-                {steps.map((step, i) => (
-                  <div key={i} className="flex items-center gap-1.5 text-[10px]">
-                    {step.status === "done" && <CheckCircle className="w-3 h-3 text-green-600 flex-shrink-0" />}
-                    {step.status === "in-progress" && <Loader2 className="w-3 h-3 animate-spin text-violet-500 flex-shrink-0" />}
-                    {step.status === "error" && <AlertCircle className="w-3 h-3 text-red-600 flex-shrink-0" />}
-                    <span className="text-slate-600 truncate">{step.name}</span>
-                  </div>
-                ))}
+              {/* Steps - scrollable list */}
+              <div className="space-y-1 overflow-y-auto max-h-64 border border-slate-200 rounded bg-white p-2">
+                {steps.length === 0 ? (
+                  <p className="text-[10px] text-slate-400">Processing files...</p>
+                ) : (
+                  steps.map((step, i) => (
+                    <div key={i} className="flex items-center gap-1.5 text-[10px]">
+                      {step.status === "done" && <CheckCircle className="w-3 h-3 text-green-600 flex-shrink-0" />}
+                      {step.status === "in-progress" && <Loader2 className="w-3 h-3 animate-spin text-violet-500 flex-shrink-0" />}
+                      {step.status === "error" && <AlertCircle className="w-3 h-3 text-red-600 flex-shrink-0" />}
+                      <span className="text-slate-700 truncate">{step.name}</span>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           )}

@@ -43,35 +43,60 @@ export default function ZipAssetUpload() {
       setSteps(s => s.map((step, i) => i === s.length - 1 ? { ...step, status: "done" } : step));
       setProgress(40);
 
-      // Step 2: Send to backend
+      // Step 2: Send to backend with polling for live progress
       setSteps(s => [...s, { name: "Unzipping & uploading to Drive", status: "in-progress" }]);
       setProgress(50);
 
+      const sessionId = `zip_upload_${Date.now()}`;
+      sessionStorage.setItem(`${sessionId}_start`, Date.now());
+
+      // Poll for progress while backend is processing
+      const pollInterval = setInterval(async () => {
+        try {
+          const progressStr = sessionStorage.getItem(`${sessionId}_progress`);
+          if (progressStr) {
+            const progressData = JSON.parse(progressStr);
+            if (progressData && Array.isArray(progressData)) {
+              const newSteps = progressData.map(p => {
+                if (p.type === 'unzip') return { name: `🔍 ${p.message}`, status: "done" };
+                if (p.type === 'processing') return { name: `⚙️ Processing: ${p.file} (${p.current}/${p.total})`, status: "in-progress" };
+                if (p.type === 'uploaded') return { name: `✓ Uploaded: ${p.file} (${p.current}/${p.total})`, status: "done" };
+                if (p.type === 'error') return { name: `✗ Error: ${p.file}`, status: "error" };
+                return { name: p.name, status: "done" };
+              });
+              setSteps(newSteps);
+              
+              const uploadedCount = newSteps.filter(s => s.status === 'done' || s.status === 'in-progress').length;
+              const totalCount = newSteps.length;
+              const uploadProgress = 50 + (totalCount > 0 ? (uploadedCount / totalCount) * 50 : 0);
+              setProgress(Math.min(uploadProgress, 95));
+            }
+          }
+        } catch (err) {
+          // Polling error - ignore and continue
+        }
+      }, 200);
+
       const res = await base44.functions.invoke("processAssetZip", {
         filename: file.name,
-        fileData: base64Data
+        fileData: base64Data,
+        sessionId
       });
+      clearInterval(pollInterval);
       const data = res.data;
 
       if (!data.success) throw new Error(data.error || "Processing failed");
 
-      // Build steps from progress array
+      // Final step: display final results
       if (data.progress && Array.isArray(data.progress)) {
         const newSteps = data.progress.map(p => {
           if (p.type === 'unzip') return { name: `🔍 ${p.message}`, status: "done" };
-          if (p.type === 'folder') return { name: `📁 ${p.message}`, status: "done" };
           if (p.type === 'processing') return { name: `⚙️ Processing: ${p.file} (${p.current}/${p.total})`, status: "in-progress" };
           if (p.type === 'uploaded') return { name: `✓ Uploaded: ${p.file} (${p.current}/${p.total})`, status: "done" };
           if (p.type === 'error') return { name: `✗ Error: ${p.file}`, status: "error" };
           return { name: p.name, status: "done" };
         });
         setSteps(newSteps);
-        
-        // Update progress bar based on uploaded files
-        const uploadedCount = newSteps.filter(s => s.status === 'done').length;
-        const totalCount = newSteps.length;
-        const uploadProgress = 50 + (totalCount > 0 ? (uploadedCount / totalCount) * 50 : 0);
-        setProgress(uploadProgress);
       }
 
       setProgress(100);
@@ -80,6 +105,9 @@ export default function ZipAssetUpload() {
       setMessage(`✓ Uploaded ${data.uploaded_count} file(s) to "${data.folder}"`);
       setDetails({ uploaded: data.uploaded, errors: data.errors });
 
+      // Cleanup
+      sessionStorage.removeItem(`${sessionId}_progress`);
+      sessionStorage.removeItem(`${sessionId}_start`);
       if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (err) {
       setSteps(s => s.map((step, i) => i === s.length - 1 ? { ...step, status: "error" } : step));

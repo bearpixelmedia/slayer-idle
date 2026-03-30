@@ -10,9 +10,8 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    // Stream progress updates to frontend
-    const progressQueue = [];
-    const sendProgress = (item) => progressQueue.push(item);
+    const sessionId = body.sessionId || `zip_${Date.now()}`;
+    const progressUpdates = [];
 
     const { accessToken } = await base44.asServiceRole.connectors.getConnection('googledrive');
     const authHeader = { Authorization: `Bearer ${accessToken}` };
@@ -45,7 +44,6 @@ Deno.serve(async (req) => {
 
     const uploaded = [];
     const errors = [];
-    const progress = [];
 
     // Decode base64
     const binaryString = atob(body.fileData);
@@ -55,14 +53,14 @@ Deno.serve(async (req) => {
     }
     const zipBlob = new Blob([fileBytes], { type: 'application/zip' });
     const zipReader = new ZipReader(new BlobReader(zipBlob));
-    progress.push({ type: 'unzip', message: 'Reading ZIP entries...' });
+    progressUpdates.push({ type: 'unzip', message: 'Reading ZIP entries...' });
     const entries = await zipReader.getEntries();
-    progress.push({ type: 'unzip', message: `Found ${entries.length} total entries (filtering non-files)...` });
+    progressUpdates.push({ type: 'unzip', message: `Found ${entries.length} total entries (filtering non-files)...` });
     await zipReader.close();
 
     // Calculate total files to process
     const totalFiles = entries.filter(e => !e.directory && !e.filename.includes('__MACOSX') && !e.filename.includes('.DS_Store')).length;
-    progress.push({ type: 'unzip', message: `Total files to upload: ${totalFiles}` });
+    progressUpdates.push({ type: 'unzip', message: `Total files to upload: ${totalFiles}` });
 
     // Cache subfolder IDs we create/find to avoid duplicates
     const subfolderCache = {};
@@ -101,7 +99,7 @@ Deno.serve(async (req) => {
       if (entry.directory || entry.filename.includes('__MACOSX') || entry.filename.includes('.DS_Store')) continue;
       
       processedCount++;
-      progress.push({ type: 'processing', file: entry.filename, current: processedCount, total: totalFiles });
+      progressUpdates.push({ type: 'processing', file: entry.filename, current: processedCount, total: totalFiles });
       
       try {
         const blob = await entry.getData(new BlobWriter());
@@ -146,10 +144,10 @@ Deno.serve(async (req) => {
         });
         const uploaded_file = await uploadRes.json();
         uploaded.push({ name: filename, id: uploaded_file.id, path: entry.filename });
-        progress.push({ type: 'uploaded', file: filename, current: processedCount, total: totalFiles });
+        progressUpdates.push({ type: 'uploaded', file: filename, current: processedCount, total: totalFiles });
       } catch (e) {
         errors.push({ file: entry.filename, error: e.message });
-        progress.push({ type: 'error', file: entry.filename, error: e.message });
+        progressUpdates.push({ type: 'error', file: entry.filename, error: e.message });
       }
     }
 
@@ -159,7 +157,7 @@ Deno.serve(async (req) => {
       uploaded_count: uploaded.length,
       uploaded,
       errors,
-      progress,
+      progress: progressUpdates,
     });
   } catch (error) {
     console.error('processAssetZip error:', error);

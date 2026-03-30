@@ -10,11 +10,31 @@ Deno.serve(async (req) => {
     const { accessToken } = await base44.asServiceRole.connectors.getConnection('googledrive');
     const authHeader = { Authorization: `Bearer ${accessToken}` };
 
-    // Get the watched folder ID from SyncState
+    // Get or create a folder for uploads
+    let folderId, folderName;
     const records = await base44.asServiceRole.entities.SyncState.list();
-    if (!records.length) return Response.json({ error: 'No watched folder configured. Please set up Google Drive Sync first.' }, { status: 400 });
-    const folderId = records[0].folder_id;
-    const folderName = records[0].folder_name;
+    if (records.length && records[0].folder_id) {
+      folderId = records[0].folder_id;
+      folderName = records[0].folder_name;
+    } else {
+      // Create a default upload folder
+      const createRes = await fetch('https://www.googleapis.com/drive/v3/files?fields=id,name', {
+        method: 'POST',
+        headers: { ...authHeader, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: 'ClickerQuest Assets', mimeType: 'application/vnd.google-apps.folder' }),
+      });
+      const created = await createRes.json();
+      folderId = created.id;
+      folderName = created.name;
+      // Save to SyncState
+      const tokenRes = await fetch('https://www.googleapis.com/drive/v3/changes/startPageToken', { headers: authHeader });
+      const { startPageToken } = await tokenRes.json();
+      if (records.length) {
+        await base44.asServiceRole.entities.SyncState.update(records[0].id, { folder_id: folderId, folder_name: folderName, page_token: startPageToken });
+      } else {
+        await base44.asServiceRole.entities.SyncState.create({ folder_id: folderId, folder_name: folderName, page_token: startPageToken });
+      }
+    }
 
     const formData = await req.formData();
     const zipFile = formData.get('file');

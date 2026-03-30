@@ -17,6 +17,7 @@ import SettingImageUpload from "@/components/game/SettingImageUpload";
 import WeaponAtlasUpload from "@/components/game/WeaponAtlasUpload";
 import DriveAssetSync from "@/components/game/DriveAssetSync";
 import DriveAssetGallery from "@/components/game/DriveAssetGallery";
+import ZipAssetUpload from "@/components/game/ZipAssetUpload";
 import { notifyGameSettingsUpdated } from "@/lib/gameSettings";
 
 const STORAGE_KEY = "game_settings_config";
@@ -185,6 +186,15 @@ export default function GameSettings() {
 
           {/* ASSETS TAB */}
           <TabsContent value="assets" className="space-y-6 mt-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>ZIP Import</CardTitle>
+                <CardDescription>Upload a ZIP of your assets — files are matched by filename to game slots automatically.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ZipAssetUpload onUpdate={updateSetting} />
+              </CardContent>
+            </Card>
             <Card>
               <CardHeader>
                 <CardTitle>Google Drive Sync</CardTitle>

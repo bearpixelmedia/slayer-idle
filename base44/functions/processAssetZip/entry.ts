@@ -52,9 +52,11 @@ Deno.serve(async (req) => {
 
     const uploaded = [];
     const errors = [];
+    const progress = [];
 
     // Cache subfolder IDs we create/find to avoid duplicates
     const subfolderCache = {};
+    const createdFolders = new Set();
 
     async function getOrCreateSubfolder(name, parentId) {
       const cacheKey = `${parentId}/${name}`;
@@ -75,12 +77,19 @@ Deno.serve(async (req) => {
       });
       const created = await createRes.json();
       subfolderCache[cacheKey] = created.id;
+      if (!createdFolders.has(name)) {
+        createdFolders.add(name);
+        progress.push({ type: 'folder', name });
+      }
       return created.id;
     }
 
     // Process uploads sequentially to avoid folder creation race conditions
-    for (const entry of entries) {
+    for (let idx = 0; idx < entries.length; idx++) {
+      const entry = entries[idx];
       if (entry.directory || entry.filename.includes('__MACOSX') || entry.filename.includes('.DS_Store')) continue;
+      
+      progress.push({ type: 'processing', file: entry.filename, current: idx + 1, total: entries.length });
       
       try {
         const blob = await entry.getData(new BlobWriter());
@@ -125,8 +134,10 @@ Deno.serve(async (req) => {
         });
         const uploaded_file = await uploadRes.json();
         uploaded.push({ name: filename, id: uploaded_file.id, path: entry.filename });
+        progress.push({ type: 'uploaded', file: filename });
       } catch (e) {
         errors.push({ file: entry.filename, error: e.message });
+        progress.push({ type: 'error', file: entry.filename, error: e.message });
       }
     }
 
@@ -136,6 +147,7 @@ Deno.serve(async (req) => {
       uploaded_count: uploaded.length,
       uploaded,
       errors,
+      progress,
     });
   } catch (error) {
     console.error('processAssetZip error:', error);

@@ -54,7 +54,18 @@ export default function ZipAssetUpload() {
 
       if (!data.success) throw new Error(data.error || "Processing failed");
 
-      setSteps(s => s.map((step, i) => i === s.length - 1 ? { ...step, status: "done" } : step));
+      // Convert progress items to display steps
+      if (data.progress && Array.isArray(data.progress)) {
+        const newSteps = data.progress.map(p => {
+          if (p.type === 'folder') return { name: `📁 Created folder: ${p.name}`, status: "done" };
+          if (p.type === 'processing') return { name: `⚙️ Processing: ${p.file} (${p.current}/${p.total})`, status: "done" };
+          if (p.type === 'uploaded') return { name: `✓ Uploaded: ${p.file}`, status: "done" };
+          if (p.type === 'error') return { name: `✗ Error: ${p.file}`, status: "error" };
+          return { name: p.name, status: "done" };
+        });
+        setSteps(newSteps);
+      }
+
       setProgress(100);
       
       setStatus("success");
@@ -130,13 +141,13 @@ export default function ZipAssetUpload() {
                 />
               </div>
               {/* Steps */}
-              <div className="space-y-1">
+              <div className="space-y-1 max-h-40 overflow-y-auto">
                 {steps.map((step, i) => (
                   <div key={i} className="flex items-center gap-1.5 text-[10px]">
                     {step.status === "done" && <CheckCircle className="w-3 h-3 text-green-600 flex-shrink-0" />}
                     {step.status === "in-progress" && <Loader2 className="w-3 h-3 animate-spin text-violet-500 flex-shrink-0" />}
                     {step.status === "error" && <AlertCircle className="w-3 h-3 text-red-600 flex-shrink-0" />}
-                    <span className="text-slate-600">{step.name}</span>
+                    <span className="text-slate-600 truncate">{step.name}</span>
                   </div>
                 ))}
               </div>

@@ -249,37 +249,22 @@ export default function GameSettings() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <DriveAssetGallery />
+                <DriveAssetGallery settings={settings} onUpdate={updateSetting} />
               </CardContent>
             </Card>
           </TabsContent>
 
-          {/* Enemies Tab */}
+          {/* Enemies Tab — asset previews + name editing now in Assets tab */}
           <TabsContent value="enemies" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>Enemy Types</CardTitle>
-                <CardDescription>Customize the appearance of each enemy type</CardDescription>
+                <CardDescription>Assets and name customization are in the Assets tab. Additional fantasy enemy variants:</CardDescription>
               </CardHeader>
               <CardContent className="space-y-8">
                 <SettingGroup
-                  title="Core enemies"
+                  title="Additional Fantasy Enemies"
                   imageItems={[
-                    { id: "enemy_goblin", label: "Goblin", defaultValue: "👺" },
-                    { id: "enemy_orc", label: "Orc", defaultValue: "🧌" },
-                    { id: "enemy_ogre", label: "Ogre", defaultValue: "👹" },
-                    { id: "enemy_skeleton", label: "Skeleton", defaultValue: "💀" },
-                    { id: "enemy_vampire", label: "Vampire", defaultValue: "🧛" },
-                    { id: "enemy_dragon", label: "Dragon", defaultValue: "🐉" },
-                    { id: "enemy_lich", label: "Lich", defaultValue: "☠️" },
-                    { id: "enemy_zombie", label: "Zombie", defaultValue: "🧟" },
-                  ]}
-                />
-                <SettingGroup
-                  title="Fantasy enemies"
-                  imageItems={[
-                    { id: "enemy_ghost", label: "Ghost", defaultValue: "👻" },
-                    { id: "enemy_spider", label: "Spider", defaultValue: "🕷️" },
                     { id: "enemy_genie", label: "Genie", defaultValue: "🧞" },
                     { id: "enemy_princess", label: "Princess", defaultValue: "👸" },
                     { id: "enemy_prince", label: "Prince", defaultValue: "🫅" },
@@ -302,27 +287,15 @@ export default function GameSettings() {
             </Card>
           </TabsContent>
 
-          {/* Bosses Tab */}
+          {/* Bosses Tab — icons, names, and mechanics are now in the Assets tab */}
           <TabsContent value="bosses" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>Boss Settings</CardTitle>
-                <CardDescription>Customize boss names, emojis, and mechanics</CardDescription>
+                <CardDescription>Boss icons, names, and mechanic names are managed in the Assets tab.</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                {BOSSES.map((boss) => (
-                  <SettingGroup
-                    key={boss.id}
-                    title={`Stage ${boss.stage} - ${boss.name}`}
-                    items={[
-                      { id: `boss_${boss.id}_name`, label: "Name", defaultValue: boss.name },
-                      { id: `boss_${boss.id}_mechanic`, label: "Mechanic Name", defaultValue: boss.mechanic.name },
-                    ]}
-                    imageItems={[
-                      { id: `boss_${boss.id}_icon`, label: "Icon", defaultValue: boss.icon },
-                    ]}
-                  />
-                ))}
+              <CardContent>
+                <p className="text-sm text-slate-500">Go to the <strong>Assets</strong> tab → 👑 Bosses section to edit boss icons and names.</p>
               </CardContent>
             </Card>
           </TabsContent>
@@ -675,33 +648,15 @@ export default function GameSettings() {
             <Card>
               <CardHeader>
                 <CardTitle>Music & Audio</CardTitle>
-                <CardDescription>Upload MP3 files for game music and sound effects</CardDescription>
+                <CardDescription>Core music tracks are in the Assets tab. Upload additional zone music here.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <SettingGroup
-                  title="Background Music"
+                  title="Zone Music"
                   imageItems={[
-                    { id: "music_title", label: "Title Screen" },
-                    { id: "music_main", label: "Main Theme" },
-                    { id: "music_boss", label: "Boss Battle" },
                     { id: "music_zone_light", label: "Realm of Light" },
                     { id: "music_zone_woods", label: "Whispering Woods" },
                     { id: "music_zone_citadel", label: "Shadowfell Citadel" },
-                  ]}
-                />
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>Player Character</CardTitle>
-                <CardDescription>Upload custom sprites for the player character in each weapon mode</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <SettingGroup
-                  title="Player Sprites"
-                  imageItems={[
-                    { id: "player_sword", label: "Sword Mode", defaultValue: "⚔️" },
-                    { id: "player_bow", label: "Bow Mode", defaultValue: "🏹" },
                   ]}
                 />
               </CardContent>

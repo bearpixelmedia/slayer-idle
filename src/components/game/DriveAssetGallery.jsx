@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { loadGameSettings, GAME_SETTINGS_UPDATED_EVENT } from "@/lib/gameSettings";
+import React, { useEffect } from "react";
+import { GAME_SETTINGS_UPDATED_EVENT } from "@/lib/gameSettings";
 import { ImageIcon, Music } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { BOSSES } from "@/lib/bosses";
 
-const STORAGE_KEY = "game_settings_config";
-
-// All asset groups to display with their setting key and label
+// Asset groups — each asset can have optional textFields shown inline
 const ASSET_GROUPS = [
   {
     title: "🌄 Parallax Layers",
@@ -27,16 +27,16 @@ const ASSET_GROUPS = [
     title: "👾 Enemies",
     folder: "enemies/",
     assets: [
-      { key: "enemy_goblin", label: "Goblin", emoji: "👺" },
-      { key: "enemy_orc", label: "Orc", emoji: "🧌" },
-      { key: "enemy_ogre", label: "Ogre", emoji: "👹" },
-      { key: "enemy_skeleton", label: "Skeleton", emoji: "💀" },
-      { key: "enemy_vampire", label: "Vampire", emoji: "🧛" },
-      { key: "enemy_dragon", label: "Dragon", emoji: "🐉" },
-      { key: "enemy_lich", label: "Lich", emoji: "☠️" },
-      { key: "enemy_zombie", label: "Zombie", emoji: "🧟" },
-      { key: "enemy_ghost", label: "Ghost", emoji: "👻" },
-      { key: "enemy_spider", label: "Spider", emoji: "🕷️" },
+      { key: "enemy_goblin", label: "Goblin", emoji: "👺", textFields: [{ id: "enemy_goblin_name", placeholder: "Goblin" }] },
+      { key: "enemy_orc", label: "Orc", emoji: "🧌", textFields: [{ id: "enemy_orc_name", placeholder: "Orc" }] },
+      { key: "enemy_ogre", label: "Ogre", emoji: "👹", textFields: [{ id: "enemy_ogre_name", placeholder: "Ogre" }] },
+      { key: "enemy_skeleton", label: "Skeleton", emoji: "💀", textFields: [{ id: "enemy_skeleton_name", placeholder: "Skeleton" }] },
+      { key: "enemy_vampire", label: "Vampire", emoji: "🧛", textFields: [{ id: "enemy_vampire_name", placeholder: "Vampire" }] },
+      { key: "enemy_dragon", label: "Dragon", emoji: "🐉", textFields: [{ id: "enemy_dragon_name", placeholder: "Dragon" }] },
+      { key: "enemy_lich", label: "Lich", emoji: "☠️", textFields: [{ id: "enemy_lich_name", placeholder: "Lich" }] },
+      { key: "enemy_zombie", label: "Zombie", emoji: "🧟", textFields: [{ id: "enemy_zombie_name", placeholder: "Zombie" }] },
+      { key: "enemy_ghost", label: "Ghost", emoji: "👻", textFields: [{ id: "enemy_ghost_name", placeholder: "Ghost" }] },
+      { key: "enemy_spider", label: "Spider", emoji: "🕷️", textFields: [{ id: "enemy_spider_name", placeholder: "Spider" }] },
     ],
   },
   {
@@ -50,11 +50,15 @@ const ASSET_GROUPS = [
   {
     title: "👑 Bosses",
     folder: "bosses/",
-    assets: [
-      { key: "boss_shadow_king_icon", label: "Shadow King", emoji: "💀" },
-      { key: "boss_storm_giant_icon", label: "Storm Giant", emoji: "⚡" },
-      { key: "boss_void_dragon_icon", label: "Void Dragon", emoji: "🐉" },
-    ],
+    assets: BOSSES.map((boss) => ({
+      key: `boss_${boss.id}_icon`,
+      label: `Stage ${boss.stage} Boss`,
+      emoji: boss.icon,
+      textFields: [
+        { id: `boss_${boss.id}_name`, placeholder: boss.name, fieldLabel: "Name" },
+        { id: `boss_${boss.id}_mechanic`, placeholder: boss.mechanic.name, fieldLabel: "Mechanic" },
+      ],
+    })),
   },
   {
     title: "🎵 Music",
@@ -67,62 +71,57 @@ const ASSET_GROUPS = [
   },
 ];
 
-function AssetCard({ assetKey, label, emoji, isAudio, value }) {
+function AssetCard({ asset, value, settings, onUpdate }) {
+  const { key, label, emoji, isAudio, textFields } = asset;
   const hasAsset = !!value;
-  const filename = `${assetKey}${isAudio ? ".mp3" : ".png"}`;
+  const filename = `${key}${isAudio ? ".mp3" : ".png"}`;
 
   return (
-    <div className={`rounded-lg border ${hasAsset ? "border-green-200 bg-green-50" : "border-slate-200 bg-slate-50"} overflow-hidden`}>
-      {/* Preview area */}
-      <div className="aspect-square flex items-center justify-center bg-slate-100 relative overflow-hidden">
+    <div className={`rounded-lg border ${hasAsset ? "border-green-200 bg-green-50" : "border-slate-200 bg-white"} overflow-hidden flex flex-col`}>
+      {/* Preview */}
+      <div className="aspect-square flex items-center justify-center bg-slate-100 relative overflow-hidden flex-shrink-0">
         {hasAsset && !isAudio ? (
-          <img
-            src={value}
-            alt={label}
-            className="w-full h-full object-contain p-1"
-            style={{ imageRendering: "pixelated" }}
-          />
+          <img src={value} alt={label} className="w-full h-full object-contain p-1" style={{ imageRendering: "pixelated" }} />
         ) : hasAsset && isAudio ? (
           <div className="flex flex-col items-center gap-1 p-2 w-full">
-            <Music className="w-6 h-6 text-green-500" />
-            <audio src={value} controls className="w-full h-6 mt-1" style={{ minWidth: 0 }} />
+            <Music className="w-5 h-5 text-green-500" />
+            <audio src={value} controls className="w-full mt-1" style={{ height: 24, minWidth: 0 }} />
           </div>
         ) : (
           <div className="flex flex-col items-center gap-1 opacity-40">
-            {emoji ? (
-              <span className="text-3xl">{emoji}</span>
-            ) : (
-              <ImageIcon className="w-8 h-8 text-slate-400" />
-            )}
+            {emoji ? <span className="text-3xl">{emoji}</span> : <ImageIcon className="w-8 h-8 text-slate-400" />}
           </div>
         )}
-        {hasAsset && (
-          <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-green-400" title="Synced from Drive" />
-        )}
+        {hasAsset && <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-green-400" title="Synced from Drive" />}
       </div>
-      {/* Label */}
-      <div className="px-2 py-1.5">
-        <p className="text-[10px] font-medium text-slate-700 truncate">{label}</p>
+
+      {/* Label + filename */}
+      <div className="px-2 pt-1.5 pb-1">
+        <p className="text-[10px] font-semibold text-slate-700 truncate">{label}</p>
         <p className="text-[9px] text-slate-400 truncate font-mono">{filename}</p>
       </div>
+
+      {/* Inline text settings */}
+      {textFields && textFields.length > 0 && (
+        <div className="px-2 pb-2 space-y-1 border-t border-slate-100 mt-1 pt-1">
+          {textFields.map((field) => (
+            <div key={field.id}>
+              {field.fieldLabel && <p className="text-[9px] text-slate-400 mb-0.5">{field.fieldLabel}</p>}
+              <Input
+                value={settings[field.id] || ""}
+                onChange={(e) => onUpdate(field.id, e.target.value)}
+                placeholder={field.placeholder}
+                className="h-6 text-[10px] px-1.5"
+              />
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
-export default function DriveAssetGallery() {
-  const [settings, setSettings] = useState(() => loadGameSettings());
-
-  useEffect(() => {
-    const reload = () => setSettings(loadGameSettings());
-    window.addEventListener(GAME_SETTINGS_UPDATED_EVENT, reload);
-    window.addEventListener("storage", (e) => {
-      if (e.key === STORAGE_KEY || e.key === null) reload();
-    });
-    return () => {
-      window.removeEventListener(GAME_SETTINGS_UPDATED_EVENT, reload);
-    };
-  }, []);
-
+export default function DriveAssetGallery({ settings, onUpdate }) {
   return (
     <div className="space-y-8">
       {ASSET_GROUPS.map((group) => (
@@ -136,15 +135,14 @@ export default function DriveAssetGallery() {
               {group.assets.filter(a => !!settings[a.key]).length}/{group.assets.length} synced
             </span>
           </div>
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
             {group.assets.map((asset) => (
               <AssetCard
                 key={asset.key}
-                assetKey={asset.key}
-                label={asset.label}
-                emoji={asset.emoji}
-                isAudio={asset.isAudio}
+                asset={asset}
                 value={settings[asset.key]}
+                settings={settings}
+                onUpdate={onUpdate}
               />
             ))}
           </div>

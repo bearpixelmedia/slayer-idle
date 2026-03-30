@@ -51,7 +51,6 @@ function AnimatedTileRow({ animationData, imgRef, currentFrame, tileWidth, tileH
 
 /** Full sheet per tile until Aseprite JSON loads — avoids empty parallax / ground / shrubs. */
 function StaticSpriteTileRow({ spriteUrl, tileWidth, tileHeight, count }) {
-  const th = tileHeight || tileWidth;
   return (
     <div style={{ display: "flex", width: "200%", height: "100%", alignItems: "flex-end" }}>
       {Array.from({ length: count }).map((_, i) => (
@@ -63,10 +62,7 @@ function StaticSpriteTileRow({ spriteUrl, tileWidth, tileHeight, count }) {
           fetchPriority="low"
           style={{
             width: `${tileWidth}px`,
-            height: "100%",
-            minHeight: `${th}px`,
-            objectFit: "contain",
-            objectPosition: "bottom",
+            height: "auto",
             flexShrink: 0,
             imageRendering: "pixelated",
           }}

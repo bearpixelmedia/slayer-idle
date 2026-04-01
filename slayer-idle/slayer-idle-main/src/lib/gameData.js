@@ -1,16 +1,20 @@
 /**
  * gameData.js — re-export barrel
  *
- * All game data has been split into focused modules:
- *   enemies.js  — enemy display, emojis, anim classes, weapon flags
- *   upgrades.js — upgrade defs, categories, cost/damage/CPS formulas
+ * All game data is split into focused modules:
+ *   enemies.js  — enemy roster, sprites, weapon flags, anim classes
+ *   heroes.js   — recruitable hero definitions (Knight, Rogue, Wizard)
+ *   upgrades.js — upgrade defs, cost/damage/CPS formulas
  *   zones.js    — stages, zones, HP/reward/soul scaling, unlock logic
  *
- * This file re-exports everything so existing imports keep working
- * with zero changes. New code should import directly from the source module.
+ * Import directly from source modules in new code.
+ * This barrel exists so legacy imports keep working with zero changes.
  */
 
 export {
+  ENEMY_ROSTER,
+  ENEMY_IDS,
+  ENEMY_BY_ID,
   ENEMY_EMOJIS,
   ZOMBIE_EMOJI_VARIANTS,
   VAMPIRE_EMOJI_VARIANTS,
@@ -19,6 +23,18 @@ export {
   ENEMY_IDLE_ANIM_CLASS,
   getEnemyIdleAnimClass,
 } from "./enemies";
+
+export {
+  HEROES,
+  HERO_IDS,
+  HERO_BY_ID,
+  MAX_HEROES,
+  getHeroDPS,
+  getHeroLevelCost,
+  getHeroPassiveValue,
+  computeHeroPassives,
+  computeHeroDPS,
+} from "./heroes";
 
 export {
   UPGRADES,

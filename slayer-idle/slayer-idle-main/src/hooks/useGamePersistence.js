@@ -96,9 +96,9 @@ export function defaultState() {
     enemyCluster: [],
     currentClusterIndex: 0,
     worldProgress: 0,
-    nextEnemyWorldPos: 20,
+    nextEnemyWorldPos: 3,
     worldCoins: [],
-    nextCoinWorldPos: 12,
+    nextCoinWorldPos: 5,
 
     // Village
     villageBuildings: {},
@@ -150,6 +150,13 @@ export function loadGame() {
 
       // Ensure heroes key exists
       if (!merged.heroes) merged.heroes = {};
+      // If no enemies in cluster and spawn point is far, bump it close so enemy appears quickly
+      if ((!merged.enemyCluster || merged.enemyCluster.length === 0) && !merged.isBossActive) {
+        const closeSpawn = merged.worldProgress + 3;
+        if (merged.nextEnemyWorldPos > closeSpawn) {
+          merged.nextEnemyWorldPos = closeSpawn;
+        }
+      }
 
       if (!data.saveVersion || data.saveVersion < SAVE_VERSION) {
         console.log(`Migrating save v${data.saveVersion ?? 1} → v${SAVE_VERSION}`);

@@ -76,6 +76,13 @@ export default function Game() {
     playerHit,
     attackTick,
     tickWorldCoinCollection,
+    // Hero system
+    heroAbilities,
+    heroPassives,
+    heroDPS,
+    recruitHero,
+    levelHero,
+    activateHeroAbility,
   } = useGameState(initMultipliers);
 
   const { unlockedIds, newUnlock, damageMultiplier, offlineMultiplier } = useAchievements(state);
@@ -291,6 +298,12 @@ export default function Game() {
          questProgress={questProgress}
          onUpgradeBuilding={upgradeBuilding}
          onRunnerClick={() => setShowRunner(true)}
+         heroAbilities={heroAbilities}
+         heroPassives={heroPassives}
+         heroDPS={heroDPS}
+         onRecruitHero={recruitHero}
+         onLevelHero={levelHero}
+         onActivateHeroAbility={activateHeroAbility}
        />
 
       {/* Mobile menu: rendered after HUD so it stacks above world coins / shrubs / HUD (Framer motion stacking) */}
@@ -355,8 +368,15 @@ export default function Game() {
                       abilities={abilities}
                       onActivateAbility={handleActivateAbility}
                       weaponMode={currentWeapon}
+                      onWeaponModeChange={setCurrentWeapon}
                       activeTab={activeTab}
                       onTabChange={setActiveTab}
+                      heroAbilities={heroAbilities}
+                      heroPassives={heroPassives}
+                      heroDPS={heroDPS}
+                      onRecruitHero={recruitHero}
+                      onLevelHero={levelHero}
+                      onActivateHeroAbility={activateHeroAbility}
                     />
                   </div>
                 </ScrollArea>

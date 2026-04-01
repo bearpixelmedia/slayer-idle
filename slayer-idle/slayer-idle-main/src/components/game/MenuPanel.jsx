@@ -27,6 +27,13 @@ export default function MenuPanel({
   onWeaponModeChange,
   onRunnerClick,
   onClose,
+  // Hero props
+  heroAbilities,
+  heroPassives,
+  heroDPS,
+  onRecruitHero,
+  onLevelHero,
+  onActivateHeroAbility,
 }) {
   const [activeTab, setActiveTab] = React.useState("combat");
 
@@ -87,6 +94,12 @@ export default function MenuPanel({
             onWeaponModeChange={onWeaponModeChange}
             activeTab={activeTab}
             onTabChange={setActiveTab}
+            heroAbilities={heroAbilities}
+            heroPassives={heroPassives}
+            heroDPS={heroDPS}
+            onRecruitHero={onRecruitHero}
+            onLevelHero={onLevelHero}
+            onActivateHeroAbility={onActivateHeroAbility}
           />
         </div>
       </ScrollArea>
@@ -95,6 +108,7 @@ export default function MenuPanel({
       <div className={`${HUD_THEME.menuPanel.footer} pointer-events-auto`}>
         {[
           { tab: "combat",      icon: "⚔️",  label: "Combat"    },
+          { tab: "heroes",      icon: "🧑‍🤝‍🧑", label: "Heroes"    },
           { tab: "equip",       icon: "🗡️",  label: "Equip"     },
           { tab: "progression", icon: "📈",  label: "Progress"  },
           { tab: "village",     icon: "🏘️",  label: "Village"   },

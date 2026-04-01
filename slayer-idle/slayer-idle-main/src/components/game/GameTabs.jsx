@@ -8,12 +8,14 @@ import QuestLog from "@/components/game/QuestLog";
 import ZoneSelector from "@/components/game/ZoneSelector";
 import UpgradeShop from "@/components/game/UpgradeShop";
 import EquipmentPanel from "@/components/game/EquipmentPanel";
+import HeroPanel from "@/components/game/HeroPanel";
 import { HUD_THEME } from "@/lib/hudTheme";
 
-const TAB_LIST = ["combat", "equip", "progression", "village", "quests", "zones"];
+const TAB_LIST = ["combat", "heroes", "equip", "progression", "village", "quests", "zones"];
 
 const TAB_LABELS = {
   combat:      "⚔️ COMBAT",
+  heroes:      "🧑‍🤝‍🧑 HEROES",
   equip:       "🗡️ EQUIP",
   progression: "📈 PROGRESS",
   village:     "🏘️ VILLAGE",
@@ -42,6 +44,13 @@ export default function GameTabs({
   onWeaponModeChange,
   activeTab,
   onTabChange,
+  // Hero props
+  heroAbilities,
+  heroPassives,
+  heroDPS,
+  onRecruitHero,
+  onLevelHero,
+  onActivateHeroAbility,
 }) {
   if (!state || typeof state !== "object") {
     return <div className="p-4 text-muted-foreground text-xs">Loading game state...</div>;
@@ -75,6 +84,22 @@ export default function GameTabs({
         className={`px-2 py-1.5 space-y-1.5 ${HUD_THEME.panel.bg} ${HUD_THEME.panel.border} rounded-lg border`}
       >
         <UpgradeShop state={state} onBuy={onBuyUpgrade} />
+      </TabsContent>
+
+      {/* Heroes */}
+      <TabsContent
+        value="heroes"
+        className={`px-2 py-1.5 space-y-1.5 ${HUD_THEME.panel.bg} ${HUD_THEME.panel.border} rounded-lg border`}
+      >
+        <HeroPanel
+          state={state}
+          heroAbilities={heroAbilities}
+          heroPassives={heroPassives}
+          heroDPS={heroDPS}
+          onRecruit={onRecruitHero}
+          onLevel={onLevelHero}
+          onActivateAbility={onActivateHeroAbility}
+        />
       </TabsContent>
 
       {/* Equipment */}

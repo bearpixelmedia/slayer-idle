@@ -38,6 +38,13 @@ export default function HUDOverlay({
   questProgress,
   onUpgradeBuilding,
   onRunnerClick,
+  // Hero props
+  heroAbilities,
+  heroPassives,
+  heroDPS,
+  onRecruitHero,
+  onLevelHero,
+  onActivateHeroAbility,
 }) {
   // Check if any upgrade is affordable
   const hasAffordableUpgrade = UPGRADES.some(upgrade => {
@@ -99,6 +106,12 @@ export default function HUDOverlay({
             onWeaponModeChange={onWeaponChange}
             onRunnerClick={onRunnerClick}
             onClose={() => onMenuToggle(false)}
+            heroAbilities={heroAbilities}
+            heroPassives={heroPassives}
+            heroDPS={heroDPS}
+            onRecruitHero={onRecruitHero}
+            onLevelHero={onLevelHero}
+            onActivateHeroAbility={onActivateHeroAbility}
           />
         </div>
       )}

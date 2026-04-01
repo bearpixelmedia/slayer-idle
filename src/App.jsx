@@ -5,22 +5,14 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
-// Add page imports here
-import TitleScreen from '@/pages/TitleScreen';
-import Game from '@/pages/Game';
-import GameSettings from '@/pages/GameSettings';
+import Game from './pages/Game';
+import GameSettings from './pages/GameSettings';
+import TitleScreen from './pages/TitleScreen';
+import { Navigate } from 'react-router-dom';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
-
-  // Show loading spinner while checking app public settings or auth
-  if (isLoadingPublicSettings || isLoadingAuth) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
-      </div>
-    );
-  }
+  const { authError, navigateToLogin } = useAuth();
 
   // Handle authentication errors
   if (authError) {
@@ -32,6 +24,7 @@ const AuthenticatedApp = () => {
     }
   }
 
+  // Render the main app
   return (
     <Routes>
       <Route path="/" element={<TitleScreen />} />
@@ -42,16 +35,20 @@ const AuthenticatedApp = () => {
   );
 };
 
+
 function App() {
+
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClientInstance}>
-        <Router>
-          <AuthenticatedApp />
-        </Router>
-        <Toaster />
-      </QueryClientProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <QueryClientProvider client={queryClientInstance}>
+          <Router>
+            <AuthenticatedApp />
+          </Router>
+          <Toaster />
+        </QueryClientProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   )
 }
 

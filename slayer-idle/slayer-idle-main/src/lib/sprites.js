@@ -402,29 +402,37 @@ export function getWeaponIcon(tier, weapon) {
 }
 
 /**
- * weaponIconStyle(tier, weapon, scale = 2) — returns an inline style object
- * ready to apply to a <div> for rendering the icon via background-image crop.
+ * weaponIconStyle(tier, weapon, boxPx = 36) — returns an inline style object
+ * that fits the icon into a fixed square box (boxPx × boxPx), centered,
+ * with correct aspect ratio. Works regardless of raw sprite dimensions.
  *
- * Sheet dimensions (used for backgroundSize):
- *   bone → 224×144    wood → 192×112
+ * Sheet dimensions: bone → 224×144   wood → 192×112
  */
 const SHEET_DIMS = {
   bone: { w: 224, h: 144 },
   wood: { w: 192, h: 112 },
 };
 
-export function weaponIconStyle(tier, weapon, scale = 2) {
+export function weaponIconStyle(tier, weapon, boxPx = 36) {
   const ic = getWeaponIcon(tier, weapon);
   if (!ic) return {};
-  const dim = SHEET_DIMS[tier] ?? { w: 224, h: 144 };
+  // Detect sheet key from path so bone items work in any tier slot
+  const sheetKey = ic.sheet.includes('bone') ? 'bone' : 'wood';
+  const dim = SHEET_DIMS[sheetKey] ?? { w: 224, h: 144 };
+  // Scale to fit longest dimension inside the box
+  const scale = boxPx / Math.max(ic.w, ic.h);
+  const scaledW = ic.w * scale;
+  const scaledH = ic.h * scale;
+  // Center the icon within the box
+  const offsetX = (boxPx - scaledW) / 2;
+  const offsetY = (boxPx - scaledH) / 2;
   return {
-    width:               ic.w * scale,
-    height:              ic.h * scale,
-    overflow:            'hidden',
-    backgroundImage:     `url(${ic.sheet})`,
-    backgroundPosition:  `-${ic.x * scale}px -${ic.y * scale}px`,
-    backgroundSize:      `${dim.w * scale}px ${dim.h * scale}px`,
-    backgroundRepeat:    'no-repeat',
-    imageRendering:      'pixelated',
+    width:              boxPx,
+    height:             boxPx,
+    backgroundImage:    `url(${ic.sheet})`,
+    backgroundPosition: `${offsetX - ic.x * scale}px ${offsetY - ic.y * scale}px`,
+    backgroundSize:     `${dim.w * scale}px ${dim.h * scale}px`,
+    backgroundRepeat:   'no-repeat',
+    imageRendering:     'pixelated',
   };
 }

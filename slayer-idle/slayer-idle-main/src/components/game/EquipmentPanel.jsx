@@ -55,8 +55,8 @@ const WEAPON_DISPLAY_NAMES = {
 
 // ─── Sub-components ────────────────────────────────────────────────────────
 
-function WeaponIconSprite({ tier, weaponKey, scale = 3, active = false, playable = false, onClick }) {
-  const style = weaponIconStyle(tier, weaponKey, scale);
+function WeaponIconSprite({ tier, weaponKey, boxPx = 36, active = false, playable = false, onClick }) {
+  const style = weaponIconStyle(tier, weaponKey, boxPx);
   if (!style.backgroundImage) return null;
 
   return (
@@ -64,7 +64,7 @@ function WeaponIconSprite({ tier, weaponKey, scale = 3, active = false, playable
       onClick={playable ? onClick : undefined}
       whileTap={playable ? { scale: 0.9 } : {}}
       className={`
-        relative flex items-center justify-center rounded-lg p-2 transition-all
+        relative flex items-center justify-center rounded-lg p-1.5 transition-all
         ${playable ? "cursor-pointer" : "cursor-default opacity-60"}
         ${active
           ? "bg-primary/20 ring-2 ring-amber-400/70 shadow-md shadow-amber-900/40"
@@ -111,7 +111,7 @@ function TierRow({ tier, weaponMode, onModeChange }) {
               <WeaponIconSprite
                 tier={tier}
                 weaponKey={weaponKey}
-                scale={3}
+                boxPx={36}
                 active={isActive}
                 playable={isPlayable}
                 onClick={() => isPlayable && onModeChange?.(modeForKey)}

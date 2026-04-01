@@ -7,20 +7,55 @@ import VillagePanel from "@/components/game/VillagePanel";
 import QuestLog from "@/components/game/QuestLog";
 import ZoneSelector from "@/components/game/ZoneSelector";
 import UpgradeShop from "@/components/game/UpgradeShop";
+import EquipmentPanel from "@/components/game/EquipmentPanel";
 import { HUD_THEME } from "@/lib/hudTheme";
 
-export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestige, onRevive, unlockedIds, damageMultiplier, offlineMultiplier, onSwitchZone, onUnlockZone, onClaimQuestReward, onRepeatQuest, questProgress, onUpgradeBuilding, abilities, onActivateAbility, weaponMode, activeTab, onTabChange }) {
-  if (!state || typeof state !== 'object') {
+const TAB_LIST = ["combat", "equip", "progression", "village", "quests", "zones"];
+
+const TAB_LABELS = {
+  combat:      "⚔️ COMBAT",
+  equip:       "🗡️ EQUIP",
+  progression: "📈 PROGRESS",
+  village:     "🏘️ VILLAGE",
+  quests:      "📜 QUESTS",
+  zones:       "🗺️ ZONES",
+};
+
+export default function GameTabs({
+  state,
+  onBuyUpgrade,
+  onUnlockSkill,
+  onPrestige,
+  onRevive,
+  unlockedIds,
+  damageMultiplier,
+  offlineMultiplier,
+  onSwitchZone,
+  onUnlockZone,
+  onClaimQuestReward,
+  onRepeatQuest,
+  questProgress,
+  onUpgradeBuilding,
+  abilities,
+  onActivateAbility,
+  weaponMode,
+  onWeaponModeChange,
+  activeTab,
+  onTabChange,
+}) {
+  if (!state || typeof state !== "object") {
     return <div className="p-4 text-muted-foreground text-xs">Loading game state...</div>;
   }
 
-  const tabLabels = { combat: "⚔️ COMBAT", progression: "📈 PROGRESS", village: "🏘️ VILLAGE", quests: "📜 QUESTS", zones: "🗺️ ZONES" };
-
   return (
     <Tabs value={activeTab || "combat"} onValueChange={onTabChange} className="w-full">
-      <div className={`px-1 py-1 border-b ${HUD_THEME.panel.border} ${HUD_THEME.panel.bg} overflow-x-auto`} style={{ boxSizing: "border-box" }}>
+      {/* Tab bar */}
+      <div
+        className={`px-1 py-1 border-b ${HUD_THEME.panel.border} ${HUD_THEME.panel.bg} overflow-x-auto`}
+        style={{ boxSizing: "border-box" }}
+      >
         <div className="flex gap-0.5 px-1">
-          {["combat", "progression", "village", "quests", "zones"].map((tab) => (
+          {TAB_LIST.map((tab) => (
             <button
               key={tab}
               onClick={() => onTabChange(tab)}
@@ -28,17 +63,36 @@ export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestig
                 activeTab === tab ? HUD_THEME.button.primary : HUD_THEME.button.muted
               }`}
             >
-              {tabLabels[tab]}
+              {TAB_LABELS[tab]}
             </button>
           ))}
         </div>
       </div>
 
-      <TabsContent value="combat" className={`px-2 py-1.5 space-y-1.5 ${HUD_THEME.panel.bg} ${HUD_THEME.panel.border} rounded-lg border`}>
+      {/* Combat */}
+      <TabsContent
+        value="combat"
+        className={`px-2 py-1.5 space-y-1.5 ${HUD_THEME.panel.bg} ${HUD_THEME.panel.border} rounded-lg border`}
+      >
         <UpgradeShop state={state} onBuy={onBuyUpgrade} />
       </TabsContent>
 
-      <TabsContent value="progression" className={`px-2 py-1.5 space-y-1.5 ${HUD_THEME.panel.bg} ${HUD_THEME.panel.border} rounded-lg border`}>
+      {/* Equipment */}
+      <TabsContent
+        value="equip"
+        className={`px-2 py-1.5 ${HUD_THEME.panel.bg} ${HUD_THEME.panel.border} rounded-lg border`}
+      >
+        <EquipmentPanel
+          weaponMode={weaponMode}
+          onModeChange={onWeaponModeChange}
+        />
+      </TabsContent>
+
+      {/* Progression */}
+      <TabsContent
+        value="progression"
+        className={`px-2 py-1.5 space-y-1.5 ${HUD_THEME.panel.bg} ${HUD_THEME.panel.border} rounded-lg border`}
+      >
         <PrestigePanel
           canPrestige={state.totalCoinsEarned > 0}
           soulsOnPrestige={Math.max(1, Math.floor(Math.sqrt(state.totalCoinsEarned / 1000)))}
@@ -58,11 +112,19 @@ export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestig
         />
       </TabsContent>
 
-      <TabsContent value="village" className={`px-2 py-1.5 ${HUD_THEME.panel.bg} ${HUD_THEME.panel.border} rounded-lg border`}>
+      {/* Village */}
+      <TabsContent
+        value="village"
+        className={`px-2 py-1.5 ${HUD_THEME.panel.bg} ${HUD_THEME.panel.border} rounded-lg border`}
+      >
         <VillagePanel state={state} onUpgradeBuilding={onUpgradeBuilding} />
       </TabsContent>
 
-      <TabsContent value="quests" className={`px-2 py-1.5 ${HUD_THEME.panel.bg} ${HUD_THEME.panel.border} rounded-lg border`}>
+      {/* Quests */}
+      <TabsContent
+        value="quests"
+        className={`px-2 py-1.5 ${HUD_THEME.panel.bg} ${HUD_THEME.panel.border} rounded-lg border`}
+      >
         <QuestLog
           questProgress={questProgress}
           onClaimReward={onClaimQuestReward}
@@ -71,7 +133,11 @@ export default function GameTabs({ state, onBuyUpgrade, onUnlockSkill, onPrestig
         />
       </TabsContent>
 
-      <TabsContent value="zones" className={`px-2 py-1.5 ${HUD_THEME.panel.bg} ${HUD_THEME.panel.border} rounded-lg border`}>
+      {/* Zones */}
+      <TabsContent
+        value="zones"
+        className={`px-2 py-1.5 ${HUD_THEME.panel.bg} ${HUD_THEME.panel.border} rounded-lg border`}
+      >
         <ZoneSelector
           activeZoneId={state.activeZoneId}
           unlockedZoneIds={state.unlockedZoneIds}

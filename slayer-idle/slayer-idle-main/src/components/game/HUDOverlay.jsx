@@ -96,6 +96,7 @@ export default function HUDOverlay({
             abilities={abilities}
             onActivateAbility={onActivateAbility}
             weaponMode={currentWeapon}
+            onWeaponModeChange={onWeaponChange}
             onRunnerClick={onRunnerClick}
             onClose={() => onMenuToggle(false)}
           />

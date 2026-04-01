@@ -24,20 +24,21 @@ export default function MenuPanel({
   abilities,
   onActivateAbility,
   weaponMode,
+  onWeaponModeChange,
   onRunnerClick,
   onClose,
 }) {
   const [activeTab, setActiveTab] = React.useState("combat");
 
   return (
-    <motion.div 
+    <motion.div
       className={`flex flex-col h-full ${HUD_THEME.menuPanel.container}`}
       initial={{ x: 400 }}
       animate={{ x: 0 }}
       exit={{ x: 400 }}
       transition={{ duration: 0.2 }}
     >
-      {/* Header */}
+      {/* Header (hidden for now) */}
       <div className={`${HUD_THEME.menuPanel.header} px-2 py-2 hidden`} style={{ boxSizing: "border-box" }}>
         <button
           onClick={onRunnerClick}
@@ -55,14 +56,14 @@ export default function MenuPanel({
         </motion.button>
       </div>
 
-      {/* Upgrades - Outside the scrollable area */}
+      {/* Upgrades — pinned above scroll, combat tab only */}
       {activeTab === "combat" && (
         <div className="px-3 py-2 flex-shrink-0 border-b border-border/30">
           <UpgradeShop state={state} onBuy={onBuyUpgrade} />
         </div>
       )}
 
-      {/* Tabs content */}
+      {/* Scrollable tab content */}
       <ScrollArea className={`${HUD_THEME.menuPanel.content} flex-1`}>
         <div className="px-3 py-2">
           <GameTabs
@@ -83,6 +84,7 @@ export default function MenuPanel({
             abilities={abilities}
             onActivateAbility={onActivateAbility}
             weaponMode={weaponMode}
+            onWeaponModeChange={onWeaponModeChange}
             activeTab={activeTab}
             onTabChange={setActiveTab}
           />
@@ -92,19 +94,24 @@ export default function MenuPanel({
       {/* Bottom tab navigation */}
       <div className={`${HUD_THEME.menuPanel.footer} pointer-events-auto`}>
         {[
-          { tab: "combat", icon: "⚔️", label: "Combat" },
-          { tab: "progression", icon: "📈", label: "Progress" },
-          { tab: "village", icon: "🏘️", label: "Village" },
-          { tab: "quests", icon: "📜", label: "Quests" },
-          { tab: "zones", icon: "🗺️", label: "Zones" },
+          { tab: "combat",      icon: "⚔️",  label: "Combat"    },
+          { tab: "equip",       icon: "🗡️",  label: "Equip"     },
+          { tab: "progression", icon: "📈",  label: "Progress"  },
+          { tab: "village",     icon: "🏘️",  label: "Village"   },
+          { tab: "quests",      icon: "📜",  label: "Quests"    },
+          { tab: "zones",       icon: "🗺️",  label: "Zones"     },
         ].map(({ tab, icon, label }) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`flex-1 py-2 rounded-lg text-lg transition-colors cursor-pointer ${activeTab === tab ? HUD_THEME.button.primary : HUD_THEME.button.muted}`}
+            className={`flex-1 py-2 rounded-lg text-lg transition-colors cursor-pointer ${
+              activeTab === tab ? HUD_THEME.button.primary : HUD_THEME.button.muted
+            }`}
             style={{ pointerEvents: "auto" }}
             title={label}
-          >{icon}</button>
+          >
+            {icon}
+          </button>
         ))}
       </div>
     </motion.div>

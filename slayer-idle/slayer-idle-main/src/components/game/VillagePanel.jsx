@@ -5,6 +5,29 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ChevronUp, Lock } from "lucide-react";
 import { HUD_THEME } from "@/lib/hudTheme";
 
+// Renders a cropped tile from a station sprite sheet
+function StationIcon({ station, size = 36 }) {
+  const scale = size / Math.min(station.tileW, station.tileH);
+  const displayW = Math.round(station.tileW * scale);
+  const displayH = Math.round(station.tileH * scale);
+  const sheetW = Math.round(station.w * scale);
+  const sheetH = Math.round(station.h * scale);
+  const offsetX = Math.round(station.col * station.tileW * scale);
+  const offsetY = Math.round(station.row * station.tileH * scale);
+  return (
+    <div style={{
+      width: displayW,
+      height: displayH,
+      backgroundImage: `url(${station.url})`,
+      backgroundSize: `${sheetW}px ${sheetH}px`,
+      backgroundPosition: `-${offsetX}px -${offsetY}px`,
+      backgroundRepeat: "no-repeat",
+      imageRendering: "pixelated",
+      flexShrink: 0,
+    }} />
+  );
+}
+
 function BuildingCard({ building, level, state, onUpgrade, maxLevel }) {
   const cost = getBuildingUpgradeCost(building, level);
   const unlocked = canUnlockBuilding(building, state);
@@ -25,9 +48,13 @@ function BuildingCard({ building, level, state, onUpgrade, maxLevel }) {
       }`}
       whileTap={canAfford && !isMaxed ? { scale: 0.97 } : {}}
     >
-      <div className="text-2xl flex-shrink-0">
-        {!unlocked && <Lock className="w-5 h-5 text-muted-foreground" />}
-        {unlocked && building.icon}
+      <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center overflow-hidden" style={{ imageRendering: "pixelated" }}>
+        {!unlocked
+          ? <Lock className="w-5 h-5 text-muted-foreground" />
+          : building.spriteStation
+          ? <StationIcon station={building.spriteStation} size={36} />
+          : <span className="text-2xl">{building.icon}</span>
+        }
       </div>
       <div className="flex-1 text-left min-w-0">
         <div className="flex items-center gap-2">

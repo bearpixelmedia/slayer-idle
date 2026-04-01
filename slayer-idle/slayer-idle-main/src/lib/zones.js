@@ -46,7 +46,7 @@ export const STAGES = [
     bgGradient: "from-emerald-900 to-teal-900",
     color: "#2dd4bf",
     soulBias: 1.2,
-    enemies: ["skeleton_rogue", "skeleton_warrior"],
+    enemies: ["skeleton_rogue", "skeleton_warrior", "zombie"],
     bossEnemy: "skeleton_mage",
   },
   {
@@ -64,7 +64,7 @@ export const STAGES = [
     bgGradient: "from-green-950 to-slate-900",
     color: "#86efac",
     soulBias: 1.4,
-    enemies: ["skeleton", "skeleton_warrior", "skeleton_mage"],
+    enemies: ["skeleton", "skeleton_warrior", "skeleton_mage", "zombie"],
     bossEnemy: "skeleton_mage",
   },
 
@@ -93,7 +93,7 @@ export const STAGES = [
     bgGradient: "from-amber-950 to-stone-950",
     color: "#b45309",
     soulBias: 1.7,
-    enemies: ["skeleton_warrior", "skeleton_mage"],
+    enemies: ["skeleton_warrior", "skeleton_mage", "ghost"],
     bossEnemy: "skeleton_mage",
   },
   {
@@ -102,7 +102,7 @@ export const STAGES = [
     bgGradient: "from-stone-950 to-neutral-900",
     color: "#78716c",
     soulBias: 1.8,
-    enemies: ["skeleton_mage", "skeleton_rogue", "skeleton_warrior"],
+    enemies: ["skeleton_mage", "skeleton_rogue", "skeleton_warrior", "ghost"],
     bossEnemy: "skeleton_mage",
   },
   {
@@ -140,7 +140,7 @@ export const STAGES = [
     bgGradient: "from-orange-950 to-stone-950",
     color: "#fb923c",
     soulBias: 2.6,
-    enemies: ["orc_warrior", "orc_rogue"],
+    enemies: ["orc_warrior", "orc_rogue", "spider"],
     bossEnemy: "orc_shaman",
   },
   {
@@ -178,7 +178,7 @@ export const STAGES = [
     bgGradient: "from-blue-950 to-slate-950",
     color: "#60a5fa",
     soulBias: 3.5,
-    enemies: ["orc_warrior", "orc_rogue"],
+    enemies: ["orc_warrior", "orc_rogue", "spider"],
     bossEnemy: "orc_shaman",
   },
   {
@@ -187,7 +187,7 @@ export const STAGES = [
     bgGradient: "from-slate-950 to-orange-950",
     color: "#fdba74",
     soulBias: 3.8,
-    enemies: ["orc_warrior", "orc_shaman"],
+    enemies: ["orc_warrior", "orc_shaman", "dragon"],
     bossEnemy: "orc_shaman",
   },
   {
@@ -205,8 +205,8 @@ export const STAGES = [
     bgGradient: "from-red-950 to-black",
     color: "#f87171",
     soulBias: 5.0,
-    enemies: ["orc_warrior", "orc_shaman"],
-    bossEnemy: "orc_shaman",
+    enemies: ["orc_warrior", "orc_shaman", "dragon"],
+    bossEnemy: "dragon",
   },
 ];
 

@@ -258,12 +258,12 @@ function ParallaxBackground() {
       // Layer 2: far mountains
       mountainFar: s.parallax_mountain_far || null,
       mountainMid: s.parallax_mountain_mid || null,
-      // Layer 3: far trees
-      treeVeryFar: s.parallax_tree_very_far || null,
-      // Layer 4: mid trees
-      treeMid: s.parallax_tree_mid || null,
-      // Layer 5: near trees / shrubs
-      treeFront: s.parallax_tree_front || null,
+      // Layer 3: far trees — default to PC tree_b (far, smaller)
+      treeVeryFar: s.parallax_tree_very_far || "/sprites/environment/props/tree_b.png",
+      // Layer 4: mid trees — default to PC tree_a (main canopy)
+      treeMid: s.parallax_tree_mid || "/sprites/environment/props/tree_a.png",
+      // Layer 5: near trees / shrubs — default to PC vegetation
+      treeFront: s.parallax_tree_front || "/sprites/environment/props/tree_c.png",
       // Layer 6: ground
       ground: s.parallax_ground || null,
     };

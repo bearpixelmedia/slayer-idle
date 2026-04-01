@@ -16,8 +16,8 @@ function ParallaxShrubOverlay() {
   const reloadSprites = React.useCallback(() => {
     const s = loadGameSettings();
     setSprites({
-      shrubBack: s.parallax_shrub_back || null,
-      shrubFront: s.parallax_shrub_front || null,
+      shrubBack:  s.parallax_shrub_back  || "/sprites/environment/props/vegetation.png",
+      shrubFront: s.parallax_shrub_front || "/sprites/environment/props/rocks.png",
     });
   }, []);
 

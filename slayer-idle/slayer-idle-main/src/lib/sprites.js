@@ -206,12 +206,43 @@ export const ZOMBIE_SPRITES = {
 
 // ─── ENEMY ROSTER MAP ────────────────────────────────────────────────────────
 export const ENEMY_SPRITE_MAP = {
-  // Orcs
-  "Orc":     ORC_SPRITES,
-  "Ogre":    ORC_WARRIOR_SPRITES,
-  "Goblin":  ORC_ROGUE_SPRITES,
+  // ── Skeletons (zone 1-2) ─────────────────────────────────────────────────
+  "Skeleton":          SKELETON_SPRITES,
+  "Skeleton Rogue":    SKELETON_ROGUE_SPRITES,
+  "Skeleton Warrior":  SKELETON_WARRIOR_SPRITES,
+  "Skeleton Mage":     SKELETON_MAGE_SPRITES,
+  // lowercase zone IDs
+  "skeleton":          SKELETON_SPRITES,
+  "skeleton_rogue":    SKELETON_ROGUE_SPRITES,
+  "skeleton_warrior":  SKELETON_WARRIOR_SPRITES,
+  "skeleton_mage":     SKELETON_MAGE_SPRITES,
 
-  // Skeletons & undead
+  // ── Orcs (zone 3-4) ──────────────────────────────────────────────────────
+  "Orc":          ORC_SPRITES,
+  "Orc Rogue":    ORC_ROGUE_SPRITES,
+  "Orc Warrior":  ORC_WARRIOR_SPRITES,
+  "Orc Shaman":   ORC_SHAMAN_SPRITES,
+  // lowercase zone IDs
+  "orc":          ORC_SPRITES,
+  "orc_rogue":    ORC_ROGUE_SPRITES,
+  "orc_warrior":  ORC_WARRIOR_SPRITES,
+  "orc_shaman":   ORC_SHAMAN_SPRITES,
+
+  // ── Special / zone variants ───────────────────────────────────────────────
+  "zombie":  ZOMBIE_SPRITES,
+  "ghost":   GHOST_SPRITES,
+  "spider":  SPIDER_SPRITES,
+  "dragon":  DRAGON_SPRITES,
+  "Zombie":  ZOMBIE_SPRITES,
+  "Ghost":   GHOST_SPRITES,
+  "Spider":  SPIDER_SPRITES,
+  "Dragon":  DRAGON_SPRITES,
+
+  // ── Legacy aliases ────────────────────────────────────────────────────────
+  "Ogre":        ORC_WARRIOR_SPRITES,
+  "Goblin":      ORC_ROGUE_SPRITES,
+
+  // Skeletons & undead (old map compat)
   "Skeleton": SKELETON_SPRITES,
   "Zombie":   ZOMBIE_SPRITES,
   "Ghost":    GHOST_SPRITES,
@@ -307,7 +338,21 @@ export const ENEMY_FILTER_MAP = {
 
   // ── Beasts ────────────────────────────────────────────────────────────────
   "Spider":  "brightness(0.4) contrast(1.4)",
-  "Dragon":  "hue-rotate(0deg) saturate(1.8) brightness(1.1)",
+  "spider":  "brightness(0.4) contrast(1.4)",
+  "Dragon":  "hue-rotate(0deg) saturate(1.8) brightness(1.1) drop-shadow(0 0 4px rgba(255,80,0,0.6))",
+  "dragon":  "hue-rotate(0deg) saturate(1.8) brightness(1.1) drop-shadow(0 0 4px rgba(255,80,0,0.6))",
+
+  // ── Zone ID aliases (lowercase) ───────────────────────────────────────────
+  "zombie":          "hue-rotate(90deg) saturate(0.9) brightness(0.8)",
+  "ghost":           "hue-rotate(200deg) saturate(0.6) brightness(1.4)",
+  "orc":             "",
+  "orc_rogue":       "hue-rotate(60deg) saturate(1.3) brightness(1.05)",
+  "orc_warrior":     "hue-rotate(20deg) saturate(1.4) brightness(0.85)",
+  "orc_shaman":      "hue-rotate(280deg) saturate(1.5) brightness(0.95)",
+  "skeleton":        "",
+  "skeleton_rogue":  "hue-rotate(30deg) saturate(1.2) brightness(1.05)",
+  "skeleton_warrior":"sepia(0.3) saturate(1.3) brightness(0.9)",
+  "skeleton_mage":   "hue-rotate(200deg) saturate(1.4) brightness(1.05)",
 
   // ── Sea creatures ─────────────────────────────────────────────────────────
   "Mermaid":  "hue-rotate(160deg) saturate(1.6) brightness(1.1)",

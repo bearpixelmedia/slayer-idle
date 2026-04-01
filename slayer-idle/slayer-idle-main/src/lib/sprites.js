@@ -162,21 +162,21 @@ export const SKELETON_ROGUE_SPRITES = {
 
 // ─── NPCs (usable as alternate player skins or boss variants) ────────────────
 export const KNIGHT_SPRITES = {
-  idle:  sheet("/sprites/npcs/knight/idle.png",  F32, { idle:  anim(6, true,  4) }),
-  run:   sheet("/sprites/npcs/knight/run.png",   F64, { run:   anim(10, true,  6) }),
-  death: sheet("/sprites/npcs/knight/death.png", F32, { death: anim(8, false, 9) }),
+  idle:  sheet("/sprites/npcs/knight/idle.png",  F32, { idle:  anim(4, true,  4) }),
+  run:   sheet("/sprites/npcs/knight/run.png",   F64, { run:   anim(6, true,  6) }),
+  death: sheet("/sprites/npcs/knight/death.png", F32, { death: anim(9, false, 9) }),
 };
 
 export const ROGUE_SPRITES = {
-  idle:  sheet("/sprites/npcs/rogue/idle.png",  F32, { idle:  anim(6, true,  4) }),
-  run:   sheet("/sprites/npcs/rogue/run.png",   F64, { run:   anim(10, true,  6) }),
-  death: sheet("/sprites/npcs/rogue/death.png", F32, { death: anim(8, false, 12) }),
+  idle:  sheet("/sprites/npcs/rogue/idle.png",  F32, { idle:  anim(4, true,  4) }),
+  run:   sheet("/sprites/npcs/rogue/run.png",   F64, { run:   anim(6, true,  6) }),
+  death: sheet("/sprites/npcs/rogue/death.png", F32, { death: anim(12, false, 12) }),
 };
 
 export const WIZARD_SPRITES = {
-  idle:  sheet("/sprites/npcs/wizard/idle.png",  F32, { idle:  anim(6, true,  4) }),
-  run:   sheet("/sprites/npcs/wizard/run.png",   F64, { run:   anim(10, true,  6) }),
-  death: sheet("/sprites/npcs/wizard/death.png", F32, { death: anim(8, false, 12) }),
+  idle:  sheet("/sprites/npcs/wizard/idle.png",  F32, { idle:  anim(4, true,  4) }),
+  run:   sheet("/sprites/npcs/wizard/run.png",   F64, { run:   anim(6, true,  6) }),
+  death: sheet("/sprites/npcs/wizard/death.png", F32, { death: anim(12, false, 12) }),
 };
 
 // ─── PLACEHOLDER ENEMIES (no unique sheet — use filter map below) ─────────────

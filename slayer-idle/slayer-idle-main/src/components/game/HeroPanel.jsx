@@ -26,6 +26,7 @@ import {
   KNIGHT_SPRITES,
   ROGUE_SPRITES,
   WIZARD_SPRITES,
+  resolveAnim,
 } from "@/lib/sprites";
 
 // ─── Sprite map ───────────────────────────────────────────────────────────────
@@ -96,8 +97,8 @@ function HeroCard({ hero, level, coins, heroAbilities, onRecruit, onLevel, onAct
       : `+${Math.round(passiveVal * 100)}% ${passiveMeta.label}`
     : null;
 
-  const spriteSheet = HERO_SPRITES[hero.id];
-  const idleSheet   = spriteSheet?.idle;
+  const spriteSet  = HERO_SPRITES[hero.id];
+  const idleAnim   = resolveAnim(spriteSet, "idle");
 
   return (
     <motion.div
@@ -112,12 +113,16 @@ function HeroCard({ hero, level, coins, heroAbilities, onRecruit, onLevel, onAct
       <div className="flex items-center gap-3 px-3 py-2.5">
         {/* Sprite or placeholder */}
         <div className="relative flex-shrink-0 w-10 h-10 rounded-md overflow-hidden bg-black/30 border border-border/30">
-          {idleSheet ? (
+          {idleAnim ? (
             <AnimatedSprite
-              sheet={idleSheet}
-              animKey="idle"
-              className="w-full h-full"
-              style={{ imageRendering: "pixelated" }}
+              url={idleAnim.url}
+              frameW={idleAnim.frameW}
+              frameH={idleAnim.frameH}
+              frames={idleAnim.frames}
+              fps={idleAnim.fps}
+              loop={idleAnim.loop}
+              scale={1}
+              playing={true}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-2xl">

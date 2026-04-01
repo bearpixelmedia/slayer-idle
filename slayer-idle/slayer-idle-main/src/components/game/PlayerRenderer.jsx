@@ -19,7 +19,7 @@ function assignRef(ref, node) {
  *   isHit                — true briefly when player takes damage
  *   isDead               — player death state
  *   fallbackEmoji        — (ignored, kept for API compat)
- *   className            — applied to wrapper div
+ *   className            — applied to the hitbox slot (passed from PlayerDisplay)
  *   onCharacterBoundsChange — ResizeObserver callback for layout system
  *   combatGlyphRef       — ref attached to the visible glyph for hitbox math
  */
@@ -30,7 +30,7 @@ const PlayerRenderer = forwardRef(function PlayerRenderer(
     isHit = false,
     isDead = false,
     fallbackEmoji,       // kept for API compat, unused
-    className,
+    className,           // kept for API compat, unused (slot sizing controlled by parent)
     emojiClassName,      // kept for API compat, unused
     onCharacterBoundsChange,
     combatGlyphRef,
@@ -50,7 +50,7 @@ const PlayerRenderer = forwardRef(function PlayerRenderer(
     [ref, combatGlyphRef]
   );
 
-  // Report bounds to PlayerDisplay's layout system
+  // Report sprite bounds to PlayerDisplay's layout system
   useLayoutEffect(() => {
     const el = wrapperRef.current;
     if (!el || !onCharacterBoundsChange) return;
@@ -68,16 +68,36 @@ const PlayerRenderer = forwardRef(function PlayerRenderer(
   }, [onCharacterBoundsChange]);
 
   return (
-    <div ref={setWrapperNode} className={className} style={{ display: "inline-flex", alignItems: "flex-end" }}>
-      <PlayerSprite
-        isDead={isDead}
-        isAttacking={isAttacking}
-        isHit={isHit}
-        isRunning={!isDead}
-        weaponMode={weaponMode}
-        scale={3}
-        flipX={false}
-      />
+    /**
+     * Outer wrapper fills the hitbox slot (h-full w-full) and aligns content to
+     * the bottom-center, matching EnemyWeaponRig's inner flex wrapper.
+     * overflow-visible lets the sprite extend upward past the slot boundary.
+     */
+    <div
+      style={{
+        display: "flex",
+        width: "100%",
+        height: "100%",
+        alignItems: "flex-end",
+        justifyContent: "center",
+        overflow: "visible",
+      }}
+    >
+      {/* Inner ref div is what we measure for hitbox math — sized to the actual sprite */}
+      <div
+        ref={setWrapperNode}
+        style={{ display: "inline-flex", alignItems: "flex-end", overflow: "visible" }}
+      >
+        <PlayerSprite
+          isDead={isDead}
+          isAttacking={isAttacking}
+          isHit={isHit}
+          isRunning={!isDead}
+          weaponMode={weaponMode}
+          scale={3}
+          flipX={false}
+        />
+      </div>
     </div>
   );
 });

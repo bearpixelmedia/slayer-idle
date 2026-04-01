@@ -1,0 +1,549 @@
+{ "frames": [
+   {
+    "filename": "Wood (Wood Square Shield) 0.aseprite",
+    "frame": { "x": 1, "y": 1, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 112, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Square Shield) 1.aseprite",
+    "frame": { "x": 19, "y": 1, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Square Shield) 2.aseprite",
+    "frame": { "x": 37, "y": 1, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Hammer) 0.aseprite",
+    "frame": { "x": 1, "y": 19, "w": 16, "h": 32 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 16, "y": 16, "w": 16, "h": 32 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Hammer) 1.aseprite",
+    "frame": { "x": 19, "y": 19, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Hammer) 2.aseprite",
+    "frame": { "x": 37, "y": 19, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Tower Shield) 0.aseprite",
+    "frame": { "x": 1, "y": 53, "w": 32, "h": 32 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 112, "y": 16, "w": 32, "h": 32 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Tower Shield) 1.aseprite",
+    "frame": { "x": 35, "y": 53, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Tower Shield) 2.aseprite",
+    "frame": { "x": 53, "y": 53, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Kite Shield) 0.aseprite",
+    "frame": { "x": 1, "y": 87, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 144, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Kite Shield) 1.aseprite",
+    "frame": { "x": 19, "y": 87, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Kite Shield) 2.aseprite",
+    "frame": { "x": 37, "y": 87, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Circle Shield) 0.aseprite",
+    "frame": { "x": 1, "y": 105, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 128, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Circle Shield) 1.aseprite",
+    "frame": { "x": 19, "y": 105, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Circle Shield) 2.aseprite",
+    "frame": { "x": 37, "y": 105, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Staff) 0.aseprite",
+    "frame": { "x": 1, "y": 123, "w": 16, "h": 48 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 96, "y": 16, "w": 16, "h": 48 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Staff) 1.aseprite",
+    "frame": { "x": 19, "y": 123, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Staff) 2.aseprite",
+    "frame": { "x": 37, "y": 123, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Quiver) 0.aseprite",
+    "frame": { "x": 1, "y": 173, "w": 16, "h": 32 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 80, "y": 16, "w": 16, "h": 32 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Quiver) 1.aseprite",
+    "frame": { "x": 19, "y": 173, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Quiver) 2.aseprite",
+    "frame": { "x": 37, "y": 173, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Wand) 0.aseprite",
+    "frame": { "x": 1, "y": 207, "w": 32, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 80, "y": 0, "w": 32, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Wand) 1.aseprite",
+    "frame": { "x": 35, "y": 207, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Wand) 2.aseprite",
+    "frame": { "x": 53, "y": 207, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Dagger) 0.aseprite",
+    "frame": { "x": 1, "y": 225, "w": 16, "h": 32 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 32, "y": 16, "w": 16, "h": 32 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Dagger) 1.aseprite",
+    "frame": { "x": 19, "y": 225, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Dagger) 2.aseprite",
+    "frame": { "x": 37, "y": 225, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Spear) 0.aseprite",
+    "frame": { "x": 1, "y": 259, "w": 16, "h": 48 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 64, "y": 0, "w": 16, "h": 48 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Spear) 1.aseprite",
+    "frame": { "x": 19, "y": 259, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Spear) 2.aseprite",
+    "frame": { "x": 37, "y": 259, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Axe) 0.aseprite",
+    "frame": { "x": 1, "y": 309, "w": 16, "h": 32 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 48, "y": 16, "w": 16, "h": 32 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Axe) 1.aseprite",
+    "frame": { "x": 19, "y": 309, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Axe) 2.aseprite",
+    "frame": { "x": 37, "y": 309, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Book) 0.aseprite",
+    "frame": { "x": 1, "y": 343, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 48, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Book) 1.aseprite",
+    "frame": { "x": 19, "y": 343, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Book) 2.aseprite",
+    "frame": { "x": 37, "y": 343, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Arrow - EastWest) 0.aseprite",
+    "frame": { "x": 1, "y": 361, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 32, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Arrow - EastWest) 1.aseprite",
+    "frame": { "x": 19, "y": 361, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Arrow - EastWest) 2.aseprite",
+    "frame": { "x": 37, "y": 361, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Arrow - NorthSouth Copy) 0.aseprite",
+    "frame": { "x": 1, "y": 379, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 16, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Arrow - NorthSouth Copy) 1.aseprite",
+    "frame": { "x": 19, "y": 379, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Arrow - NorthSouth Copy) 2.aseprite",
+    "frame": { "x": 37, "y": 379, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Bow) 0.aseprite",
+    "frame": { "x": 1, "y": 397, "w": 16, "h": 32 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 48, "y": 48, "w": 16, "h": 32 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Bow) 1.aseprite",
+    "frame": { "x": 19, "y": 397, "w": 16, "h": 32 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 48, "y": 48, "w": 16, "h": 32 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Bow) 2.aseprite",
+    "frame": { "x": 37, "y": 397, "w": 16, "h": 32 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 48, "y": 48, "w": 16, "h": 32 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Sickle) 0.aseprite",
+    "frame": { "x": 1, "y": 431, "w": 16, "h": 32 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 32, "y": 48, "w": 16, "h": 32 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Sickle) 1.aseprite",
+    "frame": { "x": 19, "y": 431, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Sickle) 2.aseprite",
+    "frame": { "x": 37, "y": 431, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Mace) 0.aseprite",
+    "frame": { "x": 1, "y": 465, "w": 16, "h": 32 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 16, "y": 48, "w": 16, "h": 32 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Mace) 1.aseprite",
+    "frame": { "x": 19, "y": 465, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Mace) 2.aseprite",
+    "frame": { "x": 37, "y": 465, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Pickaxe) 0.aseprite",
+    "frame": { "x": 1, "y": 499, "w": 16, "h": 32 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 48, "w": 16, "h": 32 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Pickaxe) 1.aseprite",
+    "frame": { "x": 19, "y": 499, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Pickaxe) 2.aseprite",
+    "frame": { "x": 37, "y": 499, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Sword) 0.aseprite",
+    "frame": { "x": 1, "y": 533, "w": 16, "h": 48 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 48 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Sword) 1.aseprite",
+    "frame": { "x": 19, "y": 533, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   },
+   {
+    "filename": "Wood (Wood Sword) 2.aseprite",
+    "frame": { "x": 37, "y": 533, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 192, "h": 112 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.17-x64",
+  "image": "Wood-final.png",
+  "format": "RGBA8888",
+  "size": { "w": 70, "h": 582 },
+  "scale": "1",
+  "frameTags": [
+  ],
+  "layers": [
+   { "name": "Wood Square Shield", "opacity": 255, "blendMode": "normal" },
+   { "name": "Wood Hammer", "opacity": 255, "blendMode": "normal" },
+   { "name": "Wood Tower Shield", "opacity": 255, "blendMode": "normal" },
+   { "name": "Wood Kite Shield", "opacity": 255, "blendMode": "normal" },
+   { "name": "Wood Circle Shield", "opacity": 255, "blendMode": "normal" },
+   { "name": "Wood Staff", "opacity": 255, "blendMode": "normal" },
+   { "name": "Wood Quiver", "opacity": 255, "blendMode": "normal" },
+   { "name": "Wood Wand", "opacity": 255, "blendMode": "normal" },
+   { "name": "Wood Dagger", "opacity": 255, "blendMode": "normal" },
+   { "name": "Wood Spear", "opacity": 255, "blendMode": "normal" },
+   { "name": "Wood Axe", "opacity": 255, "blendMode": "normal" },
+   { "name": "Wood Book", "opacity": 255, "blendMode": "normal" },
+   { "name": "Wood Arrow - EastWest", "opacity": 255, "blendMode": "normal" },
+   { "name": "Wood Arrow - NorthSouth Copy", "opacity": 255, "blendMode": "normal" },
+   { "name": "Wood Bow", "opacity": 255, "blendMode": "normal" },
+   { "name": "Wood Sickle", "opacity": 255, "blendMode": "normal" },
+   { "name": "Wood Mace", "opacity": 255, "blendMode": "normal" },
+   { "name": "Wood Pickaxe", "opacity": 255, "blendMode": "normal" },
+   { "name": "Wood Sword", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}

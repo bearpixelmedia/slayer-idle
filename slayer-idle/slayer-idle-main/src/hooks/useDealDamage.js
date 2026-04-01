@@ -38,6 +38,7 @@ export default function useDealDamage({
   activeBuffsRef,
   currentWeaponRef,
   tryProcBuff,
+  isShieldWallActive,
 }) {
   // ─── Visual effect state ──────────────────────────────────────────────────
   const [floatingCoins,  setFloatingCoins]  = useState([]);
@@ -187,6 +188,11 @@ export default function useDealDamage({
         if (boss?.mechanic?.type === "thorns") {
           playerDamage += Math.ceil(finalDamage * boss.mechanic.reflectPct);
         }
+      }
+
+      // Knight hero Shield Wall — blocks all incoming damage
+      if (typeof isShieldWallActive === "function" && isShieldWallActive()) {
+        playerDamage = 0;
       }
 
       if (playerDamage > 0) {

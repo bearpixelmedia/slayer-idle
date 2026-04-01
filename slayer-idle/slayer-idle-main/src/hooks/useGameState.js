@@ -1,24 +1,34 @@
 /**
  * useGameState.js — orchestrator
  *
- * Thin wrapper that composes the four sub-hooks and exposes the same
- * return shape as before so every consumer (Game.jsx, GameCanvas, etc.)
- * continues to work without any changes.
+ * Composes sub-hooks and exposes the full game API to consumers.
  *
  * Sub-hooks:
  *   combatHelpers.js        — pure state helpers (spawnNewEnemy, etc.)
  *   useGamePersistence.js   — save/load, defaultState, offline earnings
- *   useBuffsAndAbilities.js — buffs, abilities, tryProcBuff
+ *   useBuffsAndAbilities.js — buffs, built-in abilities, hero abilities
  *   useCombatEngine.js      — main loop, dealDamage, world coins
+ *
+ * Hero system additions:
+ *   - heroPassives  (derived from recruited heroes + their levels)
+ *   - getTapDamage  now factors in rogue passive tapDamageBoost
+ *   - getIdleCPS    now factors in hero DPS + upgrades
+ *   - recruitHero   spend coins to recruit a hero (level 0 → 1)
+ *   - levelHero     spend coins to level a recruited hero
+ *   - hero active abilities wired through useBuffsAndAbilities
  */
 
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
-  ZONES, UPGRADES, TAP_UPGRADES, IDLE_UPGRADES, BOW_UPGRADES,
+  ZONES, UPGRADES,
   getUpgradeCost, getSoulsOnPrestige, getSlayerPointsOnPrestige, getBowSoulMultiplier,
   getZoneStages, canUnlockZone,
   computeTapDamage, computeIdleCPS,
 } from "@/lib/gameData";
+import {
+  HEROES, HERO_BY_ID, MAX_HEROES,
+  getHeroLevelCost, computeHeroPassives, computeHeroDPS,
+} from "@/lib/heroes";
 import { SKILLS, getSkillMultipliers } from "@/lib/skillTree";
 import { VILLAGE_BUILDINGS, computeVillageMultipliers, getBuildingUpgradeCost, canAffordUpgrade } from "@/lib/village";
 import { getBuffMultiplier } from "@/lib/buffs";
@@ -47,9 +57,7 @@ export default function useGameState({
   const currentWeaponRef = useRef(weaponMode);
 
   useEffect(() => { stateRef.current = state; }, [state]);
-  useEffect(() => {
-    currentWeaponRef.current = currentWeapon;
-  }, [currentWeapon]);
+  useEffect(() => { currentWeaponRef.current = currentWeapon; }, [currentWeapon]);
 
   // ─── Periodic save ────────────────────────────────────────────────────────
   useEffect(() => {
@@ -57,7 +65,7 @@ export default function useGameState({
     return () => clearInterval(interval);
   }, []);
 
-  // ─── Derived multipliers ─────────────────────────────────────────────────
+  // ─── Derived multipliers ──────────────────────────────────────────────────
   const skillMults = useMemo(
     () => getSkillMultipliers(state.unlockedSkills || []),
     [state.unlockedSkills]
@@ -67,30 +75,57 @@ export default function useGameState({
     [state.villageBuildings]
   );
 
-  // ─── Damage/DPS calculations ──────────────────────────────────────────────
+  // ─── Hero passives (derived from recruited heroes + levels) ──────────────
+  // heroPassives: { damageReduction, tapDamageBoost, soulGainBoost }
+  const heroPassives = useMemo(
+    () => computeHeroPassives(state.heroes || {}),
+    [state.heroes]
+  );
+
+  // Total idle DPS contributed by all heroes
+  const heroDPS = useMemo(
+    () => computeHeroDPS(state.heroes || {}),
+    [state.heroes]
+  );
+
+  // ─── Damage / DPS calculations ────────────────────────────────────────────
   const getTapDamage = useCallback(
     (s = stateRef.current, weapon = currentWeaponRef.current, buffs = []) => {
-      return computeTapDamage(s, weapon, buffs, skillMults, villageMultipliers, damageMultiplier);
+      const base = computeTapDamage(s, weapon, buffs, skillMults, villageMultipliers, damageMultiplier);
+      // Apply rogue passive tapDamageBoost
+      const boost = heroPassives.tapDamageBoost || 0;
+      return base * (1 + boost);
     },
-    [skillMults, villageMultipliers, damageMultiplier]
+    [skillMults, villageMultipliers, damageMultiplier, heroPassives]
   );
 
   const getIdleCPS = useCallback(
-    (s = stateRef.current) => computeIdleCPS(s, skillMults, villageMultipliers),
-    [skillMults, villageMultipliers]
+    (s = stateRef.current) => {
+      const upgradeCPS = computeIdleCPS(s, skillMults, villageMultipliers);
+      // Hero DPS is independent of upgrade idle DPS
+      return upgradeCPS + heroDPS;
+    },
+    [skillMults, villageMultipliers, heroDPS]
   );
 
   const getTapDamageRef = useRef(getTapDamage);
   const getIdleCPSRef   = useRef(getIdleCPS);
   useEffect(() => { getTapDamageRef.current = getTapDamage; }, [getTapDamage]);
-  useEffect(() => { getIdleCPSRef.current = getIdleCPS; }, [getIdleCPS]);
+  useEffect(() => { getIdleCPSRef.current   = getIdleCPS;   }, [getIdleCPS]);
 
-  // ─── Buffs & abilities ────────────────────────────────────────────────────
+  // ─── Buffs & abilities (built-in + hero) ─────────────────────────────────
+  const handleArcaneBombRef = useRef(null);
+
   const {
-    abilities, abilitiesRef,
-    activeBuffs, activeBuffsRef,
-    activateAbility, tryProcBuff,
-  } = useBuffsAndAbilities(stateRef);
+    abilities,      abilitiesRef,
+    heroAbilities,  heroAbilitiesRef,
+    activeBuffs,    activeBuffsRef,
+    activateAbility,
+    activateHeroAbility,
+    consumeBackstabHit,
+    isShieldWallActive,
+    tryProcBuff,
+  } = useBuffsAndAbilities(stateRef, { onArcaneBomb: (...args) => handleArcaneBombRef.current?.(...args) });
 
   // ─── Combat engine ────────────────────────────────────────────────────────
   const {
@@ -102,9 +137,22 @@ export default function useGameState({
     stateRef, setState,
     skillMults, villageMultipliers,
     abilitiesRef, activeBuffsRef,
+    heroAbilitiesRef,
+    isShieldWallActive,
     currentWeaponRef, tryProcBuff,
     getTapDamageRef, getIdleCPSRef,
   });
+
+  // ─── Arcane Bomb handler (needs dealDamage from combat engine) ─────────────
+  const handleArcaneBomb = useCallback(() => {
+    const s = stateRef.current;
+    if (!s || s.isDead || s.enemyHP <= 0) return;
+    const tapDmg = getTapDamageRef.current(s, currentWeaponRef.current, activeBuffsRef.current);
+    const bombDamage = tapDmg * (HERO_BY_ID.wizard?.ability?.multiplier ?? 20);
+    dealDamage(bombDamage, 50 + Math.random() * 20, 40 + Math.random() * 20);
+  }, [dealDamage, activeBuffsRef]);
+
+  useEffect(() => { handleArcaneBombRef.current = handleArcaneBomb; }, [handleArcaneBomb]);
 
   // ─── Offline earnings (one-shot on mount) ────────────────────────────────
   useEffect(() => {
@@ -119,7 +167,6 @@ export default function useGameState({
       totalCoinsEarned: prev.totalCoinsEarned + offlineCoins,
       souls: prev.souls + soulsEarned,
     }));
-    // Pass seconds so the modal can display "you were gone Xh Ym"
     setOfflineEarnings({ coins: offlineCoins, souls: soulsEarned, seconds });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -135,25 +182,31 @@ export default function useGameState({
       tryProcBuff("tap", stateRef.current);
       setAttackTick((n) => n + 1);
 
-      const damage = getTapDamageRef.current(
+      // Check backstab before computing damage (it boosts the multiplier)
+      const backstabActive = heroAbilitiesRef.current?.backstab?.active;
+      let tapDamage = getTapDamageRef.current(
         stateRef.current, currentWeaponRef.current, activeBuffsRef.current
       );
+      if (backstabActive) {
+        tapDamage *= HERO_BY_ID.rogue?.ability?.multiplier ?? 5;
+        consumeBackstabHit();
+      }
 
       const applyHit = () => {
         if (!bowFlightMs) {
           setSlashEffects((prev) => [...prev, { id: Date.now() + Math.random(), x, y }]);
           setTimeout(() => setSlashEffects((prev) => prev.slice(1)), 300);
         }
-        dealDamage(damage, x, y);
+        dealDamage(tapDamage, x, y);
       };
 
       if (bowFlightMs) setTimeout(applyHit, bowFlightMs);
       else applyHit();
     },
-    [dealDamage, tryProcBuff, setAttackTick, setSlashEffects, activeBuffsRef]
+    [dealDamage, tryProcBuff, setAttackTick, setSlashEffects, activeBuffsRef, heroAbilitiesRef, consumeBackstabHit]
   );
 
-  // ─── Player actions ───────────────────────────────────────────────────────
+  // ─── Upgrade actions ──────────────────────────────────────────────────────
   function getUpgradeLevel(id) {
     return state.upgradeLevels?.[id] || 0;
   }
@@ -181,6 +234,54 @@ export default function useGameState({
     });
   }, []);
 
+  // ─── Hero actions ─────────────────────────────────────────────────────────
+
+  /** Recruit a hero for the first time (sets level to 1). */
+  const recruitHero = useCallback((heroId) => {
+    setState((prev) => {
+      const hero = HERO_BY_ID[heroId];
+      if (!hero) return prev;
+      const alreadyRecruited = (prev.heroes?.[heroId] || 0) >= 1;
+      if (alreadyRecruited) return prev;
+      const recruitedCount = Object.values(prev.heroes || {}).filter((l) => l >= 1).length;
+      if (recruitedCount >= MAX_HEROES) return prev;
+      if (prev.coins < hero.unlockCost) return prev;
+      return {
+        ...prev,
+        coins: prev.coins - hero.unlockCost,
+        heroes: { ...prev.heroes, [heroId]: 1 },
+      };
+    });
+  }, []);
+
+  /** Level up a recruited hero. */
+  const levelHero = useCallback((heroId) => {
+    setState((prev) => {
+      const hero = HERO_BY_ID[heroId];
+      if (!hero) return prev;
+      const currentLevel = prev.heroes?.[heroId] || 0;
+      if (currentLevel < 1) return prev; // must be recruited first
+      const cost = getHeroLevelCost(heroId, currentLevel);
+      if (prev.coins < cost) return prev;
+      return {
+        ...prev,
+        coins: prev.coins - cost,
+        heroes: { ...prev.heroes, [heroId]: currentLevel + 1 },
+      };
+    });
+  }, []);
+
+  /** Dismiss a hero from the active team. */
+  const dismissHero = useCallback((heroId) => {
+    setState((prev) => {
+      if (!prev.heroes?.[heroId]) return prev;
+      const updated = { ...prev.heroes };
+      delete updated[heroId];
+      return { ...prev, heroes: updated };
+    });
+  }, []);
+
+  // ─── Village actions ──────────────────────────────────────────────────────
   const upgradeBuilding = useCallback((buildingId) => {
     setState((prev) => {
       const building = VILLAGE_BUILDINGS.find((b) => b.id === buildingId);
@@ -197,6 +298,7 @@ export default function useGameState({
     });
   }, []);
 
+  // ─── Skill tree ───────────────────────────────────────────────────────────
   const unlockSkill = useCallback((skillId) => {
     setState((prev) => {
       if (prev.unlockedSkills.includes(skillId)) return prev;
@@ -212,6 +314,7 @@ export default function useGameState({
     });
   }, []);
 
+  // ─── Revive / prestige / zone ─────────────────────────────────────────────
   const revive = useCallback(() => {
     setState((prev) => {
       if (prev.souls < 10) return prev;
@@ -219,39 +322,39 @@ export default function useGameState({
     });
   }, []);
 
-  const prestige = useCallback(
-    (opts = {}) => {
-      const fromDeath = opts.fromDeath === true;
-      setState((prev) => {
-        const baseSoulsFromRun = getSoulsOnPrestige(prev.totalCoinsEarned);
-        const effectiveBaseSouls =
-          baseSoulsFromRun > 0 ? baseSoulsFromRun : fromDeath ? 1 : 0;
-        if (effectiveBaseSouls <= 0) return prev;
+  const prestige = useCallback((opts = {}) => {
+    const fromDeath = opts.fromDeath === true;
+    setState((prev) => {
+      const baseSoulsFromRun = getSoulsOnPrestige(prev.totalCoinsEarned);
+      const effectiveBaseSouls = baseSoulsFromRun > 0 ? baseSoulsFromRun : fromDeath ? 1 : 0;
+      if (effectiveBaseSouls <= 0) return prev;
 
-        const soulMult = getSkillMultipliers(prev.unlockedSkills).soulMultiplier;
-        const newSouls = Math.max(1, Math.floor(effectiveBaseSouls * soulMult));
-        const newSlayerPoints = getSlayerPointsOnPrestige(prev.souls + newSouls);
-        const fresh = defaultState();
-        const wp = coerceFiniteNumber(prev.worldProgress, 0);
+      const soulMult = getSkillMultipliers(prev.unlockedSkills).soulMultiplier;
+      // Apply wizard soulGainBoost passive if wizard is recruited
+      const wizardBoost = computeHeroPassives(prev.heroes || {}).soulGainBoost || 0;
+      const newSouls = Math.max(1, Math.floor(effectiveBaseSouls * soulMult * (1 + wizardBoost)));
+      const newSlayerPoints = getSlayerPointsOnPrestige(prev.souls + newSouls);
+      const fresh = defaultState();
+      const wp = coerceFiniteNumber(prev.worldProgress, 0);
 
-        const merged = {
-          ...fresh,
-          worldProgress: wp,
-          nextCoinWorldPos: wp + 12,
-          souls: prev.souls + newSouls,
-          slayerPoints: prev.slayerPoints + newSlayerPoints,
-          unlockedSkills: prev.unlockedSkills,
-          totalKills: prev.totalKills,
-          highestStage: prev.highestStage || 0,
-          prestigeCount: (prev.prestigeCount || 0) + 1,
-          villageBuildings: prev.villageBuildings || {},
-          saveVersion: SAVE_VERSION,
-        };
-        return sanitizePathScalars(spawnNewEnemy(merged));
-      });
-    },
-    []
-  );
+      const merged = {
+        ...fresh,
+        worldProgress: wp,
+        nextCoinWorldPos: wp + 12,
+        souls: prev.souls + newSouls,
+        slayerPoints: prev.slayerPoints + newSlayerPoints,
+        unlockedSkills: prev.unlockedSkills,
+        // Heroes persist through prestige — levels kept
+        heroes: prev.heroes || {},
+        totalKills: prev.totalKills,
+        highestStage: prev.highestStage || 0,
+        prestigeCount: (prev.prestigeCount || 0) + 1,
+        villageBuildings: prev.villageBuildings || {},
+        saveVersion: SAVE_VERSION,
+      };
+      return sanitizePathScalars(spawnNewEnemy(merged));
+    });
+  }, []);
 
   const switchZone = useCallback((zoneId) => {
     setState((prev) => {
@@ -289,11 +392,11 @@ export default function useGameState({
     });
   }, []);
 
-  // ─── Prestige preview (pure, no hooks) ───────────────────────────────────
+  // ─── Prestige preview ─────────────────────────────────────────────────────
   const { soulsOnPrestige, canPrestige, slayerPointsOnPrestige } =
     computePrestigePreview(state);
 
-  // ─── Return shape — identical to original ────────────────────────────────
+  // ─── Return shape ─────────────────────────────────────────────────────────
   return {
     state,
     floatingCoins,
@@ -314,6 +417,15 @@ export default function useGameState({
     unlockSkill,
     abilities,
     activateAbility,
+    // Hero system
+    heroAbilities,
+    heroPassives,
+    heroDPS,
+    recruitHero,
+    levelHero,
+    dismissHero,
+    activateHeroAbility,
+    isShieldWallActive,
     getTapDamage: () => getTapDamageRef.current(stateRef.current),
     getIdleCPS:   () => getIdleCPSRef.current(stateRef.current),
     getUpgradeLevel,
@@ -329,4 +441,3 @@ export default function useGameState({
     tickWorldCoinCollection,
   };
 }
-

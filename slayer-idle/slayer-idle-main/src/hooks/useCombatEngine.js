@@ -40,6 +40,8 @@ export default function useCombatEngine({
   villageMultipliers,
   abilitiesRef,
   activeBuffsRef,
+  heroAbilitiesRef,
+  isShieldWallActive,
   currentWeaponRef,
   tryProcBuff,
   getTapDamageRef,
@@ -67,6 +69,7 @@ export default function useCombatEngine({
     activeBuffsRef,
     currentWeaponRef,
     tryProcBuff,
+    isShieldWallActive,
   });
 
   // ── Main game loop (world tick, auto-attack, idle DPS, cleanup) ──────────

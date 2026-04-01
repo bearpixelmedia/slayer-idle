@@ -1,4 +1,4 @@
-#env
+# env
 .env
 .env.*
 !.env.example
@@ -12,12 +12,22 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies — never commit these
+node_modules/
 node_modules
+.pnp
+.pnp.js
+
+# Build output
 dist
 dist-ssr
 *.local
 
-# Editor directories and files
+# Vite cache
+.vite
+**/.vite/
+
+# Editor
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -28,5 +38,6 @@ dist-ssr
 *.sln
 *.sw?
 
-.env
-.vite
+# Temp / agent files
+incoming_files/
+*.zip

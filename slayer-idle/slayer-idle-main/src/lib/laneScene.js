@@ -38,7 +38,7 @@ export const COMBAT_GROUND_SHADOW_BOSS =
  * size tracks the same Tailwind breakpoints as `combatSlotNominal` / `computeEnemyWeaponLayout`.
  */
 export const COMBAT_HITBOX_SLOT_CLASS =
-  "relative z-0 box-border flex h-16 w-16 shrink-0 flex-col justify-end items-center sm:h-20 sm:w-20 md:h-24 md:w-24";
+  "relative z-0 box-border flex h-16 w-16 shrink-0 flex-col justify-end items-center overflow-visible sm:h-20 sm:w-20 md:h-24 md:w-24";
 
 /** Non-boss enemy, weapons hidden: row flex (no flex-col). */
 export const COMBAT_HITBOX_SLOT_ROW_CLASS =

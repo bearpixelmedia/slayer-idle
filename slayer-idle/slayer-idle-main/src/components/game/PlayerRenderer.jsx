@@ -13,13 +13,20 @@ function assignRef(ref, node) {
  * Renders the player character using the sprite animation system.
  * Keeps the same external API as before so PlayerDisplay works unchanged.
  *
+ * Scale rationale:
+ *   Enemy sprites are 32px frames × scale 3 = 96px on screen.
+ *   Player sprites are 64px frames. scale=2 → 128px — visually comparable
+ *   to enemies and overflows the 64px hitbox slot by ~64px, same order of
+ *   magnitude as enemies. scale=3 would produce 192px which is too large
+ *   and fights the overflow chain.
+ *
  * Props:
  *   weaponMode           — "sword" | "bow"
  *   isAttacking          — true for one tick when player attacks
  *   isHit                — true briefly when player takes damage
  *   isDead               — player death state
  *   fallbackEmoji        — (ignored, kept for API compat)
- *   className            — applied to the hitbox slot (passed from PlayerDisplay)
+ *   className            — (ignored, kept for API compat)
  *   onCharacterBoundsChange — ResizeObserver callback for layout system
  *   combatGlyphRef       — ref attached to the visible glyph for hitbox math
  */
@@ -29,9 +36,9 @@ const PlayerRenderer = forwardRef(function PlayerRenderer(
     isAttacking = false,
     isHit = false,
     isDead = false,
-    fallbackEmoji,       // kept for API compat, unused
-    className,           // kept for API compat, unused (slot sizing controlled by parent)
-    emojiClassName,      // kept for API compat, unused
+    fallbackEmoji: _fallbackEmoji,  // kept for API compat, unused
+    className: _className,          // kept for API compat, unused
+    emojiClassName: _emojiClassName, // kept for API compat, unused
     onCharacterBoundsChange,
     combatGlyphRef,
   },
@@ -69,9 +76,10 @@ const PlayerRenderer = forwardRef(function PlayerRenderer(
 
   return (
     /**
-     * Outer wrapper fills the hitbox slot (h-full w-full) and aligns content to
-     * the bottom-center, matching EnemyWeaponRig's inner flex wrapper.
-     * overflow-visible lets the sprite extend upward past the slot boundary.
+     * Mirrors EnemyWeaponRig's inner flex wrapper:
+     *   - h-full / w-full fills the hitbox slot
+     *   - items-end aligns sprite to the feet baseline
+     *   - overflow-visible lets sprite extend upward past the slot
      */
     <div
       style={{
@@ -83,7 +91,6 @@ const PlayerRenderer = forwardRef(function PlayerRenderer(
         overflow: "visible",
       }}
     >
-      {/* Inner ref div is what we measure for hitbox math — sized to the actual sprite */}
       <div
         ref={setWrapperNode}
         style={{ display: "inline-flex", alignItems: "flex-end", overflow: "visible" }}
@@ -94,7 +101,7 @@ const PlayerRenderer = forwardRef(function PlayerRenderer(
           isHit={isHit}
           isRunning={!isDead}
           weaponMode={weaponMode}
-          scale={3}
+          scale={2}
           flipX={false}
         />
       </div>

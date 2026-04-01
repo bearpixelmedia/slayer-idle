@@ -9,8 +9,14 @@ import { HUD_THEME } from "@/lib/hudTheme";
 import { UPGRADES, getUpgradeCost } from "@/lib/gameData";
 
 /**
- * HUDOverlay - Single parent container for all HUD UI elements
- * Pulls from global HUD_THEME for consistent styling
+ * HUDOverlay — single fixed overlay layer for all HUD chrome.
+ *
+ * Layout (mobile portrait):
+ *   • Stats bar   — top-center, centered pill
+ *   • WeaponMode  — top-left below stats, compact pill buttons (only when bow unlocked)
+ *   • AbilityHUD  — left edge, compact 56×40 buttons
+ *   • Menu button — bottom-right FAB
+ *   • Menu panel  — slides in from right (desktop: fixed panel)
  */
 export default function HUDOverlay({
   state,
@@ -46,99 +52,107 @@ export default function HUDOverlay({
   onLevelHero,
   onActivateHeroAbility,
 }) {
-  // Check if any upgrade is affordable
-  const hasAffordableUpgrade = UPGRADES.some(upgrade => {
+  const hasAffordableUpgrade = UPGRADES.some((upgrade) => {
     const level = state?.upgradeLevels?.[upgrade.id] || 0;
     const cost = getUpgradeCost(upgrade, level);
     return (state?.coins || 0) >= cost;
   });
 
+  // Shared menu panel props
+  const menuProps = {
+    state,
+    onBuyUpgrade,
+    onUnlockSkill,
+    onPrestige,
+    onRevive,
+    unlockedIds,
+    damageMultiplier,
+    offlineMultiplier,
+    onSwitchZone,
+    onUnlockZone,
+    onClaimQuestReward,
+    onRepeatQuest,
+    questProgress,
+    onUpgradeBuilding,
+    abilities,
+    onActivateAbility,
+    weaponMode: currentWeapon,
+    onWeaponModeChange: onWeaponChange,
+    onRunnerClick,
+    heroAbilities,
+    heroPassives,
+    heroDPS,
+    onRecruitHero,
+    onLevelHero,
+    onActivateHeroAbility,
+  };
+
   return (
     <div className="fixed inset-0 z-30 pointer-events-none">
-      {/* Stats Bar - Top Left */}
+      {/* ── Stats bar — top-center ─────────────────────────── */}
       <StatsBar
         state={state}
         tapDamage={getTapDamage()}
         idleCPS={getIdleCPS()}
       />
 
-      {/* Active Buffs - Below Stats Bar */}
+      {/* ── Active buffs — below stats bar ────────────────── */}
       {activeBuffs && activeBuffs.length > 0 && (
         <div className={HUD_THEME.buffs.container}>
           <ActiveBuffsDisplay activeBuffs={activeBuffs} />
         </div>
       )}
 
-      {/* Weapon Mode - Below Buffs */}
+      {/* ── Weapon Mode toggle — top-left, below stats ─────── */}
       <WeaponMode
         currentMode={currentWeapon}
         bowUnlocked={(state?.upgradeLevels?.["bow"] || 0) > 0}
         onModeChange={onWeaponChange}
-        className="flex fixed top-28 left-2 right-2 z-10 pointer-events-auto sm:top-32 max-w-[min(100vw-1rem,28rem)]"
+        className="fixed top-[4.5rem] left-2 z-20 pointer-events-auto"
       />
 
-      {/* Ability HUD - Left side */}
+      {/* ── Ability HUD — left edge ────────────────────────── */}
       <div className="pointer-events-auto">
         <AbilityHUD abilities={abilities} onActivate={onActivateAbility} />
       </div>
 
-      {/* Menu Panel - Right side (Desktop) */}
+      {/* ── Desktop: side menu panel ──────────────────────── */}
       {hudMenuOpen && (
-        <div className="hidden lg:block fixed right-2 top-20 bottom-20 w-96 overflow-hidden z-40 pointer-events-auto">
+        <div className="hidden lg:block fixed right-0 top-0 bottom-0 w-96 z-40 pointer-events-auto shadow-2xl">
           <MenuPanel
-            state={state}
-            onBuyUpgrade={onBuyUpgrade}
-            onUnlockSkill={onUnlockSkill}
-            onPrestige={onPrestige}
-            onRevive={onRevive}
-            unlockedIds={unlockedIds}
-            damageMultiplier={damageMultiplier}
-            offlineMultiplier={offlineMultiplier}
-            onSwitchZone={onSwitchZone}
-            onUnlockZone={onUnlockZone}
-            onClaimQuestReward={onClaimQuestReward}
-            onRepeatQuest={onRepeatQuest}
-            questProgress={questProgress}
-            onUpgradeBuilding={onUpgradeBuilding}
-            abilities={abilities}
-            onActivateAbility={onActivateAbility}
-            weaponMode={currentWeapon}
-            onWeaponModeChange={onWeaponChange}
-            onRunnerClick={onRunnerClick}
+            {...menuProps}
             onClose={() => onMenuToggle(false)}
-            heroAbilities={heroAbilities}
-            heroPassives={heroPassives}
-            heroDPS={heroDPS}
-            onRecruitHero={onRecruitHero}
-            onLevelHero={onLevelHero}
-            onActivateHeroAbility={onActivateHeroAbility}
           />
         </div>
       )}
 
-      {/* Menu Toggle Button */}
+      {/* ── Menu FAB — bottom-right ────────────────────────── */}
       {!hudMenuOpen && (
         <motion.button
           type="button"
-          title={hasAffordableUpgrade ? "Menu — you can buy an upgrade!" : "Open menu"}
+          title={hasAffordableUpgrade ? "Menu — upgrade available!" : "Open menu"}
           onClick={() => onMenuToggle(true)}
           animate={
             hasAffordableUpgrade
               ? {
                   boxShadow: [
                     "0 0 0 0 rgba(251, 191, 36, 0.95)",
-                    "0 0 0 22px rgba(251, 191, 36, 0)",
+                    "0 0 0 18px rgba(251, 191, 36, 0)",
                   ],
                   scale: [1, 1.06, 1],
                 }
               : {}
           }
           transition={hasAffordableUpgrade ? { duration: 1.1, repeat: Infinity } : {}}
-          className={`hidden lg:flex fixed right-4 bottom-4 z-50 h-14 w-14 pointer-events-auto items-center justify-center rounded-full text-2xl shadow-lg transition-all active:scale-95 border-[3px] hover:brightness-110 ${
-            hasAffordableUpgrade
+          className={`
+            hidden lg:flex fixed right-4 bottom-4 z-50 h-14 w-14
+            pointer-events-auto items-center justify-center rounded-full text-2xl
+            shadow-lg transition-all active:scale-95 border-[3px] hover:brightness-110
+            ${hasAffordableUpgrade
               ? "border-amber-400 bg-gradient-to-br from-amber-500/50 to-primary/45 ring-2 ring-amber-300/50"
               : "border-amber-600/80 bg-gradient-to-br from-amber-900/50 to-card/90 ring-1 ring-amber-500/30"
-          }`}
+            }
+          `}
         >
           📖
         </motion.button>

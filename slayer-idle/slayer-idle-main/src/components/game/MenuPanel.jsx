@@ -45,21 +45,20 @@ export default function MenuPanel({
       exit={{ x: 400 }}
       transition={{ duration: 0.2 }}
     >
-      {/* Header (hidden for now) */}
-      <div className={`${HUD_THEME.menuPanel.header} px-2 py-2 hidden`} style={{ boxSizing: "border-box" }}>
-        <button
-          onClick={onRunnerClick}
-          className={`flex-1 py-2.5 rounded-lg text-[10px] sm:text-[11px] transition-colors border-2 ${HUD_THEME.button.primary} border-primary/60 min-h-[36px] flex items-center justify-center`}
-        >
-          🏃 RUNNER
-        </button>
+      {/* Header — always visible with close button */}
+      <div
+        className={`${HUD_THEME.menuPanel.header} px-2 py-2 flex items-center gap-2`}
+        style={{ boxSizing: "border-box" }}
+      >
+        <span className="font-pixel text-[9px] text-muted-foreground flex-1">MENU</span>
         <motion.button
           whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
+          whileTap={{ scale: 0.9 }}
           onClick={onClose}
-          className={`flex-shrink-0 p-2 rounded-lg ${HUD_THEME.button.primary} transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center`}
+          className={`flex-shrink-0 p-2 rounded-lg bg-red-900/60 hover:bg-red-700/80 border border-red-600/50 text-foreground transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center`}
+          title="Close menu"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4" />
         </motion.button>
       </div>
 

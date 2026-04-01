@@ -413,26 +413,45 @@ const SHEET_DIMS = {
   wood: { w: 192, h: 112 },
 };
 
+/**
+ * weaponIconStyle returns TWO style objects: { outer, inner }
+ *
+ * outer — a fixed boxPx×boxPx flex container (centers the inner)
+ * inner — exact scaled weapon size with the background crop
+ *
+ * Usage:
+ *   const { outer, inner } = weaponIconStyle(tier, weapon, 36);
+ *   <div style={outer}><div style={inner} /></div>
+ *
+ * This prevents neighboring sprites from bleeding into the box.
+ */
 export function weaponIconStyle(tier, weapon, boxPx = 36) {
   const ic = getWeaponIcon(tier, weapon);
-  if (!ic) return {};
-  // Detect sheet key from path so bone items work in any tier slot
+  if (!ic) return { outer: {}, inner: {} };
   const sheetKey = ic.sheet.includes('bone') ? 'bone' : 'wood';
   const dim = SHEET_DIMS[sheetKey] ?? { w: 224, h: 144 };
-  // Scale to fit longest dimension inside the box
+  // Scale so longest dimension = boxPx
   const scale = boxPx / Math.max(ic.w, ic.h);
-  const scaledW = ic.w * scale;
-  const scaledH = ic.h * scale;
-  // Center the icon within the box
-  const offsetX = (boxPx - scaledW) / 2;
-  const offsetY = (boxPx - scaledH) / 2;
+  const scaledW = Math.round(ic.w * scale);
+  const scaledH = Math.round(ic.h * scale);
   return {
-    width:              boxPx,
-    height:             boxPx,
-    backgroundImage:    `url(${ic.sheet})`,
-    backgroundPosition: `${offsetX - ic.x * scale}px ${offsetY - ic.y * scale}px`,
-    backgroundSize:     `${dim.w * scale}px ${dim.h * scale}px`,
-    backgroundRepeat:   'no-repeat',
-    imageRendering:     'pixelated',
+    outer: {
+      width:          boxPx,
+      height:         boxPx,
+      display:        'flex',
+      alignItems:     'center',
+      justifyContent: 'center',
+      flexShrink:     0,
+    },
+    inner: {
+      width:              scaledW,
+      height:             scaledH,
+      backgroundImage:    `url(${ic.sheet})`,
+      backgroundPosition: `-${Math.round(ic.x * scale)}px -${Math.round(ic.y * scale)}px`,
+      backgroundSize:     `${Math.round(dim.w * scale)}px ${Math.round(dim.h * scale)}px`,
+      backgroundRepeat:   'no-repeat',
+      imageRendering:     'pixelated',
+      flexShrink:         0,
+    },
   };
 }

@@ -12,9 +12,13 @@ const WEAPON_MODE_ICONS = {
 function WeaponIcon({ mode, boxPx = 20 }) {
   const def = WEAPON_MODE_ICONS[mode];
   if (!def) return null;
-  const style = weaponIconStyle(def.tier, def.key, boxPx);
-  if (!style.backgroundImage) return null;
-  return <div style={style} className="flex-shrink-0" />;
+  const { outer, inner } = weaponIconStyle(def.tier, def.key, boxPx);
+  if (!inner?.backgroundImage) return null;
+  return (
+    <div style={outer}>
+      <div style={inner} />
+    </div>
+  );
 }
 
 export default function WeaponMode({ currentMode, bowUnlocked, onModeChange, className }) {

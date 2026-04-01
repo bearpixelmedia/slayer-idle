@@ -56,15 +56,15 @@ const WEAPON_DISPLAY_NAMES = {
 // ─── Sub-components ────────────────────────────────────────────────────────
 
 function WeaponIconSprite({ tier, weaponKey, boxPx = 36, active = false, playable = false, onClick }) {
-  const style = weaponIconStyle(tier, weaponKey, boxPx);
-  if (!style.backgroundImage) return null;
+  const { outer, inner } = weaponIconStyle(tier, weaponKey, boxPx);
+  if (!inner?.backgroundImage) return null;
 
   return (
     <motion.button
       onClick={playable ? onClick : undefined}
       whileTap={playable ? { scale: 0.9 } : {}}
       className={`
-        relative flex items-center justify-center rounded-lg p-1.5 transition-all
+        relative rounded-lg p-1.5 transition-all
         ${playable ? "cursor-pointer" : "cursor-default opacity-60"}
         ${active
           ? "bg-primary/20 ring-2 ring-amber-400/70 shadow-md shadow-amber-900/40"
@@ -75,7 +75,9 @@ function WeaponIconSprite({ tier, weaponKey, boxPx = 36, active = false, playabl
       `}
       title={WEAPON_DISPLAY_NAMES[weaponKey] ?? weaponKey}
     >
-      <div style={style} />
+      <div style={outer}>
+        <div style={inner} />
+      </div>
       {active && (
         <span className="absolute -top-1 -right-1 w-3 h-3 bg-amber-400 rounded-full ring-1 ring-background" />
       )}

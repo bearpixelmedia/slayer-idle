@@ -68,9 +68,9 @@ export const PLAYER_BODY_A = {
 //
 // Bone.png / Wood.png: static weapon sprites (tilesheets, not animated).
 export const WEAPON_SPRITES = {
-  hands: "/sprites/weapons/hands.png",   // 32×96, 3 skin variants stacked vertically
-  bone:  "/sprites/weapons/bone.png",    // 224×144 static tilesheet
-  wood:  "/sprites/weapons/wood.png",    // 192×112 static tilesheet
+  hands: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/11dac728f_hands.png",   // 32×96, 3 skin variants stacked vertically
+  bone:  "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/23d20de1f_bone.png",    // 224×144 static tilesheet
+  wood:  "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/f0db3d226_wood.png",    // 192×112 static tilesheet
 };
 
 // ─── ENVIRONMENT ─────────────────────────────────────────────────────────────
@@ -352,40 +352,40 @@ export const WEAPON_ICONS = {
   // ── BONE set (bone.png — 224×144) ─────────────────────────────────────────
   bone: {
     // Left half static icons (cols 0–111)
-    dagger:     { sheet: "/sprites/weapons/bone.png", x:  0, y:  4, w: 10, h: 24 },
-    sword:      { sheet: "/sprites/weapons/bone.png", x:  0, y: 32, w: 10, h: 40 },
-    club:       { sheet: "/sprites/weapons/bone.png", x: 16, y:  2, w: 12, h: 28 },
-    mace:       { sheet: "/sprites/weapons/bone.png", x: 16, y: 48, w: 10, h: 32 },
-    hammer:     { sheet: "/sprites/weapons/bone.png", x: 32, y:  0, w: 16, h: 44 },
-    axe:        { sheet: "/sprites/weapons/bone.png", x: 48, y:  4, w: 16, h: 24 },
-    pickaxe:    { sheet: "/sprites/weapons/bone.png", x: 48, y: 48, w: 16, h: 28 },
-    spear:      { sheet: "/sprites/weapons/bone.png", x: 64, y:  2, w:  8, h: 78 },
-    arrow:      { sheet: "/sprites/weapons/bone.png", x: 80, y:  4, w:  7, h: 16 },
-    arrow_h:    { sheet: "/sprites/weapons/bone.png", x: 80, y: 32, w: 16, h:  7 },
+    dagger:     { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/23d20de1f_bone.png", x:  0, y:  4, w: 10, h: 24 },
+    sword:      { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/23d20de1f_bone.png", x:  0, y: 32, w: 10, h: 40 },
+    club:       { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/23d20de1f_bone.png", x: 16, y:  2, w: 12, h: 28 },
+    mace:       { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/23d20de1f_bone.png", x: 16, y: 48, w: 10, h: 32 },
+    hammer:     { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/23d20de1f_bone.png", x: 32, y:  0, w: 16, h: 44 },
+    axe:        { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/23d20de1f_bone.png", x: 48, y:  4, w: 16, h: 24 },
+    pickaxe:    { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/23d20de1f_bone.png", x: 48, y: 48, w: 16, h: 28 },
+    spear:      { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/23d20de1f_bone.png", x: 64, y:  2, w:  8, h: 78 },
+    arrow:      { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/23d20de1f_bone.png", x: 80, y:  4, w:  7, h: 16 },
+    arrow_h:    { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/23d20de1f_bone.png", x: 80, y: 32, w: 16, h:  7 },
     // Right half — multi-col and animation frames
-    shield:     { sheet: "/sprites/weapons/bone.png", x:112, y:  0, w: 32, h: 40 },
-    crossbow:   { sheet: "/sprites/weapons/bone.png", x: 96, y: 48, w: 16, h: 32 },
-    staff:      { sheet: "/sprites/weapons/bone.png", x:160, y:  0, w: 16, h: 80 },
-    wand:       { sheet: "/sprites/weapons/bone.png", x:192, y:  0, w: 16, h: 64 },
-    bow_f1:     { sheet: "/sprites/weapons/bone.png", x:144, y: 48, w: 10, h: 32 },
-    bow_f2:     { sheet: "/sprites/weapons/bone.png", x:160, y: 48, w: 13, h: 28 },
+    shield:     { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/23d20de1f_bone.png", x:112, y:  0, w: 32, h: 40 },
+    crossbow:   { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/23d20de1f_bone.png", x: 96, y: 48, w: 16, h: 32 },
+    staff:      { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/23d20de1f_bone.png", x:160, y:  0, w: 16, h: 80 },
+    wand:       { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/23d20de1f_bone.png", x:192, y:  0, w: 16, h: 64 },
+    bow_f1:     { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/23d20de1f_bone.png", x:144, y: 48, w: 10, h: 32 },
+    bow_f2:     { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/23d20de1f_bone.png", x:160, y: 48, w: 13, h: 28 },
   },
 
   // ── WOOD set (wood.png — 192×112) ─────────────────────────────────────────
   wood: {
-    sword:      { sheet: "/sprites/weapons/wood.png", x:  0, y:  6, w: 10, h: 41 },
-    pickaxe:    { sheet: "/sprites/weapons/wood.png", x:  0, y: 50, w: 16, h: 28 },
-    arrow:      { sheet: "/sprites/weapons/wood.png", x: 16, y:  0, w:  7, h: 16 },
-    hammer:     { sheet: "/sprites/weapons/wood.png", x: 16, y: 16, w: 16, h: 31 },
-    mace:       { sheet: "/sprites/weapons/wood.png", x: 16, y: 48, w: 10, h: 32 },
-    arrow_h:    { sheet: "/sprites/weapons/wood.png", x: 32, y:  0, w: 16, h:  7 },
-    dagger:     { sheet: "/sprites/weapons/wood.png", x: 32, y: 16, w: 10, h: 28 },
-    sickle:     { sheet: "/sprites/weapons/wood.png", x: 32, y: 48, w: 16, h: 31 },
-    book:       { sheet: "/sprites/weapons/wood.png", x: 48, y:  2, w: 11, h: 13 },
-    axe:        { sheet: "/sprites/weapons/wood.png", x: 48, y: 18, w: 16, h: 28 },
-    bow_f1:     { sheet: "/sprites/weapons/wood.png", x: 48, y: 48, w: 10, h: 32 },
-    spear:      { sheet: "/sprites/weapons/wood.png", x: 64, y:  0, w:  8, h: 43 },
-    bow_f2:     { sheet: "/sprites/weapons/wood.png", x: 64, y: 48, w: 13, h: 28 },
+    sword:      { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/f0db3d226_wood.png", x:  0, y:  6, w: 10, h: 41 },
+    pickaxe:    { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/f0db3d226_wood.png", x:  0, y: 50, w: 16, h: 28 },
+    arrow:      { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/f0db3d226_wood.png", x: 16, y:  0, w:  7, h: 16 },
+    hammer:     { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/f0db3d226_wood.png", x: 16, y: 16, w: 16, h: 31 },
+    mace:       { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/f0db3d226_wood.png", x: 16, y: 48, w: 10, h: 32 },
+    arrow_h:    { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/f0db3d226_wood.png", x: 32, y:  0, w: 16, h:  7 },
+    dagger:     { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/f0db3d226_wood.png", x: 32, y: 16, w: 10, h: 28 },
+    sickle:     { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/f0db3d226_wood.png", x: 32, y: 48, w: 16, h: 31 },
+    book:       { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/f0db3d226_wood.png", x: 48, y:  2, w: 11, h: 13 },
+    axe:        { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/f0db3d226_wood.png", x: 48, y: 18, w: 16, h: 28 },
+    bow_f1:     { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/f0db3d226_wood.png", x: 48, y: 48, w: 10, h: 32 },
+    spear:      { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/f0db3d226_wood.png", x: 64, y:  0, w:  8, h: 43 },
+    bow_f2:     { sheet: "https://base44.app/api/apps/69cace038e9a8f98f1b22458/files/mp/public/69cace038e9a8f98f1b22458/f0db3d226_wood.png", x: 64, y: 48, w: 13, h: 28 },
   },
 };
 

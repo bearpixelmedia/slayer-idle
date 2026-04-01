@@ -1,13 +1,57 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
+import AnimatedSprite from "@/components/game/AnimatedSprite";
 
-const ENEMIES = ["👺", "🧌", "👹", "💀", "🧛", "🐉", "☠️", "🧟", "👻"];
-const FEATURES = [
-  { icon: "⚔️", title: "Strategic\nCombat", desc: "Tap & idle fighting" },
-  { icon: "✨", title: "Prestige\nSystem", desc: "Reset for eternal power" },
-  { icon: "🗺️", title: "Multiple\nZones", desc: "Explore new realms" },
+// ─── Sprite-based enemy marquee ───────────────────────────────────────────────
+// All idle sheets are 128×32 (4 frames, 32×32 each).
+const MARQUEE_ENEMIES = [
+  { url: "/sprites/enemies/orc/idle.png",           frameSize: 32, frames: 4, fps: 4, filter: "" },
+  { url: "/sprites/enemies/skeleton/idle.png",       frameSize: 32, frames: 4, fps: 4, filter: "" },
+  { url: "/sprites/enemies/orc_rogue/idle.png",      frameSize: 32, frames: 4, fps: 4, filter: "hue-rotate(160deg)" },
+  { url: "/sprites/enemies/skeleton_mage/idle.png",  frameSize: 32, frames: 4, fps: 4, filter: "hue-rotate(200deg)" },
+  { url: "/sprites/enemies/orc_warrior/idle.png",    frameSize: 32, frames: 4, fps: 4, filter: "sepia(0.4)" },
+  { url: "/sprites/enemies/skeleton_rogue/idle.png", frameSize: 32, frames: 4, fps: 4, filter: "hue-rotate(90deg)" },
+  { url: "/sprites/enemies/orc_shaman/idle.png",     frameSize: 32, frames: 4, fps: 4, filter: "hue-rotate(280deg)" },
+  { url: "/sprites/enemies/skeleton_warrior/idle.png",frameSize: 32,frames: 4, fps: 4, filter: "sepia(0.6)" },
 ];
+
+// ─── Hero scene sprites ───────────────────────────────────────────────────────
+// Knight, Rogue, Wizard idle: 128×32 (4f @ 32px). Player: 256×64 (4f @ 64px).
+const SCENE_HEROES = [
+  { url: "/sprites/npcs/knight/idle.png", frameSize: 32, frames: 4, fps: 4, scale: 3, flipX: false },
+  { url: "/sprites/npcs/rogue/idle.png",  frameSize: 32, frames: 4, fps: 4, scale: 3, flipX: false },
+  { url: "/sprites/npcs/wizard/idle.png", frameSize: 32, frames: 4, fps: 4, scale: 3, flipX: false },
+];
+
+const SCENE_ENEMIES = [
+  { url: "/sprites/enemies/orc/idle.png",          frameSize: 32, frames: 4, fps: 4, scale: 2.5, flipX: true, filter: "" },
+  { url: "/sprites/enemies/skeleton/idle.png",      frameSize: 32, frames: 4, fps: 4, scale: 2.5, flipX: true, filter: "" },
+  { url: "/sprites/enemies/orc_warrior/idle.png",   frameSize: 32, frames: 4, fps: 4, scale: 3,   flipX: true, filter: "sepia(0.3)" },
+  { url: "/sprites/enemies/skeleton_mage/idle.png", frameSize: 32, frames: 4, fps: 4, scale: 2.5, flipX: true, filter: "hue-rotate(200deg)" },
+];
+
+// ─── Feature card icons (using environment sprites as pixel icons) ────────────
+const FEATURES = [
+  {
+    sprite: { url: "/sprites/environment/animated/bonfire_anim.png", frameW: 32, frameH: 32, frames: 4, fps: 8 },
+    title: "Strategic\nCombat",
+    desc: "Tap & idle fighting",
+  },
+  {
+    sprite: { url: "/sprites/environment/animated/alchemy.png", frameW: 192, frameH: 192, frames: 1, fps: 1, scale: 0.18 },
+    title: "Prestige\nSystem",
+    desc: "Reset for eternal power",
+  },
+  {
+    sprite: { url: "/sprites/environment/animated/fire.png", frameW: 32, frameH: 48, frames: 4, fps: 10 },
+    title: "Multiple\nZones",
+    desc: "Explore new realms",
+  },
+];
+
+// Build marquee array (tripled so seamless loop works on any screen width)
+const MARQUEE_FULL = [...MARQUEE_ENEMIES, ...MARQUEE_ENEMIES, ...MARQUEE_ENEMIES, ...MARQUEE_ENEMIES];
 
 export default function TitleScreen() {
   const navigate = useNavigate();
@@ -25,15 +69,26 @@ export default function TitleScreen() {
         <div className="absolute bottom-[20%] left-[5%] w-32 h-32 sm:w-56 sm:h-56 bg-secondary rounded-full mix-blend-screen filter blur-3xl opacity-25" />
       </div>
 
-      {/* Scrolling enemy row */}
+      {/* Scrolling enemy marquee */}
       <div className="absolute top-[12%] sm:top-[15%] w-full overflow-hidden pointer-events-none">
         <motion.div
-          className="flex gap-6 sm:gap-10 whitespace-nowrap"
+          className="flex gap-6 sm:gap-10 whitespace-nowrap items-end"
           animate={reduceMotion ? {} : { x: ["0%", "-50%"] }}
-          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+          transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
         >
-          {[...ENEMIES, ...ENEMIES, ...ENEMIES, ...ENEMIES].map((e, i) => (
-            <span key={i} className="text-2xl sm:text-4xl opacity-30 select-none">{e}</span>
+          {MARQUEE_FULL.map((e, i) => (
+            <div key={i} style={{ opacity: 0.35, filter: e.filter || "none", imageRendering: "pixelated" }}>
+              <AnimatedSprite
+                url={e.url}
+                frameSize={e.frameSize}
+                frames={e.frames}
+                fps={e.fps}
+                loop={true}
+                playing={!reduceMotion}
+                scale={2}
+                flipX={i % 2 === 0}
+              />
+            </div>
           ))}
         </motion.div>
       </div>
@@ -49,26 +104,55 @@ export default function TitleScreen() {
           transition={{ duration: 0.6 }}
         >
           <h1 className="font-pixel text-2xl xs:text-3xl sm:text-5xl md:text-6xl text-primary leading-tight drop-shadow-[0_0_20px_hsl(var(--primary)/0.6)]">
-            CLICKER
+            SLAYER
           </h1>
           <h1 className="font-pixel text-2xl xs:text-3xl sm:text-5xl md:text-6xl text-primary leading-tight drop-shadow-[0_0_20px_hsl(var(--primary)/0.6)]">
-            QUEST
+            IDLE
           </h1>
           <div className="mt-2 h-0.5 w-20 sm:w-32 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto" />
         </motion.div>
 
-        {/* Player + enemies scene */}
+        {/* Hero + enemy scene */}
         <motion.div
-          className="flex items-end justify-center gap-2 sm:gap-4 py-1"
+          className="flex items-end justify-center gap-3 sm:gap-5 py-1"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.6 }}
         >
-          <span className="text-3xl sm:text-5xl animate-enemy-idle-float select-none">👺</span>
-          <span className="text-3xl sm:text-5xl animate-enemy-idle-march select-none">🧌</span>
-          <span className="text-4xl sm:text-6xl select-none drop-shadow-lg">🧙‍♂️</span>
-          <span className="text-3xl sm:text-5xl animate-enemy-idle-bob select-none">💀</span>
-          <span className="text-3xl sm:text-5xl animate-enemy-idle-loom select-none">🐉</span>
+          {/* Enemies on the left, facing right (flipX=false so they face toward heroes) */}
+          {SCENE_ENEMIES.map((e, i) => (
+            <div key={`enemy-${i}`} style={{ filter: e.filter || "none", imageRendering: "pixelated" }}>
+              <AnimatedSprite
+                url={e.url}
+                frameSize={e.frameSize}
+                frames={e.frames}
+                fps={e.fps + i * 0.5}
+                loop={true}
+                playing={true}
+                scale={e.scale}
+                flipX={false}
+              />
+            </div>
+          ))}
+
+          {/* Divider glow */}
+          <div className="w-px h-16 sm:h-24 bg-gradient-to-b from-transparent via-primary/60 to-transparent mx-1 sm:mx-2 flex-shrink-0" />
+
+          {/* Heroes on the right, facing left toward enemies */}
+          {SCENE_HEROES.map((h, i) => (
+            <div key={`hero-${i}`} style={{ imageRendering: "pixelated" }}>
+              <AnimatedSprite
+                url={h.url}
+                frameSize={h.frameSize}
+                frames={h.frames}
+                fps={h.fps + i * 0.3}
+                loop={true}
+                playing={true}
+                scale={h.scale}
+                flipX={true}
+              />
+            </div>
+          ))}
         </motion.div>
 
         {/* Feature cards */}
@@ -81,9 +165,20 @@ export default function TitleScreen() {
           {FEATURES.map((f, i) => (
             <div
               key={i}
-              className="flex flex-col items-center gap-1 p-2 sm:p-4 rounded-xl border border-border/50 bg-card/40 backdrop-blur-sm text-center"
+              className="flex flex-col items-center gap-1 p-2 sm:p-4 rounded-xl border border-border/50 bg-card/40 backdrop-blur-sm text-center overflow-hidden"
             >
-              <span className="text-xl sm:text-3xl">{f.icon}</span>
+              <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12" style={{ imageRendering: "pixelated" }}>
+                <AnimatedSprite
+                  url={f.sprite.url}
+                  frameW={f.sprite.frameW}
+                  frameH={f.sprite.frameH}
+                  frames={f.sprite.frames}
+                  fps={f.sprite.fps}
+                  loop={true}
+                  playing={!reduceMotion}
+                  scale={f.sprite.scale ?? 1.2}
+                />
+              </div>
               <p className="font-pixel text-[7px] sm:text-[9px] text-foreground leading-tight whitespace-pre-line">{f.title}</p>
               <p className="text-[8px] sm:text-xs text-muted-foreground leading-tight hidden sm:block">{f.desc}</p>
             </div>

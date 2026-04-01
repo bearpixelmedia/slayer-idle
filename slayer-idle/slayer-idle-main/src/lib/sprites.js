@@ -327,3 +327,104 @@ export const ENEMY_FILTER_MAP = {
 export function getEnemyFilter(enemyName) {
   return ENEMY_FILTER_MAP[enemyName] ?? "";
 }
+
+// ─── WEAPON ICONS (static crop coords from tilesheets) ───────────────────────
+//
+// Each entry: { sheet, x, y, w, h }
+//   sheet — path to the source PNG
+//   x,y   — top-left pixel on the sheet (tight crop, confirmed visually)
+//   w,h   — pixel dimensions of the tight-cropped asset
+//
+// Usage (React example):
+//   const ic = WEAPON_ICONS.wood.sword;
+//   <div style={{
+//     width: ic.w * scale, height: ic.h * scale, overflow: 'hidden',
+//     backgroundImage: `url(${ic.sheet})`,
+//     backgroundPosition: `-${ic.x * scale}px -${ic.y * scale}px`,
+//     backgroundSize: `${192 * scale}px ${112 * scale}px`,  // wood sheet dims
+//     imageRendering: 'pixelated',
+//   }} />
+//
+// Bone sheet: 224×144   Wood sheet: 192×112
+
+export const WEAPON_ICONS = {
+
+  // ── BONE set (bone.png — 224×144) ─────────────────────────────────────────
+  bone: {
+    // Left half static icons (cols 0–111)
+    dagger:     { sheet: "/sprites/weapons/bone.png", x:  0, y:  4, w: 10, h: 24 },
+    sword:      { sheet: "/sprites/weapons/bone.png", x:  0, y: 32, w: 10, h: 40 },
+    club:       { sheet: "/sprites/weapons/bone.png", x: 16, y:  2, w: 12, h: 28 },
+    mace:       { sheet: "/sprites/weapons/bone.png", x: 16, y: 48, w: 10, h: 32 },
+    hammer:     { sheet: "/sprites/weapons/bone.png", x: 32, y:  0, w: 16, h: 44 },
+    axe:        { sheet: "/sprites/weapons/bone.png", x: 48, y:  4, w: 16, h: 24 },
+    pickaxe:    { sheet: "/sprites/weapons/bone.png", x: 48, y: 48, w: 16, h: 28 },
+    spear:      { sheet: "/sprites/weapons/bone.png", x: 64, y:  2, w:  8, h: 78 },
+    arrow:      { sheet: "/sprites/weapons/bone.png", x: 80, y:  4, w:  7, h: 16 },
+    arrow_h:    { sheet: "/sprites/weapons/bone.png", x: 80, y: 32, w: 16, h:  7 },
+    // Right half — multi-col and animation frames
+    shield:     { sheet: "/sprites/weapons/bone.png", x:112, y:  0, w: 32, h: 40 },
+    crossbow:   { sheet: "/sprites/weapons/bone.png", x: 96, y: 48, w: 16, h: 32 },
+    staff:      { sheet: "/sprites/weapons/bone.png", x:160, y:  0, w: 16, h: 80 },
+    wand:       { sheet: "/sprites/weapons/bone.png", x:192, y:  0, w: 16, h: 64 },
+    bow_f1:     { sheet: "/sprites/weapons/bone.png", x:144, y: 48, w: 10, h: 32 },
+    bow_f2:     { sheet: "/sprites/weapons/bone.png", x:160, y: 48, w: 13, h: 28 },
+  },
+
+  // ── WOOD set (wood.png — 192×112) ─────────────────────────────────────────
+  wood: {
+    sword:      { sheet: "/sprites/weapons/wood.png", x:  0, y:  6, w: 10, h: 41 },
+    pickaxe:    { sheet: "/sprites/weapons/wood.png", x:  0, y: 50, w: 16, h: 28 },
+    arrow:      { sheet: "/sprites/weapons/wood.png", x: 16, y:  0, w:  7, h: 16 },
+    hammer:     { sheet: "/sprites/weapons/wood.png", x: 16, y: 16, w: 16, h: 31 },
+    mace:       { sheet: "/sprites/weapons/wood.png", x: 16, y: 48, w: 10, h: 32 },
+    arrow_h:    { sheet: "/sprites/weapons/wood.png", x: 32, y:  0, w: 16, h:  7 },
+    dagger:     { sheet: "/sprites/weapons/wood.png", x: 32, y: 16, w: 10, h: 28 },
+    sickle:     { sheet: "/sprites/weapons/wood.png", x: 32, y: 48, w: 16, h: 31 },
+    book:       { sheet: "/sprites/weapons/wood.png", x: 48, y:  2, w: 11, h: 13 },
+    axe:        { sheet: "/sprites/weapons/wood.png", x: 48, y: 18, w: 16, h: 28 },
+    bow_f1:     { sheet: "/sprites/weapons/wood.png", x: 48, y: 48, w: 10, h: 32 },
+    spear:      { sheet: "/sprites/weapons/wood.png", x: 64, y:  0, w:  8, h: 43 },
+    bow_f2:     { sheet: "/sprites/weapons/wood.png", x: 64, y: 48, w: 13, h: 28 },
+  },
+};
+
+/**
+ * getWeaponIcon(tier, weapon) — convenience getter
+ * Returns the icon crop descriptor or null if not found.
+ *
+ * Example:
+ *   const ic = getWeaponIcon('wood', 'sword');
+ *   // { sheet, x, y, w, h }
+ */
+export function getWeaponIcon(tier, weapon) {
+  return WEAPON_ICONS[tier]?.[weapon] ?? null;
+}
+
+/**
+ * weaponIconStyle(tier, weapon, scale = 2) — returns an inline style object
+ * ready to apply to a <div> for rendering the icon via background-image crop.
+ *
+ * Sheet dimensions (used for backgroundSize):
+ *   bone → 224×144    wood → 192×112
+ */
+const SHEET_DIMS = {
+  bone: { w: 224, h: 144 },
+  wood: { w: 192, h: 112 },
+};
+
+export function weaponIconStyle(tier, weapon, scale = 2) {
+  const ic = getWeaponIcon(tier, weapon);
+  if (!ic) return {};
+  const dim = SHEET_DIMS[tier] ?? { w: 224, h: 144 };
+  return {
+    width:               ic.w * scale,
+    height:              ic.h * scale,
+    overflow:            'hidden',
+    backgroundImage:     `url(${ic.sheet})`,
+    backgroundPosition:  `-${ic.x * scale}px -${ic.y * scale}px`,
+    backgroundSize:      `${dim.w * scale}px ${dim.h * scale}px`,
+    backgroundRepeat:    'no-repeat',
+    imageRendering:      'pixelated',
+  };
+}

@@ -1,6 +1,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatNumber } from "@/lib/formatNumber";
+import { PixelCoin } from "@/components/game/PixelCoin";
 
 function FloatingElements({ floatingCoins, floatingSouls, floatingDamage, slashEffects }) {
   return (
@@ -34,7 +35,7 @@ function FloatingElements({ floatingCoins, floatingSouls, floatingDamage, slashE
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            +{formatNumber(c.amount)} 🪙
+            <><PixelCoin size={10} className="mr-0.5 align-middle" />+{formatNumber(c.amount)}</>
           </motion.div>
         ))}
       </AnimatePresence>

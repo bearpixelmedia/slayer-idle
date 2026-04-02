@@ -3,6 +3,7 @@ import { QUESTS, getQuestById } from "@/lib/quests";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ChevronUp, CheckCircle2, Lock } from "lucide-react";
 import { HUD_THEME } from "@/lib/hudTheme";
+import { PixelCoin } from "@/components/game/PixelCoin";
 
 function QuestCard({ quest, questProgress, onClaim, onRepeat }) {
   const { progress, completed, claimed } = questProgress;
@@ -67,7 +68,7 @@ function QuestCard({ quest, questProgress, onClaim, onRepeat }) {
               {/* Reward preview */}
               <div className="flex gap-1 text-[8px] font-pixel">
                 {quest.reward.coins > 0 && (
-                  <span className="text-primary">+{quest.reward.coins}🪙</span>
+                  <span className="text-primary">+{quest.reward.coins} <PixelCoin size={10} className="inline-block align-middle" /></span>
                 )}
                 {quest.reward.souls > 0 && (
                   <span className="text-accent">+{quest.reward.souls}👻</span>

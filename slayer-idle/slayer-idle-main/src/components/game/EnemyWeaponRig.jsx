@@ -175,12 +175,20 @@ export function EnemyWeaponRig({
                 animate={weaponLeftControls}
                 initial={{ rotate: 0, x: 0, y: 0, scale: 1 }}
               >
-                <span
-                  className="inline-block origin-bottom-right [transform:rotate(90deg)] [line-height:1]"
+                <div
                   aria-hidden
-                >
-                  🗡️
-                </span>
+                  style={{
+                    width: 10,
+                    height: 24,
+                    backgroundImage: "url(/sprites/weapons/bone.png)",
+                    backgroundRepeat: "no-repeat",
+                    backgroundSize: "224px 144px",
+                    backgroundPosition: "0px -4px",
+                    imageRendering: "pixelated",
+                    transform: "rotate(90deg)",
+                    transformOrigin: "bottom right",
+                  }}
+                />
               </motion.span>
             </div>
 
@@ -209,20 +217,19 @@ export function EnemyWeaponRig({
                 animate={weaponRightControls}
                 initial={{ rotate: 0, x: 0, y: 0, scale: 1 }}
               >
-                <span
-                  className="inline-block [transform:translateX(calc(var(--sh-out)-var(--sh-x)))] sm:[transform:translateX(calc(var(--sh-out-sm)-var(--sh-x-sm)))] md:[transform:translateX(calc(var(--sh-out-md)-var(--sh-x-md)))]"
-                  style={{
-                    "--sh-out": layout.shieldOutwardRem,
-                    "--sh-out-sm": layout.shieldOutwardRemSm,
-                    "--sh-out-md": layout.shieldOutwardRemMd,
-                    "--sh-x": layout.shieldTranslateRem,
-                    "--sh-x-sm": layout.shieldTranslateRemSm,
-                    "--sh-x-md": layout.shieldTranslateRemMd,
-                  }}
+                <div
                   aria-hidden
-                >
-                  🛡️
-                </span>
+                  style={{
+                    width: 32,
+                    height: 40,
+                    backgroundImage: "url(/sprites/weapons/bone.png)",
+                    backgroundRepeat: "no-repeat",
+                    backgroundSize: "224px 144px",
+                    backgroundPosition: "-112px 0px",
+                    imageRendering: "pixelated",
+                    transform: `translateX(calc(${layout.shieldOutwardRem} - ${layout.shieldTranslateRem}))`,
+                  }}
+                />
               </motion.span>
             </div>
           </div>

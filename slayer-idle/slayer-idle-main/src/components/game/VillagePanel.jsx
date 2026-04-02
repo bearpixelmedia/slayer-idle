@@ -4,6 +4,7 @@ import { formatNumber } from "@/lib/formatNumber";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ChevronUp, Lock } from "lucide-react";
 import { HUD_THEME } from "@/lib/hudTheme";
+import { PixelCoin, PixelSoul } from "@/components/game/PixelCoin";
 
 // Renders a cropped tile from a station sprite sheet
 function StationIcon({ station, size = 36 }) {
@@ -67,7 +68,7 @@ function BuildingCard({ building, level, state, onUpgrade, maxLevel }) {
           {cost && cost.coins !== undefined && !isMaxed && (
             <span className="font-pixel text-[8px]">
               <span className={canAfford ? "text-primary" : "text-muted-foreground/50"}>
-                🪙 {formatNumber(cost.coins)} 👻 {cost.souls || 0}
+                <><PixelCoin size={10} className="inline-block align-middle mr-0.5" />{formatNumber(cost.coins)} <PixelSoul size={10} className="inline-block align-middle mx-0.5" />{cost.souls || 0}</>
               </span>
             </span>
           )}

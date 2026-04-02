@@ -22,6 +22,7 @@ import { HEROES, HERO_BY_ID, MAX_HEROES, getHeroLevelCost, getHeroPassiveValue, 
 import { formatNumber } from "@/lib/formatNumber";
 import { HUD_THEME } from "@/lib/hudTheme";
 import AnimatedSprite from "@/components/game/AnimatedSprite";
+import { PixelCoin } from "@/components/game/PixelCoin";
 import {
   KNIGHT_SPRITES,
   ROGUE_SPRITES,
@@ -214,7 +215,7 @@ function HeroCard({ hero, level, coins, heroAbilities, onRecruit, onLevel, onAct
               : "bg-muted/30 text-muted-foreground/50"
           }`}
         >
-          <span>🪙 {formatNumber(levelCost)}</span>
+          <span><><PixelCoin size={10} className="inline-block align-middle mr-0.5" />{formatNumber(levelCost)}</></span>
           <span>{recruited ? `LEVEL UP (${level} → ${level + 1})` : "RECRUIT"}</span>
         </motion.button>
       </div>

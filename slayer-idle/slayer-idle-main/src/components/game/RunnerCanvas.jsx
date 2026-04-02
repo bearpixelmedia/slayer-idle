@@ -1,10 +1,44 @@
 import React, { useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const PLAYER_SIZE = 20;
-const OBSTACLE_WIDTH = 15;
-const OBSTACLE_HEIGHT = 25;
 const GROUND_Y = 70;
+
+// Pixel-art player: uses player/run.png (6 frames, 16×16 each → 96×16 sheet)
+// We'll just show a static frame (frame 0) scaled up — no animation needed for minigame
+function PixelRunner({ isGameOver }) {
+  return (
+    <div
+      style={{
+        width: 32,
+        height: 32,
+        backgroundImage: "url(/sprites/player/run.png)",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "192px 32px",   // 6 frames × 32px
+        backgroundPosition: isGameOver ? "-160px 0px" : "0px 0px",
+        imageRendering: "pixelated",
+        transform: isGameOver ? "rotate(90deg)" : "none",
+        transition: "transform 0.3s",
+      }}
+    />
+  );
+}
+
+// Pixel-art rock: use a small brown square styled as a pixel obstacle
+function PixelRock() {
+  return (
+    <div
+      style={{
+        width: 16,
+        height: 16,
+        backgroundImage: "url(/sprites/environment/props/rocks.png)",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "64px 64px",
+        backgroundPosition: "0px 0px",
+        imageRendering: "pixelated",
+      }}
+    />
+  );
+}
 
 export default function RunnerCanvas({
   playerY,
@@ -16,15 +50,11 @@ export default function RunnerCanvas({
 }) {
   const canvasRef = useRef(null);
 
-  const handleClick = () => {
-    onTap();
-  };
-
   return (
     <div
       ref={canvasRef}
       className="relative w-full h-48 bg-gradient-to-b from-blue-900/40 to-blue-950/60 cursor-pointer select-none overflow-hidden border border-border/30 rounded-lg"
-      onClick={handleClick}
+      onClick={onTap}
     >
       {/* Sky */}
       <div className="absolute inset-0 bg-gradient-to-b from-blue-600/20 to-transparent pointer-events-none" />
@@ -40,12 +70,10 @@ export default function RunnerCanvas({
 
       {/* Player */}
       <motion.div
-        className="absolute left-[20%] text-3xl"
-        style={{ top: `${playerY}%` }}
-        animate={{ rotate: isGameOver ? 360 : 0 }}
-        transition={{ duration: isGameOver ? 0.3 : 0 }}
+        className="absolute left-[20%]"
+        style={{ top: `${playerY}%`, transform: "translateY(-100%)" }}
       >
-        🏃
+        <PixelRunner isGameOver={isGameOver} />
       </motion.div>
 
       {/* Obstacles */}
@@ -53,16 +81,15 @@ export default function RunnerCanvas({
         {obstacles.map((obs) => (
           <motion.div
             key={obs.id}
-            className="absolute text-2xl"
+            className="absolute"
             style={{
               left: `${obs.x}%`,
               top: `${GROUND_Y}%`,
               transform: "translateY(-100%)",
             }}
-            initial={{ x: 0 }}
             exit={{ opacity: 0 }}
           >
-            🪨
+            <PixelRock />
           </motion.div>
         ))}
       </AnimatePresence>
@@ -77,13 +104,11 @@ export default function RunnerCanvas({
         <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className="text-center">
             <p className="font-pixel text-xs text-foreground mb-2">RUNNER MINIGAME</p>
-            <p className="text-[10px] text-muted-foreground mb-3">
-              Tap or press SPACE to jump
-            </p>
+            <p className="text-[10px] text-muted-foreground mb-3">Tap or press SPACE to jump</p>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={handleClick}
+              onClick={onTap}
               className="px-4 py-2 rounded-lg bg-primary text-primary-foreground font-pixel text-[9px] hover:brightness-110"
             >
               START
@@ -92,7 +117,7 @@ export default function RunnerCanvas({
         </div>
       )}
 
-      {/* Game over modal */}
+      {/* Game over */}
       {isGameOver && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div className="text-center">
@@ -101,7 +126,7 @@ export default function RunnerCanvas({
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={handleClick}
+              onClick={onTap}
               className="px-4 py-2 rounded-lg bg-primary text-primary-foreground font-pixel text-[9px] hover:brightness-110"
             >
               TRY AGAIN

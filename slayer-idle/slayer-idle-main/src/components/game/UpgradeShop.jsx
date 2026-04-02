@@ -4,6 +4,7 @@ import { formatNumber } from "@/lib/formatNumber";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { HUD_THEME } from "@/lib/hudTheme";
+import { PixelCoin } from "@/components/game/PixelCoin";
 
 function UpgradeCard({ upgrade, level, coins, onBuy }) {
   const cost = getUpgradeCost(upgrade, level);
@@ -35,7 +36,7 @@ function UpgradeCard({ upgrade, level, coins, onBuy }) {
         </div>
         <div className="flex items-center gap-1 text-[7px]">
           <span className={`font-pixel ${typeColor}`}>{typeLabel}</span>
-          <span className="text-primary font-pixel">🪙 {formatNumber(cost)}</span>
+          <span className="text-primary font-pixel"><><PixelCoin size={10} className="inline-block align-middle mr-0.5" />{formatNumber(cost)}</></span>
         </div>
       </div>
       <div className="flex gap-1 flex-shrink-0">

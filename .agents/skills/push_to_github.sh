@@ -1,12 +1,12 @@
 #!/bin/bash
 # push_to_github.sh
-# Pushes the current slayer-idle-main workspace to bearpixelmedia/slayer-idle on GitHub.
+# Pushes the current slayer-idle-main workspace to bearpixelmedia/slayer-idle-v0.1 on GitHub.
 # Requires $GITHUB_ACCESS_TOKEN to be set in the environment.
 
 set -e
 
 REPO_DIR="/app/slayer-idle/slayer-idle-main"
-GITHUB_REMOTE="https://x-access-token:${GITHUB_ACCESS_TOKEN}@github.com/bearpixelmedia/slayer-idle.git"
+GITHUB_REMOTE="https://x-access-token:${GITHUB_ACCESS_TOKEN}@github.com/bearpixelmedia/slayer-idle-v0.1.git"
 COMMIT_MSG="${1:-"GDE: sync game code changes"}"
 
 cd "$REPO_DIR"
@@ -35,4 +35,4 @@ fi
 
 # Push to GitHub main
 git push github HEAD:main
-echo "✅ Pushed to github.com/bearpixelmedia/slayer-idle"
+echo "✅ Pushed to github.com/bearpixelmedia/slayer-idle-v0.1"

@@ -27,13 +27,10 @@ function loadSavedMultipliers() {
 }
 
 export default function Game() {
-  // Load saved achievement multipliers synchronously so gameState starts with them
   const [initMultipliers] = React.useState(() => loadSavedMultipliers());
   const [showRunner, setShowRunner] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [hudMenuOpen, setHudMenuOpen] = useState(false);
 
-  // Initialize sound manager and music on first load
   React.useEffect(() => {
     soundManager.init();
     musicManager.init();
@@ -74,7 +71,6 @@ export default function Game() {
     playerHit,
     attackTick,
     tickWorldCoinCollection,
-    // Hero system
     heroAbilities,
     heroPassives,
     heroDPS,
@@ -84,7 +80,6 @@ export default function Game() {
   } = useGameState(initMultipliers);
 
   const { unlockedIds, newUnlock, damageMultiplier, offlineMultiplier } = useAchievements(state);
-
   const { questProgress, claimReward, resetQuestForRepeat } = useQuests(state, state?.unlockedZoneIds || []);
 
   const hasAffordableUpgrade = useMemo(() => {
@@ -96,72 +91,103 @@ export default function Game() {
     });
   }, [state]);
 
-  const handleClaimQuestReward = (questId) => {
-    claimReward(questId);
-    soundManager.play('coin-collect');
+  const handleClaimQuestReward = (questId) => { claimReward(questId); soundManager.play('coin-collect'); };
+  const handleRepeatQuest = (questId) => { resetQuestForRepeat(questId); soundManager.play('ui-click'); };
+  const handleBuyUpgrade = (upgradeId, quantity) => { buyUpgrade(upgradeId, quantity); soundManager.play('upgrade'); };
+  const handleUnlockSkill = (skillId) => { unlockSkill(skillId); soundManager.play('upgrade'); };
+  const handlePrestige = () => { prestige(); soundManager.play('prestige'); };
+  const handleActivateAbility = (abilityId) => { activateAbility(abilityId); soundManager.play('upgrade'); };
+  const handleJumpFeedback = () => { soundManager.play("tap"); };
+  const handleWorldCoinPickup = () => { soundManager.play("coin-collect"); };
+  const handleTapGame = (x, y, opts) => { handleTap(x, y, opts); };
+
+  // Shared props for the MenuPanel
+  const menuPanelProps = {
+    state,
+    onBuyUpgrade: handleBuyUpgrade,
+    onUnlockSkill: handleUnlockSkill,
+    onPrestige: handlePrestige,
+    onRevive: revive,
+    unlockedIds,
+    damageMultiplier,
+    offlineMultiplier,
+    onSwitchZone: switchZone,
+    onUnlockZone: unlockZone,
+    onClaimQuestReward: handleClaimQuestReward,
+    onRepeatQuest: handleRepeatQuest,
+    questProgress,
+    onUpgradeBuilding: upgradeBuilding,
+    abilities,
+    onActivateAbility: handleActivateAbility,
+    weaponMode: currentWeapon,
+    onWeaponModeChange: setCurrentWeapon,
+    onRunnerClick: () => setShowRunner(!showRunner),
+    heroAbilities,
+    heroPassives,
+    heroDPS,
+    onRecruitHero: recruitHero,
+    onLevelHero: levelHero,
+    onActivateHeroAbility: activateHeroAbility,
   };
 
-  const handleRepeatQuest = (questId) => {
-    resetQuestForRepeat(questId);
-    soundManager.play('ui-click');
-  };
-
-  const handleBuyUpgrade = (upgradeId, quantity) => {
-    buyUpgrade(upgradeId, quantity);
-    soundManager.play('upgrade');
-  };
-
-  const handleUnlockSkill = (skillId) => {
-    unlockSkill(skillId);
-    soundManager.play('upgrade');
-  };
-
-  const handlePrestige = () => {
-    prestige();
-    soundManager.play('prestige');
-  };
-
-  const handleActivateAbility = (abilityId) => {
-    activateAbility(abilityId);
-    soundManager.play('upgrade');
-  };
-
-  const handleJumpFeedback = () => {
-    soundManager.play("tap");
-  };
-
-  const handleWorldCoinPickup = () => {
-    soundManager.play("coin-collect");
-  };
-
-  const handleTapGame = (x, y, opts) => {
-    handleTap(x, y, opts);
+  const gameCanvasProps = {
+    state,
+    enemyDying,
+    floatingCoins,
+    floatingSouls,
+    floatingDamage,
+    particles,
+    slashEffects,
+    onTap: handleTapGame,
+    onJump: handleJumpFeedback,
+    tickWorldCoinCollection,
+    onWorldCoinPickup: handleWorldCoinPickup,
+    attackTick,
+    enemyHit,
+    playerHit,
+    weaponMode: currentWeapon,
   };
 
   return (
-    <div className="fixed inset-0 bg-background flex flex-col lg:flex-row overflow-hidden">
-      {/* Portrait/Mobile: Full screen */}
-      <div className="lg:hidden w-full h-full flex flex-col relative overflow-hidden">
+    <div className="fixed inset-0 bg-background flex overflow-hidden">
 
+      {/* ── Desktop (landscape ≥ 1024px): game left + panel right ──────────── */}
+      <div className="hidden lg:flex w-full h-full overflow-hidden">
+        {/* Left: Game canvas */}
+        <div className="flex-1 flex flex-col min-h-0 min-w-0 overflow-hidden">
+          {!showRunner ? (
+            <GameCanvas {...gameCanvasProps} />
+          ) : (
+            <RunnerCanvas
+              playerY={runner.playerY}
+              obstacles={runner.obstacles}
+              score={runner.score}
+              isGameOver={runner.isGameOver}
+              gameStarted={runner.gameStarted}
+              onTap={() => {
+                if (!runner.gameStarted) runner.startGame();
+                else if (runner.isGameOver) runner.resetGame();
+                else runner.handleJump();
+              }}
+            />
+          )}
+        </div>
+
+        {/* Right: Always-visible menu panel */}
+        <div className="w-[360px] xl:w-[400px] flex-shrink-0 h-full overflow-hidden border-l border-border/50 bg-card/95">
+          <MenuPanel
+            {...menuPanelProps}
+            onClose={null}
+            appTitle="SLAYER IDLE"
+          />
+        </div>
+      </div>
+
+      {/* ── Mobile (portrait < 1024px): full screen game + FAB ──────────────── */}
+      <div className="lg:hidden w-full h-full flex flex-col relative overflow-hidden">
         <div className="w-full flex-1 overflow-hidden flex flex-col min-h-0">
           {!showRunner ? (
-            <GameCanvas
-              state={state}
-              enemyDying={enemyDying}
-              floatingCoins={floatingCoins}
-              floatingSouls={floatingSouls}
-              floatingDamage={floatingDamage}
-              particles={particles}
-              slashEffects={slashEffects}
-              onTap={handleTapGame}
-              onJump={handleJumpFeedback}
-              tickWorldCoinCollection={tickWorldCoinCollection}
-              onWorldCoinPickup={handleWorldCoinPickup}
-              attackTick={attackTick}
-              enemyHit={enemyHit}
-              playerHit={playerHit}
-              weaponMode={currentWeapon}
-            />
+            <GameCanvas {...gameCanvasProps} />
           ) : (
             <RunnerCanvas
               playerY={runner.playerY}
@@ -189,6 +215,7 @@ export default function Game() {
           </div>
         )}
 
+        {/* Mobile FAB */}
         {!showRunner && (
           <motion.button
             type="button"
@@ -196,17 +223,11 @@ export default function Game() {
             onClick={() => setMenuOpen(!menuOpen)}
             animate={
               hasAffordableUpgrade
-                ? {
-                    boxShadow: [
-                      "0 0 0 0 rgba(251, 191, 36, 0.95)",
-                      "0 0 0 18px rgba(251, 191, 36, 0)",
-                    ],
-                    scale: [1, 1.06, 1],
-                  }
+                ? { boxShadow: ["0 0 0 0 rgba(251,191,36,0.95)", "0 0 0 18px rgba(251,191,36,0)"], scale: [1, 1.06, 1] }
                 : {}
             }
             transition={hasAffordableUpgrade ? { duration: 1.1, repeat: Infinity } : {}}
-            className={`fixed bottom-20 right-4 z-[45] flex h-14 w-14 items-center justify-center rounded-full text-2xl shadow-lg transition-all active:scale-95 sm:h-16 sm:w-16 sm:text-3xl lg:hidden border-[3px] ${
+            className={`fixed bottom-20 right-4 z-[45] flex h-14 w-14 items-center justify-center rounded-full text-2xl shadow-lg transition-all active:scale-95 sm:h-16 sm:w-16 sm:text-3xl border-[3px] ${
               hasAffordableUpgrade
                 ? "border-amber-400 bg-gradient-to-br from-amber-500/50 to-primary/45 ring-2 ring-amber-300/50 hover:brightness-110"
                 : "border-amber-600/80 bg-gradient-to-br from-amber-900/50 to-card/90 ring-1 ring-amber-500/30 hover:brightness-125"
@@ -215,164 +236,72 @@ export default function Game() {
             📖
           </motion.button>
         )}
+
+        {/* Mobile slide-in menu */}
+        <AnimatePresence>
+          {menuOpen && (
+            <>
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-[46] bg-black/60 backdrop-blur-sm"
+                onClick={() => setMenuOpen(false)}
+              />
+              {/* Panel */}
+              <motion.div
+                initial={{ x: "100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "100%" }}
+                transition={{ type: "spring", damping: 28, stiffness: 280 }}
+                className="fixed right-0 top-0 bottom-0 w-[min(360px,92vw)] z-[47] shadow-2xl"
+              >
+                <MenuPanel
+                  {...menuPanelProps}
+                  onClose={() => setMenuOpen(false)}
+                />
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
       </div>
 
-      {/* Landscape: Side-by-side layout */}
-      <div className="hidden lg:flex h-full w-full overflow-hidden">
-        <div className="flex-1 flex flex-col min-h-0 w-0">
-          
-          <div className="flex-1 overflow-hidden relative flex flex-col min-h-0">
-            {!showRunner ? (
-              <GameCanvas
-                state={state}
-                enemyDying={enemyDying}
-                floatingCoins={floatingCoins}
-                floatingSouls={floatingSouls}
-                floatingDamage={floatingDamage}
-                particles={particles}
-                slashEffects={slashEffects}
-                onTap={handleTapGame}
-                onJump={handleJumpFeedback}
-                tickWorldCoinCollection={tickWorldCoinCollection}
-                onWorldCoinPickup={handleWorldCoinPickup}
-                attackTick={attackTick}
-                enemyHit={enemyHit}
-                playerHit={playerHit}
-                weaponMode={currentWeapon}
-              />
-            ) : (
-              <RunnerCanvas
-                playerY={runner.playerY}
-                obstacles={runner.obstacles}
-                score={runner.score}
-                isGameOver={runner.isGameOver}
-                gameStarted={runner.gameStarted}
-                onTap={() => {
-                  if (!runner.gameStarted) runner.startGame();
-                  else if (runner.isGameOver) runner.resetGame();
-                  else runner.handleJump();
-                }}
-              />
-            )}
-
-            {showRunner && (
-              <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-10">
-                <button
-                  onClick={() => setShowRunner(false)}
-                  className="px-6 py-2 rounded-lg bg-secondary/60 hover:bg-secondary/80 text-foreground font-pixel text-[9px] transition-colors"
-                >
-                  ← BACK TO SLAYER
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-
-      </div>
-
-      {/* Global HUD Overlay - All HUD elements in one parent */}
+      {/* ── HUD overlay (stats bar, buffs, abilities) — all screen sizes ──── */}
       <HUDOverlay
-         state={state}
-         getTapDamage={getTapDamage}
-         getIdleCPS={getIdleCPS}
-         activeBuffs={activeBuffs}
-         currentWeapon={currentWeapon}
-         onWeaponChange={setCurrentWeapon}
-         abilities={abilities}
-         onActivateAbility={handleActivateAbility}
-         hudMenuOpen={hudMenuOpen}
-         onMenuToggle={setHudMenuOpen}
-         onBuyUpgrade={handleBuyUpgrade}
-         onUnlockSkill={handleUnlockSkill}
-         onPrestige={handlePrestige}
-         onRevive={revive}
-         unlockedIds={unlockedIds}
-         damageMultiplier={damageMultiplier}
-         offlineMultiplier={offlineMultiplier}
-         onSwitchZone={switchZone}
-         onUnlockZone={unlockZone}
-         onClaimQuestReward={handleClaimQuestReward}
-         onRepeatQuest={handleRepeatQuest}
-         questProgress={questProgress}
-         onUpgradeBuilding={upgradeBuilding}
-         onRunnerClick={() => setShowRunner(true)}
-         heroAbilities={heroAbilities}
-         heroPassives={heroPassives}
-         heroDPS={heroDPS}
-         onRecruitHero={recruitHero}
-         onLevelHero={levelHero}
-         onActivateHeroAbility={activateHeroAbility}
-       />
+        state={state}
+        getTapDamage={getTapDamage}
+        getIdleCPS={getIdleCPS}
+        activeBuffs={activeBuffs}
+        currentWeapon={currentWeapon}
+        onWeaponChange={setCurrentWeapon}
+        abilities={abilities}
+        onActivateAbility={handleActivateAbility}
+        heroAbilities={heroAbilities}
+        heroPassives={heroPassives}
+        heroDPS={heroDPS}
+        onRecruitHero={recruitHero}
+        onLevelHero={levelHero}
+        onActivateHeroAbility={activateHeroAbility}
+      />
 
-      {/* Mobile menu — full-height slide-up panel using MenuPanel */}
+      {/* ── Modals ──────────────────────────────────────────────────────────── */}
       <AnimatePresence>
-        {!showRunner && menuOpen && (
-          <motion.div
-            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm lg:hidden"
-            onClick={() => setMenuOpen(false)}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <motion.div
-              className="fixed bottom-0 left-0 right-0 z-50 max-h-[88vh] flex flex-col pointer-events-auto lg:hidden overflow-hidden rounded-t-2xl border-t-2 border-amber-600/60 shadow-2xl"
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <MenuPanel
-                state={state}
-                onBuyUpgrade={handleBuyUpgrade}
-                onUnlockSkill={handleUnlockSkill}
-                onPrestige={handlePrestige}
-                onRevive={revive}
-                unlockedIds={unlockedIds}
-                damageMultiplier={damageMultiplier}
-                offlineMultiplier={offlineMultiplier}
-                onSwitchZone={switchZone}
-                onUnlockZone={unlockZone}
-                onClaimQuestReward={handleClaimQuestReward}
-                onRepeatQuest={handleRepeatQuest}
-                questProgress={questProgress}
-                onUpgradeBuilding={upgradeBuilding}
-                abilities={abilities}
-                onActivateAbility={handleActivateAbility}
-                weaponMode={currentWeapon}
-                onWeaponModeChange={setCurrentWeapon}
-                onClose={() => setMenuOpen(false)}
-                heroAbilities={heroAbilities}
-                heroPassives={heroPassives}
-                heroDPS={heroDPS}
-                onRecruitHero={recruitHero}
-                onLevelHero={levelHero}
-                onActivateHeroAbility={activateHeroAbility}
-              />
-            </motion.div>
-          </motion.div>
+        {offlineEarnings && (
+          <OfflineEarningsModal
+            earnings={offlineEarnings}
+            onClose={() => setOfflineEarnings(null)}
+          />
         )}
       </AnimatePresence>
 
-      {/* Notifications */}
-      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
-        <AchievementToast achievement={newUnlock} />
-      </div>
+      <AnimatePresence>
+        {state?.isDead && (
+          <DeathModal onRevive={revive} souls={state?.souls} />
+        )}
+      </AnimatePresence>
 
-      <OfflineEarningsModal
-        earnings={offlineEarnings}
-        onClose={() => setOfflineEarnings(null)}
-      />
-      <DeathModal
-        isDead={state.isDead}
-        souls={state.souls}
-        onRevive={revive}
-        onPrestige={() => {
-          prestige({ fromDeath: true });
-          soundManager.play("prestige");
-        }}
-        canRevive={state.souls >= 10}
-      />
+      <AchievementToast newUnlock={newUnlock} />
     </div>
   );
 }

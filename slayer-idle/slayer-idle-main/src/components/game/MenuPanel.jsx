@@ -26,7 +26,8 @@ export default function MenuPanel({
   weaponMode,
   onWeaponModeChange,
   onRunnerClick,
-  onClose,
+  onClose,          // null = desktop (no close btn), fn = mobile (show close btn)
+  appTitle,         // optional title override (e.g. "SLAYER IDLE" on desktop)
   // Hero props
   heroAbilities,
   heroPassives,
@@ -35,42 +36,40 @@ export default function MenuPanel({
   onLevelHero,
   onActivateHeroAbility,
 }) {
-  const [activeTab, setActiveTab] = React.useState("combat");
+  const [activeTab, setActiveTab] = useState("combat");
 
   return (
-    <motion.div
-      className={`flex flex-col h-full ${HUD_THEME.menuPanel.container}`}
-      initial={{ x: 400 }}
-      animate={{ x: 0 }}
-      exit={{ x: 400 }}
-      transition={{ duration: 0.2 }}
-    >
-      {/* Header — always visible with close button */}
+    <div className={`flex flex-col h-full ${HUD_THEME.menuPanel.container}`}>
+
+      {/* ── Header ────────────────────────────────────────────────── */}
       <div
-        className={`${HUD_THEME.menuPanel.header} px-2 py-2 flex items-center gap-2`}
-        style={{ boxSizing: "border-box" }}
+        className={`${HUD_THEME.menuPanel.header} px-3 py-2 flex items-center gap-2 flex-shrink-0`}
       >
-        <span className="font-pixel text-[9px] text-muted-foreground flex-1">MENU</span>
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={onClose}
-          className={`flex-shrink-0 p-2 rounded-lg bg-red-900/60 hover:bg-red-700/80 border border-red-600/50 text-foreground transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center`}
-          title="Close menu"
-        >
-          <X className="w-4 h-4" />
-        </motion.button>
+        <span className="font-pixel text-[10px] text-foreground/90 tracking-widest flex-1">
+          {appTitle || "MENU"}
+        </span>
+        {onClose && (
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={onClose}
+            className="flex-shrink-0 p-2 rounded-lg bg-red-900/60 hover:bg-red-700/80 border border-red-600/50 text-foreground transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center"
+            title="Close menu"
+          >
+            <X className="w-4 h-4" />
+          </motion.button>
+        )}
       </div>
 
-      {/* Upgrades — pinned above scroll, combat tab only */}
+      {/* ── Upgrades pinned — combat tab only ─────────────────────── */}
       {activeTab === "combat" && (
         <div className="px-3 py-2 flex-shrink-0 border-b border-border/30">
           <UpgradeShop state={state} onBuy={onBuyUpgrade} />
         </div>
       )}
 
-      {/* Scrollable tab content */}
-      <ScrollArea className={`${HUD_THEME.menuPanel.content} flex-1`}>
+      {/* ── Scrollable tab content ─────────────────────────────────── */}
+      <ScrollArea className={`${HUD_THEME.menuPanel.content} flex-1 min-h-0`}>
         <div className="px-3 py-2">
           <GameTabs
             state={state}
@@ -103,30 +102,29 @@ export default function MenuPanel({
         </div>
       </ScrollArea>
 
-      {/* Bottom tab navigation */}
-      <div className={`${HUD_THEME.menuPanel.footer} pointer-events-auto`}>
+      {/* ── Bottom tab nav ─────────────────────────────────────────── */}
+      <div className={`${HUD_THEME.menuPanel.footer} flex-shrink-0 pointer-events-auto`}>
         {[
-          { tab: "combat",      icon: "⚔️",  label: "Combat"    },
-          { tab: "heroes",      icon: "🧑‍🤝‍🧑", label: "Heroes"    },
-          { tab: "equip",       icon: "🗡️",  label: "Equip"     },
-          { tab: "progression", icon: "📈",  label: "Progress"  },
-          { tab: "village",     icon: "🏘️",  label: "Village"   },
-          { tab: "quests",      icon: "📜",  label: "Quests"    },
-          { tab: "zones",       icon: "🗺️",  label: "Zones"     },
+          { tab: "combat",      icon: "⚔️",  label: "COMBAT"   },
+          { tab: "heroes",      icon: "🧙",  label: "HEROES"   },
+          { tab: "progression", icon: "📈",  label: "PROGRESS" },
+          { tab: "village",     icon: "🏘️",  label: "VILLAGE"  },
+          { tab: "quests",      icon: "📜",  label: "QUESTS"   },
+          { tab: "zones",       icon: "🗺️",  label: "ZONES"    },
         ].map(({ tab, icon, label }) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`flex-1 py-2 rounded-lg text-lg transition-colors cursor-pointer ${
+            className={`flex-1 py-2 flex flex-col items-center gap-0.5 rounded-lg text-xs transition-colors cursor-pointer ${
               activeTab === tab ? HUD_THEME.button.primary : HUD_THEME.button.muted
             }`}
-            style={{ pointerEvents: "auto" }}
             title={label}
           >
-            {icon}
+            <span className="text-base leading-none">{icon}</span>
+            <span className="font-pixel text-[6px] leading-none hidden sm:block">{label}</span>
           </button>
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 }

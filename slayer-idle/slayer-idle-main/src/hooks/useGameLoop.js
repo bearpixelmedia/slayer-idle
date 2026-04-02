@@ -79,7 +79,7 @@ export default function useGameLoop({
           isInCombatAlongPath(wp, enemyWorldPos, Boolean(pathState.isBossActive));
 
         const shouldWalk = !inMelee;
-        const newProgress = shouldWalk ? wp + 0.095 : wp;
+        const newProgress = shouldWalk ? wp + 0.18 : wp;
 
         const clusterClear =
           !pathState.enemyCluster || pathState.enemyCluster.length === 0;

@@ -101,7 +101,7 @@ export function spawnNewEnemy(s, opts = {}) {
     const hp = getBossHP(s.stage, s.killCount);
     const wp = s.worldProgress ?? 0;
     const queue = s.nextEnemyWorldPos ?? 0;
-    const minBossApproachOnPath = 28 + Math.random() * 20;
+    const minBossApproachOnPath = 18 + Math.random() * 10;
     const bossWorldPos = Math.max(wp + minBossApproachOnPath, queue);
     return {
       ...s,
@@ -130,7 +130,7 @@ export function spawnNewEnemy(s, opts = {}) {
   const forwardAfterKill =
     typeof anchor === "number" && Number.isFinite(anchor) ? anchor + (12 + Math.random() * 10) : null;
 
-  const minApproachOnPath = 26 + Math.random() * 22;
+  const minApproachOnPath = 14 + Math.random() * 8;
   const base = Math.max(wp + minApproachOnPath, queue, forwardAfterKill ?? 0);
   const spacing = 5 + Math.random() * 3;
 
@@ -163,7 +163,7 @@ export function spawnNewEnemy(s, opts = {}) {
   }
 
   const lastWorldPos = cluster[cluster.length - 1].worldPos;
-  const nextSpawnDistance = 15 + Math.random() * 10;
+  const nextSpawnDistance = 10 + Math.random() * 6;
 
   return {
     ...s,

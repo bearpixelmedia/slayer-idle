@@ -296,15 +296,15 @@ export function canUnlockZone(zoneId, unlockedZoneIds, zoneProgress, slayerPoint
 // ─── Scaling formulas ─────────────────────────────────────────────────────────
 
 // Enemy HP — exponential per stage, gentle kill-count ramp.
-// Stage 0: ~15 HP  →  Stage 19: ~50,000 HP
+// Stage 0: ~15 HP  →  Stage 19: ~7,500 HP  (base 1.65 per stage)
 export function getEnemyHP(stage, killCount = 0) {
-  const base = Math.ceil(15 * Math.pow(2.0, stage));
+  const base = Math.ceil(15 * Math.pow(1.65, stage));
   return Math.ceil(base * (1 + killCount * 0.003));
 }
 
 // Enemy coin reward — mirrors HP so reward-per-hit stays roughly constant.
 export function getEnemyReward(stage, killCount = 0) {
-  const base = Math.ceil(12 * Math.pow(2.0, stage));
+  const base = Math.ceil(12 * Math.pow(1.65, stage));
   return Math.ceil(base * (1 + killCount * 0.004));
 }
 
@@ -316,7 +316,7 @@ export function getEnemySouls(stage) {
 // Prestige souls — log10 curve feels rewarding at every scale.
 export function getSoulsOnPrestige(totalCoinsEarned) {
   if (totalCoinsEarned < 100) return 0;
-  return Math.floor(Math.pow(Math.log10(totalCoinsEarned + 1), 2.8));
+  return Math.floor(Math.pow(Math.log10(totalCoinsEarned + 1), 3.5));
 }
 
 export function getSlayerPointsOnPrestige(souls) {

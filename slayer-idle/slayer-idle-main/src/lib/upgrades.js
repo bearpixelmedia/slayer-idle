@@ -93,7 +93,8 @@ export function computeTapDamage(s, weapon, buffs, skillMults, villageMultiplier
   });
 
   const souls = typeof s.souls === "number" ? s.souls : 0;
-  const soulBonus = 1 + souls * 0.05;
+  // Soul bonus: +0.5% per soul, soft-capped at 6× total
+  const soulBonus = Math.min(1 + souls * 0.005, 6.0);
   const buffMult = getBuffMultiplier(Array.isArray(buffs) ? buffs : [], "tapDamageMultiplier");
   const raw = damage * soulBonus * damageMultiplier * (skillMults?.damageMultiplier || 1) * buffMult;
   return Math.max(0.5, raw);
@@ -107,6 +108,7 @@ export function computeIdleCPS(s, skillMults, villageMultipliers) {
     if (level > 0 && u.effect?.idleDPS) cps += u.effect.idleDPS * level;
   });
   const souls = typeof s.souls === "number" ? s.souls : 0;
-  const soulBonus = 1 + souls * 0.05;
+  // Soul bonus: +0.5% per soul, soft-capped at 6× total
+  const soulBonus = Math.min(1 + souls * 0.005, 6.0);
   return cps * soulBonus * (skillMults?.idleMultiplier || 1) * (villageMultipliers?.idleMultiplier || 1);
 }

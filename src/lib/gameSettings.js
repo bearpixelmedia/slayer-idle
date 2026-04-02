@@ -11,6 +11,26 @@ export function onGameSettingsUpdated(callback) {
 
 const SETTINGS_KEY = "game_settings_config";
 
+/**
+ * Given a sprite URL like "https://…/enemy_spider.png",
+ * returns the companion Aseprite JSON URL "https://…/enemy_spider.json",
+ * or null if the URL doesn't look like a PNG sprite.
+ */
+export function getAsepriteJsonUrlForSprite(spriteUrl) {
+  if (!spriteUrl || typeof spriteUrl !== "string") return null;
+  if (!spriteUrl.endsWith(".png")) return null;
+  return spriteUrl.replace(/\.png$/, ".json");
+}
+
+export function loadGameSettings() {
+  return getGameSettings();
+}
+
+export function getSetting(key, defaultValue) {
+  const settings = getGameSettings();
+  return settings[key] !== undefined ? settings[key] : defaultValue;
+}
+
 export function getGameSettings() {
   const saved = localStorage.getItem(SETTINGS_KEY);
   if (!saved) return {};

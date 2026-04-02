@@ -1,4 +1,5 @@
 const SETTINGS_EVENT = "gameSettingsUpdated";
+export const GAME_SETTINGS_UPDATED_EVENT = SETTINGS_EVENT;
 
 export function notifyGameSettingsUpdated() {
   window.dispatchEvent(new Event(SETTINGS_EVENT));

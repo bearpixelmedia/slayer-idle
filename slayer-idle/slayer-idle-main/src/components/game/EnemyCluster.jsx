@@ -18,6 +18,7 @@ import {
 import CombatLaneEntityRoot from "./CombatLaneEntityRoot";
 import EnemyRenderer from "./EnemyRenderer";
 import HealthBar from "./HealthBar";
+import { Flame } from "lucide-react";
 
 function EnemyCluster({
   cluster,
@@ -112,7 +113,7 @@ function EnemyCluster({
               style={{ left: `calc(50% + ${enemyCharacterCenterOffsetPx}px)` }}
             >
               {isBossActive && (
-                <p className="font-pixel text-[8px] text-red-400 mb-1 animate-pulse">⚔️ BOSS ENCOUNTER ⚔️</p>
+                <p className="font-pixel text-[8px] text-red-400 mb-1 animate-pulse flex items-center justify-center gap-1"><Flame size={10} />BOSS ENCOUNTER<Flame size={10} /></p>
               )}
               <p className="font-pixel text-[7px] sm:text-[8px] text-foreground/80 mb-1">{currentEnemyName}</p>
               <HealthBar current={enemyHP} max={enemyMaxHP} isBoss={isBossActive} />

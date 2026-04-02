@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { X } from "lucide-react";
+import { X, Sword, Users, TrendingUp, Home, ScrollText, Map } from "lucide-react";
 import GameTabs from "@/components/game/GameTabs";
 import UpgradeShop from "@/components/game/UpgradeShop";
 import { HUD_THEME } from "@/lib/hudTheme";
@@ -105,12 +105,12 @@ export default function MenuPanel({
       {/* ── Bottom tab nav ─────────────────────────────────────────── */}
       <div className={`${HUD_THEME.menuPanel.footer} flex-shrink-0 pointer-events-auto`}>
         {[
-          { tab: "combat",      icon: "⚔️",  label: "COMBAT"   },
-          { tab: "heroes",      icon: "🧙",  label: "HEROES"   },
-          { tab: "progression", icon: "📈",  label: "PROGRESS" },
-          { tab: "village",     icon: "🏘️",  label: "VILLAGE"  },
-          { tab: "quests",      icon: "📜",  label: "QUESTS"   },
-          { tab: "zones",       icon: "🗺️",  label: "ZONES"    },
+          { tab: "combat",      icon: <Sword size={14} />,       label: "COMBAT"   },
+          { tab: "heroes",      icon: <Users size={14} />,       label: "HEROES"   },
+          { tab: "progression", icon: <TrendingUp size={14} />,  label: "PROGRESS" },
+          { tab: "village",     icon: <Home size={14} />,        label: "VILLAGE"  },
+          { tab: "quests",      icon: <ScrollText size={14} />,  label: "QUESTS"   },
+          { tab: "zones",       icon: <Map size={14} />,         label: "ZONES"    },
         ].map(({ tab, icon, label }) => (
           <button
             key={tab}

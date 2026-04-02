@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { Crosshair } from "lucide-react";
 
 const ABILITIES = [
   {
@@ -108,7 +109,7 @@ export default function AbilityBar({ abilities, onActivate, weaponMode }) {
       <div className="flex items-center gap-2 mb-2">
         <span className="font-pixel text-[8px] text-muted-foreground">ABILITIES</span>
         {weaponMode === "bow" && (
-          <span className="font-pixel text-[8px] text-accent">🏹 BOW MODE</span>
+          <span className="font-pixel text-[8px] text-accent flex items-center gap-1"><Crosshair size={10} />BOW MODE</span>
         )}
         {Object.values(abilities).some(a => a.active) && (
           <span className="font-pixel text-[8px] text-yellow-400 animate-pulse">● ACTIVE</span>

@@ -10,7 +10,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Sword, Crosshair } from "lucide-react";
 import { weaponIconStyle, WEAPON_ICONS } from "@/lib/sprites";
 
 // ─── Config ────────────────────────────────────────────────────────────────
@@ -43,7 +43,7 @@ const WEAPON_DISPLAY_NAMES = {
   spear:    "Spear",
   sickle:   "Sickle",
   bow_f1:   "Bow",
-  crossbow: "Crossbow",
+  crossbow: "Crosshair",
   staff:    "Staff",
   wand:     "Wand",
   shield:   "Shield",
@@ -142,10 +142,10 @@ export default function EquipmentPanel({ weaponMode, onModeChange }) {
         onClick={() => setOpen((o) => !o)}
       >
         <div className="flex items-center gap-2">
-          <span className="text-base">🗡️</span>
+          <Sword size={16} />
           <span className="font-pixel text-[9px] text-amber-200 font-bold tracking-wide">EQUIPMENT</span>
           <span className="font-pixel text-[7px] text-muted-foreground capitalize">
-            {weaponMode === "bow" ? "🏹 Bow" : "⚔️ Sword"}
+            {weaponMode === "bow" ? <><Crosshair size={12} className="inline mr-1" />Bow</> : <><Sword size={12} className="inline mr-1" />Sword</>}
           </span>
         </div>
         {open

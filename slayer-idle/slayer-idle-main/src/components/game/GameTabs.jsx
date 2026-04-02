@@ -1,4 +1,5 @@
 import React from "react";
+import { Sword, Users, Shield, TrendingUp, Home, ScrollText, Map } from "lucide-react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import SkillTree from "@/components/game/SkillTree";
 import AchievementsPanel from "@/components/game/AchievementsPanel";
@@ -14,13 +15,13 @@ import { HUD_THEME } from "@/lib/hudTheme";
 const TAB_LIST = ["combat", "heroes", "equip", "progression", "village", "quests", "zones"];
 
 const TAB_LABELS = {
-  combat:      "⚔️ COMBAT",
-  heroes:      "🧑‍🤝‍🧑 HEROES",
-  equip:       "🗡️ EQUIP",
-  progression: "📈 PROGRESS",
-  village:     "🏘️ VILLAGE",
-  quests:      "📜 QUESTS",
-  zones:       "🗺️ ZONES",
+  combat:      <><Sword size={12} className="inline mr-1" />COMBAT</>,
+  heroes:      <><Users size={12} className="inline mr-1" />HEROES</>,
+  equip:       <><Shield size={12} className="inline mr-1" />EQUIP</>,
+  progression: <><TrendingUp size={12} className="inline mr-1" />PROGRESS</>,
+  village:     <><Home size={12} className="inline mr-1" />VILLAGE</>,
+  quests:      <><ScrollText size={12} className="inline mr-1" />QUESTS</>,
+  zones:       <><Map size={12} className="inline mr-1" />ZONES</>,
 };
 
 export default function GameTabs({

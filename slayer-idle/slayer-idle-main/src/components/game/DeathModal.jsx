@@ -1,6 +1,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatNumber } from "@/lib/formatNumber";
+import { Skull } from "lucide-react";
 
 export default function DeathModal({ isDead, souls, onRevive, onPrestige, canRevive }) {
   const reviveCost = 10;
@@ -20,7 +21,7 @@ export default function DeathModal({ isDead, souls, onRevive, onPrestige, canRev
             exit={{ scale: 0.8, opacity: 0 }}
             className="relative bg-card border-2 border-destructive rounded-xl p-8 max-w-sm mx-4 text-center"
           >
-            <h2 className="font-pixel text-xl text-destructive mb-4 animate-pulse">💀 YOU DIED</h2>
+            <h2 className="font-pixel text-xl text-destructive mb-4 animate-pulse flex items-center justify-center gap-2"><Skull size={20} />YOU DIED<Skull size={20} /></h2>
 
             <p className="text-sm text-muted-foreground mb-6">
               You were defeated in battle. Choose wisely.

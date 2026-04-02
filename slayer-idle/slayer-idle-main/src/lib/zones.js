@@ -46,7 +46,7 @@ export const STAGES = [
     bgGradient: "from-emerald-900 to-teal-900",
     color: "#2dd4bf",
     soulBias: 1.2,
-    enemies: ["skeleton_rogue", "skeleton_warrior", "zombie"],
+    enemies: ["skeleton_rogue", "skeleton_warrior", "skeleton_mage"],
     bossEnemy: "skeleton_mage",
   },
   {
@@ -64,7 +64,7 @@ export const STAGES = [
     bgGradient: "from-green-950 to-slate-900",
     color: "#86efac",
     soulBias: 1.4,
-    enemies: ["skeleton", "skeleton_warrior", "skeleton_mage", "zombie"],
+    enemies: ["skeleton", "skeleton_warrior", "skeleton_mage"],
     bossEnemy: "skeleton_mage",
   },
 
